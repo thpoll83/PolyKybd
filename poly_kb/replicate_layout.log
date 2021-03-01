@@ -1,0 +1,94 @@
+12-14 13:59:37 replicate_layout.action_replicate_layout 305:Plugin executed on: 'win32'
+12-14 13:59:37 replicate_layout.action_replicate_layout 306:Plugin executed with python version: '2.7.16 (default, Aug 15 2019, 17:51:40)  [GCC 9.2.0 64 bit (AMD64)]'
+12-14 13:59:37 replicate_layout.action_replicate_layout 307:KiCad build version: Unknown
+12-14 13:59:37 replicate_layout.action_replicate_layout 308:Replicate layout plugin version: 68 started
+12-14 13:59:37 replicate_layout.action_replicate_layout 319:wx top level windows: wxWindowList: [<wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x32f18f0> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x3205180> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x4c476060> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x4c4729c0> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x4c472d30> >]
+12-14 13:59:37 replicate_layout.action_replicate_layout 343:Preparing replicator with J25 as a reference
+12-14 13:59:37 replicate_layout.replicatelayout 215:getting project hierarchy from schematics
+12-14 13:59:37 replicate_layout.replicatelayout 217:Project hierarchy looks like:
+{u'5FC36072': [u'K_2', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'5FC1948A': [u'K_TAB', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'5FC10791': [u'K_W', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'5FC360D0': [u'K_TILDE', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'5FC36069': [u'K_1', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'6057902A': [u'K_A', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'60579033': [u'K_S', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'6057903C': [u'K_CapsLock', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'5FC0795D': [u'K_Q', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch']}
+12-14 13:59:37 replicate_layout.replicatelayout 225:getting a list of all footprints on board
+12-14 13:59:37 replicate_layout.action_replicate_layout 370:source anchor footprint is u'J25'
+Located on:[u'K_1']
+With filenames:[u'SSD1306_TO_SPI.sch']
+With sheet_id:[u'K_1']
+12-14 13:59:37 replicate_layout.action_replicate_layout 374:Corresponding footprints are 
+[(u'J40', [u'K_CapsLock']), (u'J37', [u'K_S']), (u'J34', [u'K_A']), (u'J31', [u'K_TILDE']), (u'J28', [u'K_2']), (u'J25', [u'K_1']), (u'J22', [u'K_TAB']), (u'J19', [u'K_W']), (u'J16', [u'K_Q'])]
+12-14 13:59:37 replicate_layout.action_replicate_layout 387:Showing dialog
+12-14 13:59:37 replicate_layout.action_replicate_layout 391:Pcbnew position: wx.Point(-10, 60)
+12-14 13:59:37 replicate_layout.action_replicate_layout 397:Display 0: wx.Rect(0, 0, 3840, 2160)
+12-14 13:59:37 replicate_layout.action_replicate_layout 401:Toolbar position: wx.Point(2421, 242)
+12-14 13:59:37 replicate_layout.action_replicate_layout 408:Dialog position: wx.Point(2108, 242)
+12-14 13:59:39 replicate_layout.replicatelayout 249:construcing a list of sheets suitable for replication on level:u'K_1', file:u'SSD1306_TO_SPI.sch'
+12-14 13:59:39 replicate_layout.replicatelayout 256:Source sheet path up to the level:[u'K_1']
+12-14 13:59:39 replicate_layout.replicatelayout 260:Footprints on the sheets:
+[u'J40', u'J37', u'J34', u'J31', u'J28', u'J25', u'J22', u'J19', u'J16']
+12-14 13:59:39 replicate_layout.replicatelayout 263:Footprints raw sheet ids:
+[u'/6057903C/5FC4B7AD', u'/60579033/5FC4B7AD', u'/6057902A/5FC4B7AD', u'/5FC360D0/5FC4B7AD', u'/5FC36072/5FC4B7AD', u'/5FC36069/5FC4B7AD', u'/5FC1948A/5FC4B7AD', u'/5FC10791/5FC4B7AD', u'/5FC0795D/5FC4B7AD']
+12-14 13:59:39 replicate_layout.replicatelayout 279:All sheets to replicate:
+[[u'K_CapsLock'], [u'K_S'], [u'K_A'], [u'K_TILDE'], [u'K_2'], [u'K_1'], [u'K_TAB'], [u'K_W'], [u'K_Q']]
+12-14 13:59:39 replicate_layout.replicatelayout 284:All sheets to replicate sorted:
+[[u'K_1'], [u'K_2'], [u'K_A'], [u'K_CapsLock'], [u'K_Q'], [u'K_S'], [u'K_TAB'], [u'K_TILDE'], [u'K_W']]
+12-14 13:59:39 replicate_layout.replicatelayout 290:All sheets to replicate sorted and without source sheet:
+[[u'K_2'], [u'K_A'], [u'K_CapsLock'], [u'K_Q'], [u'K_S'], [u'K_TAB'], [u'K_TILDE'], [u'K_W']]
+12-14 14:00:12 replicate_layout.replicatelayout 249:construcing a list of sheets suitable for replication on level:u'K_1', file:u'SSD1306_TO_SPI.sch'
+12-14 14:00:12 replicate_layout.replicatelayout 256:Source sheet path up to the level:[u'K_1']
+12-14 14:00:12 replicate_layout.replicatelayout 260:Footprints on the sheets:
+[u'J40', u'J37', u'J34', u'J31', u'J28', u'J25', u'J22', u'J19', u'J16']
+12-14 14:00:12 replicate_layout.replicatelayout 263:Footprints raw sheet ids:
+[u'/6057903C/5FC4B7AD', u'/60579033/5FC4B7AD', u'/6057902A/5FC4B7AD', u'/5FC360D0/5FC4B7AD', u'/5FC36072/5FC4B7AD', u'/5FC36069/5FC4B7AD', u'/5FC1948A/5FC4B7AD', u'/5FC10791/5FC4B7AD', u'/5FC0795D/5FC4B7AD']
+12-14 14:00:12 replicate_layout.replicatelayout 279:All sheets to replicate:
+[[u'K_CapsLock'], [u'K_S'], [u'K_A'], [u'K_TILDE'], [u'K_2'], [u'K_1'], [u'K_TAB'], [u'K_W'], [u'K_Q']]
+12-14 14:00:12 replicate_layout.replicatelayout 284:All sheets to replicate sorted:
+[[u'K_1'], [u'K_2'], [u'K_A'], [u'K_CapsLock'], [u'K_Q'], [u'K_S'], [u'K_TAB'], [u'K_TILDE'], [u'K_W']]
+12-14 14:00:12 replicate_layout.replicatelayout 290:All sheets to replicate sorted and without source sheet:
+[[u'K_2'], [u'K_A'], [u'K_CapsLock'], [u'K_Q'], [u'K_S'], [u'K_TAB'], [u'K_TILDE'], [u'K_W']]
+12-14 14:00:12 replicate_layout.action_replicate_layout 179:Replicating layout
+12-14 14:00:12 replicate_layout.replicatelayout 990:Starting replication of sheets: [[u'K_A'], [u'K_CapsLock'], [u'K_S']]
+on level: [u'K_1']
+with tracks=True, zone=True, text=True, containing=False, remove=False, locked=False
+12-14 14:00:12 root 261:updating GUI message: 'Preparing for replication'
+12-14 14:00:12 root 266:updating GUI with: 0
+12-14 14:00:12 replicate_layout.replicatelayout 556:Getting the list of source footprints
+12-14 14:00:12 replicate_layout.replicatelayout 560:Getting the list of all the remaining footprints
+12-14 14:00:12 replicate_layout.replicatelayout 564:Getting nets local to source footprints
+12-14 14:00:12 replicate_layout.replicatelayout 568:Getting source bounding box
+12-14 14:00:12 root 266:updating GUI with: 37
+12-14 14:00:12 replicate_layout.replicatelayout 572:Getting source tracks
+12-14 14:00:12 replicate_layout.replicatelayout 576:Getting source zones
+12-14 14:00:12 root 266:updating GUI with: 62
+12-14 14:00:12 replicate_layout.replicatelayout 580:Getting source text items
+12-14 14:00:12 replicate_layout.replicatelayout 584:Getting source text items
+12-14 14:00:12 root 266:updating GUI with: 87
+12-14 14:00:12 root 266:updating GUI with: 100
+12-14 14:00:12 root 261:updating GUI message: 'Replicating footprints'
+12-14 14:00:12 replicate_layout.replicatelayout 590:Replicating footprints
+12-14 14:00:12 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'K_A']
+12-14 14:00:12 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'K_CapsLock']
+12-14 14:00:12 root 266:updating GUI with: 43
+12-14 14:00:12 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'K_S']
+12-14 14:00:12 root 266:updating GUI with: 96
+12-14 14:00:12 root 261:updating GUI message: 'Replicating tracks'
+12-14 14:00:12 replicate_layout.replicatelayout 716:Replicating tracks
+12-14 14:00:12 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'K_A']
+12-14 14:00:12 root 266:updating GUI with: 24
+12-14 14:00:12 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'K_CapsLock']
+12-14 14:00:12 root 266:updating GUI with: 64
+12-14 14:00:12 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'K_S']
+12-14 14:00:12 root 261:updating GUI message: 'Replicating zones'
+12-14 14:00:12 replicate_layout.replicatelayout 767:Replicating zones
+12-14 14:00:12 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'K_A']
+12-14 14:00:12 root 266:updating GUI with: 33
+12-14 14:00:12 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'K_CapsLock']
+12-14 14:00:12 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'K_S']
+12-14 14:00:12 root 261:updating GUI message: 'Replicating text'
+12-14 14:00:12 replicate_layout.replicatelayout 833:Replicating text
+12-14 14:00:12 replicate_layout.replicatelayout 840:Replicating text on sheet [u'K_A']
+12-14 14:00:12 replicate_layout.replicatelayout 840:Replicating text on sheet [u'K_CapsLock']
+12-14 14:00:12 replicate_layout.replicatelayout 840:Replicating text on sheet [u'K_S']
+12-14 14:00:12 root 261:updating GUI message: 'Replicating drawings'
+12-14 14:00:12 replicate_layout.replicatelayout 864:Replicating drawings
+12-14 14:00:12 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'K_A']
+12-14 14:00:12 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'K_CapsLock']
+12-14 14:00:12 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'K_S']
+12-14 14:00:12 replicate_layout.action_replicate_layout 201:Replication complete

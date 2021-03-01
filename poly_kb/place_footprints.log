@@ -1,0 +1,12 @@
+11-30 14:00:59 place_footprints.action_place_footprints 414:Plugin executed on: 'win32'
+11-30 14:00:59 place_footprints.action_place_footprints 415:Plugin executed with python version: '2.7.16 (default, Aug 15 2019, 17:51:40)  [GCC 9.2.0 64 bit (AMD64)]'
+11-30 14:00:59 place_footprints.action_place_footprints 416:KiCad build version: Unknown
+11-30 14:00:59 place_footprints.action_place_footprints 417:Place footprints plugin version: 54 started
+11-30 14:01:00 place_footprints.place_footprints 213:getting project hierarchy from schematics
+11-30 14:01:00 place_footprints.place_footprints 228:getting a list of all footprints on board
+11-30 14:01:01 place_footprints.place_footprints 254:construcing a list of sheets suitable for replication on level:u'K_Q', file:u'SSD1306_TO_SPI.sch'
+11-30 14:01:01 place_footprints.place_footprints 287:suitable sheets are:[[u'K_1'], [u'K_2'], [u'K_3'], [u'K_4'], [u'K_E'], [u'K_R'], [u'K_TAB'], [u'K_TILDE'], [u'K_W']]
+11-30 14:01:10 place_footprints.action_place_footprints 654:Modules to place: ['J1', u'J20', u'J18', u'J16', u'J14', u'J12', u'J10', u'J4', u'J3', u'J2']
+11-30 14:01:10 place_footprints.place_footprints 380:Starting placing with linear layout
+11-30 14:01:10 place_footprints.action_place_footprints 696:Placing complete
+11-30 14:01:10 place_footprints.action_place_footprints 697:Sorted_modules: ['J1', u'J2', u'J3', u'J4', u'J10', u'J12', u'J14', u'J16', u'J18', u'J20']
