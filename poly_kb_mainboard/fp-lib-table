@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name poly_kb)(type KiCad)(uri ${KIPRJMOD}/poly_kb.pretty)(options "")(descr ""))
+)

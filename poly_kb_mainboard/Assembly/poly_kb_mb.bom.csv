@@ -1,0 +1,33 @@
+Designator,Quantity,Value,Footprint,LCSC Part #,Comment
+"C1, C2, C3, C4",4,1u,C_0402_1005Metric,C52923," Unpolarized capacitor, small symbol"
+C5,1,10n,C_0402_1005Metric,C15195," Unpolarized capacitor, small symbol"
+C6,1,4u7,C_0603_1608Metric,C19666," Unpolarized capacitor, small symbol"
+"C7, C8, C9, C10, C11, C12, C13",7,100n,C_0402_1005Metric,C1525," Unpolarized capacitor, small symbol"
+"C14, C15",2,2u2,C_0603_1608Metric,C23630," Unpolarized capacitor, small symbol"
+"C16, C17",2,12p,C_0402_1005Metric,C1547," Unpolarized capacitor, small symbol"
+D1,1,Reset,LED_0603_1608Metric,C72041," Light emitting diode, small symbol"
+D2,1,Status,LED_0603_1608Metric,C72043," Light emitting diode, small symbol"
+D3,1,Power,LED_0603_1608Metric,C2286," Light emitting diode, small symbol"
+F1,1,2A,Fuse_1206_3216Metric,C70085," Resettable fuse, polymeric positive temperature coefficient, small symbol"
+"FB1, FB2",2,600 @ 600 MHz,L_0805_2012Metric,C1017," Ferrite bead, small symbol"
+J1,1,SWD,SIDE-SWD,," Generic connector, double row, 02x05, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
+J2,1,USB_C_Receptacle_USB2.0,USB_C_Receptacle_HRO_TYPE-C-31-M-12,C165948, USB 2.0-only Type-C Receptacle connector
+J3,1,Left,PinHeader_2x06_P2.54mm_Vertical,C225521," Generic connector, double row, 02x06, top/bottom pin numbering scheme (row 1: 1...pins_per_row, row2: pins_per_row+1 ... num_pins), script generated (kicad-library-utils/schlib/autogen/connector/)"
+J4,1,Right,PinHeader_1x12_P2.54mm_Vertical,C225487," Generic connector, single row, 01x12, script generated (kicad-library-utils/schlib/autogen/connector/)"
+J5,1,USART2,PinHeader_2x04_P2.54mm_Vertical,C541854," Generic connector, double row, 02x04, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
+J6,1,I2C1,PinHeader_1x04_P2.54mm_Vertical,C225501," Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"
+J7,1,Bottom,PinHeader_2x20_P2.54mm_Vertical,C124383," Generic connector, double row, 02x20, counter clockwise pin numbering scheme (similar to DIP packge numbering), script generated (kicad-library-utils/schlib/autogen/connector/)"
+J8,1,Conn_01x02,PinHeader_1x02_P2.54mm_Vertical,C464599," Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+"R1, R3",2,100k,R_0402_1005Metric,C25741," Resistor, small symbol"
+"R2, R14, R15",3,10k,R_0402_1005Metric,C25744," Resistor, small symbol"
+"R4, R5, R8, R9",4,22,R_0402_1005Metric,C25092," Resistor, small symbol"
+"R6, R7, R12",3,1k5,R_0402_1005Metric,C25867," Resistor, small symbol"
+"R10, R11",2,5k1,R_0402_1005Metric,C25905," Resistor, small symbol"
+R13,1,47,R_0402_1005Metric,C25118," Resistor, small symbol"
+SW1,1,Boot0,SW_SPST_B3U-3000P-B,C963349, Single Pole Single Throw (SPST) switch
+SW2,1,Boot1,SW_SPST_B3U-3000P-B,C963349, Single Pole Single Throw (SPST) switch
+SW3,1,Reset,SW_SPST_B3U-3000P-B,C963349, Single Pole Single Throw (SPST) switch
+U1,1,XC6206P332MR,SOT-23,C5446," Positive 60-250mA Low Dropout Regulator, Fixed Output, SOT-23"
+U2,1,STM32F407VETx,LQFP-100_14x14mm_P0.5mm,C28730," ARM Cortex-M4 MCU, 512KB flash, 128KB RAM, 168MHz, 1.8-3.6V, 82 GPIO, LQFP-100"
+U3,1,W25N01GVZEIG,W25N01GVZEIG,C88868, 
+Y1,1,16MHz,Crystal_SMD_3225-4Pin_3.2x2.5mm,C13738," Four pin crystal, GND on pins 2 and 4, small symbol"
