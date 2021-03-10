@@ -2,7 +2,7 @@
 <export version="D">
   <design>
     <source>C:\Users\thomas.pollak\OneDrive\3d\3d printing\projects\keyboard\PolyKeyboard\poly_kb_mainboard\poly_kb.sch</source>
-    <date>10.03.2021 07:06:36</date>
+    <date>10.03.2021 07:39:30</date>
     <tool>Eeschema (5.1.9)-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -221,6 +221,9 @@
       <value>SWD</value>
       <footprint>poly_kb:SIDE-SWD</footprint>
       <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C225520</field>
+      </fields>
       <libsource lib="Connector_Generic" part="Conn_02x05_Odd_Even" description="Generic connector, double row, 02x05, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5FEC660E</tstamp>
