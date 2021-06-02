@@ -1,3 +1,4 @@
 (sym_lib_table
   (lib (name poly_kb)(type Legacy)(uri ${KIPRJMOD}/poly_kb.lib)(options "")(descr ""))
+  (lib (name poly_kb-rescue)(type Legacy)(uri ${KIPRJMOD}/poly_kb-rescue.lib)(options "")(descr ""))
 )

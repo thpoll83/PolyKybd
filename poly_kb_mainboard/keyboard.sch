@@ -1,0 +1,4942 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A1 33110 23386
+encoding utf-8
+Sheet 3 108
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Text GLabel 20300 -1600 1    50   Input ~ 0
+uI2C3_SCL
+Text GLabel 20200 -1600 1    50   Input ~ 0
+uI2C3_SDA
+Text GLabel 20100 -1600 1    50   Input ~ 0
+uUSART6_RX
+Text GLabel 20000 -1600 1    50   Input ~ 0
+uUSART6_TX
+Text GLabel 22500 -2750 0    50   Input ~ 0
+ADC1_IN1
+Text GLabel 22500 -2650 0    50   Input ~ 0
+ADC1_IN2
+Text GLabel 20500 -1600 1    50   Input ~ 0
+uUSART1_RX
+Text GLabel 20400 -1600 1    50   Input ~ 0
+uUSART1_TX
+Text GLabel 22500 -1750 0    50   Input ~ 0
+Col20
+Text GLabel 21700 -2000 1    50   Input ~ 0
+SHIFTR_DATA
+Text GLabel 21800 -2000 1    50   Input ~ 0
+SHIFTR_CLK
+Text GLabel 21900 -2000 1    50   Input ~ 0
+SHIFTR_NMASTER_RST
+Text GLabel 21600 -2000 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+Text GLabel 19350 -2900 0    50   Input ~ 0
+SPI3_SS
+$Comp
+L power:+3.3VA #PWR?
+U 1 1 60785522
+P 22500 -2850
+AR Path="/60785522" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60785522" Ref="#PWR0445"  Part="1" 
+F 0 "#PWR0445" H 22500 -3000 50  0001 C CNN
+F 1 "+3.3VA" H 22500 -2600 50  0000 C CNN
+F 2 "" H 22500 -2850 50  0001 C CNN
+F 3 "" H 22500 -2850 50  0001 C CNN
+	1    22500 -2850
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x12 J?
+U 1 1 60785529
+P 22700 -2350
+AR Path="/60785529" Ref="J?"  Part="1" 
+AR Path="/60775168/60785529" Ref="J11"  Part="1" 
+F 0 "J11" H 22850 -2400 50  0000 C CNN
+F 1 "Right" H 22700 -3200 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x12_P2.54mm_Vertical" H 22700 -2350 50  0001 C CNN
+F 3 "~" H 22700 -2350 50  0001 C CNN
+F 4 "C225487" H 22700 -2350 50  0001 C CNN "LCSC"
+	1    22700 -2350
+	1    0    0    -1  
+$EndComp
+Text GLabel 19350 -2700 0    50   Input ~ 0
+KB_LED_ARRAY
+Text GLabel 20000 -1100 3    50   Input ~ 0
+Col0
+Text GLabel 20100 -1100 3    50   Input ~ 0
+Col1
+Text GLabel 20200 -1100 3    50   Input ~ 0
+Col2
+Text GLabel 20300 -1100 3    50   Input ~ 0
+Col3
+Text GLabel 20400 -1100 3    50   Input ~ 0
+Col4
+Text GLabel 20500 -1100 3    50   Input ~ 0
+Col5
+Text GLabel 20600 -1100 3    50   Input ~ 0
+Col6
+Text GLabel 20700 -1100 3    50   Input ~ 0
+Col7
+Text GLabel 20800 -1100 3    50   Input ~ 0
+Col8
+Text GLabel 20900 -1100 3    50   Input ~ 0
+Col9
+Text GLabel 21000 -1100 3    50   Input ~ 0
+Col10
+Text GLabel 21100 -1100 3    50   Input ~ 0
+Col11
+Text GLabel 21200 -1100 3    50   Input ~ 0
+Col12
+Text GLabel 21300 -1100 3    50   Input ~ 0
+Col13
+Text GLabel 21400 -1100 3    50   Input ~ 0
+Col14
+Text GLabel 21500 -1100 3    50   Input ~ 0
+Col15
+Text GLabel 21600 -1100 3    50   Input ~ 0
+Col16
+Text GLabel 21700 -1100 3    50   Input ~ 0
+Col17
+Text GLabel 21800 -1100 3    50   Input ~ 0
+Col18
+Text GLabel 21900 -1100 3    50   Input ~ 0
+Col19
+Text GLabel 21300 -1600 1    50   Input ~ 0
+uPD10
+Text GLabel 21200 -1600 1    50   Input ~ 0
+uPD11
+Text GLabel 21100 -1600 1    50   Input ~ 0
+uPD12
+Text GLabel 21000 -1600 1    50   Input ~ 0
+uPD13
+Text GLabel 20900 -1600 1    50   Input ~ 0
+uPD14
+Text GLabel 20800 -1600 1    50   Input ~ 0
+uPD15
+Text GLabel 21500 -1600 1    50   Input ~ 0
+uPB0
+Text GLabel 21400 -1600 1    50   Input ~ 0
+uPB1
+$Comp
+L power:+5V #PWR?
+U 1 1 6078554C
+P 19950 -2500
+AR Path="/6078554C" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6078554C" Ref="#PWR0450"  Part="1" 
+F 0 "#PWR0450" H 19950 -2650 50  0001 C CNN
+F 1 "+5V" H 19965 -2327 50  0000 C CNN
+F 2 "" H 19950 -2500 50  0001 C CNN
+F 3 "" H 19950 -2500 50  0001 C CNN
+	1    19950 -2500
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60785552
+P 19950 -2600
+AR Path="/60785552" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60785552" Ref="#PWR0449"  Part="1" 
+F 0 "#PWR0449" H 19950 -2850 50  0001 C CNN
+F 1 "GND" H 19955 -2773 50  0000 C CNN
+F 2 "" H 19950 -2600 50  0001 C CNN
+F 3 "" H 19950 -2600 50  0001 C CNN
+	1    19950 -2600
+	0    -1   -1   0   
+$EndComp
+Text GLabel 22500 -2550 0    50   Input ~ 0
+Row7
+Text GLabel 22500 -2450 0    50   Input ~ 0
+Row6
+Text GLabel 22500 -2350 0    50   Input ~ 0
+Row5
+Text GLabel 22500 -2250 0    50   Input ~ 0
+Row4
+Text GLabel 22500 -2150 0    50   Input ~ 0
+Row3
+Text GLabel 22500 -2050 0    50   Input ~ 0
+Row2
+Text GLabel 22500 -1950 0    50   Input ~ 0
+Row1
+Text GLabel 22500 -1850 0    50   Input ~ 0
+Row0
+Text GLabel 19950 -2800 2    50   Input ~ 0
+SPI1_SS
+$Comp
+L power:GND #PWR?
+U 1 1 60785561
+P 19950 -2700
+AR Path="/60785561" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60785561" Ref="#PWR0447"  Part="1" 
+F 0 "#PWR0447" H 19950 -2950 50  0001 C CNN
+F 1 "GND" H 19955 -2873 50  0000 C CNN
+F 2 "" H 19950 -2700 50  0001 C CNN
+F 3 "" H 19950 -2700 50  0001 C CNN
+	1    19950 -2700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 60785567
+P 19950 -2400
+AR Path="/60785567" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60785567" Ref="#PWR0451"  Part="1" 
+F 0 "#PWR0451" H 19950 -2550 50  0001 C CNN
+F 1 "+5V" H 19965 -2227 50  0000 C CNN
+F 2 "" H 19950 -2400 50  0001 C CNN
+F 3 "" H 19950 -2400 50  0001 C CNN
+	1    19950 -2400
+	0    1    1    0   
+$EndComp
+Text GLabel 20600 -1600 1    50   Input ~ 0
+uI2C2_SDA
+Text GLabel 20700 -1600 1    50   Input ~ 0
+uI2C2_SCL
+$Comp
+L Connector_Generic:Conn_02x20_Counter_Clockwise J?
+U 1 1 60785570
+P 21000 -1400
+AR Path="/60785570" Ref="J?"  Part="1" 
+AR Path="/60775168/60785570" Ref="J12"  Part="1" 
+F 0 "J12" H 21150 -1400 50  0000 C CNN
+F 1 "Bottom" H 21000 -2600 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_2x20_P2.54mm_Vertical" H 21000 -1400 50  0001 C CNN
+F 3 "~" H 21000 -1400 50  0001 C CNN
+F 4 "C124383" H 21000 -1400 50  0001 C CNN "LCSC"
+	1    21000 -1400
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 60785576
+P 19350 -2800
+AR Path="/60785576" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60785576" Ref="#PWR0446"  Part="1" 
+F 0 "#PWR0446" H 19350 -2950 50  0001 C CNN
+F 1 "+3.3V" H 19500 -2650 50  0000 C CNN
+F 2 "" H 19350 -2800 50  0001 C CNN
+F 3 "" H 19350 -2800 50  0001 C CNN
+	1    19350 -2800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Connector_Generic:Conn_02x06_Top_Bottom J?
+U 1 1 6078557D
+P 19550 -2700
+AR Path="/6078557D" Ref="J?"  Part="1" 
+AR Path="/60775168/6078557D" Ref="J10"  Part="1" 
+F 0 "J10" H 19700 -2750 50  0000 C CNN
+F 1 "Left" H 19550 -3500 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_2x06_P2.54mm_Vertical" H 19550 -2700 50  0001 C CNN
+F 3 "~" H 19550 -2700 50  0001 C CNN
+F 4 "C225521" H 19550 -2700 50  0001 C CNN "LCSC"
+	1    19550 -2700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	21600 -1600 21600 -2000
+Wire Wire Line
+	21700 -2000 21700 -1600
+Wire Wire Line
+	21800 -2000 21800 -1600
+Wire Wire Line
+	21900 -2000 21900 -1600
+Wire Wire Line
+	19850 -2700 19950 -2700
+Wire Wire Line
+	19950 -2600 19850 -2600
+Wire Wire Line
+	19850 -2500 19950 -2500
+Wire Wire Line
+	19950 -2400 19850 -2400
+Wire Wire Line
+	19850 -2800 19950 -2800
+$Comp
+L Connector_Generic:Conn_01x02 J?
+U 1 1 6078558D
+P 20750 -3100
+AR Path="/6078558D" Ref="J?"  Part="1" 
+AR Path="/60775168/6078558D" Ref="J9"  Part="1" 
+F 0 "J9" H 20830 -3108 50  0000 L CNN
+F 1 "Conn_01x02" H 20830 -3199 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 20750 -3100 50  0001 C CNN
+F 3 "~" H 20750 -3100 50  0001 C CNN
+F 4 "C464599" H 20750 -3100 50  0001 C CNN "LCSC"
+	1    20750 -3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60785593
+P 20550 -3100
+AR Path="/60785593" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60785593" Ref="#PWR0443"  Part="1" 
+F 0 "#PWR0443" H 20550 -3350 50  0001 C CNN
+F 1 "GND" H 20555 -3273 50  0000 C CNN
+F 2 "" H 20550 -3100 50  0001 C CNN
+F 3 "" H 20550 -3100 50  0001 C CNN
+	1    20550 -3100
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60785599
+P 20550 -3000
+AR Path="/60785599" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60785599" Ref="#PWR0444"  Part="1" 
+F 0 "#PWR0444" H 20550 -3250 50  0001 C CNN
+F 1 "GND" H 20555 -3173 50  0000 C CNN
+F 2 "" H 20550 -3000 50  0001 C CNN
+F 3 "" H 20550 -3000 50  0001 C CNN
+	1    20550 -3000
+	0    1    1    0   
+$EndComp
+Text GLabel 1350 3200 0    50   Input ~ 0
+RST1
+Text GLabel 1350 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 1350 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 1350 2900 0    50   Input ~ 0
+SCK1
+Text GLabel 2000 2750 2    50   Input ~ 0
+K_ESC
+$Sheet
+S 2950 2650 650  650 
+U 6049EEA2
+F0 "KEY_F1" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 2950 2750 50 
+F3 "SCLK" I L 2950 2900 50 
+F4 "D-C" I L 2950 3050 50 
+F5 "CS" I R 3600 2750 50 
+F6 "RESET" I L 2950 3200 50 
+F7 "LED_DIN" I R 3600 2950 50 
+F8 "LED_DOUT" I R 3600 3100 50 
+$EndSheet
+Text GLabel 3600 2750 2    50   Input ~ 0
+K_F1
+Text GLabel 2950 3200 0    50   Input ~ 0
+RST1
+Text GLabel 2950 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 2950 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 2950 2900 0    50   Input ~ 0
+SCK1
+Text GLabel 19350 -2600 0    50   Input ~ 0
+RST1
+Text GLabel 19350 -2400 0    50   Input ~ 0
+MOSI1
+Text GLabel 19350 -2500 0    50   Input ~ 0
+MISO1
+Text GLabel 19850 -2900 2    50   Input ~ 0
+SCK1
+$Sheet
+S 4400 2650 650  650 
+U 604A6422
+F0 "KEY_F2" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 4400 2750 50 
+F3 "SCLK" I L 4400 2900 50 
+F4 "D-C" I L 4400 3050 50 
+F5 "CS" I R 5050 2750 50 
+F6 "RESET" I L 4400 3200 50 
+F7 "LED_DIN" I R 5050 2950 50 
+F8 "LED_DOUT" I R 5050 3100 50 
+$EndSheet
+Text GLabel 5050 2750 2    50   Input ~ 0
+K_F2
+Text GLabel 4400 3200 0    50   Input ~ 0
+RST1
+Text GLabel 4400 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 4400 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 4400 2900 0    50   Input ~ 0
+SCK1
+$Sheet
+S 5850 2650 650  650 
+U 604A68AC
+F0 "KEY_F3" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 5850 2750 50 
+F3 "SCLK" I L 5850 2900 50 
+F4 "D-C" I L 5850 3050 50 
+F5 "CS" I R 6500 2750 50 
+F6 "RESET" I L 5850 3200 50 
+F7 "LED_DIN" I R 6500 2950 50 
+F8 "LED_DOUT" I R 6500 3100 50 
+$EndSheet
+Text GLabel 6500 2750 2    50   Input ~ 0
+K_F3
+Text GLabel 5850 3200 0    50   Input ~ 0
+RST1
+Text GLabel 5850 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 5850 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 5850 2900 0    50   Input ~ 0
+SCK1
+$Comp
+L LED:WS2812B LED_?
+U 1 1 604A81A6
+P 17350 -1700
+AR Path="/5FC0795D/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC10791/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC10877/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC10951/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC1948A/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC36069/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC36072/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC3607B/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC36084/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC360D0/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC5B0BF/5FC0795D/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC5B0BF/5FC10791/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC5B0BF/5FC1948A/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC5B0BF/5FC36069/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC5B0BF/5FC36072/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/5FC5B0BF/5FC360D0/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/6057902A/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/60579033/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/6057903C/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/60775168/60788106/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/60775168/6049EEA2/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/60775168/604A6422/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/60775168/604A68AC/604A81A6" Ref="LED_?"  Part="1" 
+AR Path="/60775168/604A81A6" Ref="LED_INDICATOR101"  Part="1" 
+F 0 "LED_INDICATOR101" H 17700 -1850 50  0000 L CNN
+F 1 "WS2812B-Mini" H 17700 -1950 50  0000 L CNN
+F 2 "poly_kb:WS2812B-Mini" H 17400 -2000 50  0001 L TNN
+F 3 "https://datasheet.lcsc.com/szlcsc/1811041130_Worldsemi-WS2812B-Mini_C114583.pdf" H 17450 -2075 50  0001 L TNN
+F 4 "C527089" H 17600 -1450 50  0000 C BNN "LCSC"
+	1    17350 -1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 604A81AC
+P 17350 -1400
+AR Path="/5FC0795D/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC10791/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC10877/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC10951/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC1948A/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC36069/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC36072/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC3607B/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC36084/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC360D0/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC0795D/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC10791/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC1948A/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC36069/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC36072/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC360D0/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/6057902A/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/60579033/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/6057903C/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60788106/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6049EEA2/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/604A6422/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/604A68AC/604A81AC" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/604A81AC" Ref="#PWR0452"  Part="1" 
+F 0 "#PWR0452" H 17350 -1650 50  0001 C CNN
+F 1 "GND" H 17355 -1573 50  0000 C CNN
+F 2 "" H 17350 -1400 50  0001 C CNN
+F 3 "" H 17350 -1400 50  0001 C CNN
+	1    17350 -1400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 604A81B2
+P 17350 -2650
+AR Path="/5FC0795D/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC10791/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC10877/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC10951/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC1948A/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC36069/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC36072/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC3607B/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC36084/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC360D0/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC0795D/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC10791/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC1948A/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC36069/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC36072/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/5FC5B0BF/5FC360D0/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/6057902A/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/60579033/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/6057903C/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60788106/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6049EEA2/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/604A6422/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/604A68AC/604A81B2" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/604A81B2" Ref="#PWR0448"  Part="1" 
+F 0 "#PWR0448" H 17350 -2800 50  0001 C CNN
+F 1 "+5V" H 17365 -2477 50  0000 C CNN
+F 2 "" H 17350 -2650 50  0001 C CNN
+F 3 "" H 17350 -2650 50  0001 C CNN
+	1    17350 -2650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:D_Small D101
+U 1 1 604A885B
+P 17350 -2400
+F 0 "D101" V 17396 -2470 50  0000 R CNN
+F 1 "D_Small" V 17305 -2470 50  0000 R CNN
+F 2 "Diode_SMD:D_SOD-123F" V 17350 -2400 50  0001 C CNN
+F 3 "~" V 17350 -2400 50  0001 C CNN
+F 4 "C64898" V 17350 -2400 50  0001 C CNN "LCSC"
+	1    17350 -2400
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	17350 -2650 17350 -2500
+Wire Wire Line
+	17350 -2300 17350 -2000
+Text GLabel 17050 -1700 0    50   Input ~ 0
+KB_LED_ARRAY
+Text GLabel 17650 -1700 2    50   Input ~ 0
+LED_ARRAY_START
+Text GLabel 24700 2450 1    50   Input ~ 0
+LED_ARRAY_START
+Wire Wire Line
+	24700 2450 24700 2950
+Wire Wire Line
+	6850 3100 6850 3400
+Wire Wire Line
+	6850 3400 5500 3400
+Wire Wire Line
+	5500 3400 5500 2950
+Wire Wire Line
+	5050 2950 5500 2950
+Wire Wire Line
+	6500 3100 6850 3100
+Wire Wire Line
+	5050 3100 5450 3100
+Wire Wire Line
+	5450 3100 5450 3400
+Wire Wire Line
+	5450 3400 4050 3400
+Wire Wire Line
+	4050 3400 4050 2950
+Wire Wire Line
+	3600 2950 4050 2950
+Wire Wire Line
+	3600 3100 4000 3100
+Wire Wire Line
+	4000 3100 4000 3400
+Wire Wire Line
+	4000 3400 2600 3400
+Wire Wire Line
+	2600 3400 2600 2950
+Wire Wire Line
+	2000 2950 2600 2950
+$Sheet
+S 2950 5200 650  650 
+U 605D76AB
+F0 "KEY_Q" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 2950 5300 50 
+F3 "SCLK" I L 2950 5450 50 
+F4 "D-C" I L 2950 5600 50 
+F5 "CS" I R 3600 5300 50 
+F6 "RESET" I L 2950 5750 50 
+F7 "LED_DIN" I R 3600 5500 50 
+F8 "LED_DOUT" I R 3600 5650 50 
+$EndSheet
+Text GLabel 2950 5750 0    50   Input ~ 0
+RST1
+Text GLabel 2950 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 2950 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 2950 5450 0    50   Input ~ 0
+SCK1
+Text GLabel 3600 5300 2    50   Input ~ 0
+K_Q
+$Sheet
+S 4400 5200 650  650 
+U 605D76B9
+F0 "KEY_W" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 4400 5300 50 
+F3 "SCLK" I L 4400 5450 50 
+F4 "D-C" I L 4400 5600 50 
+F5 "CS" I R 5050 5300 50 
+F6 "RESET" I L 4400 5750 50 
+F7 "LED_DIN" I R 5050 5500 50 
+F8 "LED_DOUT" I R 5050 5650 50 
+$EndSheet
+Text GLabel 5050 5300 2    50   Input ~ 0
+K_W
+Text GLabel 4400 5750 0    50   Input ~ 0
+RST1
+Text GLabel 4400 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 4400 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 4400 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 5850 5200 650  650 
+U 605D76C7
+F0 "KEY_E" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 5850 5300 50 
+F3 "SCLK" I L 5850 5450 50 
+F4 "D-C" I L 5850 5600 50 
+F5 "CS" I R 6500 5300 50 
+F6 "RESET" I L 5850 5750 50 
+F7 "LED_DIN" I R 6500 5500 50 
+F8 "LED_DOUT" I R 6500 5650 50 
+$EndSheet
+Text GLabel 6500 5300 2    50   Input ~ 0
+K_E
+Text GLabel 5850 5750 0    50   Input ~ 0
+RST1
+Text GLabel 5850 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 5850 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 5850 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 7300 5200 650  650 
+U 605D76D5
+F0 "KEY_R" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 7300 5300 50 
+F3 "SCLK" I L 7300 5450 50 
+F4 "D-C" I L 7300 5600 50 
+F5 "CS" I R 7950 5300 50 
+F6 "RESET" I L 7300 5750 50 
+F7 "LED_DIN" I R 7950 5500 50 
+F8 "LED_DOUT" I R 7950 5650 50 
+$EndSheet
+Text GLabel 7950 5300 2    50   Input ~ 0
+K_R
+Text GLabel 7300 5750 0    50   Input ~ 0
+RST1
+Text GLabel 7300 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 7300 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 7300 5450 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	7100 5950 7100 5500
+Wire Wire Line
+	5500 5950 5500 5500
+Wire Wire Line
+	5050 5500 5500 5500
+Wire Wire Line
+	5050 5650 5450 5650
+Wire Wire Line
+	5450 5650 5450 5950
+Wire Wire Line
+	5450 5950 4200 5950
+Wire Wire Line
+	4200 5950 4200 5500
+Wire Wire Line
+	3600 5500 4200 5500
+$Sheet
+S 1350 2650 650  650 
+U 60788106
+F0 "KEY_ESC" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 1350 2750 50 
+F3 "SCLK" I L 1350 2900 50 
+F4 "D-C" I L 1350 3050 50 
+F5 "CS" I R 2000 2750 50 
+F6 "RESET" I L 1350 3200 50 
+F7 "LED_DIN" I R 2000 2950 50 
+F8 "LED_DOUT" I R 2000 3100 50 
+$EndSheet
+$Sheet
+S 7300 2650 650  650 
+U 605E5130
+F0 "sheet605E5125" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 7300 2750 50 
+F3 "SCLK" I L 7300 2900 50 
+F4 "D-C" I L 7300 3050 50 
+F5 "CS" I R 7950 2750 50 
+F6 "RESET" I L 7300 3200 50 
+F7 "LED_DIN" I R 7950 2950 50 
+F8 "LED_DOUT" I R 7950 3100 50 
+$EndSheet
+Text GLabel 7950 2750 2    50   Input ~ 0
+K_F4
+Text GLabel 7300 3200 0    50   Input ~ 0
+RST1
+Text GLabel 7300 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 7300 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 7300 2900 0    50   Input ~ 0
+SCK1
+$Sheet
+S 8750 2650 650  650 
+U 605E513E
+F0 "sheet605E5126" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 8750 2750 50 
+F3 "SCLK" I L 8750 2900 50 
+F4 "D-C" I L 8750 3050 50 
+F5 "CS" I R 9400 2750 50 
+F6 "RESET" I L 8750 3200 50 
+F7 "LED_DIN" I R 9400 2950 50 
+F8 "LED_DOUT" I R 9400 3100 50 
+$EndSheet
+Text GLabel 9400 2750 2    50   Input ~ 0
+K_F5
+Text GLabel 8750 3200 0    50   Input ~ 0
+RST1
+Text GLabel 8750 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 8750 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 8750 2900 0    50   Input ~ 0
+SCK1
+$Sheet
+S 10200 2650 650  650 
+U 605E514C
+F0 "sheet605E5127" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 10200 2750 50 
+F3 "SCLK" I L 10200 2900 50 
+F4 "D-C" I L 10200 3050 50 
+F5 "CS" I R 10850 2750 50 
+F6 "RESET" I L 10200 3200 50 
+F7 "LED_DIN" I R 10850 2950 50 
+F8 "LED_DOUT" I R 10850 3100 50 
+$EndSheet
+Text GLabel 10850 2750 2    50   Input ~ 0
+K_F6
+Text GLabel 10200 3200 0    50   Input ~ 0
+RST1
+Text GLabel 10200 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 10200 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 10200 2900 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	11200 3400 9850 3400
+Wire Wire Line
+	9850 3400 9850 2950
+Wire Wire Line
+	9400 2950 9850 2950
+Wire Wire Line
+	10850 3100 11200 3100
+Wire Wire Line
+	9400 3100 9800 3100
+Wire Wire Line
+	9800 3100 9800 3400
+Wire Wire Line
+	9800 3400 8400 3400
+Wire Wire Line
+	8400 3400 8400 2950
+Wire Wire Line
+	7950 2950 8400 2950
+Wire Wire Line
+	7950 3100 8350 3100
+Wire Wire Line
+	8350 3100 8350 3400
+Wire Wire Line
+	8350 3400 6950 3400
+$Sheet
+S 11700 2650 650  650 
+U 605E6B71
+F0 "sheet605E6B66" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 11700 2750 50 
+F3 "SCLK" I L 11700 2900 50 
+F4 "D-C" I L 11700 3050 50 
+F5 "CS" I R 12350 2750 50 
+F6 "RESET" I L 11700 3200 50 
+F7 "LED_DIN" I R 12350 2950 50 
+F8 "LED_DOUT" I R 12350 3100 50 
+$EndSheet
+Text GLabel 12350 2750 2    50   Input ~ 0
+K_F7
+Text GLabel 11700 3200 0    50   Input ~ 0
+RST1
+Text GLabel 11700 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 11700 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 11700 2900 0    50   Input ~ 0
+SCK1
+$Sheet
+S 13150 2650 650  650 
+U 605E6B7F
+F0 "sheet605E6B67" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 13150 2750 50 
+F3 "SCLK" I L 13150 2900 50 
+F4 "D-C" I L 13150 3050 50 
+F5 "CS" I R 13800 2750 50 
+F6 "RESET" I L 13150 3200 50 
+F7 "LED_DIN" I R 13800 2950 50 
+F8 "LED_DOUT" I R 13800 3100 50 
+$EndSheet
+Text GLabel 13800 2750 2    50   Input ~ 0
+K_F8
+Text GLabel 13150 3200 0    50   Input ~ 0
+RST1
+Text GLabel 13150 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 13150 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 13150 2900 0    50   Input ~ 0
+SCK1
+$Sheet
+S 14600 2650 650  650 
+U 605E6B8D
+F0 "sheet605E6B68" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 14600 2750 50 
+F3 "SCLK" I L 14600 2900 50 
+F4 "D-C" I L 14600 3050 50 
+F5 "CS" I R 15250 2750 50 
+F6 "RESET" I L 14600 3200 50 
+F7 "LED_DIN" I R 15250 2950 50 
+F8 "LED_DOUT" I R 15250 3100 50 
+$EndSheet
+Text GLabel 15250 2750 2    50   Input ~ 0
+K_F9
+Text GLabel 14600 3200 0    50   Input ~ 0
+RST1
+Text GLabel 14600 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 14600 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 14600 2900 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	15600 3400 14250 3400
+Wire Wire Line
+	14250 3400 14250 2950
+Wire Wire Line
+	13800 2950 14250 2950
+Wire Wire Line
+	15250 3100 15600 3100
+Wire Wire Line
+	13800 3100 14200 3100
+Wire Wire Line
+	14200 3100 14200 3400
+Wire Wire Line
+	14200 3400 12800 3400
+Wire Wire Line
+	12800 3400 12800 2950
+Wire Wire Line
+	12350 2950 12800 2950
+Wire Wire Line
+	12350 3100 12750 3100
+Wire Wire Line
+	12750 3100 12750 3400
+Wire Wire Line
+	12750 3400 11350 3400
+$Sheet
+S 16100 2650 650  650 
+U 605E9AAE
+F0 "sheet605E9AA3" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 16100 2750 50 
+F3 "SCLK" I L 16100 2900 50 
+F4 "D-C" I L 16100 3050 50 
+F5 "CS" I R 16750 2750 50 
+F6 "RESET" I L 16100 3200 50 
+F7 "LED_DIN" I R 16750 2950 50 
+F8 "LED_DOUT" I R 16750 3100 50 
+$EndSheet
+Text GLabel 16750 2750 2    50   Input ~ 0
+K_F10
+Text GLabel 16100 3200 0    50   Input ~ 0
+RST1
+Text GLabel 16100 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 16100 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 16100 2900 0    50   Input ~ 0
+SCK1
+$Sheet
+S 17550 2650 650  650 
+U 605E9ABC
+F0 "sheet605E9AA4" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 17550 2750 50 
+F3 "SCLK" I L 17550 2900 50 
+F4 "D-C" I L 17550 3050 50 
+F5 "CS" I R 18200 2750 50 
+F6 "RESET" I L 17550 3200 50 
+F7 "LED_DIN" I R 18200 2950 50 
+F8 "LED_DOUT" I R 18200 3100 50 
+$EndSheet
+Text GLabel 18200 2750 2    50   Input ~ 0
+K_F11
+Text GLabel 17550 3200 0    50   Input ~ 0
+RST1
+Text GLabel 17550 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 17550 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 17550 2900 0    50   Input ~ 0
+SCK1
+$Sheet
+S 19000 2650 650  650 
+U 605E9ACA
+F0 "sheet605E9AA5" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 19000 2750 50 
+F3 "SCLK" I L 19000 2900 50 
+F4 "D-C" I L 19000 3050 50 
+F5 "CS" I R 19650 2750 50 
+F6 "RESET" I L 19000 3200 50 
+F7 "LED_DIN" I R 19650 2950 50 
+F8 "LED_DOUT" I R 19650 3100 50 
+$EndSheet
+Text GLabel 19650 2750 2    50   Input ~ 0
+K_F12
+Text GLabel 19000 3200 0    50   Input ~ 0
+RST1
+Text GLabel 19000 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 19000 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 19000 2900 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	20000 3400 18650 3400
+Wire Wire Line
+	18650 3400 18650 2950
+Wire Wire Line
+	18200 2950 18650 2950
+Wire Wire Line
+	19650 3100 20000 3100
+Wire Wire Line
+	18200 3100 18600 3100
+Wire Wire Line
+	18600 3100 18600 3400
+Wire Wire Line
+	18600 3400 17200 3400
+Wire Wire Line
+	17200 3400 17200 2950
+Wire Wire Line
+	16750 2950 17200 2950
+Wire Wire Line
+	16750 3100 17150 3100
+Wire Wire Line
+	17150 3100 17150 3400
+Wire Wire Line
+	17150 3400 15750 3400
+$Sheet
+S 20500 2650 650  650 
+U 605ED2F4
+F0 "sheet605ED2E9" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 20500 2750 50 
+F3 "SCLK" I L 20500 2900 50 
+F4 "D-C" I L 20500 3050 50 
+F5 "CS" I R 21150 2750 50 
+F6 "RESET" I L 20500 3200 50 
+F7 "LED_DIN" I R 21150 2950 50 
+F8 "LED_DOUT" I R 21150 3100 50 
+$EndSheet
+Text GLabel 21150 2750 2    50   Input ~ 0
+K_PrtScr
+Text GLabel 20500 3200 0    50   Input ~ 0
+RST1
+Text GLabel 20500 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 20500 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 20500 2900 0    50   Input ~ 0
+SCK1
+$Sheet
+S 21950 2650 650  650 
+U 605ED302
+F0 "sheet605ED2EA" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 21950 2750 50 
+F3 "SCLK" I L 21950 2900 50 
+F4 "D-C" I L 21950 3050 50 
+F5 "CS" I R 22600 2750 50 
+F6 "RESET" I L 21950 3200 50 
+F7 "LED_DIN" I R 22600 2950 50 
+F8 "LED_DOUT" I R 22600 3100 50 
+$EndSheet
+Text GLabel 22600 2750 2    50   Input ~ 0
+K_ScrLk
+Text GLabel 21950 3200 0    50   Input ~ 0
+RST1
+Text GLabel 21950 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 21950 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 21950 2900 0    50   Input ~ 0
+SCK1
+$Sheet
+S 23400 2650 650  650 
+U 605ED310
+F0 "sheet605ED2EB" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 23400 2750 50 
+F3 "SCLK" I L 23400 2900 50 
+F4 "D-C" I L 23400 3050 50 
+F5 "CS" I R 24050 2750 50 
+F6 "RESET" I L 23400 3200 50 
+F7 "LED_DIN" I R 24050 2950 50 
+F8 "LED_DOUT" I R 24050 3100 50 
+$EndSheet
+Text GLabel 24050 2750 2    50   Input ~ 0
+K_Pause
+Text GLabel 23400 3200 0    50   Input ~ 0
+RST1
+Text GLabel 23400 2750 0    50   Input ~ 0
+MOSI1
+Text GLabel 23400 3050 0    50   Input ~ 0
+MISO1
+Text GLabel 23400 2900 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	24400 3400 23050 3400
+Wire Wire Line
+	23050 3400 23050 2950
+Wire Wire Line
+	22600 2950 23050 2950
+Wire Wire Line
+	24050 3100 24400 3100
+Wire Wire Line
+	22600 3100 23000 3100
+Wire Wire Line
+	23000 3100 23000 3400
+Wire Wire Line
+	23000 3400 21600 3400
+Wire Wire Line
+	21600 3400 21600 2950
+Wire Wire Line
+	21150 2950 21600 2950
+Wire Wire Line
+	21150 3100 21550 3100
+Wire Wire Line
+	21550 3100 21550 3400
+Wire Wire Line
+	21550 3400 20150 3400
+Wire Wire Line
+	24050 2950 24700 2950
+Wire Wire Line
+	24400 3100 24400 3400
+Wire Wire Line
+	20000 3400 20000 3100
+Wire Wire Line
+	20150 3400 20150 2950
+Wire Wire Line
+	19650 2950 20150 2950
+Wire Wire Line
+	15600 3400 15600 3100
+Wire Wire Line
+	15750 3400 15750 2950
+Wire Wire Line
+	15250 2950 15750 2950
+Wire Wire Line
+	11200 3400 11200 3100
+Wire Wire Line
+	11350 3400 11350 2950
+Wire Wire Line
+	10850 2950 11350 2950
+Wire Wire Line
+	6500 2950 6950 2950
+Wire Wire Line
+	6950 2950 6950 3400
+Text GLabel 1350 4450 0    50   Input ~ 0
+RST1
+Text GLabel 1350 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 1350 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 1350 4150 0    50   Input ~ 0
+SCK1
+Text GLabel 2000 4000 2    50   Input ~ 0
+K_Tilde
+$Sheet
+S 2950 3900 650  650 
+U 6062722D
+F0 "sheet60627210" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 2950 4000 50 
+F3 "SCLK" I L 2950 4150 50 
+F4 "D-C" I L 2950 4300 50 
+F5 "CS" I R 3600 4000 50 
+F6 "RESET" I L 2950 4450 50 
+F7 "LED_DIN" I R 3600 4200 50 
+F8 "LED_DOUT" I R 3600 4350 50 
+$EndSheet
+Text GLabel 3600 4000 2    50   Input ~ 0
+K_1
+Text GLabel 2950 4450 0    50   Input ~ 0
+RST1
+Text GLabel 2950 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 2950 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 2950 4150 0    50   Input ~ 0
+SCK1
+Text GLabel 5050 4000 2    50   Input ~ 0
+K_2
+Text GLabel 4400 4450 0    50   Input ~ 0
+RST1
+Text GLabel 4400 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 4400 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 4400 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 5850 3900 650  650 
+U 60627249
+F0 "sheet60627212" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 5850 4000 50 
+F3 "SCLK" I L 5850 4150 50 
+F4 "D-C" I L 5850 4300 50 
+F5 "CS" I R 6500 4000 50 
+F6 "RESET" I L 5850 4450 50 
+F7 "LED_DIN" I R 6500 4200 50 
+F8 "LED_DOUT" I R 6500 4350 50 
+$EndSheet
+Text GLabel 6500 4000 2    50   Input ~ 0
+K_3
+Text GLabel 5850 4450 0    50   Input ~ 0
+RST1
+Text GLabel 5850 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 5850 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 5850 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 1350 3900 650  650 
+U 60627266
+F0 "sheet60627213" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 1350 4000 50 
+F3 "SCLK" I L 1350 4150 50 
+F4 "D-C" I L 1350 4300 50 
+F5 "CS" I R 2000 4000 50 
+F6 "RESET" I L 1350 4450 50 
+F7 "LED_DIN" I R 2000 4200 50 
+F8 "LED_DOUT" I R 2000 4350 50 
+$EndSheet
+$Sheet
+S 7300 3900 650  650 
+U 6062726F
+F0 "sheet60627214" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 7300 4000 50 
+F3 "SCLK" I L 7300 4150 50 
+F4 "D-C" I L 7300 4300 50 
+F5 "CS" I R 7950 4000 50 
+F6 "RESET" I L 7300 4450 50 
+F7 "LED_DIN" I R 7950 4200 50 
+F8 "LED_DOUT" I R 7950 4350 50 
+$EndSheet
+Text GLabel 7950 4000 2    50   Input ~ 0
+K_4
+Text GLabel 7300 4450 0    50   Input ~ 0
+RST1
+Text GLabel 7300 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 7300 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 7300 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 8750 3900 650  650 
+U 6062727D
+F0 "sheet60627215" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 8750 4000 50 
+F3 "SCLK" I L 8750 4150 50 
+F4 "D-C" I L 8750 4300 50 
+F5 "CS" I R 9400 4000 50 
+F6 "RESET" I L 8750 4450 50 
+F7 "LED_DIN" I R 9400 4200 50 
+F8 "LED_DOUT" I R 9400 4350 50 
+$EndSheet
+Text GLabel 9400 4000 2    50   Input ~ 0
+K_5
+Text GLabel 8750 4450 0    50   Input ~ 0
+RST1
+Text GLabel 8750 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 8750 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 8750 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 10200 3900 650  650 
+U 6062728B
+F0 "sheet60627216" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 10200 4000 50 
+F3 "SCLK" I L 10200 4150 50 
+F4 "D-C" I L 10200 4300 50 
+F5 "CS" I R 10850 4000 50 
+F6 "RESET" I L 10200 4450 50 
+F7 "LED_DIN" I R 10850 4200 50 
+F8 "LED_DOUT" I R 10850 4350 50 
+$EndSheet
+Text GLabel 10850 4000 2    50   Input ~ 0
+K_6
+Text GLabel 10200 4450 0    50   Input ~ 0
+RST1
+Text GLabel 10200 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 10200 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 10200 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 11700 3900 650  650 
+U 606272A5
+F0 "sheet60627217" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 11700 4000 50 
+F3 "SCLK" I L 11700 4150 50 
+F4 "D-C" I L 11700 4300 50 
+F5 "CS" I R 12350 4000 50 
+F6 "RESET" I L 11700 4450 50 
+F7 "LED_DIN" I R 12350 4200 50 
+F8 "LED_DOUT" I R 12350 4350 50 
+$EndSheet
+Text GLabel 12350 4000 2    50   Input ~ 0
+K_7
+Text GLabel 11700 4450 0    50   Input ~ 0
+RST1
+Text GLabel 11700 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 11700 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 11700 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 13150 3900 650  650 
+U 606272B3
+F0 "sheet60627218" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 13150 4000 50 
+F3 "SCLK" I L 13150 4150 50 
+F4 "D-C" I L 13150 4300 50 
+F5 "CS" I R 13800 4000 50 
+F6 "RESET" I L 13150 4450 50 
+F7 "LED_DIN" I R 13800 4200 50 
+F8 "LED_DOUT" I R 13800 4350 50 
+$EndSheet
+Text GLabel 13800 4000 2    50   Input ~ 0
+K_8
+Text GLabel 13150 4450 0    50   Input ~ 0
+RST1
+Text GLabel 13150 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 13150 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 13150 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 14600 3900 650  650 
+U 606272C1
+F0 "sheet60627219" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 14600 4000 50 
+F3 "SCLK" I L 14600 4150 50 
+F4 "D-C" I L 14600 4300 50 
+F5 "CS" I R 15250 4000 50 
+F6 "RESET" I L 14600 4450 50 
+F7 "LED_DIN" I R 15250 4200 50 
+F8 "LED_DOUT" I R 15250 4350 50 
+$EndSheet
+Text GLabel 15250 4000 2    50   Input ~ 0
+K_9
+Text GLabel 14600 4450 0    50   Input ~ 0
+RST1
+Text GLabel 14600 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 14600 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 14600 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 16100 3900 650  650 
+U 606272DB
+F0 "sheet6062721A" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 16100 4000 50 
+F3 "SCLK" I L 16100 4150 50 
+F4 "D-C" I L 16100 4300 50 
+F5 "CS" I R 16750 4000 50 
+F6 "RESET" I L 16100 4450 50 
+F7 "LED_DIN" I R 16750 4200 50 
+F8 "LED_DOUT" I R 16750 4350 50 
+$EndSheet
+Text GLabel 16750 4000 2    50   Input ~ 0
+K_0
+Text GLabel 16100 4450 0    50   Input ~ 0
+RST1
+Text GLabel 16100 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 16100 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 16100 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 17550 3900 650  650 
+U 606272E9
+F0 "sheet6062721B" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 17550 4000 50 
+F3 "SCLK" I L 17550 4150 50 
+F4 "D-C" I L 17550 4300 50 
+F5 "CS" I R 18200 4000 50 
+F6 "RESET" I L 17550 4450 50 
+F7 "LED_DIN" I R 18200 4200 50 
+F8 "LED_DOUT" I R 18200 4350 50 
+$EndSheet
+Text GLabel 18200 4000 2    50   Input ~ 0
+K_Minus
+Text GLabel 17550 4450 0    50   Input ~ 0
+RST1
+Text GLabel 17550 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 17550 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 17550 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 19000 3900 650  650 
+U 606272F7
+F0 "sheet6062721C" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 19000 4000 50 
+F3 "SCLK" I L 19000 4150 50 
+F4 "D-C" I L 19000 4300 50 
+F5 "CS" I R 19650 4000 50 
+F6 "RESET" I L 19000 4450 50 
+F7 "LED_DIN" I R 19650 4200 50 
+F8 "LED_DOUT" I R 19650 4350 50 
+$EndSheet
+Text GLabel 19650 4000 2    50   Input ~ 0
+K_Plus
+Text GLabel 19000 4450 0    50   Input ~ 0
+RST1
+Text GLabel 19000 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 19000 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 19000 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 20500 3900 650  650 
+U 60627311
+F0 "sheet6062721D" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 20500 4000 50 
+F3 "SCLK" I L 20500 4150 50 
+F4 "D-C" I L 20500 4300 50 
+F5 "CS" I R 21150 4000 50 
+F6 "RESET" I L 20500 4450 50 
+F7 "LED_DIN" I R 21150 4200 50 
+F8 "LED_DOUT" I R 21150 4350 50 
+$EndSheet
+Text GLabel 21150 4000 2    50   Input ~ 0
+K_BackSp
+Text GLabel 20500 4450 0    50   Input ~ 0
+RST1
+Text GLabel 20500 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 20500 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 20500 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 21950 3900 650  650 
+U 6062731F
+F0 "sheet6062721E" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 21950 4000 50 
+F3 "SCLK" I L 21950 4150 50 
+F4 "D-C" I L 21950 4300 50 
+F5 "CS" I R 22600 4000 50 
+F6 "RESET" I L 21950 4450 50 
+F7 "LED_DIN" I R 22600 4200 50 
+F8 "LED_DOUT" I R 22600 4350 50 
+$EndSheet
+Text GLabel 22600 4000 2    50   Input ~ 0
+K_Insert
+Text GLabel 21950 4450 0    50   Input ~ 0
+RST1
+Text GLabel 21950 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 21950 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 21950 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 23400 3900 650  650 
+U 6062732D
+F0 "sheet6062721F" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 23400 4000 50 
+F3 "SCLK" I L 23400 4150 50 
+F4 "D-C" I L 23400 4300 50 
+F5 "CS" I R 24050 4000 50 
+F6 "RESET" I L 23400 4450 50 
+F7 "LED_DIN" I R 24050 4200 50 
+F8 "LED_DOUT" I R 24050 4350 50 
+$EndSheet
+Text GLabel 24050 4000 2    50   Input ~ 0
+K_Home
+Text GLabel 23400 4450 0    50   Input ~ 0
+RST1
+Text GLabel 23400 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 23400 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 23400 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 24800 3900 650  650 
+U 60634450
+F0 "sheet60634442" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 24800 4000 50 
+F3 "SCLK" I L 24800 4150 50 
+F4 "D-C" I L 24800 4300 50 
+F5 "CS" I R 25450 4000 50 
+F6 "RESET" I L 24800 4450 50 
+F7 "LED_DIN" I R 25450 4200 50 
+F8 "LED_DOUT" I R 25450 4350 50 
+$EndSheet
+Text GLabel 25450 4000 2    50   Input ~ 0
+K_PgUp
+Text GLabel 24800 4450 0    50   Input ~ 0
+RST1
+Text GLabel 24800 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 24800 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 24800 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 26250 3900 650  650 
+U 6063445E
+F0 "sheet60634443" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 26250 4000 50 
+F3 "SCLK" I L 26250 4150 50 
+F4 "D-C" I L 26250 4300 50 
+F5 "CS" I R 26900 4000 50 
+F6 "RESET" I L 26250 4450 50 
+F7 "LED_DIN" I R 26900 4200 50 
+F8 "LED_DOUT" I R 26900 4350 50 
+$EndSheet
+Text GLabel 26900 4000 2    50   Input ~ 0
+K_KP_NumLk
+Text GLabel 26250 4450 0    50   Input ~ 0
+RST1
+Text GLabel 26250 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 26250 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 26250 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 27700 3900 650  650 
+U 6063446C
+F0 "sheet60634444" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 27700 4000 50 
+F3 "SCLK" I L 27700 4150 50 
+F4 "D-C" I L 27700 4300 50 
+F5 "CS" I R 28350 4000 50 
+F6 "RESET" I L 27700 4450 50 
+F7 "LED_DIN" I R 28350 4200 50 
+F8 "LED_DOUT" I R 28350 4350 50 
+$EndSheet
+Text GLabel 28350 4000 2    50   Input ~ 0
+K_KP_Div
+Text GLabel 27700 4450 0    50   Input ~ 0
+RST1
+Text GLabel 27700 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 27700 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 27700 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 29200 3900 650  650 
+U 60634486
+F0 "sheet60634445" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 29200 4000 50 
+F3 "SCLK" I L 29200 4150 50 
+F4 "D-C" I L 29200 4300 50 
+F5 "CS" I R 29850 4000 50 
+F6 "RESET" I L 29200 4450 50 
+F7 "LED_DIN" I R 29850 4200 50 
+F8 "LED_DOUT" I R 29850 4350 50 
+$EndSheet
+Text GLabel 29850 4000 2    50   Input ~ 0
+K_KP_Mul
+Text GLabel 29200 4450 0    50   Input ~ 0
+RST1
+Text GLabel 29200 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 29200 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 29200 4150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 30650 3900 650  650 
+U 60634494
+F0 "sheet60634446" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 30650 4000 50 
+F3 "SCLK" I L 30650 4150 50 
+F4 "D-C" I L 30650 4300 50 
+F5 "CS" I R 31300 4000 50 
+F6 "RESET" I L 30650 4450 50 
+F7 "LED_DIN" I R 31300 4200 50 
+F8 "LED_DOUT" I R 31300 4350 50 
+$EndSheet
+Text GLabel 31300 4000 2    50   Input ~ 0
+K_KP_Minus
+Text GLabel 30650 4450 0    50   Input ~ 0
+RST1
+Text GLabel 30650 4000 0    50   Input ~ 0
+MOSI1
+Text GLabel 30650 4300 0    50   Input ~ 0
+MISO1
+Text GLabel 30650 4150 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	2000 3100 2450 3100
+$Sheet
+S 1350 5200 650  650 
+U 6076026D
+F0 "sheet60760264" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 1350 5300 50 
+F3 "SCLK" I L 1350 5450 50 
+F4 "D-C" I L 1350 5600 50 
+F5 "CS" I R 2000 5300 50 
+F6 "RESET" I L 1350 5750 50 
+F7 "LED_DIN" I R 2000 5500 50 
+F8 "LED_DOUT" I R 2000 5650 50 
+$EndSheet
+Text GLabel 1350 5750 0    50   Input ~ 0
+RST1
+Text GLabel 1350 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 1350 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 1350 5450 0    50   Input ~ 0
+SCK1
+Text GLabel 2000 5300 2    50   Input ~ 0
+K_Tab
+Wire Wire Line
+	2550 5950 4050 5950
+Wire Wire Line
+	4050 5650 3600 5650
+Wire Wire Line
+	6500 5650 7050 5650
+Wire Wire Line
+	6500 5500 7100 5500
+Wire Wire Line
+	5500 5950 7050 5950
+Wire Wire Line
+	7050 5950 7050 5650
+Wire Wire Line
+	2450 3100 2450 3600
+Wire Wire Line
+	2450 3600 32000 3600
+Wire Wire Line
+	32000 3600 32000 4200
+Wire Wire Line
+	31300 4200 32000 4200
+Wire Wire Line
+	2000 4350 2550 4350
+Wire Wire Line
+	2550 5500 2000 5500
+Wire Wire Line
+	2550 4350 2550 4900
+Wire Wire Line
+	2550 4900 32000 4900
+Wire Wire Line
+	4050 5650 4050 5950
+Wire Wire Line
+	2550 5500 2550 5950
+$Sheet
+S 4400 3900 650  650 
+U 6062723B
+F0 "sheet60627211" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 4400 4000 50 
+F3 "SCLK" I L 4400 4150 50 
+F4 "D-C" I L 4400 4300 50 
+F5 "CS" I R 5050 4000 50 
+F6 "RESET" I L 4400 4450 50 
+F7 "LED_DIN" I R 5050 4200 50 
+F8 "LED_DOUT" I R 5050 4350 50 
+$EndSheet
+Wire Wire Line
+	31300 4350 31650 4350
+Wire Wire Line
+	31650 4650 30300 4650
+Wire Wire Line
+	30300 4650 30300 4200
+Wire Wire Line
+	29850 4200 30300 4200
+Wire Wire Line
+	31650 4350 31650 4650
+Wire Wire Line
+	29850 4350 30200 4350
+Wire Wire Line
+	30200 4350 30200 4650
+Wire Wire Line
+	30200 4650 28850 4650
+Wire Wire Line
+	28850 4650 28850 4200
+Wire Wire Line
+	28350 4200 28850 4200
+Wire Wire Line
+	28350 4350 28700 4350
+Wire Wire Line
+	28700 4350 28700 4650
+Wire Wire Line
+	28700 4650 27350 4650
+Wire Wire Line
+	27350 4650 27350 4200
+Wire Wire Line
+	26900 4200 27350 4200
+Wire Wire Line
+	26900 4350 27250 4350
+Wire Wire Line
+	27250 4350 27250 4650
+Wire Wire Line
+	27250 4650 25900 4650
+Wire Wire Line
+	25900 4650 25900 4200
+Wire Wire Line
+	25450 4200 25900 4200
+Wire Wire Line
+	25450 4350 25800 4350
+Wire Wire Line
+	25800 4350 25800 4650
+Wire Wire Line
+	25800 4650 24450 4650
+Wire Wire Line
+	24450 4650 24450 4200
+Wire Wire Line
+	24050 4200 24450 4200
+Wire Wire Line
+	24050 4350 24400 4350
+Wire Wire Line
+	24400 4350 24400 4650
+Wire Wire Line
+	24400 4650 23050 4650
+Wire Wire Line
+	23050 4650 23050 4200
+Wire Wire Line
+	22600 4200 23050 4200
+Wire Wire Line
+	22600 4350 22950 4350
+Wire Wire Line
+	22950 4350 22950 4650
+Wire Wire Line
+	22950 4650 21600 4650
+Wire Wire Line
+	21600 4650 21600 4200
+Wire Wire Line
+	21150 4200 21600 4200
+Wire Wire Line
+	21150 4350 21500 4350
+Wire Wire Line
+	21500 4350 21500 4650
+Wire Wire Line
+	21500 4650 20150 4650
+Wire Wire Line
+	20150 4650 20150 4200
+Wire Wire Line
+	19650 4200 20150 4200
+Wire Wire Line
+	19650 4350 20000 4350
+Wire Wire Line
+	20000 4350 20000 4650
+Wire Wire Line
+	20000 4650 18650 4650
+Wire Wire Line
+	18650 4650 18650 4200
+Wire Wire Line
+	18200 4200 18650 4200
+Wire Wire Line
+	18200 4350 18550 4350
+Wire Wire Line
+	18550 4350 18550 4650
+Wire Wire Line
+	18550 4650 17200 4650
+Wire Wire Line
+	17200 4650 17200 4200
+Wire Wire Line
+	16750 4200 17200 4200
+Wire Wire Line
+	16750 4350 17100 4350
+Wire Wire Line
+	17100 4350 17100 4650
+Wire Wire Line
+	17100 4650 15750 4650
+Wire Wire Line
+	15750 4650 15750 4200
+Wire Wire Line
+	15250 4200 15750 4200
+Wire Wire Line
+	15250 4350 15600 4350
+Wire Wire Line
+	15600 4350 15600 4650
+Wire Wire Line
+	15600 4650 14250 4650
+Wire Wire Line
+	14250 4650 14250 4200
+Wire Wire Line
+	13800 4200 14250 4200
+Wire Wire Line
+	13800 4350 14150 4350
+Wire Wire Line
+	14150 4350 14150 4650
+Wire Wire Line
+	14150 4650 12800 4650
+Wire Wire Line
+	12800 4650 12800 4200
+Wire Wire Line
+	12350 4200 12800 4200
+Wire Wire Line
+	12350 4350 12700 4350
+Wire Wire Line
+	12700 4350 12700 4650
+Wire Wire Line
+	12700 4650 11350 4650
+Wire Wire Line
+	11350 4650 11350 4200
+Wire Wire Line
+	10850 4200 11350 4200
+Wire Wire Line
+	10850 4350 11200 4350
+Wire Wire Line
+	11200 4350 11200 4650
+Wire Wire Line
+	11200 4650 9850 4650
+Wire Wire Line
+	9850 4650 9850 4200
+Wire Wire Line
+	9400 4200 9850 4200
+Wire Wire Line
+	9400 4350 9750 4350
+Wire Wire Line
+	9750 4350 9750 4650
+Wire Wire Line
+	9750 4650 8400 4650
+Wire Wire Line
+	8400 4650 8400 4200
+Wire Wire Line
+	7950 4200 8400 4200
+Wire Wire Line
+	7950 4350 8300 4350
+Wire Wire Line
+	8300 4350 8300 4650
+Wire Wire Line
+	8300 4650 6950 4650
+Wire Wire Line
+	6950 4650 6950 4200
+Wire Wire Line
+	6500 4200 6950 4200
+Wire Wire Line
+	6500 4350 6850 4350
+Wire Wire Line
+	6850 4350 6850 4650
+Wire Wire Line
+	6850 4650 5500 4650
+Wire Wire Line
+	5500 4650 5500 4200
+Wire Wire Line
+	5050 4200 5500 4200
+Wire Wire Line
+	5050 4350 5400 4350
+Wire Wire Line
+	5400 4350 5400 4650
+Wire Wire Line
+	5400 4650 4050 4650
+Wire Wire Line
+	4050 4650 4050 4200
+Wire Wire Line
+	3600 4200 4050 4200
+Wire Wire Line
+	3600 4350 3950 4350
+Wire Wire Line
+	3950 4350 3950 4650
+Wire Wire Line
+	3950 4650 2650 4650
+Wire Wire Line
+	2650 4650 2650 4200
+Wire Wire Line
+	2000 4200 2650 4200
+$Sheet
+S 8750 5200 650  650 
+U 6069AA47
+F0 "sheet6069AA2F" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 8750 5300 50 
+F3 "SCLK" I L 8750 5450 50 
+F4 "D-C" I L 8750 5600 50 
+F5 "CS" I R 9400 5300 50 
+F6 "RESET" I L 8750 5750 50 
+F7 "LED_DIN" I R 9400 5500 50 
+F8 "LED_DOUT" I R 9400 5650 50 
+$EndSheet
+Text GLabel 9400 5300 2    50   Input ~ 0
+K_T
+Text GLabel 8750 5750 0    50   Input ~ 0
+RST1
+Text GLabel 8750 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 8750 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 8750 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 21900 5200 650  650 
+U 6069AA55
+F0 "sheet6069AA30" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 21900 5300 50 
+F3 "SCLK" I L 21900 5450 50 
+F4 "D-C" I L 21900 5600 50 
+F5 "CS" I R 22550 5300 50 
+F6 "RESET" I L 21900 5750 50 
+F7 "LED_DIN" I R 22550 5500 50 
+F8 "LED_DOUT" I R 22550 5650 50 
+$EndSheet
+Text GLabel 10850 5300 2    50   Input ~ 0
+K_Y
+Text GLabel 21900 5750 0    50   Input ~ 0
+RST1
+Text GLabel 21900 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 21900 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 21900 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 10200 5200 650  650 
+U 6069AA63
+F0 "sheet6069AA31" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 10200 5300 50 
+F3 "SCLK" I L 10200 5450 50 
+F4 "D-C" I L 10200 5600 50 
+F5 "CS" I R 10850 5300 50 
+F6 "RESET" I L 10200 5750 50 
+F7 "LED_DIN" I R 10850 5500 50 
+F8 "LED_DOUT" I R 10850 5650 50 
+$EndSheet
+Text GLabel 12300 5300 2    50   Input ~ 0
+K_U
+Text GLabel 10200 5750 0    50   Input ~ 0
+RST1
+Text GLabel 10200 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 10200 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 10200 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 11650 5200 650  650 
+U 6069AA71
+F0 "sheet6069AA32" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 11650 5300 50 
+F3 "SCLK" I L 11650 5450 50 
+F4 "D-C" I L 11650 5600 50 
+F5 "CS" I R 12300 5300 50 
+F6 "RESET" I L 11650 5750 50 
+F7 "LED_DIN" I R 12300 5500 50 
+F8 "LED_DOUT" I R 12300 5650 50 
+$EndSheet
+Text GLabel 13750 5300 2    50   Input ~ 0
+K_I
+Text GLabel 11650 5750 0    50   Input ~ 0
+RST1
+Text GLabel 11650 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 11650 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 11650 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 13100 5200 650  650 
+U 6069AA7F
+F0 "sheet6069AA33" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 13100 5300 50 
+F3 "SCLK" I L 13100 5450 50 
+F4 "D-C" I L 13100 5600 50 
+F5 "CS" I R 13750 5300 50 
+F6 "RESET" I L 13100 5750 50 
+F7 "LED_DIN" I R 13750 5500 50 
+F8 "LED_DOUT" I R 13750 5650 50 
+$EndSheet
+Text GLabel 15250 5300 2    50   Input ~ 0
+K_O
+Text GLabel 13100 5750 0    50   Input ~ 0
+RST1
+Text GLabel 13100 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 13100 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 13100 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 14600 5200 650  650 
+U 6069AA8D
+F0 "sheet6069AA34" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 14600 5300 50 
+F3 "SCLK" I L 14600 5450 50 
+F4 "D-C" I L 14600 5600 50 
+F5 "CS" I R 15250 5300 50 
+F6 "RESET" I L 14600 5750 50 
+F7 "LED_DIN" I R 15250 5500 50 
+F8 "LED_DOUT" I R 15250 5650 50 
+$EndSheet
+Text GLabel 16700 5300 2    50   Input ~ 0
+K_P
+Text GLabel 14600 5750 0    50   Input ~ 0
+RST1
+Text GLabel 14600 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 14600 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 14600 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 16050 5200 650  650 
+U 6069AA9B
+F0 "sheet6069AA35" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 16050 5300 50 
+F3 "SCLK" I L 16050 5450 50 
+F4 "D-C" I L 16050 5600 50 
+F5 "CS" I R 16700 5300 50 
+F6 "RESET" I L 16050 5750 50 
+F7 "LED_DIN" I R 16700 5500 50 
+F8 "LED_DOUT" I R 16700 5650 50 
+$EndSheet
+Text GLabel 18150 5300 2    50   Input ~ 0
+K_LBrkt
+Text GLabel 16050 5750 0    50   Input ~ 0
+RST1
+Text GLabel 16050 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 16050 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 16050 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 17500 5200 650  650 
+U 6069AAA9
+F0 "sheet6069AA36" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 17500 5300 50 
+F3 "SCLK" I L 17500 5450 50 
+F4 "D-C" I L 17500 5600 50 
+F5 "CS" I R 18150 5300 50 
+F6 "RESET" I L 17500 5750 50 
+F7 "LED_DIN" I R 18150 5500 50 
+F8 "LED_DOUT" I R 18150 5650 50 
+$EndSheet
+Text GLabel 19650 5300 2    50   Input ~ 0
+K_RBrkt
+Text GLabel 17500 5750 0    50   Input ~ 0
+RST1
+Text GLabel 17500 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 17500 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 17500 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 19000 5200 650  650 
+U 6069AAB7
+F0 "sheet6069AA37" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 19000 5300 50 
+F3 "SCLK" I L 19000 5450 50 
+F4 "D-C" I L 19000 5600 50 
+F5 "CS" I R 19650 5300 50 
+F6 "RESET" I L 19000 5750 50 
+F7 "LED_DIN" I R 19650 5500 50 
+F8 "LED_DOUT" I R 19650 5650 50 
+$EndSheet
+Text GLabel 21100 5300 2    50   Input ~ 0
+K_BacckSl
+Text GLabel 19000 5750 0    50   Input ~ 0
+RST1
+Text GLabel 19000 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 19000 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 19000 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 20450 5200 650  650 
+U 6069AAC5
+F0 "sheet6069AA38" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 20450 5300 50 
+F3 "SCLK" I L 20450 5450 50 
+F4 "D-C" I L 20450 5600 50 
+F5 "CS" I R 21100 5300 50 
+F6 "RESET" I L 20450 5750 50 
+F7 "LED_DIN" I R 21100 5500 50 
+F8 "LED_DOUT" I R 21100 5650 50 
+$EndSheet
+Text GLabel 22550 5300 2    50   Input ~ 0
+K_Del
+Text GLabel 20450 5750 0    50   Input ~ 0
+RST1
+Text GLabel 20450 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 20450 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 20450 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 23400 5200 650  650 
+U 6069AAD3
+F0 "sheet6069AA39" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 23400 5300 50 
+F3 "SCLK" I L 23400 5450 50 
+F4 "D-C" I L 23400 5600 50 
+F5 "CS" I R 24050 5300 50 
+F6 "RESET" I L 23400 5750 50 
+F7 "LED_DIN" I R 24050 5500 50 
+F8 "LED_DOUT" I R 24050 5650 50 
+$EndSheet
+Text GLabel 24050 5300 2    50   Input ~ 0
+K_End
+Text GLabel 23400 5750 0    50   Input ~ 0
+RST1
+Text GLabel 23400 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 23400 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 23400 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 24800 5200 650  650 
+U 6069AAE1
+F0 "sheet6069AA3A" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 24800 5300 50 
+F3 "SCLK" I L 24800 5450 50 
+F4 "D-C" I L 24800 5600 50 
+F5 "CS" I R 25450 5300 50 
+F6 "RESET" I L 24800 5750 50 
+F7 "LED_DIN" I R 25450 5500 50 
+F8 "LED_DOUT" I R 25450 5650 50 
+$EndSheet
+Text GLabel 25450 5300 2    50   Input ~ 0
+K_PgDn
+Text GLabel 24800 5750 0    50   Input ~ 0
+RST1
+Text GLabel 24800 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 24800 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 24800 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 26250 5200 650  650 
+U 6069AAEF
+F0 "sheet6069AA3B" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 26250 5300 50 
+F3 "SCLK" I L 26250 5450 50 
+F4 "D-C" I L 26250 5600 50 
+F5 "CS" I R 26900 5300 50 
+F6 "RESET" I L 26250 5750 50 
+F7 "LED_DIN" I R 26900 5500 50 
+F8 "LED_DOUT" I R 26900 5650 50 
+$EndSheet
+Text GLabel 26900 5300 2    50   Input ~ 0
+K_KP_7
+Text GLabel 26250 5750 0    50   Input ~ 0
+RST1
+Text GLabel 26250 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 26250 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 26250 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 27700 5200 650  650 
+U 6069AAFD
+F0 "sheet6069AA3C" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 27700 5300 50 
+F3 "SCLK" I L 27700 5450 50 
+F4 "D-C" I L 27700 5600 50 
+F5 "CS" I R 28350 5300 50 
+F6 "RESET" I L 27700 5750 50 
+F7 "LED_DIN" I R 28350 5500 50 
+F8 "LED_DOUT" I R 28350 5650 50 
+$EndSheet
+Text GLabel 28350 5300 2    50   Input ~ 0
+K_KP_8
+Text GLabel 27700 5750 0    50   Input ~ 0
+RST1
+Text GLabel 27700 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 27700 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 27700 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 29200 5200 650  650 
+U 6069AB0B
+F0 "sheet6069AA3D" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 29200 5300 50 
+F3 "SCLK" I L 29200 5450 50 
+F4 "D-C" I L 29200 5600 50 
+F5 "CS" I R 29850 5300 50 
+F6 "RESET" I L 29200 5750 50 
+F7 "LED_DIN" I R 29850 5500 50 
+F8 "LED_DOUT" I R 29850 5650 50 
+$EndSheet
+Text GLabel 29850 5300 2    50   Input ~ 0
+K_KP_9
+Text GLabel 29200 5750 0    50   Input ~ 0
+RST1
+Text GLabel 29200 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 29200 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 29200 5450 0    50   Input ~ 0
+SCK1
+$Sheet
+S 30650 5200 650  650 
+U 6069AB19
+F0 "sheet6069AA3E" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 30650 5300 50 
+F3 "SCLK" I L 30650 5450 50 
+F4 "D-C" I L 30650 5600 50 
+F5 "CS" I R 31300 5300 50 
+F6 "RESET" I L 30650 5750 50 
+F7 "LED_DIN" I R 31300 5500 50 
+F8 "LED_DOUT" I R 31300 5650 50 
+$EndSheet
+Text GLabel 31300 5300 2    50   Input ~ 0
+K_KP_Plus
+Text GLabel 30650 5750 0    50   Input ~ 0
+RST1
+Text GLabel 30650 5300 0    50   Input ~ 0
+MOSI1
+Text GLabel 30650 5600 0    50   Input ~ 0
+MISO1
+Text GLabel 30650 5450 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	31300 5500 32000 5500
+Wire Wire Line
+	31300 5650 31650 5650
+Wire Wire Line
+	31650 5950 30300 5950
+Wire Wire Line
+	30300 5950 30300 5500
+Wire Wire Line
+	29850 5500 30300 5500
+Wire Wire Line
+	31650 5650 31650 5950
+Wire Wire Line
+	29850 5650 30200 5650
+Wire Wire Line
+	30200 5650 30200 5950
+Wire Wire Line
+	30200 5950 28850 5950
+Wire Wire Line
+	28850 5950 28850 5500
+Wire Wire Line
+	28350 5500 28850 5500
+Wire Wire Line
+	28350 5650 28700 5650
+Wire Wire Line
+	28700 5650 28700 5950
+Wire Wire Line
+	28700 5950 27350 5950
+Wire Wire Line
+	27350 5950 27350 5500
+Wire Wire Line
+	26900 5500 27350 5500
+Wire Wire Line
+	26900 5650 27250 5650
+Wire Wire Line
+	27250 5650 27250 5950
+Wire Wire Line
+	27250 5950 25900 5950
+Wire Wire Line
+	25900 5950 25900 5500
+Wire Wire Line
+	25450 5500 25900 5500
+Wire Wire Line
+	25450 5650 25800 5650
+Wire Wire Line
+	25800 5650 25800 5950
+Wire Wire Line
+	25800 5950 24450 5950
+Wire Wire Line
+	24450 5950 24450 5500
+Wire Wire Line
+	24050 5500 24450 5500
+Wire Wire Line
+	24050 5650 24400 5650
+Wire Wire Line
+	24400 5650 24400 5950
+Wire Wire Line
+	24400 5950 23050 5950
+Wire Wire Line
+	23050 5950 23050 5500
+Wire Wire Line
+	21100 5500 21550 5500
+Wire Wire Line
+	21100 5650 21450 5650
+Wire Wire Line
+	21450 5650 21450 5950
+Wire Wire Line
+	21450 5950 20100 5950
+Wire Wire Line
+	20100 5950 20100 5500
+Wire Wire Line
+	19650 5500 20100 5500
+Wire Wire Line
+	19650 5650 20000 5650
+Wire Wire Line
+	20000 5650 20000 5950
+Wire Wire Line
+	20000 5950 18650 5950
+Wire Wire Line
+	18650 5950 18650 5500
+Wire Wire Line
+	18150 5500 18650 5500
+Wire Wire Line
+	18150 5650 18500 5650
+Wire Wire Line
+	18500 5650 18500 5950
+Wire Wire Line
+	18500 5950 17150 5950
+Wire Wire Line
+	17150 5950 17150 5500
+Wire Wire Line
+	16700 5500 17150 5500
+Wire Wire Line
+	16700 5650 17050 5650
+Wire Wire Line
+	17050 5650 17050 5950
+Wire Wire Line
+	17050 5950 15700 5950
+Wire Wire Line
+	15700 5950 15700 5500
+Wire Wire Line
+	15250 5500 15700 5500
+Wire Wire Line
+	15250 5650 15600 5650
+Wire Wire Line
+	15600 5650 15600 5950
+Wire Wire Line
+	15600 5950 14250 5950
+Wire Wire Line
+	14250 5950 14250 5500
+Wire Wire Line
+	13750 5500 14250 5500
+Wire Wire Line
+	13750 5650 14100 5650
+Wire Wire Line
+	14100 5650 14100 5950
+Wire Wire Line
+	14100 5950 12750 5950
+Wire Wire Line
+	12750 5950 12750 5500
+Wire Wire Line
+	12300 5500 12750 5500
+Wire Wire Line
+	12300 5650 12650 5650
+Wire Wire Line
+	12650 5650 12650 5950
+Wire Wire Line
+	12650 5950 11300 5950
+Wire Wire Line
+	11300 5950 11300 5500
+Wire Wire Line
+	10850 5500 11300 5500
+Wire Wire Line
+	10850 5650 11200 5650
+Wire Wire Line
+	11200 5650 11200 5950
+Wire Wire Line
+	22550 5500 23050 5500
+Wire Wire Line
+	22550 5650 22900 5650
+Wire Wire Line
+	9850 5950 9850 5500
+Wire Wire Line
+	9400 5500 9850 5500
+Wire Wire Line
+	9400 5650 9750 5650
+Wire Wire Line
+	9750 5650 9750 5950
+Wire Wire Line
+	9750 5950 8400 5950
+Wire Wire Line
+	8400 5950 8400 5500
+Wire Wire Line
+	7950 5500 8400 5500
+Wire Wire Line
+	7100 5950 8300 5950
+Wire Wire Line
+	8300 5950 8300 5650
+Wire Wire Line
+	8300 5650 7950 5650
+Wire Wire Line
+	32000 4900 32000 5500
+Wire Wire Line
+	9850 5950 11200 5950
+Wire Wire Line
+	22900 5650 22900 5950
+Wire Wire Line
+	22900 5950 21550 5950
+Wire Wire Line
+	21550 5950 21550 5500
+$Sheet
+S 2950 6500 650  650 
+U 607D63FD
+F0 "sheet607D63E0" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 2950 6600 50 
+F3 "SCLK" I L 2950 6750 50 
+F4 "D-C" I L 2950 6900 50 
+F5 "CS" I R 3600 6600 50 
+F6 "RESET" I L 2950 7050 50 
+F7 "LED_DIN" I R 3600 6800 50 
+F8 "LED_DOUT" I R 3600 6950 50 
+$EndSheet
+Text GLabel 2950 7050 0    50   Input ~ 0
+RST1
+Text GLabel 2950 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 2950 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 2950 6750 0    50   Input ~ 0
+SCK1
+Text GLabel 3600 6600 2    50   Input ~ 0
+K_A
+$Sheet
+S 4400 6500 650  650 
+U 607D640B
+F0 "sheet607D63E1" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 4400 6600 50 
+F3 "SCLK" I L 4400 6750 50 
+F4 "D-C" I L 4400 6900 50 
+F5 "CS" I R 5050 6600 50 
+F6 "RESET" I L 4400 7050 50 
+F7 "LED_DIN" I R 5050 6800 50 
+F8 "LED_DOUT" I R 5050 6950 50 
+$EndSheet
+Text GLabel 5050 6600 2    50   Input ~ 0
+K_S
+Text GLabel 4400 7050 0    50   Input ~ 0
+RST1
+Text GLabel 4400 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 4400 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 4400 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 5850 6500 650  650 
+U 607D6419
+F0 "sheet607D63E2" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 5850 6600 50 
+F3 "SCLK" I L 5850 6750 50 
+F4 "D-C" I L 5850 6900 50 
+F5 "CS" I R 6500 6600 50 
+F6 "RESET" I L 5850 7050 50 
+F7 "LED_DIN" I R 6500 6800 50 
+F8 "LED_DOUT" I R 6500 6950 50 
+$EndSheet
+Text GLabel 6500 6600 2    50   Input ~ 0
+K_D
+Text GLabel 5850 7050 0    50   Input ~ 0
+RST1
+Text GLabel 5850 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 5850 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 5850 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 7300 6500 650  650 
+U 607D6427
+F0 "sheet607D63E3" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 7300 6600 50 
+F3 "SCLK" I L 7300 6750 50 
+F4 "D-C" I L 7300 6900 50 
+F5 "CS" I R 7950 6600 50 
+F6 "RESET" I L 7300 7050 50 
+F7 "LED_DIN" I R 7950 6800 50 
+F8 "LED_DOUT" I R 7950 6950 50 
+$EndSheet
+Text GLabel 7950 6600 2    50   Input ~ 0
+K_F
+Text GLabel 7300 7050 0    50   Input ~ 0
+RST1
+Text GLabel 7300 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 7300 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 7300 6750 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	7100 7250 7100 6800
+Wire Wire Line
+	5500 7250 5500 6800
+Wire Wire Line
+	5050 6800 5500 6800
+Wire Wire Line
+	5050 6950 5450 6950
+Wire Wire Line
+	5450 6950 5450 7250
+Wire Wire Line
+	5450 7250 4200 7250
+Wire Wire Line
+	4200 7250 4200 6800
+Wire Wire Line
+	3600 6800 4200 6800
+$Sheet
+S 1350 6500 650  650 
+U 607D643D
+F0 "sheet607D63E4" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 1350 6600 50 
+F3 "SCLK" I L 1350 6750 50 
+F4 "D-C" I L 1350 6900 50 
+F5 "CS" I R 2000 6600 50 
+F6 "RESET" I L 1350 7050 50 
+F7 "LED_DIN" I R 2000 6800 50 
+F8 "LED_DOUT" I R 2000 6950 50 
+$EndSheet
+Text GLabel 1350 7050 0    50   Input ~ 0
+RST1
+Text GLabel 1350 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 1350 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 1350 6750 0    50   Input ~ 0
+SCK1
+Text GLabel 2000 6600 2    50   Input ~ 0
+K_CapsLk
+Wire Wire Line
+	2550 7250 4050 7250
+Wire Wire Line
+	4050 6950 3600 6950
+Wire Wire Line
+	6500 6950 7050 6950
+Wire Wire Line
+	6500 6800 7100 6800
+Wire Wire Line
+	5500 7250 7050 7250
+Wire Wire Line
+	7050 7250 7050 6950
+Wire Wire Line
+	2550 6800 2000 6800
+Wire Wire Line
+	4050 6950 4050 7250
+Wire Wire Line
+	2550 6800 2550 7250
+$Sheet
+S 8750 6500 650  650 
+U 607D6454
+F0 "sheet607D63E5" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 8750 6600 50 
+F3 "SCLK" I L 8750 6750 50 
+F4 "D-C" I L 8750 6900 50 
+F5 "CS" I R 9400 6600 50 
+F6 "RESET" I L 8750 7050 50 
+F7 "LED_DIN" I R 9400 6800 50 
+F8 "LED_DOUT" I R 9400 6950 50 
+$EndSheet
+Text GLabel 9400 6600 2    50   Input ~ 0
+K_G
+Text GLabel 8750 7050 0    50   Input ~ 0
+RST1
+Text GLabel 8750 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 8750 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 8750 6750 0    50   Input ~ 0
+SCK1
+Text GLabel 10850 6600 2    50   Input ~ 0
+K_H
+$Sheet
+S 10200 6500 650  650 
+U 607D6470
+F0 "sheet607D63E7" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 10200 6600 50 
+F3 "SCLK" I L 10200 6750 50 
+F4 "D-C" I L 10200 6900 50 
+F5 "CS" I R 10850 6600 50 
+F6 "RESET" I L 10200 7050 50 
+F7 "LED_DIN" I R 10850 6800 50 
+F8 "LED_DOUT" I R 10850 6950 50 
+$EndSheet
+Text GLabel 12300 6600 2    50   Input ~ 0
+K_J
+Text GLabel 10200 7050 0    50   Input ~ 0
+RST1
+Text GLabel 10200 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 10200 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 10200 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 11650 6500 650  650 
+U 607D647E
+F0 "sheet607D63E8" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 11650 6600 50 
+F3 "SCLK" I L 11650 6750 50 
+F4 "D-C" I L 11650 6900 50 
+F5 "CS" I R 12300 6600 50 
+F6 "RESET" I L 11650 7050 50 
+F7 "LED_DIN" I R 12300 6800 50 
+F8 "LED_DOUT" I R 12300 6950 50 
+$EndSheet
+Text GLabel 13750 6600 2    50   Input ~ 0
+K_K
+Text GLabel 11650 7050 0    50   Input ~ 0
+RST1
+Text GLabel 11650 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 11650 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 11650 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 13100 6500 650  650 
+U 607D648C
+F0 "sheet607D63E9" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 13100 6600 50 
+F3 "SCLK" I L 13100 6750 50 
+F4 "D-C" I L 13100 6900 50 
+F5 "CS" I R 13750 6600 50 
+F6 "RESET" I L 13100 7050 50 
+F7 "LED_DIN" I R 13750 6800 50 
+F8 "LED_DOUT" I R 13750 6950 50 
+$EndSheet
+Text GLabel 15250 6600 2    50   Input ~ 0
+K_L
+Text GLabel 13100 7050 0    50   Input ~ 0
+RST1
+Text GLabel 13100 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 13100 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 13100 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 14600 6500 650  650 
+U 607D649A
+F0 "sheet607D63EA" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 14600 6600 50 
+F3 "SCLK" I L 14600 6750 50 
+F4 "D-C" I L 14600 6900 50 
+F5 "CS" I R 15250 6600 50 
+F6 "RESET" I L 14600 7050 50 
+F7 "LED_DIN" I R 15250 6800 50 
+F8 "LED_DOUT" I R 15250 6950 50 
+$EndSheet
+Text GLabel 16700 6600 2    50   Input ~ 0
+K_Colon
+Text GLabel 14600 7050 0    50   Input ~ 0
+RST1
+Text GLabel 14600 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 14600 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 14600 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 16050 6500 650  650 
+U 607D64A8
+F0 "sheet607D63EB" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 16050 6600 50 
+F3 "SCLK" I L 16050 6750 50 
+F4 "D-C" I L 16050 6900 50 
+F5 "CS" I R 16700 6600 50 
+F6 "RESET" I L 16050 7050 50 
+F7 "LED_DIN" I R 16700 6800 50 
+F8 "LED_DOUT" I R 16700 6950 50 
+$EndSheet
+Text GLabel 18150 6600 2    50   Input ~ 0
+K_Quote
+Text GLabel 16050 7050 0    50   Input ~ 0
+RST1
+Text GLabel 16050 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 16050 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 16050 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 17500 6500 650  650 
+U 607D64B6
+F0 "sheet607D63EC" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 17500 6600 50 
+F3 "SCLK" I L 17500 6750 50 
+F4 "D-C" I L 17500 6900 50 
+F5 "CS" I R 18150 6600 50 
+F6 "RESET" I L 17500 7050 50 
+F7 "LED_DIN" I R 18150 6800 50 
+F8 "LED_DOUT" I R 18150 6950 50 
+$EndSheet
+Text GLabel 19650 6600 2    50   Input ~ 0
+K_Enter
+Text GLabel 17500 7050 0    50   Input ~ 0
+RST1
+Text GLabel 17500 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 17500 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 17500 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 19000 6500 650  650 
+U 607D64C4
+F0 "sheet607D63ED" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 19000 6600 50 
+F3 "SCLK" I L 19000 6750 50 
+F4 "D-C" I L 19000 6900 50 
+F5 "CS" I R 19650 6600 50 
+F6 "RESET" I L 19000 7050 50 
+F7 "LED_DIN" I R 19650 6800 50 
+F8 "LED_DOUT" I R 19650 6950 50 
+$EndSheet
+Text GLabel 19000 7050 0    50   Input ~ 0
+RST1
+Text GLabel 19000 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 19000 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 19000 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 27700 6500 650  650 
+U 607D650A
+F0 "sheet607D63F2" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 27700 6600 50 
+F3 "SCLK" I L 27700 6750 50 
+F4 "D-C" I L 27700 6900 50 
+F5 "CS" I R 28350 6600 50 
+F6 "RESET" I L 27700 7050 50 
+F7 "LED_DIN" I R 28350 6800 50 
+F8 "LED_DOUT" I R 28350 6950 50 
+$EndSheet
+Text GLabel 28350 6600 2    50   Input ~ 0
+K_KP_4
+Text GLabel 27700 7050 0    50   Input ~ 0
+RST1
+Text GLabel 27700 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 27700 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 27700 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 29200 6500 650  650 
+U 607D6518
+F0 "sheet607D63F3" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 29200 6600 50 
+F3 "SCLK" I L 29200 6750 50 
+F4 "D-C" I L 29200 6900 50 
+F5 "CS" I R 29850 6600 50 
+F6 "RESET" I L 29200 7050 50 
+F7 "LED_DIN" I R 29850 6800 50 
+F8 "LED_DOUT" I R 29850 6950 50 
+$EndSheet
+Text GLabel 29850 6600 2    50   Input ~ 0
+K_KP_5
+Text GLabel 29200 7050 0    50   Input ~ 0
+RST1
+Text GLabel 29200 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 29200 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 29200 6750 0    50   Input ~ 0
+SCK1
+$Sheet
+S 30650 6500 650  650 
+U 607D6526
+F0 "sheet607D63F4" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 30650 6600 50 
+F3 "SCLK" I L 30650 6750 50 
+F4 "D-C" I L 30650 6900 50 
+F5 "CS" I R 31300 6600 50 
+F6 "RESET" I L 30650 7050 50 
+F7 "LED_DIN" I R 31300 6800 50 
+F8 "LED_DOUT" I R 31300 6950 50 
+$EndSheet
+Text GLabel 31300 6600 2    50   Input ~ 0
+K_KP_6
+Text GLabel 30650 7050 0    50   Input ~ 0
+RST1
+Text GLabel 30650 6600 0    50   Input ~ 0
+MOSI1
+Text GLabel 30650 6900 0    50   Input ~ 0
+MISO1
+Text GLabel 30650 6750 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	31300 6800 32000 6800
+Wire Wire Line
+	31300 6950 31650 6950
+Wire Wire Line
+	31650 7250 30300 7250
+Wire Wire Line
+	30300 7250 30300 6800
+Wire Wire Line
+	29850 6800 30300 6800
+Wire Wire Line
+	31650 6950 31650 7250
+Wire Wire Line
+	29850 6950 30200 6950
+Wire Wire Line
+	30200 6950 30200 7250
+Wire Wire Line
+	30200 7250 28850 7250
+Wire Wire Line
+	28850 7250 28850 6800
+Wire Wire Line
+	28350 6800 28850 6800
+Wire Wire Line
+	28350 6950 28700 6950
+Wire Wire Line
+	28700 6950 28700 7250
+Wire Wire Line
+	20100 7250 20100 6800
+Wire Wire Line
+	19650 6800 20100 6800
+Wire Wire Line
+	19650 6950 20000 6950
+Wire Wire Line
+	20000 6950 20000 7250
+Wire Wire Line
+	20000 7250 18650 7250
+Wire Wire Line
+	18650 7250 18650 6800
+Wire Wire Line
+	18150 6800 18650 6800
+Wire Wire Line
+	18150 6950 18500 6950
+Wire Wire Line
+	18500 6950 18500 7250
+Wire Wire Line
+	18500 7250 17150 7250
+Wire Wire Line
+	17150 7250 17150 6800
+Wire Wire Line
+	16700 6800 17150 6800
+Wire Wire Line
+	16700 6950 17050 6950
+Wire Wire Line
+	17050 6950 17050 7250
+Wire Wire Line
+	17050 7250 15700 7250
+Wire Wire Line
+	15700 7250 15700 6800
+Wire Wire Line
+	15250 6800 15700 6800
+Wire Wire Line
+	15250 6950 15600 6950
+Wire Wire Line
+	15600 6950 15600 7250
+Wire Wire Line
+	15600 7250 14250 7250
+Wire Wire Line
+	14250 7250 14250 6800
+Wire Wire Line
+	13750 6800 14250 6800
+Wire Wire Line
+	13750 6950 14100 6950
+Wire Wire Line
+	14100 6950 14100 7250
+Wire Wire Line
+	14100 7250 12750 7250
+Wire Wire Line
+	12750 7250 12750 6800
+Wire Wire Line
+	12300 6800 12750 6800
+Wire Wire Line
+	12300 6950 12650 6950
+Wire Wire Line
+	12650 6950 12650 7250
+Wire Wire Line
+	12650 7250 11300 7250
+Wire Wire Line
+	11300 7250 11300 6800
+Wire Wire Line
+	10850 6800 11300 6800
+Wire Wire Line
+	10850 6950 11200 6950
+Wire Wire Line
+	11200 6950 11200 7250
+Wire Wire Line
+	9850 7250 9850 6800
+Wire Wire Line
+	9400 6800 9850 6800
+Wire Wire Line
+	9400 6950 9750 6950
+Wire Wire Line
+	9750 6950 9750 7250
+Wire Wire Line
+	9750 7250 8400 7250
+Wire Wire Line
+	8400 7250 8400 6800
+Wire Wire Line
+	7950 6800 8400 6800
+Wire Wire Line
+	7100 7250 8300 7250
+Wire Wire Line
+	8300 7250 8300 6950
+Wire Wire Line
+	8300 6950 7950 6950
+Wire Wire Line
+	32000 6200 32000 6800
+Wire Wire Line
+	9850 7250 11200 7250
+Wire Wire Line
+	2000 5650 2400 5650
+Wire Wire Line
+	2400 5650 2400 6200
+Wire Wire Line
+	2400 6200 32000 6200
+Wire Wire Line
+	20100 7250 28700 7250
+$Sheet
+S 2950 7900 650  650 
+U 608C499B
+F0 "sheet608C4983" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 2950 8000 50 
+F3 "SCLK" I L 2950 8150 50 
+F4 "D-C" I L 2950 8300 50 
+F5 "CS" I R 3600 8000 50 
+F6 "RESET" I L 2950 8450 50 
+F7 "LED_DIN" I R 3600 8200 50 
+F8 "LED_DOUT" I R 3600 8350 50 
+$EndSheet
+Text GLabel 2950 8450 0    50   Input ~ 0
+RST1
+Text GLabel 2950 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 2950 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 2950 8150 0    50   Input ~ 0
+SCK1
+Text GLabel 3600 8000 2    50   Input ~ 0
+K_Z
+$Sheet
+S 4400 7900 650  650 
+U 608C49A9
+F0 "sheet608C4984" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 4400 8000 50 
+F3 "SCLK" I L 4400 8150 50 
+F4 "D-C" I L 4400 8300 50 
+F5 "CS" I R 5050 8000 50 
+F6 "RESET" I L 4400 8450 50 
+F7 "LED_DIN" I R 5050 8200 50 
+F8 "LED_DOUT" I R 5050 8350 50 
+$EndSheet
+Text GLabel 5050 8000 2    50   Input ~ 0
+K_X
+Text GLabel 4400 8450 0    50   Input ~ 0
+RST1
+Text GLabel 4400 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 4400 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 4400 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 5850 7900 650  650 
+U 608C49B7
+F0 "sheet608C4985" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 5850 8000 50 
+F3 "SCLK" I L 5850 8150 50 
+F4 "D-C" I L 5850 8300 50 
+F5 "CS" I R 6500 8000 50 
+F6 "RESET" I L 5850 8450 50 
+F7 "LED_DIN" I R 6500 8200 50 
+F8 "LED_DOUT" I R 6500 8350 50 
+$EndSheet
+Text GLabel 6500 8000 2    50   Input ~ 0
+K_C
+Text GLabel 5850 8450 0    50   Input ~ 0
+RST1
+Text GLabel 5850 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 5850 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 5850 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 7300 7900 650  650 
+U 608C49C5
+F0 "sheet608C4986" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 7300 8000 50 
+F3 "SCLK" I L 7300 8150 50 
+F4 "D-C" I L 7300 8300 50 
+F5 "CS" I R 7950 8000 50 
+F6 "RESET" I L 7300 8450 50 
+F7 "LED_DIN" I R 7950 8200 50 
+F8 "LED_DOUT" I R 7950 8350 50 
+$EndSheet
+Text GLabel 7950 8000 2    50   Input ~ 0
+K_V
+Text GLabel 7300 8450 0    50   Input ~ 0
+RST1
+Text GLabel 7300 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 7300 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 7300 8150 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	7100 8650 7100 8200
+Wire Wire Line
+	5500 8650 5500 8200
+Wire Wire Line
+	5050 8200 5500 8200
+Wire Wire Line
+	5050 8350 5450 8350
+Wire Wire Line
+	5450 8350 5450 8650
+Wire Wire Line
+	5450 8650 4200 8650
+Wire Wire Line
+	4200 8650 4200 8200
+Wire Wire Line
+	3600 8200 4200 8200
+$Sheet
+S 1350 7900 650  650 
+U 608C49DB
+F0 "sheet608C4987" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 1350 8000 50 
+F3 "SCLK" I L 1350 8150 50 
+F4 "D-C" I L 1350 8300 50 
+F5 "CS" I R 2000 8000 50 
+F6 "RESET" I L 1350 8450 50 
+F7 "LED_DIN" I R 2000 8200 50 
+F8 "LED_DOUT" I R 2000 8350 50 
+$EndSheet
+Text GLabel 1350 8450 0    50   Input ~ 0
+RST1
+Text GLabel 1350 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 1350 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 1350 8150 0    50   Input ~ 0
+SCK1
+Text GLabel 2000 8000 2    50   Input ~ 0
+K_LShift
+Wire Wire Line
+	2550 8650 4050 8650
+Wire Wire Line
+	4050 8350 3600 8350
+Wire Wire Line
+	6500 8350 7050 8350
+Wire Wire Line
+	6500 8200 7100 8200
+Wire Wire Line
+	5500 8650 7050 8650
+Wire Wire Line
+	7050 8650 7050 8350
+Wire Wire Line
+	2550 8200 2000 8200
+Wire Wire Line
+	4050 8350 4050 8650
+Wire Wire Line
+	2550 8200 2550 8650
+$Sheet
+S 8750 7900 650  650 
+U 608C49F2
+F0 "sheet608C4988" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 8750 8000 50 
+F3 "SCLK" I L 8750 8150 50 
+F4 "D-C" I L 8750 8300 50 
+F5 "CS" I R 9400 8000 50 
+F6 "RESET" I L 8750 8450 50 
+F7 "LED_DIN" I R 9400 8200 50 
+F8 "LED_DOUT" I R 9400 8350 50 
+$EndSheet
+Text GLabel 9400 8000 2    50   Input ~ 0
+K_B
+Text GLabel 8750 8450 0    50   Input ~ 0
+RST1
+Text GLabel 8750 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 8750 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 8750 8150 0    50   Input ~ 0
+SCK1
+Text GLabel 10850 8000 2    50   Input ~ 0
+K_N
+$Sheet
+S 10200 7900 650  650 
+U 608C4A01
+F0 "sheet608C4989" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 10200 8000 50 
+F3 "SCLK" I L 10200 8150 50 
+F4 "D-C" I L 10200 8300 50 
+F5 "CS" I R 10850 8000 50 
+F6 "RESET" I L 10200 8450 50 
+F7 "LED_DIN" I R 10850 8200 50 
+F8 "LED_DOUT" I R 10850 8350 50 
+$EndSheet
+Text GLabel 12300 8000 2    50   Input ~ 0
+K_M
+Text GLabel 10200 8450 0    50   Input ~ 0
+RST1
+Text GLabel 10200 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 10200 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 10200 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 11650 7900 650  650 
+U 608C4A0F
+F0 "sheet608C498A" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 11650 8000 50 
+F3 "SCLK" I L 11650 8150 50 
+F4 "D-C" I L 11650 8300 50 
+F5 "CS" I R 12300 8000 50 
+F6 "RESET" I L 11650 8450 50 
+F7 "LED_DIN" I R 12300 8200 50 
+F8 "LED_DOUT" I R 12300 8350 50 
+$EndSheet
+Text GLabel 13750 8000 2    50   Input ~ 0
+K_LAngleBr
+Text GLabel 11650 8450 0    50   Input ~ 0
+RST1
+Text GLabel 11650 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 11650 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 11650 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 13100 7900 650  650 
+U 608C4A1D
+F0 "sheet608C498B" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 13100 8000 50 
+F3 "SCLK" I L 13100 8150 50 
+F4 "D-C" I L 13100 8300 50 
+F5 "CS" I R 13750 8000 50 
+F6 "RESET" I L 13100 8450 50 
+F7 "LED_DIN" I R 13750 8200 50 
+F8 "LED_DOUT" I R 13750 8350 50 
+$EndSheet
+Text GLabel 15250 8000 2    50   Input ~ 0
+K_RAngleBr
+Text GLabel 13100 8450 0    50   Input ~ 0
+RST1
+Text GLabel 13100 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 13100 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 13100 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 14600 7900 650  650 
+U 608C4A2B
+F0 "sheet608C498C" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 14600 8000 50 
+F3 "SCLK" I L 14600 8150 50 
+F4 "D-C" I L 14600 8300 50 
+F5 "CS" I R 15250 8000 50 
+F6 "RESET" I L 14600 8450 50 
+F7 "LED_DIN" I R 15250 8200 50 
+F8 "LED_DOUT" I R 15250 8350 50 
+$EndSheet
+Text GLabel 16700 8000 2    50   Input ~ 0
+K_QMark
+Text GLabel 14600 8450 0    50   Input ~ 0
+RST1
+Text GLabel 14600 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 14600 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 14600 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 16050 7900 650  650 
+U 608C4A39
+F0 "sheet608C498D" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 16050 8000 50 
+F3 "SCLK" I L 16050 8150 50 
+F4 "D-C" I L 16050 8300 50 
+F5 "CS" I R 16700 8000 50 
+F6 "RESET" I L 16050 8450 50 
+F7 "LED_DIN" I R 16700 8200 50 
+F8 "LED_DOUT" I R 16700 8350 50 
+$EndSheet
+Text GLabel 18150 8000 2    50   Input ~ 0
+K_RShift
+Text GLabel 16050 8450 0    50   Input ~ 0
+RST1
+Text GLabel 16050 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 16050 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 16050 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 17500 7900 650  650 
+U 608C4A47
+F0 "sheet608C498E" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 17500 8000 50 
+F3 "SCLK" I L 17500 8150 50 
+F4 "D-C" I L 17500 8300 50 
+F5 "CS" I R 18150 8000 50 
+F6 "RESET" I L 17500 8450 50 
+F7 "LED_DIN" I R 18150 8200 50 
+F8 "LED_DOUT" I R 18150 8350 50 
+$EndSheet
+Text GLabel 22600 8000 2    50   Input ~ 0
+K_UP
+Text GLabel 17500 8450 0    50   Input ~ 0
+RST1
+Text GLabel 17500 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 17500 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 17500 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 21950 7900 650  650 
+U 608C4A55
+F0 "sheet608C498F" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 21950 8000 50 
+F3 "SCLK" I L 21950 8150 50 
+F4 "D-C" I L 21950 8300 50 
+F5 "CS" I R 22600 8000 50 
+F6 "RESET" I L 21950 8450 50 
+F7 "LED_DIN" I R 22600 8200 50 
+F8 "LED_DOUT" I R 22600 8350 50 
+$EndSheet
+Text GLabel 21950 8450 0    50   Input ~ 0
+RST1
+Text GLabel 21950 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 21950 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 21950 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 26200 7900 650  650 
+U 608C4A62
+F0 "sheet608C4990" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 26200 8000 50 
+F3 "SCLK" I L 26200 8150 50 
+F4 "D-C" I L 26200 8300 50 
+F5 "CS" I R 26850 8000 50 
+F6 "RESET" I L 26200 8450 50 
+F7 "LED_DIN" I R 26850 8200 50 
+F8 "LED_DOUT" I R 26850 8350 50 
+$EndSheet
+Text GLabel 26850 8000 2    50   Input ~ 0
+K_KP_1
+Text GLabel 26200 8450 0    50   Input ~ 0
+RST1
+Text GLabel 26200 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 26200 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 26200 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 27700 7900 650  650 
+U 608C4A70
+F0 "sheet608C4991" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 27700 8000 50 
+F3 "SCLK" I L 27700 8150 50 
+F4 "D-C" I L 27700 8300 50 
+F5 "CS" I R 28350 8000 50 
+F6 "RESET" I L 27700 8450 50 
+F7 "LED_DIN" I R 28350 8200 50 
+F8 "LED_DOUT" I R 28350 8350 50 
+$EndSheet
+Text GLabel 28350 8000 2    50   Input ~ 0
+K_KP_2
+Text GLabel 27700 8450 0    50   Input ~ 0
+RST1
+Text GLabel 27700 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 27700 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 27700 8150 0    50   Input ~ 0
+SCK1
+$Sheet
+S 29150 7900 650  650 
+U 608C4A7E
+F0 "sheet608C4992" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 29150 8000 50 
+F3 "SCLK" I L 29150 8150 50 
+F4 "D-C" I L 29150 8300 50 
+F5 "CS" I R 29800 8000 50 
+F6 "RESET" I L 29150 8450 50 
+F7 "LED_DIN" I R 29800 8200 50 
+F8 "LED_DOUT" I R 29800 8350 50 
+$EndSheet
+Text GLabel 29800 8000 2    50   Input ~ 0
+K_KP_3
+Text GLabel 29150 8450 0    50   Input ~ 0
+RST1
+Text GLabel 29150 8000 0    50   Input ~ 0
+MOSI1
+Text GLabel 29150 8300 0    50   Input ~ 0
+MISO1
+Text GLabel 29150 8150 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	29800 8200 30250 8200
+Wire Wire Line
+	29800 8350 30150 8350
+Wire Wire Line
+	30150 8650 28800 8650
+Wire Wire Line
+	28800 8650 28800 8200
+Wire Wire Line
+	28350 8200 28800 8200
+Wire Wire Line
+	30150 8350 30150 8650
+Wire Wire Line
+	28350 8350 28700 8350
+Wire Wire Line
+	28700 8350 28700 8650
+Wire Wire Line
+	28700 8650 27350 8650
+Wire Wire Line
+	27350 8650 27350 8200
+Wire Wire Line
+	26850 8200 27350 8200
+Wire Wire Line
+	26850 8350 27200 8350
+Wire Wire Line
+	27200 8350 27200 8650
+Wire Wire Line
+	23050 8650 23050 8200
+Wire Wire Line
+	22600 8200 23050 8200
+Wire Wire Line
+	22600 8350 22950 8350
+Wire Wire Line
+	22950 8350 22950 8650
+Wire Wire Line
+	18650 8650 18650 8200
+Wire Wire Line
+	18150 8200 18650 8200
+Wire Wire Line
+	18150 8350 18500 8350
+Wire Wire Line
+	18500 8350 18500 8650
+Wire Wire Line
+	18500 8650 17150 8650
+Wire Wire Line
+	17150 8650 17150 8200
+Wire Wire Line
+	16700 8200 17150 8200
+Wire Wire Line
+	16700 8350 17050 8350
+Wire Wire Line
+	17050 8350 17050 8650
+Wire Wire Line
+	17050 8650 15700 8650
+Wire Wire Line
+	15700 8650 15700 8200
+Wire Wire Line
+	15250 8200 15700 8200
+Wire Wire Line
+	15250 8350 15600 8350
+Wire Wire Line
+	15600 8350 15600 8650
+Wire Wire Line
+	15600 8650 14250 8650
+Wire Wire Line
+	14250 8650 14250 8200
+Wire Wire Line
+	13750 8200 14250 8200
+Wire Wire Line
+	13750 8350 14100 8350
+Wire Wire Line
+	14100 8350 14100 8650
+Wire Wire Line
+	14100 8650 12750 8650
+Wire Wire Line
+	12750 8650 12750 8200
+Wire Wire Line
+	12300 8200 12750 8200
+Wire Wire Line
+	12300 8350 12650 8350
+Wire Wire Line
+	12650 8350 12650 8650
+Wire Wire Line
+	12650 8650 11300 8650
+Wire Wire Line
+	11300 8650 11300 8200
+Wire Wire Line
+	10850 8200 11300 8200
+Wire Wire Line
+	10850 8350 11200 8350
+Wire Wire Line
+	11200 8350 11200 8650
+Wire Wire Line
+	9850 8650 9850 8200
+Wire Wire Line
+	9400 8200 9850 8200
+Wire Wire Line
+	9400 8350 9750 8350
+Wire Wire Line
+	9750 8350 9750 8650
+Wire Wire Line
+	9750 8650 8400 8650
+Wire Wire Line
+	8400 8650 8400 8200
+Wire Wire Line
+	7950 8200 8400 8200
+Wire Wire Line
+	7100 8650 8300 8650
+Wire Wire Line
+	8300 8650 8300 8350
+Wire Wire Line
+	8300 8350 7950 8350
+Wire Wire Line
+	32000 8900 32000 9500
+Wire Wire Line
+	9850 8650 11200 8650
+Wire Wire Line
+	2000 6950 2400 6950
+Wire Wire Line
+	2400 6950 2400 7600
+Wire Wire Line
+	2400 7600 31650 7600
+Wire Wire Line
+	23050 8650 27200 8650
+Wire Wire Line
+	18650 8650 22950 8650
+$Sheet
+S 30650 9200 650  650 
+U 609FE437
+F0 "sheet609FE42E" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 30650 9300 50 
+F3 "SCLK" I L 30650 9450 50 
+F4 "D-C" I L 30650 9600 50 
+F5 "CS" I R 31300 9300 50 
+F6 "RESET" I L 30650 9750 50 
+F7 "LED_DIN" I R 31300 9500 50 
+F8 "LED_DOUT" I R 31300 9650 50 
+$EndSheet
+Text GLabel 31300 9300 2    50   Input ~ 0
+K_KP_Enter
+Text GLabel 30650 9750 0    50   Input ~ 0
+RST1
+Text GLabel 30650 9300 0    50   Input ~ 0
+MOSI1
+Text GLabel 30650 9600 0    50   Input ~ 0
+MISO1
+Text GLabel 30650 9450 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	31300 9500 32000 9500
+Wire Wire Line
+	31300 9650 31650 9650
+Wire Wire Line
+	30250 8200 30250 8650
+Wire Wire Line
+	30250 8650 31650 8650
+$Sheet
+S 2950 9250 650  650 
+U 60A8B8A5
+F0 "sheet60A8B88C" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 2950 9350 50 
+F3 "SCLK" I L 2950 9500 50 
+F4 "D-C" I L 2950 9650 50 
+F5 "CS" I R 3600 9350 50 
+F6 "RESET" I L 2950 9800 50 
+F7 "LED_DIN" I R 3600 9550 50 
+F8 "LED_DOUT" I R 3600 9700 50 
+$EndSheet
+Text GLabel 2950 9800 0    50   Input ~ 0
+RST1
+Text GLabel 2950 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 2950 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 2950 9500 0    50   Input ~ 0
+SCK1
+Text GLabel 3600 9350 2    50   Input ~ 0
+K_LWin
+$Sheet
+S 4400 9250 650  650 
+U 60A8B8B3
+F0 "sheet60A8B88D" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 4400 9350 50 
+F3 "SCLK" I L 4400 9500 50 
+F4 "D-C" I L 4400 9650 50 
+F5 "CS" I R 5050 9350 50 
+F6 "RESET" I L 4400 9800 50 
+F7 "LED_DIN" I R 5050 9550 50 
+F8 "LED_DOUT" I R 5050 9700 50 
+$EndSheet
+Text GLabel 5050 9350 2    50   Input ~ 0
+K_LAlt
+Text GLabel 4400 9800 0    50   Input ~ 0
+RST1
+Text GLabel 4400 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 4400 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 4400 9500 0    50   Input ~ 0
+SCK1
+$Sheet
+S 5850 9250 650  650 
+U 60A8B8C1
+F0 "sheet60A8B88E" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 5850 9350 50 
+F3 "SCLK" I L 5850 9500 50 
+F4 "D-C" I L 5850 9650 50 
+F5 "CS" I R 6500 9350 50 
+F6 "RESET" I L 5850 9800 50 
+F7 "LED_DIN" I R 6500 9550 50 
+F8 "LED_DOUT" I R 6500 9700 50 
+$EndSheet
+Text GLabel 6500 9350 2    50   Input ~ 0
+K_Hanja
+Text GLabel 5850 9800 0    50   Input ~ 0
+RST1
+Text GLabel 5850 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 5850 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 5850 9500 0    50   Input ~ 0
+SCK1
+$Sheet
+S 7300 9250 650  650 
+U 60A8B8CF
+F0 "sheet60A8B88F" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 7300 9350 50 
+F3 "SCLK" I L 7300 9500 50 
+F4 "D-C" I L 7300 9650 50 
+F5 "CS" I R 7950 9350 50 
+F6 "RESET" I L 7300 9800 50 
+F7 "LED_DIN" I R 7950 9550 50 
+F8 "LED_DOUT" I R 7950 9700 50 
+$EndSheet
+Text GLabel 7950 9350 2    50   Input ~ 0
+K_Space
+Text GLabel 7300 9800 0    50   Input ~ 0
+RST1
+Text GLabel 7300 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 7300 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 7300 9500 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	7100 10000 7100 9550
+Wire Wire Line
+	5500 10000 5500 9550
+Wire Wire Line
+	5050 9550 5500 9550
+Wire Wire Line
+	5050 9700 5450 9700
+Wire Wire Line
+	5450 9700 5450 10000
+Wire Wire Line
+	5450 10000 4200 10000
+Wire Wire Line
+	4200 10000 4200 9550
+Wire Wire Line
+	3600 9550 4200 9550
+$Sheet
+S 1350 9250 650  650 
+U 60A8B8E5
+F0 "sheet60A8B890" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 1350 9350 50 
+F3 "SCLK" I L 1350 9500 50 
+F4 "D-C" I L 1350 9650 50 
+F5 "CS" I R 2000 9350 50 
+F6 "RESET" I L 1350 9800 50 
+F7 "LED_DIN" I R 2000 9550 50 
+F8 "LED_DOUT" I R 2000 9700 50 
+$EndSheet
+Text GLabel 1350 9800 0    50   Input ~ 0
+RST1
+Text GLabel 1350 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 1350 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 1350 9500 0    50   Input ~ 0
+SCK1
+Text GLabel 2000 9350 2    50   Input ~ 0
+K_LCtrl
+Wire Wire Line
+	2550 10000 4050 10000
+Wire Wire Line
+	4050 9700 3600 9700
+Wire Wire Line
+	6500 9700 7050 9700
+Wire Wire Line
+	6500 9550 7100 9550
+Wire Wire Line
+	5500 10000 7050 10000
+Wire Wire Line
+	7050 10000 7050 9700
+Wire Wire Line
+	2550 9550 2000 9550
+Wire Wire Line
+	4050 9700 4050 10000
+Wire Wire Line
+	2550 9550 2550 10000
+$Sheet
+S 8750 9250 650  650 
+U 60A8B8FC
+F0 "sheet60A8B891" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 8750 9350 50 
+F3 "SCLK" I L 8750 9500 50 
+F4 "D-C" I L 8750 9650 50 
+F5 "CS" I R 9400 9350 50 
+F6 "RESET" I L 8750 9800 50 
+F7 "LED_DIN" I R 9400 9550 50 
+F8 "LED_DOUT" I R 9400 9700 50 
+$EndSheet
+Text GLabel 9400 9350 2    50   Input ~ 0
+K_HanYoung
+Text GLabel 8750 9800 0    50   Input ~ 0
+RST1
+Text GLabel 8750 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 8750 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 8750 9500 0    50   Input ~ 0
+SCK1
+Text GLabel 10850 9350 2    50   Input ~ 0
+K_RAlt
+$Sheet
+S 10200 9250 650  650 
+U 60A8B90B
+F0 "sheet60A8B892" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 10200 9350 50 
+F3 "SCLK" I L 10200 9500 50 
+F4 "D-C" I L 10200 9650 50 
+F5 "CS" I R 10850 9350 50 
+F6 "RESET" I L 10200 9800 50 
+F7 "LED_DIN" I R 10850 9550 50 
+F8 "LED_DOUT" I R 10850 9700 50 
+$EndSheet
+Text GLabel 12300 9350 2    50   Input ~ 0
+K_CtxMenu
+Text GLabel 10200 9800 0    50   Input ~ 0
+RST1
+Text GLabel 10200 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 10200 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 10200 9500 0    50   Input ~ 0
+SCK1
+$Sheet
+S 11650 9250 650  650 
+U 60A8B919
+F0 "sheet60A8B893" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 11650 9350 50 
+F3 "SCLK" I L 11650 9500 50 
+F4 "D-C" I L 11650 9650 50 
+F5 "CS" I R 12300 9350 50 
+F6 "RESET" I L 11650 9800 50 
+F7 "LED_DIN" I R 12300 9550 50 
+F8 "LED_DOUT" I R 12300 9700 50 
+$EndSheet
+Text GLabel 21100 9350 2    50   Input ~ 0
+K_LEFT
+Text GLabel 11650 9800 0    50   Input ~ 0
+RST1
+Text GLabel 11650 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 11650 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 11650 9500 0    50   Input ~ 0
+SCK1
+$Sheet
+S 20450 9250 650  650 
+U 60A8B927
+F0 "sheet60A8B894" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 20450 9350 50 
+F3 "SCLK" I L 20450 9500 50 
+F4 "D-C" I L 20450 9650 50 
+F5 "CS" I R 21100 9350 50 
+F6 "RESET" I L 20450 9800 50 
+F7 "LED_DIN" I R 21100 9550 50 
+F8 "LED_DOUT" I R 21100 9700 50 
+$EndSheet
+Text GLabel 22600 9350 2    50   Input ~ 0
+K_DOWN
+Text GLabel 20450 9800 0    50   Input ~ 0
+RST1
+Text GLabel 20450 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 20450 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 20450 9500 0    50   Input ~ 0
+SCK1
+$Sheet
+S 21950 9250 650  650 
+U 60A8B935
+F0 "sheet60A8B895" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 21950 9350 50 
+F3 "SCLK" I L 21950 9500 50 
+F4 "D-C" I L 21950 9650 50 
+F5 "CS" I R 22600 9350 50 
+F6 "RESET" I L 21950 9800 50 
+F7 "LED_DIN" I R 22600 9550 50 
+F8 "LED_DOUT" I R 22600 9700 50 
+$EndSheet
+Text GLabel 24050 9350 2    50   Input ~ 0
+K_RIGHT
+Text GLabel 21950 9800 0    50   Input ~ 0
+RST1
+Text GLabel 21950 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 21950 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 21950 9500 0    50   Input ~ 0
+SCK1
+$Sheet
+S 23400 9250 650  650 
+U 60A8B943
+F0 "sheet60A8B896" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 23400 9350 50 
+F3 "SCLK" I L 23400 9500 50 
+F4 "D-C" I L 23400 9650 50 
+F5 "CS" I R 24050 9350 50 
+F6 "RESET" I L 23400 9800 50 
+F7 "LED_DIN" I R 24050 9550 50 
+F8 "LED_DOUT" I R 24050 9700 50 
+$EndSheet
+Text GLabel 23400 9800 0    50   Input ~ 0
+RST1
+Text GLabel 23400 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 23400 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 23400 9500 0    50   Input ~ 0
+SCK1
+$Sheet
+S 29150 9250 650  650 
+U 60A8B988
+F0 "sheet60A8B89B" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 29150 9350 50 
+F3 "SCLK" I L 29150 9500 50 
+F4 "D-C" I L 29150 9650 50 
+F5 "CS" I R 29800 9350 50 
+F6 "RESET" I L 29150 9800 50 
+F7 "LED_DIN" I R 29800 9550 50 
+F8 "LED_DOUT" I R 29800 9700 50 
+$EndSheet
+Text GLabel 29800 9350 2    50   Input ~ 0
+K_KP_DOT
+Text GLabel 29150 9800 0    50   Input ~ 0
+RST1
+Text GLabel 29150 9500 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	29800 9550 30250 9550
+Wire Wire Line
+	29800 9700 30150 9700
+Wire Wire Line
+	30150 9700 30150 10000
+Wire Wire Line
+	24050 9700 24400 9700
+Wire Wire Line
+	24400 9700 24400 10000
+Wire Wire Line
+	24400 10000 23050 10000
+Wire Wire Line
+	23050 10000 23050 9550
+Wire Wire Line
+	22600 9550 23050 9550
+Wire Wire Line
+	22600 9700 22950 9700
+Wire Wire Line
+	22950 9700 22950 10000
+Wire Wire Line
+	22950 10000 21600 10000
+Wire Wire Line
+	21600 10000 21600 9550
+Wire Wire Line
+	21100 9550 21600 9550
+Wire Wire Line
+	21100 9700 21450 9700
+Wire Wire Line
+	21450 9700 21450 10000
+Wire Wire Line
+	12750 10000 12750 9550
+Wire Wire Line
+	12300 9550 12750 9550
+Wire Wire Line
+	12300 9700 12650 9700
+Wire Wire Line
+	12650 9700 12650 10000
+Wire Wire Line
+	12650 10000 11300 10000
+Wire Wire Line
+	11300 10000 11300 9550
+Wire Wire Line
+	10850 9550 11300 9550
+Wire Wire Line
+	10850 9700 11200 9700
+Wire Wire Line
+	11200 9700 11200 10000
+Wire Wire Line
+	9850 10000 9850 9550
+Wire Wire Line
+	9400 9550 9850 9550
+Wire Wire Line
+	9400 9700 9750 9700
+Wire Wire Line
+	9750 9700 9750 10000
+Wire Wire Line
+	9750 10000 8400 10000
+Wire Wire Line
+	8400 10000 8400 9550
+Wire Wire Line
+	7950 9550 8400 9550
+Wire Wire Line
+	7100 10000 8300 10000
+Wire Wire Line
+	8300 10000 8300 9700
+Wire Wire Line
+	8300 9700 7950 9700
+Wire Wire Line
+	9850 10000 11200 10000
+Wire Wire Line
+	30250 9550 30250 10000
+Wire Wire Line
+	2000 8350 2400 8350
+Wire Wire Line
+	2400 8350 2400 8900
+Wire Wire Line
+	2400 8900 32000 8900
+Wire Wire Line
+	24550 10000 24550 9550
+Wire Wire Line
+	24550 9550 24050 9550
+Text GLabel 29150 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 29150 9350 0    50   Input ~ 0
+MOSI1
+Wire Wire Line
+	30150 10000 28800 10000
+$Sheet
+S 27700 9250 650  650 
+U 60A8B97A
+F0 "sheet60A8B89A" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 27700 9350 50 
+F3 "SCLK" I L 27700 9500 50 
+F4 "D-C" I L 27700 9650 50 
+F5 "CS" I R 28350 9350 50 
+F6 "RESET" I L 27700 9800 50 
+F7 "LED_DIN" I R 28350 9550 50 
+F8 "LED_DOUT" I R 28350 9700 50 
+$EndSheet
+Text GLabel 28350 9350 2    50   Input ~ 0
+K_KP_0
+Text GLabel 27700 9800 0    50   Input ~ 0
+RST1
+Text GLabel 27700 9500 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	28800 10000 28800 9550
+Wire Wire Line
+	28350 9550 28800 9550
+Wire Wire Line
+	28350 9700 28700 9700
+Wire Wire Line
+	28700 9700 28700 10000
+Text GLabel 27700 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 27700 9350 0    50   Input ~ 0
+MOSI1
+Wire Wire Line
+	24550 10000 28700 10000
+Wire Wire Line
+	30250 10000 31650 10000
+NoConn ~ 2000 9700
+Text GLabel 13750 9350 2    50   Input ~ 0
+K_RCtrl
+$Sheet
+S 13100 9250 650  650 
+U 60F911DE
+F0 "sheet60F911D4" 50
+F1 "SSD1306_TO_SPI.sch" 50
+F2 "SDIN" I L 13100 9350 50 
+F3 "SCLK" I L 13100 9500 50 
+F4 "D-C" I L 13100 9650 50 
+F5 "CS" I R 13750 9350 50 
+F6 "RESET" I L 13100 9800 50 
+F7 "LED_DIN" I R 13750 9550 50 
+F8 "LED_DOUT" I R 13750 9700 50 
+$EndSheet
+Text GLabel 13100 9800 0    50   Input ~ 0
+RST1
+Text GLabel 13100 9350 0    50   Input ~ 0
+MOSI1
+Text GLabel 13100 9650 0    50   Input ~ 0
+MISO1
+Text GLabel 13100 9500 0    50   Input ~ 0
+SCK1
+Wire Wire Line
+	14200 10000 14200 9550
+Wire Wire Line
+	13750 9550 14200 9550
+Wire Wire Line
+	13750 9700 14100 9700
+Wire Wire Line
+	14100 9700 14100 10000
+Wire Wire Line
+	12750 10000 14100 10000
+Wire Wire Line
+	14200 10000 21450 10000
+$Comp
+L power:GND #PWR?
+U 1 1 6055DDC9
+P 28650 17650
+AR Path="/60775168/6055A56C/6055DDC9" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6055DDC9" Ref="#PWR01073"  Part="1" 
+F 0 "#PWR01073" H 28650 17400 50  0001 C CNN
+F 1 "GND" V 28655 17522 50  0000 R CNN
+F 2 "" H 28650 17650 50  0001 C CNN
+F 3 "" H 28650 17650 50  0001 C CNN
+	1    28650 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6055DDCF
+P 29950 17650
+AR Path="/60775168/6055A56C/6055DDCF" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6055DDCF" Ref="#PWR01074"  Part="1" 
+F 0 "#PWR01074" H 29950 17500 50  0001 C CNN
+F 1 "+3.3V" V 30100 17650 50  0000 L CNN
+F 2 "" H 29950 17650 50  0001 C CNN
+F 3 "" H 29950 17650 50  0001 C CNN
+	1    29950 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 14600 14250 0    50   Input ~ 0
+SPI1_SS
+Text GLabel 29550 17250 1    50   Input ~ 0
+SHIFTR_CLK
+Text GLabel 29250 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6055DDDD
+P 15150 14250
+AR Path="/60775168/6055A56C/6055DDDD" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6055DDDD" Ref="#PWR01047"  Part="1" 
+F 0 "#PWR01047" H 15150 14100 50  0001 C CNN
+F 1 "+3.3V" H 15100 14400 50  0000 C CNN
+F 2 "" H 15150 14250 50  0001 C CNN
+F 3 "" H 15150 14250 50  0001 C CNN
+	1    15150 14250
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6055DDE3
+P 16050 14450
+AR Path="/60775168/6055A56C/6055DDE3" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6055DDE3" Ref="#PWR01048"  Part="1" 
+F 0 "#PWR01048" H 16050 14300 50  0001 C CNN
+F 1 "+3.3V" H 16065 14623 50  0000 C CNN
+F 2 "" H 16050 14450 50  0001 C CNN
+F 3 "" H 16050 14450 50  0001 C CNN
+	1    16050 14450
+	-1   0    0    1   
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x03 J?
+U 1 1 6055DDE9
+P 16150 14250
+AR Path="/60775168/6055A56C/6055DDE9" Ref="J?"  Part="1" 
+AR Path="/60775168/6055DDE9" Ref="J502"  Part="1" 
+F 0 "J502" V 16250 14000 50  0000 C CNN
+F 1 "/MR" V 16250 14250 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 16150 14250 50  0001 C CNN
+F 3 "~" H 16150 14250 50  0001 C CNN
+	1    16150 14250
+	0    -1   -1   0   
+$EndComp
+Text GLabel 16550 14450 2    50   Input ~ 0
+SHIFTR_NMASTER_RST
+Text Notes 14100 12800 0    197  ~ 39
+Display Selection
+$Comp
+L Connector_Generic:Conn_01x03 J?
+U 1 1 6055DDFA
+P 15050 14050
+AR Path="/60775168/6055A56C/6055DDFA" Ref="J?"  Part="1" 
+AR Path="/60775168/6055DDFA" Ref="J501"  Part="1" 
+F 0 "J501" V 15150 14300 50  0000 C CNN
+F 1 "/OE" V 15150 14050 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 15050 14050 50  0001 C CNN
+F 3 "~" H 15050 14050 50  0001 C CNN
+	1    15050 14050
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	16250 14450 16550 14450
+Wire Wire Line
+	15050 14450 15050 14250
+Wire Wire Line
+	14950 14250 14600 14250
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 6055DE09
+P 27450 17650
+AR Path="/60775168/6055A56C/6055DE09" Ref="U?"  Part="1" 
+AR Path="/60775168/6055DE09" Ref="U512"  Part="1" 
+F 0 "U512" V 27200 16900 50  0000 L CNN
+F 1 "74HCT595" V 27050 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 27450 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 27450 17650 50  0001 C CNN
+F 4 "C6767" V 27250 18200 50  0000 L BNN "LCSC"
+	1    27450 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 6055DE0F
+P 26750 17650
+AR Path="/60775168/6055A56C/6055DE0F" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6055DE0F" Ref="#PWR01071"  Part="1" 
+F 0 "#PWR01071" H 26750 17400 50  0001 C CNN
+F 1 "GND" V 26755 17522 50  0000 R CNN
+F 2 "" H 26750 17650 50  0001 C CNN
+F 3 "" H 26750 17650 50  0001 C CNN
+	1    26750 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6055DE15
+P 28050 17650
+AR Path="/60775168/6055A56C/6055DE15" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6055DE15" Ref="#PWR01072"  Part="1" 
+F 0 "#PWR01072" H 28050 17500 50  0001 C CNN
+F 1 "+3.3V" V 28200 17650 50  0000 L CNN
+F 2 "" H 28050 17650 50  0001 C CNN
+F 3 "" H 28050 17650 50  0001 C CNN
+	1    28050 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 27350 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+Wire Wire Line
+	28850 18050 28300 18050
+Wire Wire Line
+	28300 18050 28300 17250
+Wire Wire Line
+	28300 17250 27850 17250
+Text GLabel 27650 17250 1    50   Input ~ 0
+SHIFTR_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 6055DDC3
+P 29350 17650
+AR Path="/60775168/6055A56C/6055DDC3" Ref="U?"  Part="1" 
+AR Path="/60775168/6055DDC3" Ref="U513"  Part="1" 
+F 0 "U513" V 29100 16900 50  0000 L CNN
+F 1 "74HCT595" V 28950 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 29350 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 29350 17650 50  0001 C CNN
+F 4 "C6767" V 29150 18250 50  0000 L BNN "LCSC"
+	1    29350 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 29750 17250 1    50   Input ~ 0
+SHIFTR_DATA
+Text GLabel 16150 14650 3    50   Input ~ 0
+SHIFTR_RST
+Wire Wire Line
+	16150 14650 16150 14450
+Text GLabel 29450 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 27550 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 15050 14450 3    50   Input ~ 0
+SHIFTR_NOE
+Text GLabel 29150 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Text GLabel 27250 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Wire Wire Line
+	26950 18050 26400 18050
+Wire Wire Line
+	26400 18050 26400 17250
+Wire Wire Line
+	26400 17250 25950 17250
+$Comp
+L power:GND #PWR?
+U 1 1 60F6D761
+P 24850 17650
+AR Path="/60775168/6055A56C/60F6D761" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60F6D761" Ref="#PWR01069"  Part="1" 
+F 0 "#PWR01069" H 24850 17400 50  0001 C CNN
+F 1 "GND" V 24855 17522 50  0000 R CNN
+F 2 "" H 24850 17650 50  0001 C CNN
+F 3 "" H 24850 17650 50  0001 C CNN
+	1    24850 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 60F6D767
+P 26150 17650
+AR Path="/60775168/6055A56C/60F6D767" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60F6D767" Ref="#PWR01070"  Part="1" 
+F 0 "#PWR01070" H 26150 17500 50  0001 C CNN
+F 1 "+3.3V" V 26300 17650 50  0000 L CNN
+F 2 "" H 26150 17650 50  0001 C CNN
+F 3 "" H 26150 17650 50  0001 C CNN
+	1    26150 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 25750 17250 1    50   Input ~ 0
+SHIFTR_CLK
+Text GLabel 25450 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 60F6D770
+P 23650 17650
+AR Path="/60775168/6055A56C/60F6D770" Ref="U?"  Part="1" 
+AR Path="/60775168/60F6D770" Ref="U510"  Part="1" 
+F 0 "U510" V 23400 16900 50  0000 L CNN
+F 1 "74HCT595" V 23250 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 23650 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 23650 17650 50  0001 C CNN
+F 4 "C6767" V 23450 18200 50  0000 L BNN "LCSC"
+	1    23650 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60F6D776
+P 22950 17650
+AR Path="/60775168/6055A56C/60F6D776" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60F6D776" Ref="#PWR01067"  Part="1" 
+F 0 "#PWR01067" H 22950 17400 50  0001 C CNN
+F 1 "GND" V 22955 17522 50  0000 R CNN
+F 2 "" H 22950 17650 50  0001 C CNN
+F 3 "" H 22950 17650 50  0001 C CNN
+	1    22950 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 60F6D77C
+P 24250 17650
+AR Path="/60775168/6055A56C/60F6D77C" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60F6D77C" Ref="#PWR01068"  Part="1" 
+F 0 "#PWR01068" H 24250 17500 50  0001 C CNN
+F 1 "+3.3V" V 24400 17650 50  0000 L CNN
+F 2 "" H 24250 17650 50  0001 C CNN
+F 3 "" H 24250 17650 50  0001 C CNN
+	1    24250 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 23550 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+Wire Wire Line
+	25050 18050 24500 18050
+Wire Wire Line
+	24500 18050 24500 17250
+Wire Wire Line
+	24500 17250 24050 17250
+Text GLabel 23850 17250 1    50   Input ~ 0
+SHIFTR_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 60F6D788
+P 25550 17650
+AR Path="/60775168/6055A56C/60F6D788" Ref="U?"  Part="1" 
+AR Path="/60775168/60F6D788" Ref="U511"  Part="1" 
+F 0 "U511" V 25300 16900 50  0000 L CNN
+F 1 "74HCT595" V 25150 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 25550 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 25550 17650 50  0001 C CNN
+F 4 "C6767" V 25350 18250 50  0000 L BNN "LCSC"
+	1    25550 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 25650 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 23750 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 25350 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Text GLabel 23450 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Wire Wire Line
+	23150 18050 22600 18050
+Wire Wire Line
+	22600 18050 22600 17250
+Wire Wire Line
+	22600 17250 22150 17250
+$Comp
+L power:GND #PWR?
+U 1 1 60FD077B
+P 21050 17650
+AR Path="/60775168/6055A56C/60FD077B" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60FD077B" Ref="#PWR01065"  Part="1" 
+F 0 "#PWR01065" H 21050 17400 50  0001 C CNN
+F 1 "GND" V 21055 17522 50  0000 R CNN
+F 2 "" H 21050 17650 50  0001 C CNN
+F 3 "" H 21050 17650 50  0001 C CNN
+	1    21050 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 60FD0781
+P 22350 17650
+AR Path="/60775168/6055A56C/60FD0781" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60FD0781" Ref="#PWR01066"  Part="1" 
+F 0 "#PWR01066" H 22350 17500 50  0001 C CNN
+F 1 "+3.3V" V 22500 17650 50  0000 L CNN
+F 2 "" H 22350 17650 50  0001 C CNN
+F 3 "" H 22350 17650 50  0001 C CNN
+	1    22350 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 21950 17250 1    50   Input ~ 0
+SHIFTR_CLK
+Text GLabel 21650 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 60FD078A
+P 19850 17650
+AR Path="/60775168/6055A56C/60FD078A" Ref="U?"  Part="1" 
+AR Path="/60775168/60FD078A" Ref="U508"  Part="1" 
+F 0 "U508" V 19600 16900 50  0000 L CNN
+F 1 "74HCT595" V 19450 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 19850 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 19850 17650 50  0001 C CNN
+F 4 "C6767" V 19650 18200 50  0000 L BNN "LCSC"
+	1    19850 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60FD0790
+P 19150 17650
+AR Path="/60775168/6055A56C/60FD0790" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60FD0790" Ref="#PWR01063"  Part="1" 
+F 0 "#PWR01063" H 19150 17400 50  0001 C CNN
+F 1 "GND" V 19155 17522 50  0000 R CNN
+F 2 "" H 19150 17650 50  0001 C CNN
+F 3 "" H 19150 17650 50  0001 C CNN
+	1    19150 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 60FD0796
+P 20450 17650
+AR Path="/60775168/6055A56C/60FD0796" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60FD0796" Ref="#PWR01064"  Part="1" 
+F 0 "#PWR01064" H 20450 17500 50  0001 C CNN
+F 1 "+3.3V" V 20600 17650 50  0000 L CNN
+F 2 "" H 20450 17650 50  0001 C CNN
+F 3 "" H 20450 17650 50  0001 C CNN
+	1    20450 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 19750 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+Wire Wire Line
+	21250 18050 20700 18050
+Wire Wire Line
+	20700 18050 20700 17250
+Wire Wire Line
+	20700 17250 20250 17250
+Text GLabel 20050 17250 1    50   Input ~ 0
+SHIFTR_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 60FD07A2
+P 21750 17650
+AR Path="/60775168/6055A56C/60FD07A2" Ref="U?"  Part="1" 
+AR Path="/60775168/60FD07A2" Ref="U509"  Part="1" 
+F 0 "U509" V 21500 16900 50  0000 L CNN
+F 1 "74HCT595" V 21350 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 21750 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 21750 17650 50  0001 C CNN
+F 4 "C6767" V 21550 18250 50  0000 L BNN "LCSC"
+	1    21750 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 21850 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 19950 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 21550 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Text GLabel 19650 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Wire Wire Line
+	19350 18050 18800 18050
+Wire Wire Line
+	18800 18050 18800 17250
+Wire Wire Line
+	18800 17250 18350 17250
+$Comp
+L power:GND #PWR?
+U 1 1 60FD07B0
+P 17250 17650
+AR Path="/60775168/6055A56C/60FD07B0" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60FD07B0" Ref="#PWR01061"  Part="1" 
+F 0 "#PWR01061" H 17250 17400 50  0001 C CNN
+F 1 "GND" V 17255 17522 50  0000 R CNN
+F 2 "" H 17250 17650 50  0001 C CNN
+F 3 "" H 17250 17650 50  0001 C CNN
+	1    17250 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 60FD07B6
+P 18550 17650
+AR Path="/60775168/6055A56C/60FD07B6" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60FD07B6" Ref="#PWR01062"  Part="1" 
+F 0 "#PWR01062" H 18550 17500 50  0001 C CNN
+F 1 "+3.3V" V 18700 17650 50  0000 L CNN
+F 2 "" H 18550 17650 50  0001 C CNN
+F 3 "" H 18550 17650 50  0001 C CNN
+	1    18550 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 18150 17250 1    50   Input ~ 0
+SHIFTR_CLK
+Text GLabel 17850 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 60FD07BF
+P 16050 17650
+AR Path="/60775168/6055A56C/60FD07BF" Ref="U?"  Part="1" 
+AR Path="/60775168/60FD07BF" Ref="U506"  Part="1" 
+F 0 "U506" V 15800 16900 50  0000 L CNN
+F 1 "74HCT595" V 15650 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 16050 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 16050 17650 50  0001 C CNN
+F 4 "C6767" V 15850 18200 50  0000 L BNN "LCSC"
+	1    16050 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60FD07C5
+P 15350 17650
+AR Path="/60775168/6055A56C/60FD07C5" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60FD07C5" Ref="#PWR01059"  Part="1" 
+F 0 "#PWR01059" H 15350 17400 50  0001 C CNN
+F 1 "GND" V 15355 17522 50  0000 R CNN
+F 2 "" H 15350 17650 50  0001 C CNN
+F 3 "" H 15350 17650 50  0001 C CNN
+	1    15350 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 60FD07CB
+P 16650 17650
+AR Path="/60775168/6055A56C/60FD07CB" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/60FD07CB" Ref="#PWR01060"  Part="1" 
+F 0 "#PWR01060" H 16650 17500 50  0001 C CNN
+F 1 "+3.3V" V 16800 17650 50  0000 L CNN
+F 2 "" H 16650 17650 50  0001 C CNN
+F 3 "" H 16650 17650 50  0001 C CNN
+	1    16650 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 15950 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+Wire Wire Line
+	17450 18050 16900 18050
+Wire Wire Line
+	16900 18050 16900 17250
+Wire Wire Line
+	16900 17250 16450 17250
+Text GLabel 16250 17250 1    50   Input ~ 0
+SHIFTR_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 60FD07D7
+P 17950 17650
+AR Path="/60775168/6055A56C/60FD07D7" Ref="U?"  Part="1" 
+AR Path="/60775168/60FD07D7" Ref="U507"  Part="1" 
+F 0 "U507" V 17700 16900 50  0000 L CNN
+F 1 "74HCT595" V 17550 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 17950 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 17950 17650 50  0001 C CNN
+F 4 "C6767" V 17750 18250 50  0000 L BNN "LCSC"
+	1    17950 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 18050 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 16150 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 17750 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Text GLabel 15850 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Wire Wire Line
+	15550 18050 15000 18050
+Wire Wire Line
+	15000 18050 15000 17250
+Wire Wire Line
+	15000 17250 14550 17250
+$Comp
+L power:GND #PWR?
+U 1 1 6109EE70
+P 13450 17650
+AR Path="/60775168/6055A56C/6109EE70" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6109EE70" Ref="#PWR01057"  Part="1" 
+F 0 "#PWR01057" H 13450 17400 50  0001 C CNN
+F 1 "GND" V 13455 17522 50  0000 R CNN
+F 2 "" H 13450 17650 50  0001 C CNN
+F 3 "" H 13450 17650 50  0001 C CNN
+	1    13450 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6109EE76
+P 14750 17650
+AR Path="/60775168/6055A56C/6109EE76" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6109EE76" Ref="#PWR01058"  Part="1" 
+F 0 "#PWR01058" H 14750 17500 50  0001 C CNN
+F 1 "+3.3V" V 14900 17650 50  0000 L CNN
+F 2 "" H 14750 17650 50  0001 C CNN
+F 3 "" H 14750 17650 50  0001 C CNN
+	1    14750 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 14350 17250 1    50   Input ~ 0
+SHIFTR_CLK
+Text GLabel 14050 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 6109EE7F
+P 12250 17650
+AR Path="/60775168/6055A56C/6109EE7F" Ref="U?"  Part="1" 
+AR Path="/60775168/6109EE7F" Ref="U504"  Part="1" 
+F 0 "U504" V 12000 16900 50  0000 L CNN
+F 1 "74HCT595" V 11850 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 12250 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 12250 17650 50  0001 C CNN
+F 4 "C6767" V 12050 18200 50  0000 L BNN "LCSC"
+	1    12250 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 6109EE85
+P 11550 17650
+AR Path="/60775168/6055A56C/6109EE85" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6109EE85" Ref="#PWR01055"  Part="1" 
+F 0 "#PWR01055" H 11550 17400 50  0001 C CNN
+F 1 "GND" V 11555 17522 50  0000 R CNN
+F 2 "" H 11550 17650 50  0001 C CNN
+F 3 "" H 11550 17650 50  0001 C CNN
+	1    11550 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6109EE8B
+P 12850 17650
+AR Path="/60775168/6055A56C/6109EE8B" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6109EE8B" Ref="#PWR01056"  Part="1" 
+F 0 "#PWR01056" H 12850 17500 50  0001 C CNN
+F 1 "+3.3V" V 13000 17650 50  0000 L CNN
+F 2 "" H 12850 17650 50  0001 C CNN
+F 3 "" H 12850 17650 50  0001 C CNN
+	1    12850 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 12150 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+Wire Wire Line
+	13650 18050 13100 18050
+Wire Wire Line
+	13100 18050 13100 17250
+Wire Wire Line
+	13100 17250 12650 17250
+Text GLabel 12450 17250 1    50   Input ~ 0
+SHIFTR_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 6109EE97
+P 14150 17650
+AR Path="/60775168/6055A56C/6109EE97" Ref="U?"  Part="1" 
+AR Path="/60775168/6109EE97" Ref="U505"  Part="1" 
+F 0 "U505" V 13900 16900 50  0000 L CNN
+F 1 "74HCT595" V 13750 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 14150 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 14150 17650 50  0001 C CNN
+F 4 "C6767" V 13950 18250 50  0000 L BNN "LCSC"
+	1    14150 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 14250 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 12350 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 13950 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Text GLabel 12050 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Wire Wire Line
+	11750 18050 11200 18050
+Wire Wire Line
+	11200 18050 11200 17250
+Wire Wire Line
+	11200 17250 10750 17250
+$Comp
+L power:GND #PWR?
+U 1 1 6109EEA5
+P 9650 17650
+AR Path="/60775168/6055A56C/6109EEA5" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6109EEA5" Ref="#PWR01053"  Part="1" 
+F 0 "#PWR01053" H 9650 17400 50  0001 C CNN
+F 1 "GND" V 9655 17522 50  0000 R CNN
+F 2 "" H 9650 17650 50  0001 C CNN
+F 3 "" H 9650 17650 50  0001 C CNN
+	1    9650 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6109EEAB
+P 10950 17650
+AR Path="/60775168/6055A56C/6109EEAB" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6109EEAB" Ref="#PWR01054"  Part="1" 
+F 0 "#PWR01054" H 10950 17500 50  0001 C CNN
+F 1 "+3.3V" V 11100 17650 50  0000 L CNN
+F 2 "" H 10950 17650 50  0001 C CNN
+F 3 "" H 10950 17650 50  0001 C CNN
+	1    10950 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 10550 17250 1    50   Input ~ 0
+SHIFTR_CLK
+Text GLabel 10250 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 6109EEB4
+P 8450 17650
+AR Path="/60775168/6055A56C/6109EEB4" Ref="U?"  Part="1" 
+AR Path="/60775168/6109EEB4" Ref="U502"  Part="1" 
+F 0 "U502" V 8200 16900 50  0000 L CNN
+F 1 "74HCT595" V 8050 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 8450 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 8450 17650 50  0001 C CNN
+F 4 "C6767" V 8250 18200 50  0000 L BNN "LCSC"
+	1    8450 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 6109EEBA
+P 7750 17650
+AR Path="/60775168/6055A56C/6109EEBA" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6109EEBA" Ref="#PWR01051"  Part="1" 
+F 0 "#PWR01051" H 7750 17400 50  0001 C CNN
+F 1 "GND" V 7755 17522 50  0000 R CNN
+F 2 "" H 7750 17650 50  0001 C CNN
+F 3 "" H 7750 17650 50  0001 C CNN
+	1    7750 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6109EEC0
+P 9050 17650
+AR Path="/60775168/6055A56C/6109EEC0" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6109EEC0" Ref="#PWR01052"  Part="1" 
+F 0 "#PWR01052" H 9050 17500 50  0001 C CNN
+F 1 "+3.3V" V 9200 17650 50  0000 L CNN
+F 2 "" H 9050 17650 50  0001 C CNN
+F 3 "" H 9050 17650 50  0001 C CNN
+	1    9050 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 8350 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+Wire Wire Line
+	9850 18050 9300 18050
+Wire Wire Line
+	9300 18050 9300 17250
+Wire Wire Line
+	9300 17250 8850 17250
+Text GLabel 8650 17250 1    50   Input ~ 0
+SHIFTR_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 6109EECC
+P 10350 17650
+AR Path="/60775168/6055A56C/6109EECC" Ref="U?"  Part="1" 
+AR Path="/60775168/6109EECC" Ref="U503"  Part="1" 
+F 0 "U503" V 10100 16900 50  0000 L CNN
+F 1 "74HCT595" V 9950 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 10350 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 10350 17650 50  0001 C CNN
+F 4 "C6767" V 10150 18250 50  0000 L BNN "LCSC"
+	1    10350 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 10450 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 8550 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 10150 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Text GLabel 8250 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Wire Wire Line
+	7950 18050 7400 18050
+Wire Wire Line
+	7400 18050 7400 17250
+Wire Wire Line
+	7400 17250 6950 17250
+$Comp
+L power:GND #PWR?
+U 1 1 6109EEDA
+P 5850 17650
+AR Path="/60775168/6055A56C/6109EEDA" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6109EEDA" Ref="#PWR01049"  Part="1" 
+F 0 "#PWR01049" H 5850 17400 50  0001 C CNN
+F 1 "GND" V 5855 17522 50  0000 R CNN
+F 2 "" H 5850 17650 50  0001 C CNN
+F 3 "" H 5850 17650 50  0001 C CNN
+	1    5850 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6109EEE0
+P 7150 17650
+AR Path="/60775168/6055A56C/6109EEE0" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6109EEE0" Ref="#PWR01050"  Part="1" 
+F 0 "#PWR01050" H 7150 17500 50  0001 C CNN
+F 1 "+3.3V" V 7300 17650 50  0000 L CNN
+F 2 "" H 7150 17650 50  0001 C CNN
+F 3 "" H 7150 17650 50  0001 C CNN
+	1    7150 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 6750 17250 1    50   Input ~ 0
+SHIFTR_CLK
+Text GLabel 6450 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 6109EF01
+P 6550 17650
+AR Path="/60775168/6055A56C/6109EF01" Ref="U?"  Part="1" 
+AR Path="/60775168/6109EF01" Ref="U501"  Part="1" 
+F 0 "U501" V 6300 16900 50  0000 L CNN
+F 1 "74HCT595" V 6150 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 6550 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 6550 17650 50  0001 C CNN
+F 4 "C6767" V 6350 18250 50  0000 L BNN "LCSC"
+	1    6550 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 6650 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 6350 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Text GLabel 29750 18050 3    50   Input ~ 0
+K_ESC
+Text GLabel 29650 18050 3    50   Input ~ 0
+K_F1
+Text GLabel 29550 18050 3    50   Input ~ 0
+K_F2
+Text GLabel 29450 18050 3    50   Input ~ 0
+K_F3
+Text GLabel 29350 18050 3    50   Input ~ 0
+K_F4
+Text GLabel 29250 18050 3    50   Input ~ 0
+K_F5
+Text GLabel 29150 18050 3    50   Input ~ 0
+K_F6
+Text GLabel 29050 18050 3    50   Input ~ 0
+K_F7
+Text GLabel 27850 18050 3    50   Input ~ 0
+K_F8
+Text GLabel 27750 18050 3    50   Input ~ 0
+K_F9
+Text GLabel 27650 18050 3    50   Input ~ 0
+K_F10
+Text GLabel 27550 18050 3    50   Input ~ 0
+K_F11
+Text GLabel 27450 18050 3    50   Input ~ 0
+K_F12
+Text GLabel 27350 18050 3    50   Input ~ 0
+K_PrtScr
+Text GLabel 27250 18050 3    50   Input ~ 0
+K_ScrLk
+Text GLabel 27150 18050 3    50   Input ~ 0
+K_Pause
+Text GLabel 20250 18050 3    50   Input ~ 0
+K_Tab
+Text GLabel 20150 18050 3    50   Input ~ 0
+K_Q
+Text GLabel 20050 18050 3    50   Input ~ 0
+K_W
+Text GLabel 19950 18050 3    50   Input ~ 0
+K_E
+Text GLabel 19850 18050 3    50   Input ~ 0
+K_R
+Text GLabel 19750 18050 3    50   Input ~ 0
+K_T
+Text GLabel 19650 18050 3    50   Input ~ 0
+K_Y
+Text GLabel 19550 18050 3    50   Input ~ 0
+K_U
+Text GLabel 18350 18050 3    50   Input ~ 0
+K_I
+Text GLabel 18250 18050 3    50   Input ~ 0
+K_O
+Text GLabel 18150 18050 3    50   Input ~ 0
+K_P
+Text GLabel 18050 18050 3    50   Input ~ 0
+K_LBrkt
+Text GLabel 17950 18050 3    50   Input ~ 0
+K_RBrkt
+Text GLabel 17850 18050 3    50   Input ~ 0
+K_BacckSl
+Text GLabel 17750 18050 3    50   Input ~ 0
+K_Del
+Text GLabel 17650 18050 3    50   Input ~ 0
+K_End
+Text GLabel 16350 18050 3    50   Input ~ 0
+K_KP_7
+Text GLabel 16250 18050 3    50   Input ~ 0
+K_KP_8
+Text GLabel 16150 18050 3    50   Input ~ 0
+K_KP_9
+Text GLabel 16050 18050 3    50   Input ~ 0
+K_KP_Plus
+Text GLabel 22150 18050 3    50   Input ~ 0
+K_PgUp
+Text GLabel 22050 18050 3    50   Input ~ 0
+K_KP_NumLk
+Text GLabel 21950 18050 3    50   Input ~ 0
+K_KP_Div
+Text GLabel 21850 18050 3    50   Input ~ 0
+K_KP_Mul
+Text GLabel 21750 18050 3    50   Input ~ 0
+K_KP_Minus
+Text GLabel 24050 18050 3    50   Input ~ 0
+K_8
+Text GLabel 23950 18050 3    50   Input ~ 0
+K_9
+Text GLabel 23850 18050 3    50   Input ~ 0
+K_0
+Text GLabel 23750 18050 3    50   Input ~ 0
+K_Minus
+Text GLabel 23650 18050 3    50   Input ~ 0
+K_Plus
+Text GLabel 23550 18050 3    50   Input ~ 0
+K_BackSp
+Text GLabel 23450 18050 3    50   Input ~ 0
+K_Insert
+Text GLabel 23350 18050 3    50   Input ~ 0
+K_Home
+Text GLabel 25950 18050 3    50   Input ~ 0
+K_Tilde
+Text GLabel 25850 18050 3    50   Input ~ 0
+K_1
+Text GLabel 25750 18050 3    50   Input ~ 0
+K_2
+Text GLabel 25650 18050 3    50   Input ~ 0
+K_3
+Text GLabel 25550 18050 3    50   Input ~ 0
+K_4
+Text GLabel 25450 18050 3    50   Input ~ 0
+K_5
+Text GLabel 25350 18050 3    50   Input ~ 0
+K_6
+Text GLabel 25250 18050 3    50   Input ~ 0
+K_7
+Text GLabel 14550 18050 3    50   Input ~ 0
+K_CapsLk
+Text GLabel 14450 18050 3    50   Input ~ 0
+K_A
+Text GLabel 14350 18050 3    50   Input ~ 0
+K_S
+Text GLabel 14250 18050 3    50   Input ~ 0
+K_D
+Text GLabel 14150 18050 3    50   Input ~ 0
+K_F
+Text GLabel 14050 18050 3    50   Input ~ 0
+K_G
+Text GLabel 13950 18050 3    50   Input ~ 0
+K_H
+Text GLabel 13850 18050 3    50   Input ~ 0
+K_J
+Text GLabel 12650 18050 3    50   Input ~ 0
+K_K
+Text GLabel 12550 18050 3    50   Input ~ 0
+K_L
+Text GLabel 12450 18050 3    50   Input ~ 0
+K_Colon
+Text GLabel 12350 18050 3    50   Input ~ 0
+K_Quote
+Text GLabel 12250 18050 3    50   Input ~ 0
+K_Enter
+Text GLabel 12150 18050 3    50   Input ~ 0
+K_KP_4
+Text GLabel 12050 18050 3    50   Input ~ 0
+K_KP_5
+Text GLabel 11950 18050 3    50   Input ~ 0
+K_KP_6
+Text GLabel 10750 18050 3    50   Input ~ 0
+K_LShift
+Text GLabel 10650 18050 3    50   Input ~ 0
+K_Z
+Text GLabel 10550 18050 3    50   Input ~ 0
+K_X
+Text GLabel 10450 18050 3    50   Input ~ 0
+K_C
+Text GLabel 10350 18050 3    50   Input ~ 0
+K_V
+Text GLabel 10250 18050 3    50   Input ~ 0
+K_B
+Text GLabel 10150 18050 3    50   Input ~ 0
+K_N
+Text GLabel 10050 18050 3    50   Input ~ 0
+K_M
+Text GLabel 6950 18050 3    50   Input ~ 0
+K_LCtrl
+Text GLabel 6850 18050 3    50   Input ~ 0
+K_LWin
+Text GLabel 6750 18050 3    50   Input ~ 0
+K_LAlt
+Text GLabel 6650 18050 3    50   Input ~ 0
+K_Hanja
+Text GLabel 6550 18050 3    50   Input ~ 0
+K_Space
+Text GLabel 6450 18050 3    50   Input ~ 0
+K_HanYoung
+Text GLabel 6350 18050 3    50   Input ~ 0
+K_RAlt
+Text GLabel 6250 18050 3    50   Input ~ 0
+K_CtxMenu
+Text GLabel 8850 18050 3    50   Input ~ 0
+K_LAngleBr
+Text GLabel 8750 18050 3    50   Input ~ 0
+K_RAngleBr
+Text GLabel 8650 18050 3    50   Input ~ 0
+K_QMark
+Text GLabel 8550 18050 3    50   Input ~ 0
+K_RShift
+Text GLabel 8450 18050 3    50   Input ~ 0
+K_UP
+Text GLabel 8350 18050 3    50   Input ~ 0
+K_KP_1
+Text GLabel 8250 18050 3    50   Input ~ 0
+K_KP_2
+Text GLabel 8150 18050 3    50   Input ~ 0
+K_KP_3
+Wire Wire Line
+	31650 9650 31650 10000
+Wire Wire Line
+	31650 8650 31650 7600
+Text GLabel 5050 18050 3    50   Input ~ 0
+K_RCtrl
+Text GLabel 4950 18050 3    50   Input ~ 0
+K_LEFT
+Text GLabel 4850 18050 3    50   Input ~ 0
+K_DOWN
+Text GLabel 4750 18050 3    50   Input ~ 0
+K_RIGHT
+Text GLabel 4650 18050 3    50   Input ~ 0
+K_KP_0
+Text GLabel 4550 18050 3    50   Input ~ 0
+K_KP_DOT
+Text GLabel 4450 18050 3    50   Input ~ 0
+K_KP_Enter
+Text GLabel 16450 18050 3    50   Input ~ 0
+K_PgDn
+Wire Wire Line
+	5500 18050 5500 17250
+Wire Wire Line
+	5500 17250 5050 17250
+$Comp
+L power:GND #PWR?
+U 1 1 6306F2DE
+P 3950 17650
+AR Path="/60775168/6055A56C/6306F2DE" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6306F2DE" Ref="#PWR01075"  Part="1" 
+F 0 "#PWR01075" H 3950 17400 50  0001 C CNN
+F 1 "GND" V 3955 17522 50  0000 R CNN
+F 2 "" H 3950 17650 50  0001 C CNN
+F 3 "" H 3950 17650 50  0001 C CNN
+	1    3950 17650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6306F2E4
+P 5250 17650
+AR Path="/60775168/6055A56C/6306F2E4" Ref="#PWR?"  Part="1" 
+AR Path="/60775168/6306F2E4" Ref="#PWR01076"  Part="1" 
+F 0 "#PWR01076" H 5250 17500 50  0001 C CNN
+F 1 "+3.3V" V 5400 17650 50  0000 L CNN
+F 2 "" H 5250 17650 50  0001 C CNN
+F 3 "" H 5250 17650 50  0001 C CNN
+	1    5250 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 4850 17250 1    50   Input ~ 0
+SHIFTR_CLK
+Text GLabel 4550 17250 1    50   Input ~ 0
+SHIFTR_LATCH_CLK
+$Comp
+L 74xx:74HCT595 U?
+U 1 1 6306F2ED
+P 4650 17650
+AR Path="/60775168/6055A56C/6306F2ED" Ref="U?"  Part="1" 
+AR Path="/60775168/6306F2ED" Ref="U500"  Part="1" 
+F 0 "U500" V 4400 16900 50  0000 L CNN
+F 1 "74HCT595" V 4250 16900 50  0000 L CNN
+F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 4650 17650 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 4650 17650 50  0001 C CNN
+F 4 "C6767" V 4450 18250 50  0000 L BNN "LCSC"
+	1    4650 17650
+	0    1    1    0   
+$EndComp
+Text GLabel 4750 17250 1    50   Input ~ 0
+SHIFTR_RST
+Text GLabel 4450 17250 1    50   Input ~ 0
+SHIFTR_NOE
+Wire Wire Line
+	6050 18050 5500 18050
+NoConn ~ 4350 18050
+NoConn ~ 4150 18050
+NoConn ~ 15950 18050
+NoConn ~ 15850 18050
+NoConn ~ 15750 18050
+NoConn ~ 21650 18050
+NoConn ~ 21550 18050
+NoConn ~ 21450 18050
+$EndSCHEMATC

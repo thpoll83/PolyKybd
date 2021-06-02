@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
-Sheet 1 10
+Sheet 1 11
 Title "Poly Keyboard Prototype"
 Date ""
 Rev "1"
@@ -121,42 +121,8 @@ Wire Wire Line
 	3200 2650 3200 3250
 Wire Wire Line
 	3000 1950 3100 1950
-$Comp
-L 74xx:74HCT595 U4
-U 1 1 5FC69D30
-P 5100 7050
-F 0 "U4" V 4850 6300 50  0000 L CNN
-F 1 "74HCT595" V 4700 6300 50  0000 L CNN
-F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 5100 7050 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 5100 7050 50  0001 C CNN
-F 4 "C6767" V 5350 6150 50  0000 L BNN "LCSC"
-	1    5100 7050
-	0    1    1    0   
-$EndComp
 Wire Wire Line
 	4850 1950 4850 1450
-$Comp
-L power:GND #PWR031
-U 1 1 5FC8778D
-P 4400 7050
-F 0 "#PWR031" H 4400 6800 50  0001 C CNN
-F 1 "GND" V 4405 6922 50  0000 R CNN
-F 2 "" H 4400 7050 50  0001 C CNN
-F 3 "" H 4400 7050 50  0001 C CNN
-	1    4400 7050
-	0    1    1    0   
-$EndComp
-$Comp
-L power:+3.3V #PWR032
-U 1 1 5FC88280
-P 5700 7050
-F 0 "#PWR032" H 5700 6900 50  0001 C CNN
-F 1 "+3.3V" V 5850 7050 50  0000 L CNN
-F 2 "" H 5700 7050 50  0001 C CNN
-F 3 "" H 5700 7050 50  0001 C CNN
-	1    5700 7050
-	0    1    1    0   
-$EndComp
 $Comp
 L MCU_ST_STM32F3:STM32F303VCTx U1
 U 1 1 5FC89F2D
@@ -1165,7 +1131,7 @@ USART3_RX
 Text GLabel 14400 9000 0    50   Input ~ 0
 USART3_TX
 $Comp
-L Connector:USB_C_Plug_USB2.0 P1
+L poly_kb-rescue:USB_C_Plug_USB2.0-Connector P1
 U 1 1 60113082
 P 1850 9800
 F 0 "P1" H 1957 10667 50  0000 C CNN
@@ -1189,7 +1155,7 @@ F 3 "" H 1850 10700 50  0001 C CNN
 $EndComp
 NoConn ~ 1550 10700
 $Comp
-L Power_Protection:USBLC6-2SC6 U5
+L poly_kb-rescue:USBLC6-2SC6-Power_Protection U5
 U 1 1 60129326
 P 3400 9800
 F 0 "U5" H 3600 10200 50  0000 C CNN
@@ -1381,8 +1347,6 @@ Text GLabel 2100 3200 0    50   Input ~ 0
 SPI1_SCK
 Text GLabel 2100 3300 0    50   Input ~ 0
 SPI1_MOSI
-Text GLabel 4250 6300 0    50   Input ~ 0
-SPI1_SS
 Text GLabel 2100 3000 0    50   Input ~ 0
 SPI1_RESET
 $Comp
@@ -1540,42 +1504,6 @@ Connection ~ 1200 8300
 Connection ~ 1350 8300
 Wire Wire Line
 	1350 8300 1200 8300
-Text GLabel 5700 6500 2    50   Input ~ 0
-SHIFTR_DATA
-Wire Wire Line
-	5700 6500 5500 6500
-Wire Wire Line
-	5500 6500 5500 6650
-Text GLabel 5700 6400 2    50   Input ~ 0
-SHIFTR_CLK
-Wire Wire Line
-	5700 6400 5450 6400
-Text GLabel 5000 6400 1    50   Input ~ 0
-SHIFTR_LATCH_CLK
-Wire Wire Line
-	5000 6400 5000 6650
-$Comp
-L power:+3.3V #PWR024
-U 1 1 5FD57EE0
-P 4800 6300
-F 0 "#PWR024" H 4800 6150 50  0001 C CNN
-F 1 "+3.3V" H 4750 6450 50  0000 C CNN
-F 2 "" H 4800 6300 50  0001 C CNN
-F 3 "" H 4800 6300 50  0001 C CNN
-	1    4800 6300
-	-1   0    0    1   
-$EndComp
-$Comp
-L power:+3.3V #PWR025
-U 1 1 5FDA47B3
-P 5200 6300
-F 0 "#PWR025" H 5200 6150 50  0001 C CNN
-F 1 "+3.3V" H 5215 6473 50  0000 C CNN
-F 2 "" H 5200 6300 50  0001 C CNN
-F 3 "" H 5200 6300 50  0001 C CNN
-	1    5200 6300
-	-1   0    0    1   
-$EndComp
 Text GLabel 10750 5600 2    50   Input ~ 0
 SHIFTR_DATA
 Text GLabel 10750 5500 2    50   Input ~ 0
@@ -1615,80 +1543,20 @@ NoConn ~ 10750 5100
 NoConn ~ 10750 5200
 Text GLabel 14600 2000 0    50   Input ~ 0
 BOOT0
-$Comp
-L Connector_Generic:Conn_01x03 J5
-U 1 1 600BB178
-P 5300 6100
-F 0 "J5" V 5400 5850 50  0000 C CNN
-F 1 "/MR" V 5400 6100 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 5300 6100 50  0001 C CNN
-F 3 "~" H 5300 6100 50  0001 C CNN
-	1    5300 6100
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	5300 6600 5450 6600
-Wire Wire Line
-	5450 6600 5450 6400
-Wire Wire Line
-	5300 6600 5300 6650
 Text GLabel 10750 5300 2    50   Input ~ 0
-SHIFTR_NMASTER_RST
-Text GLabel 5700 6300 2    50   Input ~ 0
 SHIFTR_NMASTER_RST
 Text GLabel 2100 1700 0    50   Input ~ 0
 K_3
-Text GLabel 5000 7450 3    50   Input ~ 0
-K_6
 Text GLabel 3850 1700 0    50   Input ~ 0
 K_2
-Text GLabel 5100 7450 3    50   Input ~ 0
-K_5
 Text GLabel 5600 1700 0    50   Input ~ 0
 K_1
-Text GLabel 5200 7450 3    50   Input ~ 0
-K_4
 Text GLabel 2100 2900 0    50   Input ~ 0
 K_6
-Text GLabel 5500 7450 3    50   Input ~ 0
-K_1
-Text GLabel 5400 7450 3    50   Input ~ 0
-K_2
-Text GLabel 5300 7450 3    50   Input ~ 0
-K_3
 Text GLabel 5600 2900 0    50   Input ~ 0
 K_4
 Text GLabel 3850 2900 0    50   Input ~ 0
 K_5
-Text Notes 3600 5400 0    50   ~ 0
-Display CS Selection
-$Comp
-L Connector_Generic:Conn_01x03 J4
-U 1 1 602DF878
-P 4700 6100
-F 0 "J4" V 4800 6350 50  0000 C CNN
-F 1 "/OE" V 4800 6100 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 4700 6100 50  0001 C CNN
-F 3 "~" H 4700 6100 50  0001 C CNN
-	1    4700 6100
-	0    1    -1   0   
-$EndComp
-Wire Wire Line
-	5400 6300 5700 6300
-Wire Wire Line
-	5200 6650 5200 6550
-Wire Wire Line
-	5200 6500 5300 6500
-Wire Wire Line
-	5300 6500 5300 6300
-Wire Wire Line
-	4900 6650 4900 6500
-Wire Wire Line
-	4900 6500 4700 6500
-Wire Wire Line
-	4700 6500 4700 6300
-Wire Wire Line
-	4600 6300 4250 6300
 Wire Wire Line
 	4950 1450 4950 2050
 Wire Wire Line
@@ -1851,104 +1719,8 @@ Wire Wire Line
 	3000 4500 3200 4500
 Wire Wire Line
 	3100 3150 3000 3150
-$Comp
-L 74xx:74HCT595 U3
-U 1 1 605ED0F6
-P 3200 7050
-F 0 "U3" V 2950 6300 50  0000 L CNN
-F 1 "74HCT595" V 2800 6300 50  0000 L CNN
-F 2 "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm" H 3200 7050 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf" H 3200 7050 50  0001 C CNN
-F 4 "C6767" V 3450 6150 50  0000 L BNN "LCSC"
-	1    3200 7050
-	0    1    1    0   
-$EndComp
-$Comp
-L power:GND #PWR029
-U 1 1 605ED0FC
-P 2500 7050
-F 0 "#PWR029" H 2500 6800 50  0001 C CNN
-F 1 "GND" V 2505 6922 50  0000 R CNN
-F 2 "" H 2500 7050 50  0001 C CNN
-F 3 "" H 2500 7050 50  0001 C CNN
-	1    2500 7050
-	0    1    1    0   
-$EndComp
-$Comp
-L power:+3.3V #PWR030
-U 1 1 605ED102
-P 3800 7050
-F 0 "#PWR030" H 3800 6900 50  0001 C CNN
-F 1 "+3.3V" V 3950 7050 50  0000 L CNN
-F 2 "" H 3800 7050 50  0001 C CNN
-F 3 "" H 3800 7050 50  0001 C CNN
-	1    3800 7050
-	0    1    1    0   
-$EndComp
-Text GLabel 4900 7450 3    50   Input ~ 0
-K_7
-Text GLabel 4800 7450 3    50   Input ~ 0
-K_8
-Text GLabel 3600 7450 3    50   Input ~ 0
-K_9
-Wire Wire Line
-	3000 7700 3000 7450
-Wire Wire Line
-	2900 7450 2900 7700
-Wire Wire Line
-	2800 7700 2800 7450
-Wire Wire Line
-	2800 7450 2700 7450
 Text Notes 5700 9750 0    50   ~ 0
 Analog In
-Wire Wire Line
-	4700 6500 3000 6500
-Wire Wire Line
-	3000 6500 3000 6650
-Connection ~ 4700 6500
-Wire Wire Line
-	5200 6550 3300 6550
-Wire Wire Line
-	3300 6550 3300 6650
-Connection ~ 5200 6550
-Wire Wire Line
-	5200 6550 5200 6500
-Text GLabel 3100 6400 1    50   Input ~ 0
-SHIFTR_LATCH_CLK
-Wire Wire Line
-	3100 6400 3100 6650
-Wire Wire Line
-	5300 6600 3400 6600
-Wire Wire Line
-	3400 6600 3400 6650
-Connection ~ 5300 6600
-Wire Wire Line
-	4600 7450 4050 7450
-Wire Wire Line
-	4050 7450 4050 6650
-Wire Wire Line
-	4050 6650 3600 6650
-$Comp
-L Connector_Generic:Conn_01x08 J9
-U 1 1 606C952D
-P 3200 7900
-F 0 "J9" V 3072 8280 50  0000 L CNN
-F 1 "SHIFTR_K10-K16+C" V 3300 7700 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" H 3200 7900 50  0001 C CNN
-F 3 "~" H 3200 7900 50  0001 C CNN
-	1    3200 7900
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	3100 7450 3100 7700
-Wire Wire Line
-	3200 7450 3200 7700
-Wire Wire Line
-	3300 7450 3300 7700
-Wire Wire Line
-	3400 7450 3400 7700
-Wire Wire Line
-	3500 7450 3500 7700
 $Comp
 L Switch:SW_Push SW2
 U 1 1 60743BE1
@@ -2535,4 +2307,10 @@ F 3 "" H 13050 4000 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	13050 4000 12800 4000
+$Sheet
+S 3450 6300 1250 850 
+U 6051678A
+F0 "DisplaySelect" 50
+F1 "DisplaySelect.sch" 50
+$EndSheet
 $EndSCHEMATC

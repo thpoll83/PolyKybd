@@ -1,94 +1,962 @@
-12-14 13:59:37 replicate_layout.action_replicate_layout 305:Plugin executed on: 'win32'
-12-14 13:59:37 replicate_layout.action_replicate_layout 306:Plugin executed with python version: '2.7.16 (default, Aug 15 2019, 17:51:40)  [GCC 9.2.0 64 bit (AMD64)]'
-12-14 13:59:37 replicate_layout.action_replicate_layout 307:KiCad build version: Unknown
-12-14 13:59:37 replicate_layout.action_replicate_layout 308:Replicate layout plugin version: 68 started
-12-14 13:59:37 replicate_layout.action_replicate_layout 319:wx top level windows: wxWindowList: [<wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x32f18f0> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x3205180> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x4c476060> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x4c4729c0> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x4c472d30> >]
-12-14 13:59:37 replicate_layout.action_replicate_layout 343:Preparing replicator with J25 as a reference
-12-14 13:59:37 replicate_layout.replicatelayout 215:getting project hierarchy from schematics
-12-14 13:59:37 replicate_layout.replicatelayout 217:Project hierarchy looks like:
-{u'5FC36072': [u'K_2', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'5FC1948A': [u'K_TAB', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'5FC10791': [u'K_W', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'5FC360D0': [u'K_TILDE', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'5FC36069': [u'K_1', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'6057902A': [u'K_A', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'60579033': [u'K_S', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'6057903C': [u'K_CapsLock', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch'], u'5FC0795D': [u'K_Q', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb\\SSD1306_TO_SPI.sch']}
-12-14 13:59:37 replicate_layout.replicatelayout 225:getting a list of all footprints on board
-12-14 13:59:37 replicate_layout.action_replicate_layout 370:source anchor footprint is u'J25'
-Located on:[u'K_1']
-With filenames:[u'SSD1306_TO_SPI.sch']
-With sheet_id:[u'K_1']
-12-14 13:59:37 replicate_layout.action_replicate_layout 374:Corresponding footprints are 
-[(u'J40', [u'K_CapsLock']), (u'J37', [u'K_S']), (u'J34', [u'K_A']), (u'J31', [u'K_TILDE']), (u'J28', [u'K_2']), (u'J25', [u'K_1']), (u'J22', [u'K_TAB']), (u'J19', [u'K_W']), (u'J16', [u'K_Q'])]
-12-14 13:59:37 replicate_layout.action_replicate_layout 387:Showing dialog
-12-14 13:59:37 replicate_layout.action_replicate_layout 391:Pcbnew position: wx.Point(-10, 60)
-12-14 13:59:37 replicate_layout.action_replicate_layout 397:Display 0: wx.Rect(0, 0, 3840, 2160)
-12-14 13:59:37 replicate_layout.action_replicate_layout 401:Toolbar position: wx.Point(2421, 242)
-12-14 13:59:37 replicate_layout.action_replicate_layout 408:Dialog position: wx.Point(2108, 242)
-12-14 13:59:39 replicate_layout.replicatelayout 249:construcing a list of sheets suitable for replication on level:u'K_1', file:u'SSD1306_TO_SPI.sch'
-12-14 13:59:39 replicate_layout.replicatelayout 256:Source sheet path up to the level:[u'K_1']
-12-14 13:59:39 replicate_layout.replicatelayout 260:Footprints on the sheets:
-[u'J40', u'J37', u'J34', u'J31', u'J28', u'J25', u'J22', u'J19', u'J16']
-12-14 13:59:39 replicate_layout.replicatelayout 263:Footprints raw sheet ids:
-[u'/6057903C/5FC4B7AD', u'/60579033/5FC4B7AD', u'/6057902A/5FC4B7AD', u'/5FC360D0/5FC4B7AD', u'/5FC36072/5FC4B7AD', u'/5FC36069/5FC4B7AD', u'/5FC1948A/5FC4B7AD', u'/5FC10791/5FC4B7AD', u'/5FC0795D/5FC4B7AD']
-12-14 13:59:39 replicate_layout.replicatelayout 279:All sheets to replicate:
-[[u'K_CapsLock'], [u'K_S'], [u'K_A'], [u'K_TILDE'], [u'K_2'], [u'K_1'], [u'K_TAB'], [u'K_W'], [u'K_Q']]
-12-14 13:59:39 replicate_layout.replicatelayout 284:All sheets to replicate sorted:
-[[u'K_1'], [u'K_2'], [u'K_A'], [u'K_CapsLock'], [u'K_Q'], [u'K_S'], [u'K_TAB'], [u'K_TILDE'], [u'K_W']]
-12-14 13:59:39 replicate_layout.replicatelayout 290:All sheets to replicate sorted and without source sheet:
-[[u'K_2'], [u'K_A'], [u'K_CapsLock'], [u'K_Q'], [u'K_S'], [u'K_TAB'], [u'K_TILDE'], [u'K_W']]
-12-14 14:00:12 replicate_layout.replicatelayout 249:construcing a list of sheets suitable for replication on level:u'K_1', file:u'SSD1306_TO_SPI.sch'
-12-14 14:00:12 replicate_layout.replicatelayout 256:Source sheet path up to the level:[u'K_1']
-12-14 14:00:12 replicate_layout.replicatelayout 260:Footprints on the sheets:
-[u'J40', u'J37', u'J34', u'J31', u'J28', u'J25', u'J22', u'J19', u'J16']
-12-14 14:00:12 replicate_layout.replicatelayout 263:Footprints raw sheet ids:
-[u'/6057903C/5FC4B7AD', u'/60579033/5FC4B7AD', u'/6057902A/5FC4B7AD', u'/5FC360D0/5FC4B7AD', u'/5FC36072/5FC4B7AD', u'/5FC36069/5FC4B7AD', u'/5FC1948A/5FC4B7AD', u'/5FC10791/5FC4B7AD', u'/5FC0795D/5FC4B7AD']
-12-14 14:00:12 replicate_layout.replicatelayout 279:All sheets to replicate:
-[[u'K_CapsLock'], [u'K_S'], [u'K_A'], [u'K_TILDE'], [u'K_2'], [u'K_1'], [u'K_TAB'], [u'K_W'], [u'K_Q']]
-12-14 14:00:12 replicate_layout.replicatelayout 284:All sheets to replicate sorted:
-[[u'K_1'], [u'K_2'], [u'K_A'], [u'K_CapsLock'], [u'K_Q'], [u'K_S'], [u'K_TAB'], [u'K_TILDE'], [u'K_W']]
-12-14 14:00:12 replicate_layout.replicatelayout 290:All sheets to replicate sorted and without source sheet:
-[[u'K_2'], [u'K_A'], [u'K_CapsLock'], [u'K_Q'], [u'K_S'], [u'K_TAB'], [u'K_TILDE'], [u'K_W']]
-12-14 14:00:12 replicate_layout.action_replicate_layout 179:Replicating layout
-12-14 14:00:12 replicate_layout.replicatelayout 990:Starting replication of sheets: [[u'K_A'], [u'K_CapsLock'], [u'K_S']]
-on level: [u'K_1']
-with tracks=True, zone=True, text=True, containing=False, remove=False, locked=False
-12-14 14:00:12 root 261:updating GUI message: 'Preparing for replication'
-12-14 14:00:12 root 266:updating GUI with: 0
-12-14 14:00:12 replicate_layout.replicatelayout 556:Getting the list of source footprints
-12-14 14:00:12 replicate_layout.replicatelayout 560:Getting the list of all the remaining footprints
-12-14 14:00:12 replicate_layout.replicatelayout 564:Getting nets local to source footprints
-12-14 14:00:12 replicate_layout.replicatelayout 568:Getting source bounding box
-12-14 14:00:12 root 266:updating GUI with: 37
-12-14 14:00:12 replicate_layout.replicatelayout 572:Getting source tracks
-12-14 14:00:12 replicate_layout.replicatelayout 576:Getting source zones
-12-14 14:00:12 root 266:updating GUI with: 62
-12-14 14:00:12 replicate_layout.replicatelayout 580:Getting source text items
-12-14 14:00:12 replicate_layout.replicatelayout 584:Getting source text items
-12-14 14:00:12 root 266:updating GUI with: 87
-12-14 14:00:12 root 266:updating GUI with: 100
-12-14 14:00:12 root 261:updating GUI message: 'Replicating footprints'
-12-14 14:00:12 replicate_layout.replicatelayout 590:Replicating footprints
-12-14 14:00:12 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'K_A']
-12-14 14:00:12 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'K_CapsLock']
-12-14 14:00:12 root 266:updating GUI with: 43
-12-14 14:00:12 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'K_S']
-12-14 14:00:12 root 266:updating GUI with: 96
-12-14 14:00:12 root 261:updating GUI message: 'Replicating tracks'
-12-14 14:00:12 replicate_layout.replicatelayout 716:Replicating tracks
-12-14 14:00:12 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'K_A']
-12-14 14:00:12 root 266:updating GUI with: 24
-12-14 14:00:12 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'K_CapsLock']
-12-14 14:00:12 root 266:updating GUI with: 64
-12-14 14:00:12 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'K_S']
-12-14 14:00:12 root 261:updating GUI message: 'Replicating zones'
-12-14 14:00:12 replicate_layout.replicatelayout 767:Replicating zones
-12-14 14:00:12 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'K_A']
-12-14 14:00:12 root 266:updating GUI with: 33
-12-14 14:00:12 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'K_CapsLock']
-12-14 14:00:12 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'K_S']
-12-14 14:00:12 root 261:updating GUI message: 'Replicating text'
-12-14 14:00:12 replicate_layout.replicatelayout 833:Replicating text
-12-14 14:00:12 replicate_layout.replicatelayout 840:Replicating text on sheet [u'K_A']
-12-14 14:00:12 replicate_layout.replicatelayout 840:Replicating text on sheet [u'K_CapsLock']
-12-14 14:00:12 replicate_layout.replicatelayout 840:Replicating text on sheet [u'K_S']
-12-14 14:00:12 root 261:updating GUI message: 'Replicating drawings'
-12-14 14:00:12 replicate_layout.replicatelayout 864:Replicating drawings
-12-14 14:00:12 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'K_A']
-12-14 14:00:12 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'K_CapsLock']
-12-14 14:00:12 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'K_S']
-12-14 14:00:12 replicate_layout.action_replicate_layout 201:Replication complete
+03-15 15:15:55 replicate_layout.action_replicate_layout 305:Plugin executed on: 'win32'
+03-15 15:15:55 replicate_layout.action_replicate_layout 306:Plugin executed with python version: '2.7.18 (default, Apr 20 2020, 16:57:11)  [GCC 9.3.0 64 bit (AMD64)]'
+03-15 15:15:55 replicate_layout.action_replicate_layout 307:KiCad build version: (5.1.9)-1
+03-15 15:15:55 replicate_layout.action_replicate_layout 308:Replicate layout plugin version: 68 started
+03-15 15:15:55 replicate_layout.action_replicate_layout 319:wx top level windows: wxWindowList: [<wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x3094570> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x2aa0d90> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0xabcd8d0> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x9878a90> >, <wx._windows.Frame; proxy of <Swig Object of type 'wxFrame *' at 0x9879bc0> >]
+03-15 15:15:55 replicate_layout.action_replicate_layout 343:Preparing replicator with J117 as a reference
+03-15 15:15:55 replicate_layout.replicatelayout 215:getting project hierarchy from schematics
+03-15 15:15:55 replicate_layout.replicatelayout 217:Project hierarchy looks like:
+{u'6069AAA9': [u'sheet6069AA36', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AA9B': [u'sheet6069AA35', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B8CF': [u'sheet60A8B88F', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6062731F': [u'sheet6062721E', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'606272E9': [u'sheet6062721B', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AA63': [u'sheet6069AA31', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60634494': [u'sheet60634446', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D6518': [u'sheet607D63F3', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D649A': [u'sheet607D63EA', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C4A2B': [u'sheet608C498C', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'606272DB': [u'sheet6062721A', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60627266': [u'sheet60627213', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6062726F': [u'sheet60627214', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AB0B': [u'sheet6069AA3D', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B943': [u'sheet60A8B896', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605E9ACA': [u'sheet605E9AA5', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D6526': [u'sheet607D63F4', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C4A1D': [u'sheet608C498B', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C49F2': [u'sheet608C4988', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60634486': [u'sheet60634445', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B97A': [u'sheet60A8B89A', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D64A8': [u'sheet607D63EB', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60627311': [u'sheet6062721D', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B8C1': [u'sheet60A8B88E', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AB19': [u'sheet6069AA3E', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605D76D5': [u'KEY_R', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605D76B9': [u'KEY_W', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AAC5': [u'sheet6069AA38', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6062723B': [u'sheet60627211', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B8E5': [u'sheet60A8B890', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60788106': [u'KEY_ESC', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605E514C': [u'sheet605E5127', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60627249': [u'sheet60627212', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'606272C1': [u'sheet60627219', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'609FE437': [u'sheet609FE42E', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605E6B71': [u'sheet605E6B66', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B8B3': [u'sheet60A8B88D', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AAB7': [u'sheet6069AA37', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AA8D': [u'sheet6069AA34', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605E9AAE': [u'sheet605E9AA3', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6062732D': [u'sheet6062721F', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605D76C7': [u'KEY_E', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605E6B7F': [u'sheet605E6B67', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D6427': [u'sheet607D63E3', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'604A68AC': [u'KEY_F3', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B927': [u'sheet60A8B894', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D643D': [u'sheet607D63E4', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'606272B3': [u'sheet60627218', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'606AA195': [u'Mainboard', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\mainboard.sch'], u'605E513E': [u'sheet605E5126', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C4A47': [u'sheet608C498E', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C49C5': [u'sheet608C4986', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D6419': [u'sheet607D63E2', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C49A9': [u'sheet608C4984', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6063445E': [u'sheet60634443', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AAE1': [u'sheet6069AA3A', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B935': [u'sheet60A8B895', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'606272A5': [u'sheet60627217', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B90B': [u'sheet60A8B892', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C4A55': [u'sheet608C498F', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B8FC': [u'sheet60A8B891', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605D76AB': [u'KEY_Q', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D640B': [u'sheet607D63E1', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605E6B8D': [u'sheet605E6B68', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C49B7': [u'sheet608C4985', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B988': [u'sheet60A8B89B', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6062722D': [u'sheet60627210', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AAD3': [u'sheet6069AA39', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605ED310': [u'sheet605ED2EB', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D6454': [u'sheet607D63E5', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AA55': [u'sheet6069AA30', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AAEF': [u'sheet6069AA3B', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6049EEA2': [u'KEY_F1', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C4A62': [u'sheet608C4990', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C4A39': [u'sheet608C498D', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60634450': [u'sheet60634442', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6062727D': [u'sheet60627215', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B8A5': [u'sheet60A8B88C', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C499B': [u'sheet608C4983', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60775168': [u'Keyboard', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\keyboard.sch'], u'605E9ABC': [u'sheet605E9AA4', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AA7F': [u'sheet6069AA33', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60A8B919': [u'sheet60A8B893', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C4A0F': [u'sheet608C498A', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D63FD': [u'sheet607D63E0', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'604A6422': [u'KEY_F2', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D6470': [u'sheet607D63E7', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605ED302': [u'sheet605ED2EA', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C49DB': [u'sheet608C4987', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AA47': [u'sheet6069AA2F', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6063446C': [u'sheet60634444', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605E5130': [u'sheet605E5125', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6076026D': [u'sheet60760264', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AAFD': [u'sheet6069AA3C', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D64B6': [u'sheet607D63EC', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D648C': [u'sheet607D63E9', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C4A70': [u'sheet608C4991', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D64C4': [u'sheet607D63ED', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C4A7E': [u'sheet608C4992', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'60F911DE': [u'sheet60F911D4', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D650A': [u'sheet607D63F2', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'606272F7': [u'sheet6062721C', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'608C4A01': [u'sheet608C4989', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6069AA71': [u'sheet6069AA32', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'6062728B': [u'sheet60627216', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'605ED2F4': [u'sheet605ED2E9', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch'], u'607D647E': [u'sheet607D63E8', u'C:\\Users\\thomas.pollak\\OneDrive\\3d\\3d printing\\projects\\keyboard\\PolyKeyboard\\poly_kb_mainboard\\SSD1306_TO_SPI.sch']}
+03-15 15:15:55 replicate_layout.replicatelayout 225:getting a list of all footprints on board
+03-15 15:15:55 replicate_layout.action_replicate_layout 370:source anchor footprint is u'J117'
+Located on:[u'Keyboard', u'KEY_ESC']
+With filenames:[u'keyboard.sch', u'SSD1306_TO_SPI.sch']
+With sheet_id:[u'Keyboard', u'KEY_ESC']
+03-15 15:15:55 replicate_layout.action_replicate_layout 374:Corresponding footprints are 
+[(u'J59', [u'Keyboard', u'sheet60F911D4']), (u'J58', [u'Keyboard', u'sheet60A8B89A']), (u'J57', [u'Keyboard', u'sheet60A8B89B']), (u'J56', [u'Keyboard', u'sheet60A8B896']), (u'J55', [u'Keyboard', u'sheet60A8B895']), (u'J54', [u'Keyboard', u'sheet60A8B894']), (u'J53', [u'Keyboard', u'sheet60A8B893']), (u'J52', [u'Keyboard', u'sheet60A8B892']), (u'J51', [u'Keyboard', u'sheet60A8B891']), (u'J50', [u'Keyboard', u'sheet60A8B890']), (u'J49', [u'Keyboard', u'sheet60A8B88F']), (u'J48', [u'Keyboard', u'sheet60A8B88E']), (u'J47', [u'Keyboard', u'sheet60A8B88D']), (u'J46', [u'Keyboard', u'sheet60A8B88C']), (u'J45', [u'Keyboard', u'sheet609FE42E']), (u'J44', [u'Keyboard', u'sheet608C4992']), (u'J43', [u'Keyboard', u'sheet608C4991']), (u'J42', [u'Keyboard', u'sheet608C4990']), (u'J41', [u'Keyboard', u'sheet608C498F']), (u'J40', [u'Keyboard', u'sheet608C498E']), (u'J39', [u'Keyboard', u'sheet608C498D']), (u'J38', [u'Keyboard', u'sheet608C498C']), (u'J37', [u'Keyboard', u'sheet608C498B']), (u'J36', [u'Keyboard', u'sheet608C498A']), (u'J35', [u'Keyboard', u'sheet608C4989']), (u'J34', [u'Keyboard', u'sheet608C4988']), (u'J33', [u'Keyboard', u'sheet608C4987']), (u'J32', [u'Keyboard', u'sheet608C4986']), (u'J31', [u'Keyboard', u'sheet608C4985']), (u'J30', [u'Keyboard', u'sheet608C4984']), (u'J29', [u'Keyboard', u'sheet608C4983']), (u'J28', [u'Keyboard', u'sheet607D63F4']), (u'J27', [u'Keyboard', u'sheet607D63F3']), (u'J26', [u'Keyboard', u'sheet607D63F2']), (u'J25', [u'Keyboard', u'sheet607D63ED']), (u'J24', [u'Keyboard', u'sheet607D63EC']), (u'J23', [u'Keyboard', u'sheet607D63EB']), (u'J22', [u'Keyboard', u'sheet607D63EA']), (u'J21', [u'Keyboard', u'sheet607D63E9']), (u'J20', [u'Keyboard', u'sheet607D63E8']), (u'J19', [u'Keyboard', u'sheet607D63E7']), (u'J18', [u'Keyboard', u'sheet607D63E5']), (u'J17', [u'Keyboard', u'sheet607D63E4']), (u'J16', [u'Keyboard', u'sheet607D63E3']), (u'J15', [u'Keyboard', u'sheet607D63E2']), (u'J14', [u'Keyboard', u'sheet607D63E1']), (u'J13', [u'Keyboard', u'sheet607D63E0']), (u'J116', [u'Keyboard', u'sheet6069AA36']), (u'J115', [u'Keyboard', u'sheet6069AA35']), (u'J113', [u'Keyboard', u'sheet6069AA33']), (u'J112', [u'Keyboard', u'sheet6069AA32']), (u'J114', [u'Keyboard', u'sheet6069AA34']), (u'J111', [u'Keyboard', u'sheet6069AA31']), (u'J110', [u'Keyboard', u'sheet6069AA30']), (u'J107', [u'Keyboard', u'KEY_E']), (u'J158', [u'Keyboard', u'sheet6069AA3E']), (u'J157', [u'Keyboard', u'sheet6069AA3D']), (u'J156', [u'Keyboard', u'sheet6069AA3C']), (u'J155', [u'Keyboard', u'sheet6069AA3B']), (u'J154', [u'Keyboard', u'sheet6069AA3A']), (u'J153', [u'Keyboard', u'sheet6069AA39']), (u'J152', [u'Keyboard', u'sheet6069AA38']), (u'J151', [u'Keyboard', u'sheet6069AA37']), (u'J109', [u'Keyboard', u'sheet6069AA2F']), (u'J108', [u'Keyboard', u'KEY_R']), (u'J106', [u'Keyboard', u'KEY_W']), (u'J105', [u'Keyboard', u'KEY_Q']), (u'J101', [u'Keyboard', u'sheet60760264']), (u'J150', [u'Keyboard', u'sheet60634446']), (u'J149', [u'Keyboard', u'sheet60634445']), (u'J148', [u'Keyboard', u'sheet60634444']), (u'J147', [u'Keyboard', u'sheet60634443']), (u'J146', [u'Keyboard', u'sheet60634442']), (u'J145', [u'Keyboard', u'sheet6062721F']), (u'J144', [u'Keyboard', u'sheet6062721E']), (u'J143', [u'Keyboard', u'sheet6062721D']), (u'J142', [u'Keyboard', u'sheet6062721C']), (u'J141', [u'Keyboard', u'sheet6062721B']), (u'J140', [u'Keyboard', u'sheet6062721A']), (u'J139', [u'Keyboard', u'sheet60627219']), (u'J138', [u'Keyboard', u'sheet60627218']), (u'J137', [u'Keyboard', u'sheet60627217']), (u'J136', [u'Keyboard', u'sheet60627216']), (u'J135', [u'Keyboard', u'sheet60627215']), (u'J134', [u'Keyboard', u'sheet60627214']), (u'J133', [u'Keyboard', u'sheet60627213']), (u'J132', [u'Keyboard', u'sheet60627212']), (u'J131', [u'Keyboard', u'sheet60627211']), (u'J130', [u'Keyboard', u'sheet60627210']), (u'J129', [u'Keyboard', u'sheet605ED2EB']), (u'J128', [u'Keyboard', u'sheet605ED2EA']), (u'J127', [u'Keyboard', u'sheet605ED2E9']), (u'J126', [u'Keyboard', u'sheet605E9AA5']), (u'J125', [u'Keyboard', u'sheet605E9AA4']), (u'J124', [u'Keyboard', u'sheet605E9AA3']), (u'J123', [u'Keyboard', u'sheet605E6B68']), (u'J122', [u'Keyboard', u'sheet605E6B67']), (u'J121', [u'Keyboard', u'sheet605E6B66']), (u'J120', [u'Keyboard', u'sheet605E5127']), (u'J119', [u'Keyboard', u'sheet605E5126']), (u'J118', [u'Keyboard', u'sheet605E5125']), (u'J117', [u'Keyboard', u'KEY_ESC']), (u'J104', [u'Keyboard', u'KEY_F3']), (u'J103', [u'Keyboard', u'KEY_F2']), (u'J102', [u'Keyboard', u'KEY_F1'])]
+03-15 15:15:55 replicate_layout.action_replicate_layout 387:Showing dialog
+03-15 15:15:55 replicate_layout.action_replicate_layout 391:Pcbnew position: wx.Point(-11, 49)
+03-15 15:15:55 replicate_layout.action_replicate_layout 397:Display 0: wx.Rect(0, 0, 3840, 2160)
+03-15 15:15:55 replicate_layout.action_replicate_layout 401:Toolbar position: wx.Point(3556, 231)
+03-15 15:15:55 replicate_layout.action_replicate_layout 408:Dialog position: wx.Point(3243, 231)
+03-15 15:16:02 replicate_layout.replicatelayout 249:construcing a list of sheets suitable for replication on level:u'KEY_ESC', file:u'SSD1306_TO_SPI.sch'
+03-15 15:16:02 replicate_layout.replicatelayout 256:Source sheet path up to the level:[u'Keyboard', u'KEY_ESC']
+03-15 15:16:02 replicate_layout.replicatelayout 260:Footprints on the sheets:
+[u'J59', u'J58', u'J57', u'J56', u'J55', u'J54', u'J53', u'J52', u'J51', u'J50', u'J49', u'J48', u'J47', u'J46', u'J45', u'J44', u'J43', u'J42', u'J41', u'J40', u'J39', u'J38', u'J37', u'J36', u'J35', u'J34', u'J33', u'J32', u'J31', u'J30', u'J29', u'J28', u'J27', u'J26', u'J25', u'J24', u'J23', u'J22', u'J21', u'J20', u'J19', u'J18', u'J17', u'J16', u'J15', u'J14', u'J13', u'J116', u'J115', u'J113', u'J112', u'J114', u'J111', u'J110', u'J107', u'J158', u'J157', u'J156', u'J155', u'J154', u'J153', u'J152', u'J151', u'J109', u'J108', u'J106', u'J105', u'J101', u'J150', u'J149', u'J148', u'J147', u'J146', u'J145', u'J144', u'J143', u'J142', u'J141', u'J140', u'J139', u'J138', u'J137', u'J136', u'J135', u'J134', u'J133', u'J132', u'J131', u'J130', u'J129', u'J128', u'J127', u'J126', u'J125', u'J124', u'J123', u'J122', u'J121', u'J120', u'J119', u'J118', u'J117', u'J104', u'J103', u'J102']
+03-15 15:16:02 replicate_layout.replicatelayout 263:Footprints raw sheet ids:
+[u'/60775168/60F911DE/5FC4B7AD', u'/60775168/60A8B97A/5FC4B7AD', u'/60775168/60A8B988/5FC4B7AD', u'/60775168/60A8B943/5FC4B7AD', u'/60775168/60A8B935/5FC4B7AD', u'/60775168/60A8B927/5FC4B7AD', u'/60775168/60A8B919/5FC4B7AD', u'/60775168/60A8B90B/5FC4B7AD', u'/60775168/60A8B8FC/5FC4B7AD', u'/60775168/60A8B8E5/5FC4B7AD', u'/60775168/60A8B8CF/5FC4B7AD', u'/60775168/60A8B8C1/5FC4B7AD', u'/60775168/60A8B8B3/5FC4B7AD', u'/60775168/60A8B8A5/5FC4B7AD', u'/60775168/609FE437/5FC4B7AD', u'/60775168/608C4A7E/5FC4B7AD', u'/60775168/608C4A70/5FC4B7AD', u'/60775168/608C4A62/5FC4B7AD', u'/60775168/608C4A55/5FC4B7AD', u'/60775168/608C4A47/5FC4B7AD', u'/60775168/608C4A39/5FC4B7AD', u'/60775168/608C4A2B/5FC4B7AD', u'/60775168/608C4A1D/5FC4B7AD', u'/60775168/608C4A0F/5FC4B7AD', u'/60775168/608C4A01/5FC4B7AD', u'/60775168/608C49F2/5FC4B7AD', u'/60775168/608C49DB/5FC4B7AD', u'/60775168/608C49C5/5FC4B7AD', u'/60775168/608C49B7/5FC4B7AD', u'/60775168/608C49A9/5FC4B7AD', u'/60775168/608C499B/5FC4B7AD', u'/60775168/607D6526/5FC4B7AD', u'/60775168/607D6518/5FC4B7AD', u'/60775168/607D650A/5FC4B7AD', u'/60775168/607D64C4/5FC4B7AD', u'/60775168/607D64B6/5FC4B7AD', u'/60775168/607D64A8/5FC4B7AD', u'/60775168/607D649A/5FC4B7AD', u'/60775168/607D648C/5FC4B7AD', u'/60775168/607D647E/5FC4B7AD', u'/60775168/607D6470/5FC4B7AD', u'/60775168/607D6454/5FC4B7AD', u'/60775168/607D643D/5FC4B7AD', u'/60775168/607D6427/5FC4B7AD', u'/60775168/607D6419/5FC4B7AD', u'/60775168/607D640B/5FC4B7AD', u'/60775168/607D63FD/5FC4B7AD', u'/60775168/6069AAA9/5FC4B7AD', u'/60775168/6069AA9B/5FC4B7AD', u'/60775168/6069AA7F/5FC4B7AD', u'/60775168/6069AA71/5FC4B7AD', u'/60775168/6069AA8D/5FC4B7AD', u'/60775168/6069AA63/5FC4B7AD', u'/60775168/6069AA55/5FC4B7AD', u'/60775168/605D76C7/5FC4B7AD', u'/60775168/6069AB19/5FC4B7AD', u'/60775168/6069AB0B/5FC4B7AD', u'/60775168/6069AAFD/5FC4B7AD', u'/60775168/6069AAEF/5FC4B7AD', u'/60775168/6069AAE1/5FC4B7AD', u'/60775168/6069AAD3/5FC4B7AD', u'/60775168/6069AAC5/5FC4B7AD', u'/60775168/6069AAB7/5FC4B7AD', u'/60775168/6069AA47/5FC4B7AD', u'/60775168/605D76D5/5FC4B7AD', u'/60775168/605D76B9/5FC4B7AD', u'/60775168/605D76AB/5FC4B7AD', u'/60775168/6076026D/5FC4B7AD', u'/60775168/60634494/5FC4B7AD', u'/60775168/60634486/5FC4B7AD', u'/60775168/6063446C/5FC4B7AD', u'/60775168/6063445E/5FC4B7AD', u'/60775168/60634450/5FC4B7AD', u'/60775168/6062732D/5FC4B7AD', u'/60775168/6062731F/5FC4B7AD', u'/60775168/60627311/5FC4B7AD', u'/60775168/606272F7/5FC4B7AD', u'/60775168/606272E9/5FC4B7AD', u'/60775168/606272DB/5FC4B7AD', u'/60775168/606272C1/5FC4B7AD', u'/60775168/606272B3/5FC4B7AD', u'/60775168/606272A5/5FC4B7AD', u'/60775168/6062728B/5FC4B7AD', u'/60775168/6062727D/5FC4B7AD', u'/60775168/6062726F/5FC4B7AD', u'/60775168/60627266/5FC4B7AD', u'/60775168/60627249/5FC4B7AD', u'/60775168/6062723B/5FC4B7AD', u'/60775168/6062722D/5FC4B7AD', u'/60775168/605ED310/5FC4B7AD', u'/60775168/605ED302/5FC4B7AD', u'/60775168/605ED2F4/5FC4B7AD', u'/60775168/605E9ACA/5FC4B7AD', u'/60775168/605E9ABC/5FC4B7AD', u'/60775168/605E9AAE/5FC4B7AD', u'/60775168/605E6B8D/5FC4B7AD', u'/60775168/605E6B7F/5FC4B7AD', u'/60775168/605E6B71/5FC4B7AD', u'/60775168/605E514C/5FC4B7AD', u'/60775168/605E513E/5FC4B7AD', u'/60775168/605E5130/5FC4B7AD', u'/60775168/60788106/5FC4B7AD', u'/60775168/604A68AC/5FC4B7AD', u'/60775168/604A6422/5FC4B7AD', u'/60775168/6049EEA2/5FC4B7AD']
+03-15 15:16:02 replicate_layout.replicatelayout 279:All sheets to replicate:
+[[u'Keyboard', u'sheet60F911D4'], [u'Keyboard', u'sheet60A8B89A'], [u'Keyboard', u'sheet60A8B89B'], [u'Keyboard', u'sheet60A8B896'], [u'Keyboard', u'sheet60A8B895'], [u'Keyboard', u'sheet60A8B894'], [u'Keyboard', u'sheet60A8B893'], [u'Keyboard', u'sheet60A8B892'], [u'Keyboard', u'sheet60A8B891'], [u'Keyboard', u'sheet60A8B890'], [u'Keyboard', u'sheet60A8B88F'], [u'Keyboard', u'sheet60A8B88E'], [u'Keyboard', u'sheet60A8B88D'], [u'Keyboard', u'sheet60A8B88C'], [u'Keyboard', u'sheet609FE42E'], [u'Keyboard', u'sheet608C4992'], [u'Keyboard', u'sheet608C4991'], [u'Keyboard', u'sheet608C4990'], [u'Keyboard', u'sheet608C498F'], [u'Keyboard', u'sheet608C498E'], [u'Keyboard', u'sheet608C498D'], [u'Keyboard', u'sheet608C498C'], [u'Keyboard', u'sheet608C498B'], [u'Keyboard', u'sheet608C498A'], [u'Keyboard', u'sheet608C4989'], [u'Keyboard', u'sheet608C4988'], [u'Keyboard', u'sheet608C4987'], [u'Keyboard', u'sheet608C4986'], [u'Keyboard', u'sheet608C4985'], [u'Keyboard', u'sheet608C4984'], [u'Keyboard', u'sheet608C4983'], [u'Keyboard', u'sheet607D63F4'], [u'Keyboard', u'sheet607D63F3'], [u'Keyboard', u'sheet607D63F2'], [u'Keyboard', u'sheet607D63ED'], [u'Keyboard', u'sheet607D63EC'], [u'Keyboard', u'sheet607D63EB'], [u'Keyboard', u'sheet607D63EA'], [u'Keyboard', u'sheet607D63E9'], [u'Keyboard', u'sheet607D63E8'], [u'Keyboard', u'sheet607D63E7'], [u'Keyboard', u'sheet607D63E5'], [u'Keyboard', u'sheet607D63E4'], [u'Keyboard', u'sheet607D63E3'], [u'Keyboard', u'sheet607D63E2'], [u'Keyboard', u'sheet607D63E1'], [u'Keyboard', u'sheet607D63E0'], [u'Keyboard', u'sheet6069AA36'], [u'Keyboard', u'sheet6069AA35'], [u'Keyboard', u'sheet6069AA33'], [u'Keyboard', u'sheet6069AA32'], [u'Keyboard', u'sheet6069AA34'], [u'Keyboard', u'sheet6069AA31'], [u'Keyboard', u'sheet6069AA30'], [u'Keyboard', u'KEY_E'], [u'Keyboard', u'sheet6069AA3E'], [u'Keyboard', u'sheet6069AA3D'], [u'Keyboard', u'sheet6069AA3C'], [u'Keyboard', u'sheet6069AA3B'], [u'Keyboard', u'sheet6069AA3A'], [u'Keyboard', u'sheet6069AA39'], [u'Keyboard', u'sheet6069AA38'], [u'Keyboard', u'sheet6069AA37'], [u'Keyboard', u'sheet6069AA2F'], [u'Keyboard', u'KEY_R'], [u'Keyboard', u'KEY_W'], [u'Keyboard', u'KEY_Q'], [u'Keyboard', u'sheet60760264'], [u'Keyboard', u'sheet60634446'], [u'Keyboard', u'sheet60634445'], [u'Keyboard', u'sheet60634444'], [u'Keyboard', u'sheet60634443'], [u'Keyboard', u'sheet60634442'], [u'Keyboard', u'sheet6062721F'], [u'Keyboard', u'sheet6062721E'], [u'Keyboard', u'sheet6062721D'], [u'Keyboard', u'sheet6062721C'], [u'Keyboard', u'sheet6062721B'], [u'Keyboard', u'sheet6062721A'], [u'Keyboard', u'sheet60627219'], [u'Keyboard', u'sheet60627218'], [u'Keyboard', u'sheet60627217'], [u'Keyboard', u'sheet60627216'], [u'Keyboard', u'sheet60627215'], [u'Keyboard', u'sheet60627214'], [u'Keyboard', u'sheet60627213'], [u'Keyboard', u'sheet60627212'], [u'Keyboard', u'sheet60627211'], [u'Keyboard', u'sheet60627210'], [u'Keyboard', u'sheet605ED2EB'], [u'Keyboard', u'sheet605ED2EA'], [u'Keyboard', u'sheet605ED2E9'], [u'Keyboard', u'sheet605E9AA5'], [u'Keyboard', u'sheet605E9AA4'], [u'Keyboard', u'sheet605E9AA3'], [u'Keyboard', u'sheet605E6B68'], [u'Keyboard', u'sheet605E6B67'], [u'Keyboard', u'sheet605E6B66'], [u'Keyboard', u'sheet605E5127'], [u'Keyboard', u'sheet605E5126'], [u'Keyboard', u'sheet605E5125'], [u'Keyboard', u'KEY_ESC'], [u'Keyboard', u'KEY_F3'], [u'Keyboard', u'KEY_F2'], [u'Keyboard', u'KEY_F1']]
+03-15 15:16:02 replicate_layout.replicatelayout 284:All sheets to replicate sorted:
+[[u'Keyboard', u'KEY_E'], [u'Keyboard', u'KEY_ESC'], [u'Keyboard', u'KEY_F1'], [u'Keyboard', u'KEY_F2'], [u'Keyboard', u'KEY_F3'], [u'Keyboard', u'KEY_Q'], [u'Keyboard', u'KEY_R'], [u'Keyboard', u'KEY_W'], [u'Keyboard', u'sheet605E5125'], [u'Keyboard', u'sheet605E5126'], [u'Keyboard', u'sheet605E5127'], [u'Keyboard', u'sheet605E6B66'], [u'Keyboard', u'sheet605E6B67'], [u'Keyboard', u'sheet605E6B68'], [u'Keyboard', u'sheet605E9AA3'], [u'Keyboard', u'sheet605E9AA4'], [u'Keyboard', u'sheet605E9AA5'], [u'Keyboard', u'sheet605ED2E9'], [u'Keyboard', u'sheet605ED2EA'], [u'Keyboard', u'sheet605ED2EB'], [u'Keyboard', u'sheet60627210'], [u'Keyboard', u'sheet60627211'], [u'Keyboard', u'sheet60627212'], [u'Keyboard', u'sheet60627213'], [u'Keyboard', u'sheet60627214'], [u'Keyboard', u'sheet60627215'], [u'Keyboard', u'sheet60627216'], [u'Keyboard', u'sheet60627217'], [u'Keyboard', u'sheet60627218'], [u'Keyboard', u'sheet60627219'], [u'Keyboard', u'sheet6062721A'], [u'Keyboard', u'sheet6062721B'], [u'Keyboard', u'sheet6062721C'], [u'Keyboard', u'sheet6062721D'], [u'Keyboard', u'sheet6062721E'], [u'Keyboard', u'sheet6062721F'], [u'Keyboard', u'sheet60634442'], [u'Keyboard', u'sheet60634443'], [u'Keyboard', u'sheet60634444'], [u'Keyboard', u'sheet60634445'], [u'Keyboard', u'sheet60634446'], [u'Keyboard', u'sheet6069AA2F'], [u'Keyboard', u'sheet6069AA30'], [u'Keyboard', u'sheet6069AA31'], [u'Keyboard', u'sheet6069AA32'], [u'Keyboard', u'sheet6069AA33'], [u'Keyboard', u'sheet6069AA34'], [u'Keyboard', u'sheet6069AA35'], [u'Keyboard', u'sheet6069AA36'], [u'Keyboard', u'sheet6069AA37'], [u'Keyboard', u'sheet6069AA38'], [u'Keyboard', u'sheet6069AA39'], [u'Keyboard', u'sheet6069AA3A'], [u'Keyboard', u'sheet6069AA3B'], [u'Keyboard', u'sheet6069AA3C'], [u'Keyboard', u'sheet6069AA3D'], [u'Keyboard', u'sheet6069AA3E'], [u'Keyboard', u'sheet60760264'], [u'Keyboard', u'sheet607D63E0'], [u'Keyboard', u'sheet607D63E1'], [u'Keyboard', u'sheet607D63E2'], [u'Keyboard', u'sheet607D63E3'], [u'Keyboard', u'sheet607D63E4'], [u'Keyboard', u'sheet607D63E5'], [u'Keyboard', u'sheet607D63E7'], [u'Keyboard', u'sheet607D63E8'], [u'Keyboard', u'sheet607D63E9'], [u'Keyboard', u'sheet607D63EA'], [u'Keyboard', u'sheet607D63EB'], [u'Keyboard', u'sheet607D63EC'], [u'Keyboard', u'sheet607D63ED'], [u'Keyboard', u'sheet607D63F2'], [u'Keyboard', u'sheet607D63F3'], [u'Keyboard', u'sheet607D63F4'], [u'Keyboard', u'sheet608C4983'], [u'Keyboard', u'sheet608C4984'], [u'Keyboard', u'sheet608C4985'], [u'Keyboard', u'sheet608C4986'], [u'Keyboard', u'sheet608C4987'], [u'Keyboard', u'sheet608C4988'], [u'Keyboard', u'sheet608C4989'], [u'Keyboard', u'sheet608C498A'], [u'Keyboard', u'sheet608C498B'], [u'Keyboard', u'sheet608C498C'], [u'Keyboard', u'sheet608C498D'], [u'Keyboard', u'sheet608C498E'], [u'Keyboard', u'sheet608C498F'], [u'Keyboard', u'sheet608C4990'], [u'Keyboard', u'sheet608C4991'], [u'Keyboard', u'sheet608C4992'], [u'Keyboard', u'sheet609FE42E'], [u'Keyboard', u'sheet60A8B88C'], [u'Keyboard', u'sheet60A8B88D'], [u'Keyboard', u'sheet60A8B88E'], [u'Keyboard', u'sheet60A8B88F'], [u'Keyboard', u'sheet60A8B890'], [u'Keyboard', u'sheet60A8B891'], [u'Keyboard', u'sheet60A8B892'], [u'Keyboard', u'sheet60A8B893'], [u'Keyboard', u'sheet60A8B894'], [u'Keyboard', u'sheet60A8B895'], [u'Keyboard', u'sheet60A8B896'], [u'Keyboard', u'sheet60A8B89A'], [u'Keyboard', u'sheet60A8B89B'], [u'Keyboard', u'sheet60F911D4']]
+03-15 15:16:02 replicate_layout.replicatelayout 290:All sheets to replicate sorted and without source sheet:
+[[u'Keyboard', u'KEY_E'], [u'Keyboard', u'KEY_F1'], [u'Keyboard', u'KEY_F2'], [u'Keyboard', u'KEY_F3'], [u'Keyboard', u'KEY_Q'], [u'Keyboard', u'KEY_R'], [u'Keyboard', u'KEY_W'], [u'Keyboard', u'sheet605E5125'], [u'Keyboard', u'sheet605E5126'], [u'Keyboard', u'sheet605E5127'], [u'Keyboard', u'sheet605E6B66'], [u'Keyboard', u'sheet605E6B67'], [u'Keyboard', u'sheet605E6B68'], [u'Keyboard', u'sheet605E9AA3'], [u'Keyboard', u'sheet605E9AA4'], [u'Keyboard', u'sheet605E9AA5'], [u'Keyboard', u'sheet605ED2E9'], [u'Keyboard', u'sheet605ED2EA'], [u'Keyboard', u'sheet605ED2EB'], [u'Keyboard', u'sheet60627210'], [u'Keyboard', u'sheet60627211'], [u'Keyboard', u'sheet60627212'], [u'Keyboard', u'sheet60627213'], [u'Keyboard', u'sheet60627214'], [u'Keyboard', u'sheet60627215'], [u'Keyboard', u'sheet60627216'], [u'Keyboard', u'sheet60627217'], [u'Keyboard', u'sheet60627218'], [u'Keyboard', u'sheet60627219'], [u'Keyboard', u'sheet6062721A'], [u'Keyboard', u'sheet6062721B'], [u'Keyboard', u'sheet6062721C'], [u'Keyboard', u'sheet6062721D'], [u'Keyboard', u'sheet6062721E'], [u'Keyboard', u'sheet6062721F'], [u'Keyboard', u'sheet60634442'], [u'Keyboard', u'sheet60634443'], [u'Keyboard', u'sheet60634444'], [u'Keyboard', u'sheet60634445'], [u'Keyboard', u'sheet60634446'], [u'Keyboard', u'sheet6069AA2F'], [u'Keyboard', u'sheet6069AA30'], [u'Keyboard', u'sheet6069AA31'], [u'Keyboard', u'sheet6069AA32'], [u'Keyboard', u'sheet6069AA33'], [u'Keyboard', u'sheet6069AA34'], [u'Keyboard', u'sheet6069AA35'], [u'Keyboard', u'sheet6069AA36'], [u'Keyboard', u'sheet6069AA37'], [u'Keyboard', u'sheet6069AA38'], [u'Keyboard', u'sheet6069AA39'], [u'Keyboard', u'sheet6069AA3A'], [u'Keyboard', u'sheet6069AA3B'], [u'Keyboard', u'sheet6069AA3C'], [u'Keyboard', u'sheet6069AA3D'], [u'Keyboard', u'sheet6069AA3E'], [u'Keyboard', u'sheet60760264'], [u'Keyboard', u'sheet607D63E0'], [u'Keyboard', u'sheet607D63E1'], [u'Keyboard', u'sheet607D63E2'], [u'Keyboard', u'sheet607D63E3'], [u'Keyboard', u'sheet607D63E4'], [u'Keyboard', u'sheet607D63E5'], [u'Keyboard', u'sheet607D63E7'], [u'Keyboard', u'sheet607D63E8'], [u'Keyboard', u'sheet607D63E9'], [u'Keyboard', u'sheet607D63EA'], [u'Keyboard', u'sheet607D63EB'], [u'Keyboard', u'sheet607D63EC'], [u'Keyboard', u'sheet607D63ED'], [u'Keyboard', u'sheet607D63F2'], [u'Keyboard', u'sheet607D63F3'], [u'Keyboard', u'sheet607D63F4'], [u'Keyboard', u'sheet608C4983'], [u'Keyboard', u'sheet608C4984'], [u'Keyboard', u'sheet608C4985'], [u'Keyboard', u'sheet608C4986'], [u'Keyboard', u'sheet608C4987'], [u'Keyboard', u'sheet608C4988'], [u'Keyboard', u'sheet608C4989'], [u'Keyboard', u'sheet608C498A'], [u'Keyboard', u'sheet608C498B'], [u'Keyboard', u'sheet608C498C'], [u'Keyboard', u'sheet608C498D'], [u'Keyboard', u'sheet608C498E'], [u'Keyboard', u'sheet608C498F'], [u'Keyboard', u'sheet608C4990'], [u'Keyboard', u'sheet608C4991'], [u'Keyboard', u'sheet608C4992'], [u'Keyboard', u'sheet609FE42E'], [u'Keyboard', u'sheet60A8B88C'], [u'Keyboard', u'sheet60A8B88D'], [u'Keyboard', u'sheet60A8B88E'], [u'Keyboard', u'sheet60A8B88F'], [u'Keyboard', u'sheet60A8B890'], [u'Keyboard', u'sheet60A8B891'], [u'Keyboard', u'sheet60A8B892'], [u'Keyboard', u'sheet60A8B893'], [u'Keyboard', u'sheet60A8B894'], [u'Keyboard', u'sheet60A8B895'], [u'Keyboard', u'sheet60A8B896'], [u'Keyboard', u'sheet60A8B89A'], [u'Keyboard', u'sheet60A8B89B'], [u'Keyboard', u'sheet60F911D4']]
+03-15 15:16:12 replicate_layout.replicatelayout 249:construcing a list of sheets suitable for replication on level:u'KEY_ESC', file:u'SSD1306_TO_SPI.sch'
+03-15 15:16:12 replicate_layout.replicatelayout 256:Source sheet path up to the level:[u'Keyboard', u'KEY_ESC']
+03-15 15:16:12 replicate_layout.replicatelayout 260:Footprints on the sheets:
+[u'J59', u'J58', u'J57', u'J56', u'J55', u'J54', u'J53', u'J52', u'J51', u'J50', u'J49', u'J48', u'J47', u'J46', u'J45', u'J44', u'J43', u'J42', u'J41', u'J40', u'J39', u'J38', u'J37', u'J36', u'J35', u'J34', u'J33', u'J32', u'J31', u'J30', u'J29', u'J28', u'J27', u'J26', u'J25', u'J24', u'J23', u'J22', u'J21', u'J20', u'J19', u'J18', u'J17', u'J16', u'J15', u'J14', u'J13', u'J116', u'J115', u'J113', u'J112', u'J114', u'J111', u'J110', u'J107', u'J158', u'J157', u'J156', u'J155', u'J154', u'J153', u'J152', u'J151', u'J109', u'J108', u'J106', u'J105', u'J101', u'J150', u'J149', u'J148', u'J147', u'J146', u'J145', u'J144', u'J143', u'J142', u'J141', u'J140', u'J139', u'J138', u'J137', u'J136', u'J135', u'J134', u'J133', u'J132', u'J131', u'J130', u'J129', u'J128', u'J127', u'J126', u'J125', u'J124', u'J123', u'J122', u'J121', u'J120', u'J119', u'J118', u'J117', u'J104', u'J103', u'J102']
+03-15 15:16:12 replicate_layout.replicatelayout 263:Footprints raw sheet ids:
+[u'/60775168/60F911DE/5FC4B7AD', u'/60775168/60A8B97A/5FC4B7AD', u'/60775168/60A8B988/5FC4B7AD', u'/60775168/60A8B943/5FC4B7AD', u'/60775168/60A8B935/5FC4B7AD', u'/60775168/60A8B927/5FC4B7AD', u'/60775168/60A8B919/5FC4B7AD', u'/60775168/60A8B90B/5FC4B7AD', u'/60775168/60A8B8FC/5FC4B7AD', u'/60775168/60A8B8E5/5FC4B7AD', u'/60775168/60A8B8CF/5FC4B7AD', u'/60775168/60A8B8C1/5FC4B7AD', u'/60775168/60A8B8B3/5FC4B7AD', u'/60775168/60A8B8A5/5FC4B7AD', u'/60775168/609FE437/5FC4B7AD', u'/60775168/608C4A7E/5FC4B7AD', u'/60775168/608C4A70/5FC4B7AD', u'/60775168/608C4A62/5FC4B7AD', u'/60775168/608C4A55/5FC4B7AD', u'/60775168/608C4A47/5FC4B7AD', u'/60775168/608C4A39/5FC4B7AD', u'/60775168/608C4A2B/5FC4B7AD', u'/60775168/608C4A1D/5FC4B7AD', u'/60775168/608C4A0F/5FC4B7AD', u'/60775168/608C4A01/5FC4B7AD', u'/60775168/608C49F2/5FC4B7AD', u'/60775168/608C49DB/5FC4B7AD', u'/60775168/608C49C5/5FC4B7AD', u'/60775168/608C49B7/5FC4B7AD', u'/60775168/608C49A9/5FC4B7AD', u'/60775168/608C499B/5FC4B7AD', u'/60775168/607D6526/5FC4B7AD', u'/60775168/607D6518/5FC4B7AD', u'/60775168/607D650A/5FC4B7AD', u'/60775168/607D64C4/5FC4B7AD', u'/60775168/607D64B6/5FC4B7AD', u'/60775168/607D64A8/5FC4B7AD', u'/60775168/607D649A/5FC4B7AD', u'/60775168/607D648C/5FC4B7AD', u'/60775168/607D647E/5FC4B7AD', u'/60775168/607D6470/5FC4B7AD', u'/60775168/607D6454/5FC4B7AD', u'/60775168/607D643D/5FC4B7AD', u'/60775168/607D6427/5FC4B7AD', u'/60775168/607D6419/5FC4B7AD', u'/60775168/607D640B/5FC4B7AD', u'/60775168/607D63FD/5FC4B7AD', u'/60775168/6069AAA9/5FC4B7AD', u'/60775168/6069AA9B/5FC4B7AD', u'/60775168/6069AA7F/5FC4B7AD', u'/60775168/6069AA71/5FC4B7AD', u'/60775168/6069AA8D/5FC4B7AD', u'/60775168/6069AA63/5FC4B7AD', u'/60775168/6069AA55/5FC4B7AD', u'/60775168/605D76C7/5FC4B7AD', u'/60775168/6069AB19/5FC4B7AD', u'/60775168/6069AB0B/5FC4B7AD', u'/60775168/6069AAFD/5FC4B7AD', u'/60775168/6069AAEF/5FC4B7AD', u'/60775168/6069AAE1/5FC4B7AD', u'/60775168/6069AAD3/5FC4B7AD', u'/60775168/6069AAC5/5FC4B7AD', u'/60775168/6069AAB7/5FC4B7AD', u'/60775168/6069AA47/5FC4B7AD', u'/60775168/605D76D5/5FC4B7AD', u'/60775168/605D76B9/5FC4B7AD', u'/60775168/605D76AB/5FC4B7AD', u'/60775168/6076026D/5FC4B7AD', u'/60775168/60634494/5FC4B7AD', u'/60775168/60634486/5FC4B7AD', u'/60775168/6063446C/5FC4B7AD', u'/60775168/6063445E/5FC4B7AD', u'/60775168/60634450/5FC4B7AD', u'/60775168/6062732D/5FC4B7AD', u'/60775168/6062731F/5FC4B7AD', u'/60775168/60627311/5FC4B7AD', u'/60775168/606272F7/5FC4B7AD', u'/60775168/606272E9/5FC4B7AD', u'/60775168/606272DB/5FC4B7AD', u'/60775168/606272C1/5FC4B7AD', u'/60775168/606272B3/5FC4B7AD', u'/60775168/606272A5/5FC4B7AD', u'/60775168/6062728B/5FC4B7AD', u'/60775168/6062727D/5FC4B7AD', u'/60775168/6062726F/5FC4B7AD', u'/60775168/60627266/5FC4B7AD', u'/60775168/60627249/5FC4B7AD', u'/60775168/6062723B/5FC4B7AD', u'/60775168/6062722D/5FC4B7AD', u'/60775168/605ED310/5FC4B7AD', u'/60775168/605ED302/5FC4B7AD', u'/60775168/605ED2F4/5FC4B7AD', u'/60775168/605E9ACA/5FC4B7AD', u'/60775168/605E9ABC/5FC4B7AD', u'/60775168/605E9AAE/5FC4B7AD', u'/60775168/605E6B8D/5FC4B7AD', u'/60775168/605E6B7F/5FC4B7AD', u'/60775168/605E6B71/5FC4B7AD', u'/60775168/605E514C/5FC4B7AD', u'/60775168/605E513E/5FC4B7AD', u'/60775168/605E5130/5FC4B7AD', u'/60775168/60788106/5FC4B7AD', u'/60775168/604A68AC/5FC4B7AD', u'/60775168/604A6422/5FC4B7AD', u'/60775168/6049EEA2/5FC4B7AD']
+03-15 15:16:12 replicate_layout.replicatelayout 279:All sheets to replicate:
+[[u'Keyboard', u'sheet60F911D4'], [u'Keyboard', u'sheet60A8B89A'], [u'Keyboard', u'sheet60A8B89B'], [u'Keyboard', u'sheet60A8B896'], [u'Keyboard', u'sheet60A8B895'], [u'Keyboard', u'sheet60A8B894'], [u'Keyboard', u'sheet60A8B893'], [u'Keyboard', u'sheet60A8B892'], [u'Keyboard', u'sheet60A8B891'], [u'Keyboard', u'sheet60A8B890'], [u'Keyboard', u'sheet60A8B88F'], [u'Keyboard', u'sheet60A8B88E'], [u'Keyboard', u'sheet60A8B88D'], [u'Keyboard', u'sheet60A8B88C'], [u'Keyboard', u'sheet609FE42E'], [u'Keyboard', u'sheet608C4992'], [u'Keyboard', u'sheet608C4991'], [u'Keyboard', u'sheet608C4990'], [u'Keyboard', u'sheet608C498F'], [u'Keyboard', u'sheet608C498E'], [u'Keyboard', u'sheet608C498D'], [u'Keyboard', u'sheet608C498C'], [u'Keyboard', u'sheet608C498B'], [u'Keyboard', u'sheet608C498A'], [u'Keyboard', u'sheet608C4989'], [u'Keyboard', u'sheet608C4988'], [u'Keyboard', u'sheet608C4987'], [u'Keyboard', u'sheet608C4986'], [u'Keyboard', u'sheet608C4985'], [u'Keyboard', u'sheet608C4984'], [u'Keyboard', u'sheet608C4983'], [u'Keyboard', u'sheet607D63F4'], [u'Keyboard', u'sheet607D63F3'], [u'Keyboard', u'sheet607D63F2'], [u'Keyboard', u'sheet607D63ED'], [u'Keyboard', u'sheet607D63EC'], [u'Keyboard', u'sheet607D63EB'], [u'Keyboard', u'sheet607D63EA'], [u'Keyboard', u'sheet607D63E9'], [u'Keyboard', u'sheet607D63E8'], [u'Keyboard', u'sheet607D63E7'], [u'Keyboard', u'sheet607D63E5'], [u'Keyboard', u'sheet607D63E4'], [u'Keyboard', u'sheet607D63E3'], [u'Keyboard', u'sheet607D63E2'], [u'Keyboard', u'sheet607D63E1'], [u'Keyboard', u'sheet607D63E0'], [u'Keyboard', u'sheet6069AA36'], [u'Keyboard', u'sheet6069AA35'], [u'Keyboard', u'sheet6069AA33'], [u'Keyboard', u'sheet6069AA32'], [u'Keyboard', u'sheet6069AA34'], [u'Keyboard', u'sheet6069AA31'], [u'Keyboard', u'sheet6069AA30'], [u'Keyboard', u'KEY_E'], [u'Keyboard', u'sheet6069AA3E'], [u'Keyboard', u'sheet6069AA3D'], [u'Keyboard', u'sheet6069AA3C'], [u'Keyboard', u'sheet6069AA3B'], [u'Keyboard', u'sheet6069AA3A'], [u'Keyboard', u'sheet6069AA39'], [u'Keyboard', u'sheet6069AA38'], [u'Keyboard', u'sheet6069AA37'], [u'Keyboard', u'sheet6069AA2F'], [u'Keyboard', u'KEY_R'], [u'Keyboard', u'KEY_W'], [u'Keyboard', u'KEY_Q'], [u'Keyboard', u'sheet60760264'], [u'Keyboard', u'sheet60634446'], [u'Keyboard', u'sheet60634445'], [u'Keyboard', u'sheet60634444'], [u'Keyboard', u'sheet60634443'], [u'Keyboard', u'sheet60634442'], [u'Keyboard', u'sheet6062721F'], [u'Keyboard', u'sheet6062721E'], [u'Keyboard', u'sheet6062721D'], [u'Keyboard', u'sheet6062721C'], [u'Keyboard', u'sheet6062721B'], [u'Keyboard', u'sheet6062721A'], [u'Keyboard', u'sheet60627219'], [u'Keyboard', u'sheet60627218'], [u'Keyboard', u'sheet60627217'], [u'Keyboard', u'sheet60627216'], [u'Keyboard', u'sheet60627215'], [u'Keyboard', u'sheet60627214'], [u'Keyboard', u'sheet60627213'], [u'Keyboard', u'sheet60627212'], [u'Keyboard', u'sheet60627211'], [u'Keyboard', u'sheet60627210'], [u'Keyboard', u'sheet605ED2EB'], [u'Keyboard', u'sheet605ED2EA'], [u'Keyboard', u'sheet605ED2E9'], [u'Keyboard', u'sheet605E9AA5'], [u'Keyboard', u'sheet605E9AA4'], [u'Keyboard', u'sheet605E9AA3'], [u'Keyboard', u'sheet605E6B68'], [u'Keyboard', u'sheet605E6B67'], [u'Keyboard', u'sheet605E6B66'], [u'Keyboard', u'sheet605E5127'], [u'Keyboard', u'sheet605E5126'], [u'Keyboard', u'sheet605E5125'], [u'Keyboard', u'KEY_ESC'], [u'Keyboard', u'KEY_F3'], [u'Keyboard', u'KEY_F2'], [u'Keyboard', u'KEY_F1']]
+03-15 15:16:12 replicate_layout.replicatelayout 284:All sheets to replicate sorted:
+[[u'Keyboard', u'KEY_E'], [u'Keyboard', u'KEY_ESC'], [u'Keyboard', u'KEY_F1'], [u'Keyboard', u'KEY_F2'], [u'Keyboard', u'KEY_F3'], [u'Keyboard', u'KEY_Q'], [u'Keyboard', u'KEY_R'], [u'Keyboard', u'KEY_W'], [u'Keyboard', u'sheet605E5125'], [u'Keyboard', u'sheet605E5126'], [u'Keyboard', u'sheet605E5127'], [u'Keyboard', u'sheet605E6B66'], [u'Keyboard', u'sheet605E6B67'], [u'Keyboard', u'sheet605E6B68'], [u'Keyboard', u'sheet605E9AA3'], [u'Keyboard', u'sheet605E9AA4'], [u'Keyboard', u'sheet605E9AA5'], [u'Keyboard', u'sheet605ED2E9'], [u'Keyboard', u'sheet605ED2EA'], [u'Keyboard', u'sheet605ED2EB'], [u'Keyboard', u'sheet60627210'], [u'Keyboard', u'sheet60627211'], [u'Keyboard', u'sheet60627212'], [u'Keyboard', u'sheet60627213'], [u'Keyboard', u'sheet60627214'], [u'Keyboard', u'sheet60627215'], [u'Keyboard', u'sheet60627216'], [u'Keyboard', u'sheet60627217'], [u'Keyboard', u'sheet60627218'], [u'Keyboard', u'sheet60627219'], [u'Keyboard', u'sheet6062721A'], [u'Keyboard', u'sheet6062721B'], [u'Keyboard', u'sheet6062721C'], [u'Keyboard', u'sheet6062721D'], [u'Keyboard', u'sheet6062721E'], [u'Keyboard', u'sheet6062721F'], [u'Keyboard', u'sheet60634442'], [u'Keyboard', u'sheet60634443'], [u'Keyboard', u'sheet60634444'], [u'Keyboard', u'sheet60634445'], [u'Keyboard', u'sheet60634446'], [u'Keyboard', u'sheet6069AA2F'], [u'Keyboard', u'sheet6069AA30'], [u'Keyboard', u'sheet6069AA31'], [u'Keyboard', u'sheet6069AA32'], [u'Keyboard', u'sheet6069AA33'], [u'Keyboard', u'sheet6069AA34'], [u'Keyboard', u'sheet6069AA35'], [u'Keyboard', u'sheet6069AA36'], [u'Keyboard', u'sheet6069AA37'], [u'Keyboard', u'sheet6069AA38'], [u'Keyboard', u'sheet6069AA39'], [u'Keyboard', u'sheet6069AA3A'], [u'Keyboard', u'sheet6069AA3B'], [u'Keyboard', u'sheet6069AA3C'], [u'Keyboard', u'sheet6069AA3D'], [u'Keyboard', u'sheet6069AA3E'], [u'Keyboard', u'sheet60760264'], [u'Keyboard', u'sheet607D63E0'], [u'Keyboard', u'sheet607D63E1'], [u'Keyboard', u'sheet607D63E2'], [u'Keyboard', u'sheet607D63E3'], [u'Keyboard', u'sheet607D63E4'], [u'Keyboard', u'sheet607D63E5'], [u'Keyboard', u'sheet607D63E7'], [u'Keyboard', u'sheet607D63E8'], [u'Keyboard', u'sheet607D63E9'], [u'Keyboard', u'sheet607D63EA'], [u'Keyboard', u'sheet607D63EB'], [u'Keyboard', u'sheet607D63EC'], [u'Keyboard', u'sheet607D63ED'], [u'Keyboard', u'sheet607D63F2'], [u'Keyboard', u'sheet607D63F3'], [u'Keyboard', u'sheet607D63F4'], [u'Keyboard', u'sheet608C4983'], [u'Keyboard', u'sheet608C4984'], [u'Keyboard', u'sheet608C4985'], [u'Keyboard', u'sheet608C4986'], [u'Keyboard', u'sheet608C4987'], [u'Keyboard', u'sheet608C4988'], [u'Keyboard', u'sheet608C4989'], [u'Keyboard', u'sheet608C498A'], [u'Keyboard', u'sheet608C498B'], [u'Keyboard', u'sheet608C498C'], [u'Keyboard', u'sheet608C498D'], [u'Keyboard', u'sheet608C498E'], [u'Keyboard', u'sheet608C498F'], [u'Keyboard', u'sheet608C4990'], [u'Keyboard', u'sheet608C4991'], [u'Keyboard', u'sheet608C4992'], [u'Keyboard', u'sheet609FE42E'], [u'Keyboard', u'sheet60A8B88C'], [u'Keyboard', u'sheet60A8B88D'], [u'Keyboard', u'sheet60A8B88E'], [u'Keyboard', u'sheet60A8B88F'], [u'Keyboard', u'sheet60A8B890'], [u'Keyboard', u'sheet60A8B891'], [u'Keyboard', u'sheet60A8B892'], [u'Keyboard', u'sheet60A8B893'], [u'Keyboard', u'sheet60A8B894'], [u'Keyboard', u'sheet60A8B895'], [u'Keyboard', u'sheet60A8B896'], [u'Keyboard', u'sheet60A8B89A'], [u'Keyboard', u'sheet60A8B89B'], [u'Keyboard', u'sheet60F911D4']]
+03-15 15:16:12 replicate_layout.replicatelayout 290:All sheets to replicate sorted and without source sheet:
+[[u'Keyboard', u'KEY_E'], [u'Keyboard', u'KEY_F1'], [u'Keyboard', u'KEY_F2'], [u'Keyboard', u'KEY_F3'], [u'Keyboard', u'KEY_Q'], [u'Keyboard', u'KEY_R'], [u'Keyboard', u'KEY_W'], [u'Keyboard', u'sheet605E5125'], [u'Keyboard', u'sheet605E5126'], [u'Keyboard', u'sheet605E5127'], [u'Keyboard', u'sheet605E6B66'], [u'Keyboard', u'sheet605E6B67'], [u'Keyboard', u'sheet605E6B68'], [u'Keyboard', u'sheet605E9AA3'], [u'Keyboard', u'sheet605E9AA4'], [u'Keyboard', u'sheet605E9AA5'], [u'Keyboard', u'sheet605ED2E9'], [u'Keyboard', u'sheet605ED2EA'], [u'Keyboard', u'sheet605ED2EB'], [u'Keyboard', u'sheet60627210'], [u'Keyboard', u'sheet60627211'], [u'Keyboard', u'sheet60627212'], [u'Keyboard', u'sheet60627213'], [u'Keyboard', u'sheet60627214'], [u'Keyboard', u'sheet60627215'], [u'Keyboard', u'sheet60627216'], [u'Keyboard', u'sheet60627217'], [u'Keyboard', u'sheet60627218'], [u'Keyboard', u'sheet60627219'], [u'Keyboard', u'sheet6062721A'], [u'Keyboard', u'sheet6062721B'], [u'Keyboard', u'sheet6062721C'], [u'Keyboard', u'sheet6062721D'], [u'Keyboard', u'sheet6062721E'], [u'Keyboard', u'sheet6062721F'], [u'Keyboard', u'sheet60634442'], [u'Keyboard', u'sheet60634443'], [u'Keyboard', u'sheet60634444'], [u'Keyboard', u'sheet60634445'], [u'Keyboard', u'sheet60634446'], [u'Keyboard', u'sheet6069AA2F'], [u'Keyboard', u'sheet6069AA30'], [u'Keyboard', u'sheet6069AA31'], [u'Keyboard', u'sheet6069AA32'], [u'Keyboard', u'sheet6069AA33'], [u'Keyboard', u'sheet6069AA34'], [u'Keyboard', u'sheet6069AA35'], [u'Keyboard', u'sheet6069AA36'], [u'Keyboard', u'sheet6069AA37'], [u'Keyboard', u'sheet6069AA38'], [u'Keyboard', u'sheet6069AA39'], [u'Keyboard', u'sheet6069AA3A'], [u'Keyboard', u'sheet6069AA3B'], [u'Keyboard', u'sheet6069AA3C'], [u'Keyboard', u'sheet6069AA3D'], [u'Keyboard', u'sheet6069AA3E'], [u'Keyboard', u'sheet60760264'], [u'Keyboard', u'sheet607D63E0'], [u'Keyboard', u'sheet607D63E1'], [u'Keyboard', u'sheet607D63E2'], [u'Keyboard', u'sheet607D63E3'], [u'Keyboard', u'sheet607D63E4'], [u'Keyboard', u'sheet607D63E5'], [u'Keyboard', u'sheet607D63E7'], [u'Keyboard', u'sheet607D63E8'], [u'Keyboard', u'sheet607D63E9'], [u'Keyboard', u'sheet607D63EA'], [u'Keyboard', u'sheet607D63EB'], [u'Keyboard', u'sheet607D63EC'], [u'Keyboard', u'sheet607D63ED'], [u'Keyboard', u'sheet607D63F2'], [u'Keyboard', u'sheet607D63F3'], [u'Keyboard', u'sheet607D63F4'], [u'Keyboard', u'sheet608C4983'], [u'Keyboard', u'sheet608C4984'], [u'Keyboard', u'sheet608C4985'], [u'Keyboard', u'sheet608C4986'], [u'Keyboard', u'sheet608C4987'], [u'Keyboard', u'sheet608C4988'], [u'Keyboard', u'sheet608C4989'], [u'Keyboard', u'sheet608C498A'], [u'Keyboard', u'sheet608C498B'], [u'Keyboard', u'sheet608C498C'], [u'Keyboard', u'sheet608C498D'], [u'Keyboard', u'sheet608C498E'], [u'Keyboard', u'sheet608C498F'], [u'Keyboard', u'sheet608C4990'], [u'Keyboard', u'sheet608C4991'], [u'Keyboard', u'sheet608C4992'], [u'Keyboard', u'sheet609FE42E'], [u'Keyboard', u'sheet60A8B88C'], [u'Keyboard', u'sheet60A8B88D'], [u'Keyboard', u'sheet60A8B88E'], [u'Keyboard', u'sheet60A8B88F'], [u'Keyboard', u'sheet60A8B890'], [u'Keyboard', u'sheet60A8B891'], [u'Keyboard', u'sheet60A8B892'], [u'Keyboard', u'sheet60A8B893'], [u'Keyboard', u'sheet60A8B894'], [u'Keyboard', u'sheet60A8B895'], [u'Keyboard', u'sheet60A8B896'], [u'Keyboard', u'sheet60A8B89A'], [u'Keyboard', u'sheet60A8B89B'], [u'Keyboard', u'sheet60F911D4']]
+03-15 15:16:12 replicate_layout.action_replicate_layout 179:Replicating layout
+03-15 15:16:12 replicate_layout.replicatelayout 990:Starting replication of sheets: [[u'Keyboard', u'KEY_E'], [u'Keyboard', u'KEY_F1'], [u'Keyboard', u'KEY_F2'], [u'Keyboard', u'KEY_F3'], [u'Keyboard', u'KEY_Q'], [u'Keyboard', u'KEY_R'], [u'Keyboard', u'KEY_W'], [u'Keyboard', u'sheet605E5125'], [u'Keyboard', u'sheet605E5126'], [u'Keyboard', u'sheet605E5127'], [u'Keyboard', u'sheet605E6B66'], [u'Keyboard', u'sheet605E6B67'], [u'Keyboard', u'sheet605E6B68'], [u'Keyboard', u'sheet605E9AA3'], [u'Keyboard', u'sheet605E9AA4'], [u'Keyboard', u'sheet605E9AA5'], [u'Keyboard', u'sheet605ED2E9'], [u'Keyboard', u'sheet605ED2EA'], [u'Keyboard', u'sheet605ED2EB'], [u'Keyboard', u'sheet60627210'], [u'Keyboard', u'sheet60627211'], [u'Keyboard', u'sheet60627212'], [u'Keyboard', u'sheet60627213'], [u'Keyboard', u'sheet60627214'], [u'Keyboard', u'sheet60627215'], [u'Keyboard', u'sheet60627216'], [u'Keyboard', u'sheet60627217'], [u'Keyboard', u'sheet60627218'], [u'Keyboard', u'sheet60627219'], [u'Keyboard', u'sheet6062721A'], [u'Keyboard', u'sheet6062721B'], [u'Keyboard', u'sheet6062721C'], [u'Keyboard', u'sheet6062721D'], [u'Keyboard', u'sheet6062721E'], [u'Keyboard', u'sheet6062721F'], [u'Keyboard', u'sheet60634442'], [u'Keyboard', u'sheet60634443'], [u'Keyboard', u'sheet60634444'], [u'Keyboard', u'sheet60634445'], [u'Keyboard', u'sheet60634446'], [u'Keyboard', u'sheet6069AA2F'], [u'Keyboard', u'sheet6069AA30'], [u'Keyboard', u'sheet6069AA31'], [u'Keyboard', u'sheet6069AA32'], [u'Keyboard', u'sheet6069AA33'], [u'Keyboard', u'sheet6069AA34'], [u'Keyboard', u'sheet6069AA35'], [u'Keyboard', u'sheet6069AA36'], [u'Keyboard', u'sheet6069AA37'], [u'Keyboard', u'sheet6069AA38'], [u'Keyboard', u'sheet6069AA39'], [u'Keyboard', u'sheet6069AA3A'], [u'Keyboard', u'sheet6069AA3B'], [u'Keyboard', u'sheet6069AA3C'], [u'Keyboard', u'sheet6069AA3D'], [u'Keyboard', u'sheet6069AA3E'], [u'Keyboard', u'sheet60760264'], [u'Keyboard', u'sheet607D63E0'], [u'Keyboard', u'sheet607D63E1'], [u'Keyboard', u'sheet607D63E2'], [u'Keyboard', u'sheet607D63E3'], [u'Keyboard', u'sheet607D63E4'], [u'Keyboard', u'sheet607D63E5'], [u'Keyboard', u'sheet607D63E7'], [u'Keyboard', u'sheet607D63E8'], [u'Keyboard', u'sheet607D63E9'], [u'Keyboard', u'sheet607D63EA'], [u'Keyboard', u'sheet607D63EB'], [u'Keyboard', u'sheet607D63EC'], [u'Keyboard', u'sheet607D63ED'], [u'Keyboard', u'sheet607D63F2'], [u'Keyboard', u'sheet607D63F3'], [u'Keyboard', u'sheet607D63F4'], [u'Keyboard', u'sheet608C4983'], [u'Keyboard', u'sheet608C4984'], [u'Keyboard', u'sheet608C4985'], [u'Keyboard', u'sheet608C4986'], [u'Keyboard', u'sheet608C4987'], [u'Keyboard', u'sheet608C4988'], [u'Keyboard', u'sheet608C4989'], [u'Keyboard', u'sheet608C498A'], [u'Keyboard', u'sheet608C498B'], [u'Keyboard', u'sheet608C498C'], [u'Keyboard', u'sheet608C498D'], [u'Keyboard', u'sheet608C498E'], [u'Keyboard', u'sheet608C498F'], [u'Keyboard', u'sheet608C4990'], [u'Keyboard', u'sheet608C4991'], [u'Keyboard', u'sheet608C4992'], [u'Keyboard', u'sheet609FE42E'], [u'Keyboard', u'sheet60A8B88C'], [u'Keyboard', u'sheet60A8B88D'], [u'Keyboard', u'sheet60A8B88E'], [u'Keyboard', u'sheet60A8B88F'], [u'Keyboard', u'sheet60A8B890'], [u'Keyboard', u'sheet60A8B891'], [u'Keyboard', u'sheet60A8B892'], [u'Keyboard', u'sheet60A8B893'], [u'Keyboard', u'sheet60A8B894'], [u'Keyboard', u'sheet60A8B895'], [u'Keyboard', u'sheet60A8B896'], [u'Keyboard', u'sheet60A8B89A'], [u'Keyboard', u'sheet60A8B89B'], [u'Keyboard', u'sheet60F911D4']]
+on level: [u'Keyboard', u'KEY_ESC']
+with tracks=True, zone=True, text=True, containing=False, remove=False, locked=True
+03-15 15:16:12 root 261:updating GUI message: 'Preparing for replication'
+03-15 15:16:12 root 266:updating GUI with: 0
+03-15 15:16:12 replicate_layout.replicatelayout 556:Getting the list of source footprints
+03-15 15:16:12 replicate_layout.replicatelayout 560:Getting the list of all the remaining footprints
+03-15 15:16:12 replicate_layout.replicatelayout 564:Getting nets local to source footprints
+03-15 15:16:13 replicate_layout.replicatelayout 568:Getting source bounding box
+03-15 15:16:13 root 266:updating GUI with: 37
+03-15 15:16:13 replicate_layout.replicatelayout 572:Getting source tracks
+03-15 15:16:13 replicate_layout.replicatelayout 576:Getting source zones
+03-15 15:16:13 root 266:updating GUI with: 62
+03-15 15:16:13 replicate_layout.replicatelayout 580:Getting source text items
+03-15 15:16:13 replicate_layout.replicatelayout 584:Getting source text items
+03-15 15:16:13 root 266:updating GUI with: 87
+03-15 15:16:13 root 266:updating GUI with: 100
+03-15 15:16:13 root 261:updating GUI message: 'Replicating footprints'
+03-15 15:16:13 replicate_layout.replicatelayout 590:Replicating footprints
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'KEY_E']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'KEY_F1']
+03-15 15:16:13 root 266:updating GUI with: 1
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'KEY_F2']
+03-15 15:16:13 root 266:updating GUI with: 2
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'KEY_F3']
+03-15 15:16:13 root 266:updating GUI with: 3
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'KEY_Q']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'KEY_R']
+03-15 15:16:13 root 266:updating GUI with: 5
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'KEY_W']
+03-15 15:16:13 root 266:updating GUI with: 6
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605E5125']
+03-15 15:16:13 root 266:updating GUI with: 7
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605E5126']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605E5127']
+03-15 15:16:13 root 266:updating GUI with: 8
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605E6B66']
+03-15 15:16:13 root 266:updating GUI with: 10
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605E6B67']
+03-15 15:16:13 root 266:updating GUI with: 11
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605E6B68']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605E9AA3']
+03-15 15:16:13 root 266:updating GUI with: 12
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605E9AA4']
+03-15 15:16:13 root 266:updating GUI with: 14
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605E9AA5']
+03-15 15:16:13 root 266:updating GUI with: 15
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605ED2E9']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605ED2EA']
+03-15 15:16:13 root 266:updating GUI with: 16
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet605ED2EB']
+03-15 15:16:13 root 266:updating GUI with: 18
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60627210']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60627211']
+03-15 15:16:13 root 266:updating GUI with: 19
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60627212']
+03-15 15:16:13 root 266:updating GUI with: 20
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60627213']
+03-15 15:16:13 root 266:updating GUI with: 22
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60627214']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60627215']
+03-15 15:16:13 root 266:updating GUI with: 23
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60627216']
+03-15 15:16:13 root 266:updating GUI with: 24
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60627217']
+03-15 15:16:13 root 266:updating GUI with: 25
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60627218']
+03-15 15:16:13 root 266:updating GUI with: 26
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60627219']
+03-15 15:16:13 root 266:updating GUI with: 27
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6062721A']
+03-15 15:16:13 root 266:updating GUI with: 28
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6062721B']
+03-15 15:16:13 root 266:updating GUI with: 29
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6062721C']
+03-15 15:16:13 root 266:updating GUI with: 30
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6062721D']
+03-15 15:16:13 root 266:updating GUI with: 31
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6062721E']
+03-15 15:16:13 root 266:updating GUI with: 32
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6062721F']
+03-15 15:16:13 root 266:updating GUI with: 33
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60634442']
+03-15 15:16:13 root 266:updating GUI with: 34
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60634443']
+03-15 15:16:13 root 266:updating GUI with: 35
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60634444']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60634445']
+03-15 15:16:13 root 266:updating GUI with: 36
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60634446']
+03-15 15:16:13 root 266:updating GUI with: 37
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA2F']
+03-15 15:16:13 root 266:updating GUI with: 38
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA30']
+03-15 15:16:13 root 266:updating GUI with: 40
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA31']
+03-15 15:16:13 root 266:updating GUI with: 41
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA32']
+03-15 15:16:13 root 266:updating GUI with: 42
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA33']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA34']
+03-15 15:16:13 root 266:updating GUI with: 43
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA35']
+03-15 15:16:13 root 266:updating GUI with: 44
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA36']
+03-15 15:16:13 root 266:updating GUI with: 45
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA37']
+03-15 15:16:13 root 266:updating GUI with: 46
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA38']
+03-15 15:16:13 root 266:updating GUI with: 48
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA39']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA3A']
+03-15 15:16:13 root 266:updating GUI with: 49
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA3B']
+03-15 15:16:13 root 266:updating GUI with: 50
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA3C']
+03-15 15:16:13 root 266:updating GUI with: 51
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA3D']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet6069AA3E']
+03-15 15:16:13 root 266:updating GUI with: 53
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60760264']
+03-15 15:16:13 root 266:updating GUI with: 54
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63E0']
+03-15 15:16:13 root 266:updating GUI with: 55
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63E1']
+03-15 15:16:13 root 266:updating GUI with: 56
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63E2']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63E3']
+03-15 15:16:13 root 266:updating GUI with: 57
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63E4']
+03-15 15:16:13 root 266:updating GUI with: 59
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63E5']
+03-15 15:16:13 root 266:updating GUI with: 60
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63E7']
+03-15 15:16:13 root 266:updating GUI with: 61
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63E8']
+03-15 15:16:13 root 266:updating GUI with: 62
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63E9']
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63EA']
+03-15 15:16:13 root 266:updating GUI with: 63
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63EB']
+03-15 15:16:13 root 266:updating GUI with: 65
+03-15 15:16:13 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63EC']
+03-15 15:16:14 root 266:updating GUI with: 65
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63ED']
+03-15 15:16:14 root 266:updating GUI with: 67
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63F2']
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63F3']
+03-15 15:16:14 root 266:updating GUI with: 68
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet607D63F4']
+03-15 15:16:14 root 266:updating GUI with: 69
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C4983']
+03-15 15:16:14 root 266:updating GUI with: 70
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C4984']
+03-15 15:16:14 root 266:updating GUI with: 71
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C4985']
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C4986']
+03-15 15:16:14 root 266:updating GUI with: 73
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C4987']
+03-15 15:16:14 root 266:updating GUI with: 74
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C4988']
+03-15 15:16:14 root 266:updating GUI with: 75
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C4989']
+03-15 15:16:14 root 266:updating GUI with: 76
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C498A']
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C498B']
+03-15 15:16:14 root 266:updating GUI with: 78
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C498C']
+03-15 15:16:14 root 266:updating GUI with: 79
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C498D']
+03-15 15:16:14 root 266:updating GUI with: 80
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C498E']
+03-15 15:16:14 root 266:updating GUI with: 81
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C498F']
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C4990']
+03-15 15:16:14 root 266:updating GUI with: 83
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C4991']
+03-15 15:16:14 root 266:updating GUI with: 84
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet608C4992']
+03-15 15:16:14 root 266:updating GUI with: 85
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet609FE42E']
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B88C']
+03-15 15:16:14 root 266:updating GUI with: 86
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B88D']
+03-15 15:16:14 root 266:updating GUI with: 87
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B88E']
+03-15 15:16:14 root 266:updating GUI with: 88
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B88F']
+03-15 15:16:14 root 266:updating GUI with: 89
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B890']
+03-15 15:16:14 root 266:updating GUI with: 90
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B891']
+03-15 15:16:14 root 266:updating GUI with: 92
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B892']
+03-15 15:16:14 root 266:updating GUI with: 93
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B893']
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B894']
+03-15 15:16:14 root 266:updating GUI with: 94
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B895']
+03-15 15:16:14 root 266:updating GUI with: 95
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B896']
+03-15 15:16:14 root 266:updating GUI with: 96
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B89A']
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60A8B89B']
+03-15 15:16:14 root 266:updating GUI with: 98
+03-15 15:16:14 replicate_layout.replicatelayout 596:Replicating footprints on sheet [u'Keyboard', u'sheet60F911D4']
+03-15 15:16:14 root 266:updating GUI with: 99
+03-15 15:16:14 root 261:updating GUI message: 'Replicating tracks'
+03-15 15:16:14 replicate_layout.replicatelayout 716:Replicating tracks
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'KEY_E']
+03-15 15:16:14 root 266:updating GUI with: 0
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'KEY_F1']
+03-15 15:16:14 root 266:updating GUI with: 0
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'KEY_F2']
+03-15 15:16:14 root 266:updating GUI with: 1
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'KEY_F3']
+03-15 15:16:14 root 266:updating GUI with: 2
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'KEY_Q']
+03-15 15:16:14 root 266:updating GUI with: 3
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'KEY_R']
+03-15 15:16:14 root 266:updating GUI with: 4
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'KEY_W']
+03-15 15:16:14 root 266:updating GUI with: 5
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605E5125']
+03-15 15:16:14 root 266:updating GUI with: 6
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605E5126']
+03-15 15:16:14 root 266:updating GUI with: 7
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605E5127']
+03-15 15:16:14 root 266:updating GUI with: 8
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605E6B66']
+03-15 15:16:14 root 266:updating GUI with: 9
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605E6B67']
+03-15 15:16:14 root 266:updating GUI with: 10
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605E6B68']
+03-15 15:16:14 root 266:updating GUI with: 11
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605E9AA3']
+03-15 15:16:14 root 266:updating GUI with: 12
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605E9AA4']
+03-15 15:16:14 root 266:updating GUI with: 13
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605E9AA5']
+03-15 15:16:14 root 266:updating GUI with: 14
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605ED2E9']
+03-15 15:16:14 root 266:updating GUI with: 15
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605ED2EA']
+03-15 15:16:14 root 266:updating GUI with: 16
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet605ED2EB']
+03-15 15:16:14 root 266:updating GUI with: 17
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60627210']
+03-15 15:16:14 root 266:updating GUI with: 18
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60627211']
+03-15 15:16:14 root 266:updating GUI with: 19
+03-15 15:16:14 root 266:updating GUI with: 20
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60627212']
+03-15 15:16:14 root 266:updating GUI with: 20
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60627213']
+03-15 15:16:14 root 266:updating GUI with: 21
+03-15 15:16:14 root 266:updating GUI with: 21
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60627214']
+03-15 15:16:14 root 266:updating GUI with: 22
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60627215']
+03-15 15:16:14 root 266:updating GUI with: 23
+03-15 15:16:14 root 266:updating GUI with: 24
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60627216']
+03-15 15:16:14 root 266:updating GUI with: 24
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60627217']
+03-15 15:16:14 root 266:updating GUI with: 25
+03-15 15:16:14 root 266:updating GUI with: 25
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60627218']
+03-15 15:16:14 root 266:updating GUI with: 26
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60627219']
+03-15 15:16:14 root 266:updating GUI with: 26
+03-15 15:16:14 root 266:updating GUI with: 27
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6062721A']
+03-15 15:16:14 root 266:updating GUI with: 27
+03-15 15:16:14 root 266:updating GUI with: 28
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6062721B']
+03-15 15:16:14 root 266:updating GUI with: 29
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6062721C']
+03-15 15:16:14 root 266:updating GUI with: 29
+03-15 15:16:14 root 266:updating GUI with: 30
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6062721D']
+03-15 15:16:14 root 266:updating GUI with: 30
+03-15 15:16:14 root 266:updating GUI with: 31
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6062721E']
+03-15 15:16:14 root 266:updating GUI with: 31
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6062721F']
+03-15 15:16:14 root 266:updating GUI with: 32
+03-15 15:16:14 root 266:updating GUI with: 33
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60634442']
+03-15 15:16:14 root 266:updating GUI with: 33
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60634443']
+03-15 15:16:14 root 266:updating GUI with: 34
+03-15 15:16:14 root 266:updating GUI with: 35
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60634444']
+03-15 15:16:14 root 266:updating GUI with: 35
+03-15 15:16:14 root 266:updating GUI with: 36
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60634445']
+03-15 15:16:14 root 266:updating GUI with: 36
+03-15 15:16:14 root 266:updating GUI with: 36
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60634446']
+03-15 15:16:14 root 266:updating GUI with: 37
+03-15 15:16:14 root 266:updating GUI with: 37
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA2F']
+03-15 15:16:14 root 266:updating GUI with: 38
+03-15 15:16:14 root 266:updating GUI with: 38
+03-15 15:16:14 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA30']
+03-15 15:16:14 root 266:updating GUI with: 39
+03-15 15:16:15 root 266:updating GUI with: 39
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA31']
+03-15 15:16:15 root 266:updating GUI with: 40
+03-15 15:16:15 root 266:updating GUI with: 40
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA32']
+03-15 15:16:15 root 266:updating GUI with: 41
+03-15 15:16:15 root 266:updating GUI with: 41
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA33']
+03-15 15:16:15 root 266:updating GUI with: 42
+03-15 15:16:15 root 266:updating GUI with: 42
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA34']
+03-15 15:16:15 root 266:updating GUI with: 43
+03-15 15:16:15 root 266:updating GUI with: 43
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA35']
+03-15 15:16:15 root 266:updating GUI with: 44
+03-15 15:16:15 root 266:updating GUI with: 44
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA36']
+03-15 15:16:15 root 266:updating GUI with: 45
+03-15 15:16:15 root 266:updating GUI with: 45
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA37']
+03-15 15:16:15 root 266:updating GUI with: 46
+03-15 15:16:15 root 266:updating GUI with: 46
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA38']
+03-15 15:16:15 root 266:updating GUI with: 47
+03-15 15:16:15 root 266:updating GUI with: 47
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA39']
+03-15 15:16:15 root 266:updating GUI with: 48
+03-15 15:16:15 root 266:updating GUI with: 48
+03-15 15:16:15 root 266:updating GUI with: 48
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA3A']
+03-15 15:16:15 root 266:updating GUI with: 49
+03-15 15:16:15 root 266:updating GUI with: 49
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA3B']
+03-15 15:16:15 root 266:updating GUI with: 50
+03-15 15:16:15 root 266:updating GUI with: 50
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA3C']
+03-15 15:16:15 root 266:updating GUI with: 50
+03-15 15:16:15 root 266:updating GUI with: 51
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA3D']
+03-15 15:16:15 root 266:updating GUI with: 51
+03-15 15:16:15 root 266:updating GUI with: 52
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet6069AA3E']
+03-15 15:16:15 root 266:updating GUI with: 52
+03-15 15:16:15 root 266:updating GUI with: 53
+03-15 15:16:15 root 266:updating GUI with: 53
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60760264']
+03-15 15:16:15 root 266:updating GUI with: 53
+03-15 15:16:15 root 266:updating GUI with: 54
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63E0']
+03-15 15:16:15 root 266:updating GUI with: 54
+03-15 15:16:15 root 266:updating GUI with: 55
+03-15 15:16:15 root 266:updating GUI with: 55
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63E1']
+03-15 15:16:15 root 266:updating GUI with: 55
+03-15 15:16:15 root 266:updating GUI with: 56
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63E2']
+03-15 15:16:15 root 266:updating GUI with: 56
+03-15 15:16:15 root 266:updating GUI with: 56
+03-15 15:16:15 root 266:updating GUI with: 57
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63E3']
+03-15 15:16:15 root 266:updating GUI with: 57
+03-15 15:16:15 root 266:updating GUI with: 58
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63E4']
+03-15 15:16:15 root 266:updating GUI with: 58
+03-15 15:16:15 root 266:updating GUI with: 58
+03-15 15:16:15 root 266:updating GUI with: 59
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63E5']
+03-15 15:16:15 root 266:updating GUI with: 59
+03-15 15:16:15 root 266:updating GUI with: 59
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63E7']
+03-15 15:16:15 root 266:updating GUI with: 60
+03-15 15:16:15 root 266:updating GUI with: 60
+03-15 15:16:15 root 266:updating GUI with: 61
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63E8']
+03-15 15:16:15 root 266:updating GUI with: 61
+03-15 15:16:15 root 266:updating GUI with: 61
+03-15 15:16:15 root 266:updating GUI with: 62
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63E9']
+03-15 15:16:15 root 266:updating GUI with: 62
+03-15 15:16:15 root 266:updating GUI with: 62
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63EA']
+03-15 15:16:15 root 266:updating GUI with: 63
+03-15 15:16:15 root 266:updating GUI with: 63
+03-15 15:16:15 root 266:updating GUI with: 64
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63EB']
+03-15 15:16:15 root 266:updating GUI with: 64
+03-15 15:16:15 root 266:updating GUI with: 64
+03-15 15:16:15 root 266:updating GUI with: 65
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63EC']
+03-15 15:16:15 root 266:updating GUI with: 65
+03-15 15:16:15 root 266:updating GUI with: 65
+03-15 15:16:15 root 266:updating GUI with: 66
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63ED']
+03-15 15:16:15 root 266:updating GUI with: 66
+03-15 15:16:15 root 266:updating GUI with: 66
+03-15 15:16:15 root 266:updating GUI with: 66
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63F2']
+03-15 15:16:15 root 266:updating GUI with: 67
+03-15 15:16:15 root 266:updating GUI with: 67
+03-15 15:16:15 root 266:updating GUI with: 67
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63F3']
+03-15 15:16:15 root 266:updating GUI with: 68
+03-15 15:16:15 root 266:updating GUI with: 68
+03-15 15:16:15 root 266:updating GUI with: 68
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet607D63F4']
+03-15 15:16:15 root 266:updating GUI with: 69
+03-15 15:16:15 root 266:updating GUI with: 69
+03-15 15:16:15 root 266:updating GUI with: 69
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C4983']
+03-15 15:16:15 root 266:updating GUI with: 70
+03-15 15:16:15 root 266:updating GUI with: 70
+03-15 15:16:15 root 266:updating GUI with: 70
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C4984']
+03-15 15:16:15 root 266:updating GUI with: 71
+03-15 15:16:15 root 266:updating GUI with: 71
+03-15 15:16:15 root 266:updating GUI with: 71
+03-15 15:16:15 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C4985']
+03-15 15:16:15 root 266:updating GUI with: 72
+03-15 15:16:16 root 266:updating GUI with: 72
+03-15 15:16:16 root 266:updating GUI with: 72
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C4986']
+03-15 15:16:16 root 266:updating GUI with: 73
+03-15 15:16:16 root 266:updating GUI with: 73
+03-15 15:16:16 root 266:updating GUI with: 73
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C4987']
+03-15 15:16:16 root 266:updating GUI with: 74
+03-15 15:16:16 root 266:updating GUI with: 74
+03-15 15:16:16 root 266:updating GUI with: 74
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C4988']
+03-15 15:16:16 root 266:updating GUI with: 75
+03-15 15:16:16 root 266:updating GUI with: 75
+03-15 15:16:16 root 266:updating GUI with: 75
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C4989']
+03-15 15:16:16 root 266:updating GUI with: 75
+03-15 15:16:16 root 266:updating GUI with: 76
+03-15 15:16:16 root 266:updating GUI with: 76
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C498A']
+03-15 15:16:16 root 266:updating GUI with: 76
+03-15 15:16:16 root 266:updating GUI with: 77
+03-15 15:16:16 root 266:updating GUI with: 77
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C498B']
+03-15 15:16:16 root 266:updating GUI with: 77
+03-15 15:16:16 root 266:updating GUI with: 78
+03-15 15:16:16 root 266:updating GUI with: 78
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C498C']
+03-15 15:16:16 root 266:updating GUI with: 78
+03-15 15:16:16 root 266:updating GUI with: 79
+03-15 15:16:16 root 266:updating GUI with: 79
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C498D']
+03-15 15:16:16 root 266:updating GUI with: 79
+03-15 15:16:16 root 266:updating GUI with: 80
+03-15 15:16:16 root 266:updating GUI with: 80
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C498E']
+03-15 15:16:16 root 266:updating GUI with: 80
+03-15 15:16:16 root 266:updating GUI with: 80
+03-15 15:16:16 root 266:updating GUI with: 81
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C498F']
+03-15 15:16:16 root 266:updating GUI with: 81
+03-15 15:16:16 root 266:updating GUI with: 81
+03-15 15:16:16 root 266:updating GUI with: 82
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C4990']
+03-15 15:16:16 root 266:updating GUI with: 82
+03-15 15:16:16 root 266:updating GUI with: 82
+03-15 15:16:16 root 266:updating GUI with: 83
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C4991']
+03-15 15:16:16 root 266:updating GUI with: 83
+03-15 15:16:16 root 266:updating GUI with: 83
+03-15 15:16:16 root 266:updating GUI with: 84
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet608C4992']
+03-15 15:16:16 root 266:updating GUI with: 84
+03-15 15:16:16 root 266:updating GUI with: 84
+03-15 15:16:16 root 266:updating GUI with: 85
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet609FE42E']
+03-15 15:16:16 root 266:updating GUI with: 85
+03-15 15:16:16 root 266:updating GUI with: 85
+03-15 15:16:16 root 266:updating GUI with: 86
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B88C']
+03-15 15:16:16 root 266:updating GUI with: 86
+03-15 15:16:16 root 266:updating GUI with: 86
+03-15 15:16:16 root 266:updating GUI with: 87
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B88D']
+03-15 15:16:16 root 266:updating GUI with: 87
+03-15 15:16:16 root 266:updating GUI with: 87
+03-15 15:16:16 root 266:updating GUI with: 88
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B88E']
+03-15 15:16:16 root 266:updating GUI with: 88
+03-15 15:16:16 root 266:updating GUI with: 88
+03-15 15:16:16 root 266:updating GUI with: 89
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B88F']
+03-15 15:16:16 root 266:updating GUI with: 89
+03-15 15:16:16 root 266:updating GUI with: 89
+03-15 15:16:16 root 266:updating GUI with: 90
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B890']
+03-15 15:16:16 root 266:updating GUI with: 90
+03-15 15:16:16 root 266:updating GUI with: 90
+03-15 15:16:16 root 266:updating GUI with: 90
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B891']
+03-15 15:16:16 root 266:updating GUI with: 91
+03-15 15:16:16 root 266:updating GUI with: 91
+03-15 15:16:16 root 266:updating GUI with: 91
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B892']
+03-15 15:16:16 root 266:updating GUI with: 92
+03-15 15:16:16 root 266:updating GUI with: 92
+03-15 15:16:16 root 266:updating GUI with: 92
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B893']
+03-15 15:16:16 root 266:updating GUI with: 93
+03-15 15:16:16 root 266:updating GUI with: 93
+03-15 15:16:16 root 266:updating GUI with: 93
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B894']
+03-15 15:16:16 root 266:updating GUI with: 94
+03-15 15:16:16 root 266:updating GUI with: 94
+03-15 15:16:16 root 266:updating GUI with: 94
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B895']
+03-15 15:16:16 root 266:updating GUI with: 95
+03-15 15:16:16 root 266:updating GUI with: 95
+03-15 15:16:16 root 266:updating GUI with: 95
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B896']
+03-15 15:16:16 root 266:updating GUI with: 96
+03-15 15:16:16 root 266:updating GUI with: 96
+03-15 15:16:16 root 266:updating GUI with: 96
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B89A']
+03-15 15:16:16 root 266:updating GUI with: 97
+03-15 15:16:16 root 266:updating GUI with: 97
+03-15 15:16:16 root 266:updating GUI with: 97
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60A8B89B']
+03-15 15:16:16 root 266:updating GUI with: 98
+03-15 15:16:16 root 266:updating GUI with: 98
+03-15 15:16:16 root 266:updating GUI with: 98
+03-15 15:16:16 replicate_layout.replicatelayout 722:Replicating tracks on sheet [u'Keyboard', u'sheet60F911D4']
+03-15 15:16:16 root 266:updating GUI with: 99
+03-15 15:16:16 root 266:updating GUI with: 99
+03-15 15:16:16 root 266:updating GUI with: 99
+03-15 15:16:16 root 261:updating GUI message: 'Replicating zones'
+03-15 15:16:16 replicate_layout.replicatelayout 767:Replicating zones
+03-15 15:16:16 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'KEY_E']
+03-15 15:16:16 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'KEY_F1']
+03-15 15:16:16 root 266:updating GUI with: 1
+03-15 15:16:16 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'KEY_F2']
+03-15 15:16:16 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'KEY_F3']
+03-15 15:16:16 root 266:updating GUI with: 3
+03-15 15:16:16 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'KEY_Q']
+03-15 15:16:16 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'KEY_R']
+03-15 15:16:16 root 266:updating GUI with: 5
+03-15 15:16:16 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'KEY_W']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605E5125']
+03-15 15:16:17 root 266:updating GUI with: 7
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605E5126']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605E5127']
+03-15 15:16:17 root 266:updating GUI with: 9
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605E6B66']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605E6B67']
+03-15 15:16:17 root 266:updating GUI with: 11
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605E6B68']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605E9AA3']
+03-15 15:16:17 root 266:updating GUI with: 13
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605E9AA4']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605E9AA5']
+03-15 15:16:17 root 266:updating GUI with: 15
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605ED2E9']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605ED2EA']
+03-15 15:16:17 root 266:updating GUI with: 17
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet605ED2EB']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60627210']
+03-15 15:16:17 root 266:updating GUI with: 19
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60627211']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60627212']
+03-15 15:16:17 root 266:updating GUI with: 21
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60627213']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60627214']
+03-15 15:16:17 root 266:updating GUI with: 23
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60627215']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60627216']
+03-15 15:16:17 root 266:updating GUI with: 25
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60627217']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60627218']
+03-15 15:16:17 root 266:updating GUI with: 26
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60627219']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6062721A']
+03-15 15:16:17 root 266:updating GUI with: 28
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6062721B']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6062721C']
+03-15 15:16:17 root 266:updating GUI with: 30
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6062721D']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6062721E']
+03-15 15:16:17 root 266:updating GUI with: 32
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6062721F']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60634442']
+03-15 15:16:17 root 266:updating GUI with: 34
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60634443']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60634444']
+03-15 15:16:17 root 266:updating GUI with: 36
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60634445']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60634446']
+03-15 15:16:17 root 266:updating GUI with: 38
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA2F']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA30']
+03-15 15:16:17 root 266:updating GUI with: 40
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA31']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA32']
+03-15 15:16:17 root 266:updating GUI with: 42
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA33']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA34']
+03-15 15:16:17 root 266:updating GUI with: 44
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA35']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA36']
+03-15 15:16:17 root 266:updating GUI with: 46
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA37']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA38']
+03-15 15:16:17 root 266:updating GUI with: 48
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA39']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA3A']
+03-15 15:16:17 root 266:updating GUI with: 50
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA3B']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA3C']
+03-15 15:16:17 root 266:updating GUI with: 51
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA3D']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet6069AA3E']
+03-15 15:16:17 root 266:updating GUI with: 53
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60760264']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63E0']
+03-15 15:16:17 root 266:updating GUI with: 55
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63E1']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63E2']
+03-15 15:16:17 root 266:updating GUI with: 57
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63E3']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63E4']
+03-15 15:16:17 root 266:updating GUI with: 59
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63E5']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63E7']
+03-15 15:16:17 root 266:updating GUI with: 61
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63E8']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63E9']
+03-15 15:16:17 root 266:updating GUI with: 63
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63EA']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63EB']
+03-15 15:16:17 root 266:updating GUI with: 65
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63EC']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63ED']
+03-15 15:16:17 root 266:updating GUI with: 67
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63F2']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63F3']
+03-15 15:16:17 root 266:updating GUI with: 69
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet607D63F4']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C4983']
+03-15 15:16:17 root 266:updating GUI with: 71
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C4984']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C4985']
+03-15 15:16:17 root 266:updating GUI with: 73
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C4986']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C4987']
+03-15 15:16:17 root 266:updating GUI with: 75
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C4988']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C4989']
+03-15 15:16:17 root 266:updating GUI with: 76
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C498A']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C498B']
+03-15 15:16:17 root 266:updating GUI with: 78
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C498C']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C498D']
+03-15 15:16:17 root 266:updating GUI with: 80
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C498E']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C498F']
+03-15 15:16:17 root 266:updating GUI with: 82
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C4990']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C4991']
+03-15 15:16:17 root 266:updating GUI with: 84
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet608C4992']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet609FE42E']
+03-15 15:16:17 root 266:updating GUI with: 86
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B88C']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B88D']
+03-15 15:16:17 root 266:updating GUI with: 88
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B88E']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B88F']
+03-15 15:16:17 root 266:updating GUI with: 90
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B890']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B891']
+03-15 15:16:17 root 266:updating GUI with: 92
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B892']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B893']
+03-15 15:16:17 root 266:updating GUI with: 94
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B894']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B895']
+03-15 15:16:17 root 266:updating GUI with: 96
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B896']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B89A']
+03-15 15:16:17 root 266:updating GUI with: 98
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60A8B89B']
+03-15 15:16:17 replicate_layout.replicatelayout 774:Replicating zones on sheet [u'Keyboard', u'sheet60F911D4']
+03-15 15:16:17 root 261:updating GUI message: 'Replicating text'
+03-15 15:16:17 root 266:updating GUI with: 0
+03-15 15:16:17 replicate_layout.replicatelayout 833:Replicating text
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'KEY_E']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'KEY_F1']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'KEY_F2']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'KEY_F3']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'KEY_Q']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'KEY_R']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'KEY_W']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605E5125']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605E5126']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605E5127']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605E6B66']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605E6B67']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605E6B68']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605E9AA3']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605E9AA4']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605E9AA5']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605ED2E9']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605ED2EA']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet605ED2EB']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60627210']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60627211']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60627212']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60627213']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60627214']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60627215']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60627216']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60627217']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60627218']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60627219']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6062721A']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6062721B']
+03-15 15:16:17 root 266:updating GUI with: 29
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6062721C']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6062721D']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6062721E']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6062721F']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60634442']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60634443']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60634444']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60634445']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60634446']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA2F']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA30']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA31']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA32']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA33']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA34']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA35']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA36']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA37']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA38']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA39']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA3A']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA3B']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA3C']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA3D']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet6069AA3E']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60760264']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63E0']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63E1']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63E2']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63E3']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63E4']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63E5']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63E7']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63E8']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63E9']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63EA']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63EB']
+03-15 15:16:17 root 266:updating GUI with: 65
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63EC']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63ED']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63F2']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63F3']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet607D63F4']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C4983']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C4984']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C4985']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C4986']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C4987']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C4988']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C4989']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C498A']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C498B']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C498C']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C498D']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C498E']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C498F']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C4990']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C4991']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet608C4992']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet609FE42E']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B88C']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B88D']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B88E']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B88F']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B890']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B891']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B892']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B893']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B894']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B895']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B896']
+03-15 15:16:17 root 266:updating GUI with: 97
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B89A']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60A8B89B']
+03-15 15:16:17 replicate_layout.replicatelayout 840:Replicating text on sheet [u'Keyboard', u'sheet60F911D4']
+03-15 15:16:17 root 261:updating GUI message: 'Replicating drawings'
+03-15 15:16:17 replicate_layout.replicatelayout 864:Replicating drawings
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'KEY_E']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'KEY_F1']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'KEY_F2']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'KEY_F3']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'KEY_Q']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'KEY_R']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'KEY_W']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605E5125']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605E5126']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605E5127']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605E6B66']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605E6B67']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605E6B68']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605E9AA3']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605E9AA4']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605E9AA5']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605ED2E9']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605ED2EA']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet605ED2EB']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60627210']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60627211']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60627212']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60627213']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60627214']
+03-15 15:16:17 root 266:updating GUI with: 22
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60627215']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60627216']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60627217']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60627218']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60627219']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6062721A']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6062721B']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6062721C']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6062721D']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6062721E']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6062721F']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60634442']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60634443']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60634444']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60634445']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60634446']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA2F']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA30']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA31']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA32']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA33']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA34']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA35']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA36']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA37']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA38']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA39']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA3A']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA3B']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA3C']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA3D']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet6069AA3E']
+03-15 15:16:17 root 266:updating GUI with: 53
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60760264']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63E0']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63E1']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63E2']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63E3']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63E4']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63E5']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63E7']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63E8']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63E9']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63EA']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63EB']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63EC']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63ED']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63F2']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63F3']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet607D63F4']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C4983']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C4984']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C4985']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C4986']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C4987']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C4988']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C4989']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C498A']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C498B']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C498C']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C498D']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C498E']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C498F']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C4990']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C4991']
+03-15 15:16:17 root 266:updating GUI with: 84
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet608C4992']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet609FE42E']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B88C']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B88D']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B88E']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B88F']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B890']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B891']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B892']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B893']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B894']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B895']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B896']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B89A']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60A8B89B']
+03-15 15:16:17 replicate_layout.replicatelayout 870:Replicating drawings on sheet [u'Keyboard', u'sheet60F911D4']
+03-15 15:16:18 replicate_layout.action_replicate_layout 201:Replication complete
