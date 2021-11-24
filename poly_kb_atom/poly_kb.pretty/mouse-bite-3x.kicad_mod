@@ -1,0 +1,11 @@
+(module mouse-bite-3x (layer F.Cu) (tedit 61965335)
+  (fp_text reference mouse-bite-2mm-slot (at 0 -2) (layer F.SilkS) hide
+    (effects (font (size 1 1) (thickness 0.2)))
+  )
+  (fp_text value VAL** (at 0 2.1) (layer F.SilkS) hide
+    (effects (font (size 1 1) (thickness 0.2)))
+  )
+  (pad "" np_thru_hole circle (at -0.7493 -0.0007) (size 0.5 0.5) (drill 0.5) (layers *.Cu *.Mask))
+  (pad "" np_thru_hole circle (at 0.0007 -0.0007) (size 0.5 0.5) (drill 0.5) (layers *.Cu *.Mask))
+  (pad "" np_thru_hole circle (at 0.7552 -0.0007) (size 0.5 0.5) (drill 0.5) (layers *.Cu *.Mask))
+)

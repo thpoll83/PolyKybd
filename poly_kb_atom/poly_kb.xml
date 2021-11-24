@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="D">
+  <design>
+    <source>C:\Users\thomas.pollak\OneDrive\3d\3d printing\projects\keyboard\PolyKeyboard\poly_kb_atom\poly_kb.sch</source>
+    <date>14.09.2021 16:44:32</date>
+    <tool>Eeschema (5.1.9)-1</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title>Poly Keyboard Prototype</title>
+        <company/>
+        <rev>1</rev>
+        <date/>
+        <source>poly_kb.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="2" name="/Keyboard/" tstamps="/60775168/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>keyboard.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="3" name="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>SSD1306_TO_SPI.sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="J4">
+      <value>EastFront</value>
+      <footprint>poly_kb:AtomConnect2</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x09" description="Generic connector, single row, 01x09, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/Keyboard/" tstamps="/60775168/"/>
+      <tstamp>60DD874F</tstamp>
+    </comp>
+    <comp ref="J3">
+      <value>WestFront</value>
+      <footprint>poly_kb:AtomConnect2</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x09" description="Generic connector, single row, 01x09, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/Keyboard/" tstamps="/60775168/"/>
+      <tstamp>6132B688</tstamp>
+    </comp>
+    <comp ref="J6">
+      <value>EastBack</value>
+      <footprint>poly_kb:AtomConnect2</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x09" description="Generic connector, single row, 01x09, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/Keyboard/" tstamps="/60775168/"/>
+      <tstamp>613EFBA3</tstamp>
+    </comp>
+    <comp ref="J5">
+      <value>WestBack</value>
+      <footprint>poly_kb:AtomConnectCS</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x10" description="Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/Keyboard/" tstamps="/60775168/"/>
+      <tstamp>613F0D03</tstamp>
+    </comp>
+    <comp ref="J2">
+      <value>North</value>
+      <footprint>poly_kb:TestPoin_1.5x1.5mm_Drill0.7mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x01" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/Keyboard/" tstamps="/60775168/"/>
+      <tstamp>61409CF2</tstamp>
+    </comp>
+    <comp ref="J7">
+      <value>South</value>
+      <footprint>poly_kb:TestPoin_1.5x1.5mm_Drill0.7mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x01" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/Keyboard/" tstamps="/60775168/"/>
+      <tstamp>61410C7E</tstamp>
+    </comp>
+    <comp ref="J8">
+      <value>North2</value>
+      <footprint>poly_kb:TestPoin_1.5x1.5mm_Drill0.7mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x01" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/Keyboard/" tstamps="/60775168/"/>
+      <tstamp>61441F3E</tstamp>
+    </comp>
+    <comp ref="J9">
+      <value>South2</value>
+      <footprint>poly_kb:TestPoin_1.5x1.5mm_Drill0.7mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector_Generic" part="Conn_01x01" description="Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/Keyboard/" tstamps="/60775168/"/>
+      <tstamp>61444659</tstamp>
+    </comp>
+    <comp ref="C4">
+      <value>4.7uF</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C19666</field>
+      </fields>
+      <libsource lib="Device" part="C_Small" description="Unpolarized capacitor, small symbol"/>
+      <sheetpath names="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/"/>
+      <tstamp>607EA96B</tstamp>
+    </comp>
+    <comp ref="C1">
+      <value>2.2uF</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC"> C23630</field>
+      </fields>
+      <libsource lib="Device" part="C_Small" description="Unpolarized capacitor, small symbol"/>
+      <sheetpath names="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/"/>
+      <tstamp>607EA96F</tstamp>
+    </comp>
+    <comp ref="C5">
+      <value>1uF</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC"> C52923</field>
+      </fields>
+      <libsource lib="Device" part="C_Small" description="Unpolarized capacitor, small symbol"/>
+      <sheetpath names="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/"/>
+      <tstamp>607EA972</tstamp>
+    </comp>
+    <comp ref="LED1">
+      <value>WS2812B-Mini</value>
+      <footprint>poly_kb:WS2812B-Mini</footprint>
+      <datasheet>https://datasheet.lcsc.com/szlcsc/1811041130_Worldsemi-WS2812B-Mini_C114583.pdf</datasheet>
+      <fields>
+        <field name="LCSC">C527089</field>
+      </fields>
+      <libsource lib="LED" part="WS2812B" description="RGB LED with integrated controller"/>
+      <sheetpath names="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/"/>
+      <tstamp>607EA967</tstamp>
+    </comp>
+    <comp ref="C6">
+      <value>1uF</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC"> C52923</field>
+      </fields>
+      <libsource lib="Device" part="C_Small" description="Unpolarized capacitor, small symbol"/>
+      <sheetpath names="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/"/>
+      <tstamp>60788FD5</tstamp>
+    </comp>
+    <comp ref="C2">
+      <value>2.2uF</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC"> C23630</field>
+      </fields>
+      <libsource lib="Device" part="C_Small" description="Unpolarized capacitor, small symbol"/>
+      <sheetpath names="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/"/>
+      <tstamp>607EA977</tstamp>
+    </comp>
+    <comp ref="J1">
+      <value>Conn_01x16</value>
+      <footprint>poly_kb:FPC_16_JUSHUO_AFC05_S16FIA_00</footprint>
+      <datasheet>https://datasheet.lcsc.com/szlcsc/1811021329_JUSHUO-AFC11-S16ICA-00_C262501.pdf</datasheet>
+      <fields>
+        <field name="LCSC">C561388</field>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x16" description="Generic connector, single row, 01x16, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <sheetpath names="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/"/>
+      <tstamp>5FC4B7AD</tstamp>
+    </comp>
+    <comp ref="C3">
+      <value>1uF</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC"> C52923</field>
+      </fields>
+      <libsource lib="Device" part="C_Small" description="Unpolarized capacitor, small symbol"/>
+      <sheetpath names="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/"/>
+      <tstamp>60DCE49F</tstamp>
+    </comp>
+    <comp ref="SW1">
+      <value>SW_Push</value>
+      <footprint>poly_kb:SW_Cherry_MX_1.00u_PCB_NoSilk</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <sheetpath names="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/"/>
+      <tstamp>60DD50C7</tstamp>
+    </comp>
+    <comp ref="D1">
+      <value>D_Small</value>
+      <footprint>Diode_SMD:D_SOD-323F</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C2826370</field>
+      </fields>
+      <libsource lib="Device" part="D_Small" description="Diode, small symbol"/>
+      <sheetpath names="/Keyboard/sheet605ED2EB/" tstamps="/60775168/605ED310/"/>
+      <tstamp>60DD5B2A</tstamp>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Connector_Generic" part="Conn_01x01">
+      <description>Generic connector, single row, 01x01, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x01</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector_Generic" part="Conn_01x09">
+      <description>Generic connector, single row, 01x09, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x09</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+        <pin num="7" name="Pin_7" type="passive"/>
+        <pin num="8" name="Pin_8" type="passive"/>
+        <pin num="9" name="Pin_9" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector_Generic" part="Conn_01x10">
+      <description>Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x10</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+        <pin num="7" name="Pin_7" type="passive"/>
+        <pin num="8" name="Pin_8" type="passive"/>
+        <pin num="9" name="Pin_9" type="passive"/>
+        <pin num="10" name="Pin_10" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector_Generic" part="Conn_01x16">
+      <description>Generic connector, single row, 01x16, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x16</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+        <pin num="7" name="Pin_7" type="passive"/>
+        <pin num="8" name="Pin_8" type="passive"/>
+        <pin num="9" name="Pin_9" type="passive"/>
+        <pin num="10" name="Pin_10" type="passive"/>
+        <pin num="11" name="Pin_11" type="passive"/>
+        <pin num="12" name="Pin_12" type="passive"/>
+        <pin num="13" name="Pin_13" type="passive"/>
+        <pin num="14" name="Pin_14" type="passive"/>
+        <pin num="15" name="Pin_15" type="passive"/>
+        <pin num="16" name="Pin_16" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="C_Small">
+      <description>Unpolarized capacitor, small symbol</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>C_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C_Small</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="D_Small">
+      <description>Diode, small symbol</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>TO-???*</fp>
+        <fp>*_Diode_*</fp>
+        <fp>*SingleDiode*</fp>
+        <fp>D_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">D_Small</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="LED" part="WS2812B">
+      <description>RGB LED with integrated controller</description>
+      <docs>https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf</docs>
+      <footprints>
+        <fp>LED*WS2812*PLCC*5.0x5.0mm*P3.2mm*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">WS2812B</field>
+        <field name="Footprint">LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm</field>
+      </fields>
+      <pins>
+        <pin num="1" name="VDD" type="power_in"/>
+        <pin num="2" name="DOUT" type="output"/>
+        <pin num="3" name="VSS" type="power_in"/>
+        <pin num="4" name="DIN" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="Switch" part="SW_Push">
+      <description>Push button switch, generic, two pins</description>
+      <docs>~</docs>
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">SW_Push</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connector_Generic">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Connector_Generic.lib</uri>
+    </library>
+    <library logical="Device">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Device.lib</uri>
+    </library>
+    <library logical="LED">
+      <uri>C:\Program Files\KiCad\share\kicad\library/LED.lib</uri>
+    </library>
+    <library logical="Switch">
+      <uri>C:\Program Files\KiCad\share\kicad\library/Switch.lib</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="CS7">
+      <node ref="J5" pin="8"/>
+      <node ref="J6" pin="8"/>
+    </net>
+    <net code="2" name="CS8">
+      <node ref="J6" pin="9"/>
+      <node ref="J5" pin="9"/>
+    </net>
+    <net code="3" name="/Keyboard/sheet605ED2EB/GND">
+      <node ref="J5" pin="1"/>
+      <node ref="C1" pin="2"/>
+      <node ref="C3" pin="2"/>
+      <node ref="J1" pin="3"/>
+      <node ref="C2" pin="2"/>
+      <node ref="C4" pin="2"/>
+      <node ref="J1" pin="1"/>
+      <node ref="J6" pin="1"/>
+      <node ref="LED1" pin="3"/>
+    </net>
+    <net code="4" name="/Keyboard/sheet605ED2EB/KeyRow">
+      <node ref="J3" pin="9"/>
+      <node ref="SW1" pin="1"/>
+      <node ref="J4" pin="9"/>
+    </net>
+    <net code="5" name="CS4">
+      <node ref="J5" pin="5"/>
+      <node ref="J6" pin="5"/>
+    </net>
+    <net code="6" name="CS5">
+      <node ref="J6" pin="6"/>
+      <node ref="J5" pin="6"/>
+    </net>
+    <net code="7" name="CS1">
+      <node ref="J6" pin="2"/>
+      <node ref="J5" pin="2"/>
+    </net>
+    <net code="8" name="CS3">
+      <node ref="J5" pin="4"/>
+      <node ref="J6" pin="4"/>
+    </net>
+    <net code="9" name="/Keyboard/sheet605ED2EB/CS">
+      <node ref="J1" pin="10"/>
+      <node ref="J5" pin="10"/>
+    </net>
+    <net code="10" name="/Keyboard/sheet605ED2EB/KeyCol">
+      <node ref="D1" pin="1"/>
+      <node ref="J7" pin="1"/>
+      <node ref="J2" pin="1"/>
+      <node ref="J9" pin="1"/>
+      <node ref="J8" pin="1"/>
+    </net>
+    <net code="11" name="CS6">
+      <node ref="J5" pin="7"/>
+      <node ref="J6" pin="7"/>
+    </net>
+    <net code="12" name="CS2">
+      <node ref="J5" pin="3"/>
+      <node ref="J6" pin="3"/>
+    </net>
+    <net code="13" name="/Keyboard/sheet605ED2EB/SCLK">
+      <node ref="J1" pin="13"/>
+      <node ref="J4" pin="8"/>
+      <node ref="J3" pin="8"/>
+    </net>
+    <net code="14" name="/Keyboard/sheet605ED2EB/LED_DIN">
+      <node ref="LED1" pin="4"/>
+      <node ref="J4" pin="4"/>
+    </net>
+    <net code="15" name="/Keyboard/sheet605ED2EB/5V">
+      <node ref="J3" pin="1"/>
+      <node ref="LED1" pin="1"/>
+      <node ref="J4" pin="1"/>
+    </net>
+    <net code="16" name="/Keyboard/sheet605ED2EB/LED_DOUT">
+      <node ref="LED1" pin="2"/>
+      <node ref="J3" pin="4"/>
+    </net>
+    <net code="17" name="/Keyboard/sheet605ED2EB/3V3">
+      <node ref="J1" pin="16"/>
+      <node ref="J3" pin="2"/>
+      <node ref="J4" pin="2"/>
+      <node ref="J1" pin="9"/>
+      <node ref="C3" pin="1"/>
+      <node ref="C1" pin="1"/>
+    </net>
+    <net code="18" name="/Keyboard/sheet605ED2EB/4V2">
+      <node ref="J3" pin="3"/>
+      <node ref="J4" pin="3"/>
+      <node ref="C2" pin="1"/>
+      <node ref="J1" pin="8"/>
+    </net>
+    <net code="19" name="/Keyboard/sheet605ED2EB/D-C">
+      <node ref="J4" pin="7"/>
+      <node ref="J1" pin="12"/>
+      <node ref="J3" pin="7"/>
+    </net>
+    <net code="20" name="/Keyboard/sheet605ED2EB/RESET">
+      <node ref="J4" pin="5"/>
+      <node ref="J3" pin="5"/>
+      <node ref="J1" pin="11"/>
+    </net>
+    <net code="21" name="/Keyboard/sheet605ED2EB/SDIN">
+      <node ref="J1" pin="14"/>
+      <node ref="J4" pin="6"/>
+      <node ref="J3" pin="6"/>
+    </net>
+    <net code="22" name="Net-(C6-Pad1)">
+      <node ref="C6" pin="1"/>
+      <node ref="J1" pin="6"/>
+    </net>
+    <net code="23" name="Net-(J1-Pad2)">
+      <node ref="J1" pin="2"/>
+    </net>
+    <net code="24" name="Net-(D1-Pad2)">
+      <node ref="D1" pin="2"/>
+      <node ref="SW1" pin="2"/>
+    </net>
+    <net code="25" name="Net-(C5-Pad2)">
+      <node ref="J1" pin="5"/>
+      <node ref="C5" pin="2"/>
+    </net>
+    <net code="26" name="Net-(C5-Pad1)">
+      <node ref="J1" pin="4"/>
+      <node ref="C5" pin="1"/>
+    </net>
+    <net code="27" name="Net-(C6-Pad2)">
+      <node ref="C6" pin="2"/>
+      <node ref="J1" pin="7"/>
+    </net>
+    <net code="29" name="Net-(C4-Pad1)">
+      <node ref="C4" pin="1"/>
+      <node ref="J1" pin="15"/>
+    </net>
+  </nets>
+</export>
