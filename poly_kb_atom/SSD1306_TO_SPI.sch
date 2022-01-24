@@ -4,10 +4,10 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 3 3
-Title ""
-Date ""
-Rev ""
-Comp ""
+Title "Display Adapter, LED & Switch"
+Date "2022-01-24"
+Rev "2.1"
+Comp "thpoll"
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -1252,9 +1252,6 @@ $EndComp
 Wire Wire Line
 	4950 4750 4950 4900
 Wire Wire Line
-	4250 4550 4950 4550
-Connection ~ 4950 4550
-Wire Wire Line
 	4950 4550 5200 4550
 Text HLabel 4650 4450 0    50   Input ~ 0
 GND
@@ -1262,8 +1259,6 @@ Text HLabel 6400 4300 3    50   Input ~ 0
 GND
 Text HLabel 4950 4900 3    50   Input ~ 0
 GND
-Text HLabel 4250 4550 0    50   Input ~ 0
-3V3
 Text HLabel 3800 3850 0    50   Input ~ 0
 3V3
 Wire Wire Line

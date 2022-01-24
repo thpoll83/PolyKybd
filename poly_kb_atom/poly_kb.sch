@@ -4,10 +4,10 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 3
-Title "Poly Keyboard Prototype"
-Date ""
-Rev "1"
-Comp ""
+Title "Poly Keyboard Atom Standalone"
+Date "2022-01-24"
+Rev "2.1"
+Comp "thpoll"
 Comment1 ""
 Comment2 ""
 Comment3 ""
