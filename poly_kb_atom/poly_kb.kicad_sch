@@ -1,0 +1,95 @@
+(kicad_sch (version 20211123) (generator eeschema)
+
+  (uuid 81bbc3ff-3938-49ac-8297-ce2bcc9a42bd)
+
+  (paper "A4")
+
+  (title_block
+    (title "Poly Keyboard Atom Standalone")
+    (date "2022-01-24")
+    (rev "2.1")
+    (company "thpoll")
+  )
+
+  (lib_symbols
+  )
+
+
+  (sheet (at 67.31 83.82) (size 53.34 31.75) (fields_autoplaced)
+    (stroke (width 0) (type solid) (color 0 0 0 0))
+    (fill (color 0 0 0 0.0000))
+    (uuid 00000000-0000-0000-0000-000060775168)
+    (property "Sheet name" "Keyboard" (id 0) (at 67.31 83.1084 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheet file" "keyboard.kicad_sch" (id 1) (at 67.31 116.1546 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+  )
+
+  (sheet_instances
+    (path "/" (page "1"))
+    (path "/00000000-0000-0000-0000-000060775168" (page "2"))
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310" (page "3"))
+  )
+
+  (symbol_instances
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/00000000-0000-0000-0000-0000607ea96f"
+      (reference "C1") (unit 1) (value "2.2uF") (footprint "Capacitor_SMD:C_0603_1608Metric")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/00000000-0000-0000-0000-0000607ea977"
+      (reference "C2") (unit 1) (value "2.2uF") (footprint "Capacitor_SMD:C_0603_1608Metric")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/00000000-0000-0000-0000-000060dce49f"
+      (reference "C3") (unit 1) (value "1uF") (footprint "Capacitor_SMD:C_0402_1005Metric")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/00000000-0000-0000-0000-0000607ea96b"
+      (reference "C4") (unit 1) (value "4.7uF") (footprint "Capacitor_SMD:C_0603_1608Metric")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/00000000-0000-0000-0000-0000607ea972"
+      (reference "C5") (unit 1) (value "1uF") (footprint "Capacitor_SMD:C_0402_1005Metric")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/00000000-0000-0000-0000-000060788fd5"
+      (reference "C6") (unit 1) (value "1uF") (footprint "Capacitor_SMD:C_0402_1005Metric")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/00000000-0000-0000-0000-000060dd5b2a"
+      (reference "D1") (unit 1) (value "D_Small") (footprint "Diode_SMD:D_SOD-323")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/00000000-0000-0000-0000-00005fc4b7ad"
+      (reference "J1") (unit 1) (value "Conn_01x16") (footprint "poly_kb:FPC_16_JUSHUO_AFC05_S16FIA_00")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-000061409cf2"
+      (reference "J2") (unit 1) (value "North") (footprint "poly_kb:TestPoin_1.5x1.5mm_Drill0.7mm")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-00006132b688"
+      (reference "J3") (unit 1) (value "WestFront") (footprint "poly_kb:AtomConnect2")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-000060dd874f"
+      (reference "J4") (unit 1) (value "EastFront") (footprint "poly_kb:AtomConnect2")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000613f0d03"
+      (reference "J5") (unit 1) (value "WestBack") (footprint "poly_kb:AtomConnectCS")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000613efba3"
+      (reference "J6") (unit 1) (value "EastBack") (footprint "poly_kb:AtomConnect2")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-000061410c7e"
+      (reference "J7") (unit 1) (value "South") (footprint "poly_kb:TestPoin_1.5x1.5mm_Drill0.7mm")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-000061441f3e"
+      (reference "J8") (unit 1) (value "North2") (footprint "poly_kb:TestPoin_1.5x1.5mm_Drill0.7mm")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-000061444659"
+      (reference "J9") (unit 1) (value "South2") (footprint "poly_kb:TestPoin_1.5x1.5mm_Drill0.7mm")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/00000000-0000-0000-0000-0000607ea967"
+      (reference "LED1") (unit 1) (value "WS2812B-Mini") (footprint "poly_kb:WS2812B-Mini")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/3036986f-780f-4e5b-8e4b-4e66acc1e072"
+      (reference "R1") (unit 1) (value "1M") (footprint "Resistor_SMD:R_0402_1005Metric")
+    )
+    (path "/00000000-0000-0000-0000-000060775168/00000000-0000-0000-0000-0000605ed310/00000000-0000-0000-0000-000060dd50c7"
+      (reference "SW1") (unit 1) (value "SW_Push") (footprint "poly_kb:SW_Cherry_MX_1.00u_PCB_NoSilk")
+    )
+  )
+)
