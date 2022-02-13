@@ -2,3 +2,6 @@
 *.kicad_pcb-bak
 poly_kb_atom/poly_kb-backups/
 poly_kb_atom/connector-backups/
+poly_kb_atom/_autosave*
+poly_kb_atom/#auto_saved_files#
+fp-info-cache

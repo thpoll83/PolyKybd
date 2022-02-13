@@ -45,7 +45,7 @@
         "silk_text_upright": false,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.15
+          "min_clearance": 0.15239999999999998
         }
       },
       "diff_pair_dimensions": [
@@ -108,8 +108,8 @@
         "allow_blind_buried_vias": false,
         "allow_microvias": false,
         "max_error": 0.005,
-        "min_clearance": 0.0,
-        "min_copper_edge_clearance": 0.01,
+        "min_clearance": 0.15239999999999998,
+        "min_copper_edge_clearance": 0.15,
         "min_hole_clearance": 0.13,
         "min_hole_to_hole": 0.25,
         "min_microvia_diameter": 0.19999999999999998,
@@ -129,7 +129,8 @@
         0.4,
         0.5,
         0.75,
-        1.0
+        1.0,
+        1.5
       ],
       "via_dimensions": [
         {
