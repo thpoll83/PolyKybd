@@ -1,6 +1,6 @@
 {
   "board": {
-    "active_layer": 37,
+    "active_layer": 0,
     "active_layer_preset": "All Layers",
     "auto_track_width": true,
     "hidden_nets": [],
@@ -66,7 +66,7 @@
     "zone_display_mode": 0
   },
   "meta": {
-    "filename": "poly_kb_molecule_1x4.kicad_prl",
+    "filename": "poly_kb_molecule_2x1.kicad_prl",
     "version": 3
   },
   "project": {
