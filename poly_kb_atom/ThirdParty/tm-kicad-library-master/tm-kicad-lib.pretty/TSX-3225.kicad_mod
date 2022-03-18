@@ -1,0 +1,12 @@
+(module TSX-3225 (layer F.Cu) (tedit 543DF4AB)
+  (fp_text reference X? (at 0 -2.5) (layer F.SilkS)
+    (effects (font (size 1 1) (thickness 0.1)))
+  )
+  (fp_text value VAL** (at 0 3) (layer F.SilkS) hide
+    (effects (font (size 1.5 1.5) (thickness 0.15)))
+  )
+  (pad 1 smd rect (at -1.1 0.8) (size 1.4 1.15) (layers F.Cu F.Paste F.Mask))
+  (pad 2 smd rect (at 1.1 0.8) (size 1.4 1.15) (layers F.Cu F.Paste F.Mask))
+  (pad 3 smd rect (at 1.1 -0.8) (size 1.4 1.15) (layers F.Cu F.Paste F.Mask))
+  (pad 4 smd rect (at -1.1 -0.8) (size 1.4 1.15) (layers F.Cu F.Paste F.Mask))
+)

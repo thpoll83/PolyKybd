@@ -1,0 +1,17 @@
+(module FC-135 (layer F.Cu) (tedit 54DA6E22)
+  (fp_text reference X2 (at 0 -1.524) (layer F.SilkS)
+    (effects (font (size 0.5 0.5) (thickness 0.125)))
+  )
+  (fp_text value SC32S-12.5PF20PPM (at 0 0) (layer F.SilkS) hide
+    (effects (font (size 1.5 1.5) (thickness 0.15)))
+  )
+  (fp_line (start -1.397 0.889) (end 1.397 0.889) (layer F.SilkS) (width 0.15))
+  (fp_line (start -1.397 -0.889) (end 1.397 -0.889) (layer F.SilkS) (width 0.15))
+  (pad 1 smd rect (at 1.175 0) (size 0.65 1.3) (layers F.Cu F.Paste F.Mask))
+  (pad 2 smd rect (at -1.175 0) (size 0.65 1.3) (layers F.Cu F.Paste F.Mask))
+  (model SMD_Packages/SMD-0402.wrl
+    (at (xyz 0 0 0))
+    (scale (xyz 0.12 0.15 0.1))
+    (rotate (xyz 0 0 0))
+  )
+)

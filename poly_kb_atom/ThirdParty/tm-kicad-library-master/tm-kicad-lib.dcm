@@ -1,0 +1,141 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP 2450BL15B100
+D BALUN 2.4GHz 2.45GHz 2.5GHz 50 100
+F http://www.johansontechnology.com/images/stories/ip/baluns/JTI_Balun-2450BL15B100_6-02.pdf
+$ENDCMP
+#
+$CMP AAT3110
+D Charge pump
+F http://www.skyworksinc.com/uploads/documents/202126A.pdf
+$ENDCMP
+#
+$CMP AAT4610
+F http://www.skyworksinc.com/uploads/documents/201916A.pdf
+$ENDCMP
+#
+$CMP AP3417C
+D VOLTAGE REGULATOR DCDC SWITCHING ADJUSTABLE 1A
+F http://diodes.com/datasheets/AP3417C.pdf
+$ENDCMP
+#
+$CMP AP3418
+D VOLTAGE REGULATOR DCDC SWITCHING ADJUSTABLE 1.5A
+F http://diodes.com/datasheets/AP3418.pdf
+$ENDCMP
+#
+$CMP ATSAMD21J18A-MUT
+D SAMD21J18A-MUT, QFN64, 256k Flash, 32k RAM, 48MHz, CortexM0+
+K ARM 32bit Microcontroller 48MHz CortexM0+
+F http://www.atmel.com/Images/Atmel-42181-SAM-D21_Datasheet.pdf
+$ENDCMP
+#
+$CMP CAT24Cxx
+D I2C EEPROM, 2KB
+K I2C EEPROM 2KB
+F http://www.onsemi.com/pub_link/Collateral/CAT24C01-D.PDF
+$ENDCMP
+#
+$CMP DSOT23
+D Diode SOT23
+K DIODE SOT23 SOT-23
+$ENDCMP
+#
+$CMP FAN5353
+F https://www.fairchildsemi.com/datasheets/FA/FAN5353.pdf
+$ENDCMP
+#
+$CMP FDG6342L
+F https://www.fairchildsemi.com/datasheets/FD/FDG6342L.pdf
+$ENDCMP
+#
+$CMP LT1004xS8-x.x
+D Precision micropower zener reference
+F http://cds.linear.com/docs/en/datasheet/1004fb.pdf
+$ENDCMP
+#
+$CMP LTC1049
+D Low power, zero drift op amp
+F http://cds.linear.com/docs/en/datasheet/1049fb.pdf
+$ENDCMP
+#
+$CMP LTC201A
+D Micropower, low charge injection, quad CMOS analog switches
+F http://cds.linear.com/docs/en/datasheet/201a23fb.pdf
+$ENDCMP
+#
+$CMP MAX6102
+D 2.5V REFERENCE
+F http://datasheets.maximintegrated.com/en/ds/MAX6100-MAX6107.pdf
+$ENDCMP
+#
+$CMP MAX6106
+D 2.048V REFERENCE
+F http://datasheets.maximintegrated.com/en/ds/MAX6100-MAX6107.pdf
+$ENDCMP
+#
+$CMP MAX9919
+D CURRENT SENSE AMPLIFIER
+K MAX9918 MAX9919 MAX9920 CURRENT SENSE AMPLIFIER
+F http://datasheets.maximintegrated.com/en/ds/MAX9918-MAX9920.pdf
+$ENDCMP
+#
+$CMP MT9700
+F http://wenku.baidu.com/view/47a478c36bec0975f565e238.html
+$ENDCMP
+#
+$CMP NCP103
+D LDO 150mA
+F http://www.onsemi.com/pub_link/Collateral/NCP103-D.PDF
+$ENDCMP
+#
+$CMP NCP6334B
+F http://www.onsemi.com/pub/Collateral/NCP6334B-D.PDF
+$ENDCMP
+#
+$CMP PAM2319
+F http://www.diodes.com/datasheets/PAM2319.pdf
+$ENDCMP
+#
+$CMP PCA9685
+D 16 CHANNEL 12 BIT PWM LED DRIVER I2C
+F http://www.nxp.com/documents/data_sheet/PCA9685.pdf
+$ENDCMP
+#
+$CMP RJ45_LEDs
+F http://www.shopwiznet.com/lanotattachments/download/file/id/95/store/1/
+$ENDCMP
+#
+$CMP SAMD21G14A-MU
+D SAMD20G14A-M, QFN48, 16K Flash, 2K RAM, 48MHz, CortexM0+
+K ARM 32bit Microcontroller 48MHz CortexM0+
+F http://www.atmel.com/Images/Atmel-42129-SAM-D20_Datasheet.pdf
+$ENDCMP
+#
+$CMP TPS27081A
+F http://www.ti.com/lit/ds/symlink/tps27081a.pdf
+$ENDCMP
+#
+$CMP TPS56X209
+F http://www.ti.com/lit/ds/symlink/tps563209.pdf
+$ENDCMP
+#
+$CMP TSV324IDT
+D OP AMP QUAD SOIC
+K OPAMP OP AMP
+F http://www.st.com/web/en/resource/technical/document/datasheet/CD00063292.pdf
+$ENDCMP
+#
+$CMP XC6206
+D LDO 200mA
+K LDO
+F http://www.seeedstudio.com/wiki/images/7/71/1300260P1.pdf
+$ENDCMP
+#
+$CMP nRF51822-QF
+D 2.4GHz radio (BLE-capable) and ARM Cortex M0 SOC
+K nRF BLE 2.4GHz radio M0 SOC
+F https://www.nordicsemi.com/eng/nordic/download_resource/20339/13/6077937
+$ENDCMP
+#
+#End Doc Library

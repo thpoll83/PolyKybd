@@ -1,0 +1,9 @@
+(module NPTH_0.45mm (layer F.Cu) (tedit 54D2E727)
+  (fp_text reference REF** (at 0 -2.54) (layer F.SilkS) hide
+    (effects (font (size 1.5 1.5) (thickness 0.15)))
+  )
+  (fp_text value NPTH_0.45mm (at 0 -5.08) (layer F.Fab) hide
+    (effects (font (size 1.5 1.5) (thickness 0.15)))
+  )
+  (pad "" np_thru_hole circle (at 0 0) (size 0.451 0.451) (drill 0.45) (layers *.Cu))
+)
