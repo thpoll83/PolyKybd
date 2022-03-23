@@ -45,7 +45,7 @@
         "silk_text_upright": false,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.508
+          "min_clearance": 0.0
         }
       },
       "diff_pair_dimensions": [
@@ -55,7 +55,10 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        "clearance|184185349|130612040|b54d5715-6b8b-4a06-984b-724ae4fcfb36|eb323ef0-b2b9-4c99-b925-cfa5eba50e83",
+        "clearance|189900349|108895040|f455e0aa-1c1f-429a-b77e-ef40b6c59200|814acf01-f2d5-48dc-8858-cf982710b307"
+      ],
       "meta": {
         "version": 2
       },
@@ -555,11 +558,11 @@
     ],
     [
       "91504d29-a738-459d-af7d-49aa9cec3947",
-      "K_L9"
+      "K_B"
     ],
     [
       "efd0db4a-0d4d-401a-8c34-6a12f828929f",
-      "K_L5"
+      "K_L9"
     ],
     [
       "8c9a36ab-d08a-4e02-b358-e60f56356438",
@@ -567,31 +570,31 @@
     ],
     [
       "d6494646-d0bc-40c9-a684-d51ce02dc04d",
-      "K_B"
-    ],
-    [
-      "f482a64b-9552-4179-a4cb-afcf9c133e8e",
       "K_B2"
     ],
     [
-      "4a0bdc7b-86f0-4524-b031-947af4670ce5",
+      "f482a64b-9552-4179-a4cb-afcf9c133e8e",
       "K_B3"
     ],
     [
-      "7e4dd5e7-f13a-4b6f-9821-c603ce0a1e84",
+      "4a0bdc7b-86f0-4524-b031-947af4670ce5",
       "K_B4"
     ],
     [
-      "ab12949c-ec3d-44b1-8c5c-48bfec281847",
+      "7e4dd5e7-f13a-4b6f-9821-c603ce0a1e84",
       "K_B5"
     ],
     [
-      "0d8fabb9-b71f-42d2-b887-cd1bcb6155bb",
+      "ab12949c-ec3d-44b1-8c5c-48bfec281847",
       "K_B6"
     ],
     [
-      "27260850-af3c-4b8b-9ab7-244ea24742d6",
+      "0d8fabb9-b71f-42d2-b887-cd1bcb6155bb",
       "K_B7"
+    ],
+    [
+      "27260850-af3c-4b8b-9ab7-244ea24742d6",
+      "K_B8"
     ],
     [
       "92e782d8-f8e0-4b6b-8c13-c5574675ce33",
