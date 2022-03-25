@@ -1,5 +1,0 @@
-(fp_lib_table
-  (lib (name poly_kb)(type KiCad)(uri ${KIPRJMOD}/poly_kb.pretty)(options "")(descr ""))
-  (lib (name keyswitch-kicad-library)(type KiCad)(uri ${KIPRJMOD}/keyswitch-kicad-library.pretty)(options "")(descr ""))
-  (lib (name Mounting_Keyboard_Stabilizer)(type KiCad)(uri ${KIPRJMOD}/keyswitch-kicad-library/modules/Mounting_Keyboard_Stabilizer.pretty)(options "")(descr ""))
-)
