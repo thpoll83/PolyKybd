@@ -9900,7 +9900,7 @@
   (symbol (lib_id "Device:C_Small") (at 496.57 354.33 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 06d041a2-dbcd-47e6-9ef8-3039d24a47f0)
-    (property "Reference" "C_VDD_1" (id 0) (at 492.76 349.25 0)
+    (property "Reference" "C13" (id 0) (at 499.11 354.33 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10uF" (id 1) (at 490.22 354.33 0)
@@ -9946,7 +9946,7 @@
   (symbol (lib_id "Device:C_Small") (at 557.53 354.33 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 0b2b2342-d0d2-499e-8f62-e5bbeea5a5fc)
-    (property "Reference" "C_VDD_2" (id 0) (at 547.37 354.33 0)
+    (property "Reference" "C14" (id 0) (at 551.18 354.33 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10uF" (id 1) (at 560.07 354.33 0)
@@ -9989,7 +9989,7 @@
   (symbol (lib_id "Device:R_Small") (at 542.29 311.15 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 11ac1e71-8b66-4770-a051-6f5434f0a864)
-    (property "Reference" "R_VBAT_1'1" (id 0) (at 535.94 311.15 0))
+    (property "Reference" "R11" (id 0) (at 535.94 311.15 0))
     (property "Value" "390k" (id 1) (at 538.48 313.69 0))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 542.29 311.15 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -10047,7 +10047,7 @@
   (symbol (lib_id "poly_kb:TD6811") (at 520.7 303.53 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 1d178689-c215-4f27-98a1-ad931d788e90)
-    (property "Reference" "U_VBAT_1" (id 0) (at 520.7 294.801 0))
+    (property "Reference" "U2" (id 0) (at 520.7 294.801 0))
     (property "Value" "TD6811" (id 1) (at 520.7 297.3379 0))
     (property "Footprint" "Package_TO_SOT_SMD:TSOT-23-5" (id 2) (at 520.7 289.56 0))
     (property "Datasheet" "" (id 3) (at 520.7 303.53 0)
@@ -10125,7 +10125,7 @@
   (symbol (lib_id "Device:R_Small") (at 542.29 323.85 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 2e10d31a-b34f-4ab8-a1e4-fac188f9f32b)
-    (property "Reference" "R_VBAT_2" (id 0) (at 535.94 322.58 0))
+    (property "Reference" "R12" (id 0) (at 535.94 322.58 0))
     (property "Value" "150k" (id 1) (at 538.48 325.12 0))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 542.29 323.85 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -10146,8 +10146,8 @@
   (symbol (lib_id "Device:L") (at 537.21 300.99 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 2e7a1a53-fb24-4cfc-8c7a-385eadf0434b)
-    (property "Reference" "L_VBAT_1" (id 0) (at 537.21 296.7822 90))
-    (property "Value" "4.7uH" (id 1) (at 537.21 299.3191 90))
+    (property "Reference" "L1" (id 0) (at 537.21 294.64 90))
+    (property "Value" "4.7uH" (id 1) (at 537.21 297.18 90))
     (property "Footprint" "poly_kb:MCS0530-4R7MN2" (id 2) (at 537.21 300.99 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -10167,7 +10167,7 @@
   (symbol (lib_id "Device:D_Small") (at 289.56 185.42 90) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 31957ca8-b1ca-47b4-9c83-801d717f673c)
-    (property "Reference" "D_ENC_2" (id 0) (at 289.56 181.61 90))
+    (property "Reference" "D11" (id 0) (at 289.56 181.61 90))
     (property "Value" "D_Small" (id 1) (at 289.56 179.07 90))
     (property "Footprint" "poly_kb:D_SOD-323Ext" (id 2) (at 289.56 185.42 90)
       (effects (font (size 1.27 1.27)) hide)
@@ -10268,10 +10268,10 @@
   (symbol (lib_id "Device:C_Small") (at 492.76 303.53 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 56c97df3-fbe8-44cc-9fc5-e9caadc3dde8)
-    (property "Reference" "C_VBAT_1" (id 0) (at 495.0841 302.7016 0)
+    (property "Reference" "C10" (id 0) (at 495.3 302.2662 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "10uF" (id 1) (at 495.0841 305.2385 0)
+    (property "Value" "10uF" (id 1) (at 495.3 304.8062 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Capacitor_SMD:C_0805_2012Metric" (id 2) (at 492.76 303.53 0)
@@ -10458,7 +10458,7 @@
   (symbol (lib_id "Device:C_Small") (at 558.8 303.53 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 75b616f3-f1ac-4681-98e8-85f6c7e1c500)
-    (property "Reference" "C_VBAT_3" (id 0) (at 558.8 306.07 0)
+    (property "Reference" "C12" (id 0) (at 561.34 304.8 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10uF" (id 1) (at 561.34 302.26 0)
@@ -10483,7 +10483,7 @@
   (symbol (lib_id "Device:D_Small") (at 316.23 190.5 90) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 76bcd94e-50f2-438f-8209-37fa1e69afb5)
-    (property "Reference" "D_ENC_3" (id 0) (at 317.5 185.42 90))
+    (property "Reference" "D12" (id 0) (at 317.5 185.42 90))
     (property "Value" "D_Small" (id 1) (at 320.04 187.96 90))
     (property "Footprint" "poly_kb:D_SOD-323Ext" (id 2) (at 316.23 190.5 90)
       (effects (font (size 1.27 1.27)) hide)
@@ -10749,7 +10749,7 @@
   (symbol (lib_id "Device:R_Small") (at 505.46 356.87 270) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid cfb0d638-d2e7-4fdb-ba5c-60d4d2891cca)
-    (property "Reference" "R_VDD_1" (id 0) (at 505.46 359.41 90))
+    (property "Reference" "R13" (id 0) (at 505.46 359.41 90))
     (property "Value" "22k" (id 1) (at 505.46 361.95 90))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 505.46 356.87 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -10770,7 +10770,7 @@
   (symbol (lib_id "tm-kicad-lib:MT9700") (at 529.59 354.33 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid d132ed7a-da3b-4d59-9b1e-9b28b8334204)
-    (property "Reference" "U_VDD_1" (id 0) (at 529.59 361.95 0)
+    (property "Reference" "U3" (id 0) (at 529.59 361.95 0)
       (effects (font (size 1.524 1.524)))
     )
     (property "Value" "MT9700" (id 1) (at 529.59 354.33 0)
@@ -10798,7 +10798,7 @@
   (symbol (lib_id "Device:C_Small") (at 546.1 303.53 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid d77f15a3-6048-46ac-af22-fef82d80b274)
-    (property "Reference" "C_VBAT_2" (id 0) (at 546.1 306.07 0)
+    (property "Reference" "C11" (id 0) (at 548.64 304.8 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "22pF" (id 1) (at 548.64 302.26 0)
@@ -10857,7 +10857,7 @@
   (symbol (lib_id "Device:R_Small") (at 542.29 303.53 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid df958af7-5ed5-4435-a73a-8420951b1aaf)
-    (property "Reference" "R_VBAT_1" (id 0) (at 535.94 303.53 0))
+    (property "Reference" "R10" (id 0) (at 535.94 303.53 0))
     (property "Value" "390k" (id 1) (at 538.48 306.07 0))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 542.29 303.53 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -10917,7 +10917,7 @@
   (symbol (lib_id "Device:D_Small") (at 297.18 180.34 90) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid fbccffcd-60c2-4922-b17c-d78f0373da4c)
-    (property "Reference" "D_ENC_1" (id 0) (at 297.18 177.8 90))
+    (property "Reference" "D10" (id 0) (at 297.18 177.8 90))
     (property "Value" "D_Small" (id 1) (at 297.18 175.26 90))
     (property "Footprint" "poly_kb:D_SOD-323Ext" (id 2) (at 297.18 180.34 90)
       (effects (font (size 1.27 1.27)) hide)
@@ -14235,6 +14235,21 @@
     (path "/27260850-af3c-4b8b-9ab7-244ea24742d6/045e2b02-bbb9-4128-b50f-816a961b17ef"
       (reference "C7_36") (unit 1) (value "DNP") (footprint "Capacitor_SMD:C_0603_1608Metric")
     )
+    (path "/56c97df3-fbe8-44cc-9fc5-e9caadc3dde8"
+      (reference "C10") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0805_2012Metric")
+    )
+    (path "/d77f15a3-6048-46ac-af22-fef82d80b274"
+      (reference "C11") (unit 1) (value "22pF") (footprint "Capacitor_SMD:C_0603_1608Metric")
+    )
+    (path "/75b616f3-f1ac-4681-98e8-85f6c7e1c500"
+      (reference "C12") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0805_2012Metric")
+    )
+    (path "/06d041a2-dbcd-47e6-9ef8-3039d24a47f0"
+      (reference "C13") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0805_2012Metric")
+    )
+    (path "/0b2b2342-d0d2-499e-8f62-e5bbeea5a5fc"
+      (reference "C14") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0805_2012Metric")
+    )
     (path "/c3b3d7f4-943f-4cff-b180-87ef3e1bcbff/00000000-0000-0000-0000-00005fc4b7ad"
       (reference "CONN1") (unit 1) (value "0.42\" Display Connector") (footprint "poly_kb:FPC_16_JUSHUO_AFC05_S16FIA_00_Rev2")
     )
@@ -14342,21 +14357,6 @@
     )
     (path "/27260850-af3c-4b8b-9ab7-244ea24742d6/00000000-0000-0000-0000-00005fc4b7ad"
       (reference "CONN36") (unit 1) (value "0.42\" Display Connector") (footprint "poly_kb:FPC_16_JUSHUO_AFC05_S16FIA_00_Rev2")
-    )
-    (path "/56c97df3-fbe8-44cc-9fc5-e9caadc3dde8"
-      (reference "C_VBAT_1") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0805_2012Metric")
-    )
-    (path "/d77f15a3-6048-46ac-af22-fef82d80b274"
-      (reference "C_VBAT_2") (unit 1) (value "22pF") (footprint "Capacitor_SMD:C_0603_1608Metric")
-    )
-    (path "/75b616f3-f1ac-4681-98e8-85f6c7e1c500"
-      (reference "C_VBAT_3") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0805_2012Metric")
-    )
-    (path "/06d041a2-dbcd-47e6-9ef8-3039d24a47f0"
-      (reference "C_VDD_1") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0805_2012Metric")
-    )
-    (path "/0b2b2342-d0d2-499e-8f62-e5bbeea5a5fc"
-      (reference "C_VDD_2") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0805_2012Metric")
     )
     (path "/c3b3d7f4-943f-4cff-b180-87ef3e1bcbff/00000000-0000-0000-0000-000060dd5b2a"
       (reference "D1_1") (unit 1) (value "D_Small") (footprint "poly_kb:D_SOD-323Ext")
@@ -14473,13 +14473,13 @@
       (reference "D6") (unit 1) (value "Yellow") (footprint "LED_SMD:LED_0805_2012Metric")
     )
     (path "/fbccffcd-60c2-4922-b17c-d78f0373da4c"
-      (reference "D_ENC_1") (unit 1) (value "D_Small") (footprint "poly_kb:D_SOD-323Ext")
+      (reference "D10") (unit 1) (value "D_Small") (footprint "poly_kb:D_SOD-323Ext")
     )
     (path "/31957ca8-b1ca-47b4-9c83-801d717f673c"
-      (reference "D_ENC_2") (unit 1) (value "D_Small") (footprint "poly_kb:D_SOD-323Ext")
+      (reference "D11") (unit 1) (value "D_Small") (footprint "poly_kb:D_SOD-323Ext")
     )
     (path "/76bcd94e-50f2-438f-8209-37fa1e69afb5"
-      (reference "D_ENC_3") (unit 1) (value "D_Small") (footprint "poly_kb:D_SOD-323Ext")
+      (reference "D12") (unit 1) (value "D_Small") (footprint "poly_kb:D_SOD-323Ext")
     )
     (path "/7798716b-70ae-4716-bed5-ad6b04fa4582"
       (reference "ENC1") (unit 1) (value "RotaryEncoder_Switch") (footprint "KUSOboard:EVQWGD001")
@@ -14513,6 +14513,9 @@
     )
     (path "/df36318c-2a79-4a64-9ea6-4a6e753da06e"
       (reference "JP2") (unit 1) (value "TX_SEL") (footprint "Jumper:SolderJumper-3_P1.3mm_Open_RoundedPad1.0x1.5mm_NumberLabels")
+    )
+    (path "/2e7a1a53-fb24-4cfc-8c7a-385eadf0434b"
+      (reference "L1") (unit 1) (value "4.7uH") (footprint "poly_kb:MCS0530-4R7MN2")
     )
     (path "/c3b3d7f4-943f-4cff-b180-87ef3e1bcbff/00000000-0000-0000-0000-0000607ea967"
       (reference "LED1") (unit 1) (value "WS2812B-Mini") (footprint "poly_kb:WS2812B-Mini")
@@ -14621,9 +14624,6 @@
     )
     (path "/27260850-af3c-4b8b-9ab7-244ea24742d6/00000000-0000-0000-0000-0000607ea967"
       (reference "LED36") (unit 1) (value "WS2812B-Mini") (footprint "poly_kb:WS2812B-Mini")
-    )
-    (path "/2e7a1a53-fb24-4cfc-8c7a-385eadf0434b"
-      (reference "L_VBAT_1") (unit 1) (value "4.7uH") (footprint "poly_kb:MCS0530-4R7MN2")
     )
     (path "/68ccfe6c-e1ca-4497-ba79-259a53038b88"
       (reference "OLED1") (unit 1) (value "OPT_OLED_DISPLAY") (footprint "poly_kb:SSD1306_THT_OLED_DISPLAY_128X64_0-92INCH")
@@ -14754,20 +14754,20 @@
     (path "/3d233eb6-56b7-4a56-b987-0630802a8eab"
       (reference "R6") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
-    (path "/12beff64-d174-43d6-a45a-71e541ac6a3e"
-      (reference "RESET1") (unit 1) (value "SW_Push") (footprint "Button_Switch_SMD:Panasonic_EVQPUK_EVQPUB")
-    )
     (path "/df958af7-5ed5-4435-a73a-8420951b1aaf"
-      (reference "R_VBAT_1") (unit 1) (value "390k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R10") (unit 1) (value "390k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/11ac1e71-8b66-4770-a051-6f5434f0a864"
-      (reference "R_VBAT_1'1") (unit 1) (value "390k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R11") (unit 1) (value "390k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/2e10d31a-b34f-4ab8-a1e4-fac188f9f32b"
-      (reference "R_VBAT_2") (unit 1) (value "150k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R12") (unit 1) (value "150k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/cfb0d638-d2e7-4fdb-ba5c-60d4d2891cca"
-      (reference "R_VDD_1") (unit 1) (value "22k") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R13") (unit 1) (value "22k") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/12beff64-d174-43d6-a45a-71e541ac6a3e"
+      (reference "RESET1") (unit 1) (value "SW_Push") (footprint "Button_Switch_SMD:Panasonic_EVQPUK_EVQPUB")
     )
     (path "/5d4e55a5-29a4-40a3-ab09-2b232a2fef65"
       (reference "SERIAL1") (unit 1) (value "RJ12") (footprint "poly_kb:MOLEX_85502-5007_6P6C_90DEG")
@@ -14916,26 +14916,26 @@
     (path "/5fd34e2c-c10c-40fc-9e50-3495df302c97"
       (reference "U1") (unit 1) (value "Pico") (footprint "poly_kb:RPi_Pico_SMD")
     )
-    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/a48221cf-2c41-4b92-8677-536dfa81d722"
-      (reference "U_SR_1") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
-    )
-    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/6d5e0d83-8232-40cc-acdb-aa7c18220b7b"
-      (reference "U_SR_2") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
-    )
-    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/5b298751-6c02-40fa-a24c-f545ec632e4e"
-      (reference "U_SR_3") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
-    )
-    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/f4234d4d-0685-42ef-9578-91c9044cf481"
-      (reference "U_SR_4") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
-    )
-    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/578e1d72-8ef4-4ac0-b24c-23843feed8de"
-      (reference "U_SR_5") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
-    )
     (path "/1d178689-c215-4f27-98a1-ad931d788e90"
-      (reference "U_VBAT_1") (unit 1) (value "TD6811") (footprint "Package_TO_SOT_SMD:TSOT-23-5")
+      (reference "U2") (unit 1) (value "TD6811") (footprint "Package_TO_SOT_SMD:TSOT-23-5")
     )
     (path "/d132ed7a-da3b-4d59-9b1e-9b28b8334204"
-      (reference "U_VDD_1") (unit 1) (value "MT9700") (footprint "Package_TO_SOT_SMD:SOT-23-5")
+      (reference "U3") (unit 1) (value "MT9700") (footprint "Package_TO_SOT_SMD:SOT-23-5")
+    )
+    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/a48221cf-2c41-4b92-8677-536dfa81d722"
+      (reference "U4") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
+    )
+    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/6d5e0d83-8232-40cc-acdb-aa7c18220b7b"
+      (reference "U5") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
+    )
+    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/5b298751-6c02-40fa-a24c-f545ec632e4e"
+      (reference "U6") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
+    )
+    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/f4234d4d-0685-42ef-9578-91c9044cf481"
+      (reference "U7") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
+    )
+    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/578e1d72-8ef4-4ac0-b24c-23843feed8de"
+      (reference "U8") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
     )
   )
 )
