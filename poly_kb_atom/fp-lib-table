@@ -1,4 +1,6 @@
 (fp_lib_table
   (lib (name "poly_kb")(type "KiCad")(uri "${KIPRJMOD}/poly_kb.pretty")(options "")(descr ""))
   (lib (name "perigoso_Kailh")(type "KiCad")(uri "${KICAD6_3RD_PARTY}/footprints/com_github_perigoso_keyswitch-kicad-library/Switch_Keyboard_Kailh.pretty")(options "")(descr ""))
+  (lib (name "keebio")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/Keebio-Parts.pretty")(options "")(descr ""))
+  (lib (name "KUSO")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/KUSOboard.pretty")(options "")(descr ""))
 )
