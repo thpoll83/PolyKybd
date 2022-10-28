@@ -813,7 +813,7 @@
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "poly_kb:FPC_16_JUSHUO_AFC05_S16FIA_00_Rev2" (id 2) (at 96.52 57.15 90))
-    (property "Datasheet" "https://datasheet.lcsc.com/szlcsc/1811021329_JUSHUO-AFC11-S16ICA-00_C262501.pdf" (id 3) (at 63.5 96.52 0))
+    (property "Datasheet" "https://datasheet.lcsc.com/lcsc/2005271133_JUSHUO-AFC05-S16FIA-00_C561388.pdf" (id 3) (at 63.5 96.52 0))
     (property "LCSC" "C561388" (id 4) (at 85.09 76.2 0)
       (effects (font (size 1.27 1.27)) (justify bottom))
     )
