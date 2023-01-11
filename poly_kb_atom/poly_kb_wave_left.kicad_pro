@@ -55,10 +55,7 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [
-        "clearance|184185349|130612040|b54d5715-6b8b-4a06-984b-724ae4fcfb36|eb323ef0-b2b9-4c99-b925-cfa5eba50e83",
-        "clearance|189900349|108895040|f455e0aa-1c1f-429a-b77e-ef40b6c59200|814acf01-f2d5-48dc-8858-cf982710b307"
-      ],
+      "drc_exclusions": [],
       "meta": {
         "version": 2
       },
@@ -599,6 +596,10 @@
     [
       "92e782d8-f8e0-4b6b-8c13-c5574675ce33",
       "ShiftRegisters"
+    ],
+    [
+      "5b575f2a-a831-41f0-985e-3d214d07238c",
+      "RpPico"
     ]
   ],
   "text_variables": {}

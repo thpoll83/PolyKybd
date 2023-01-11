@@ -1,8 +1,10 @@
 (sym_lib_table
   (lib (name "poly_kb")(type "KiCad")(uri "${KIPRJMOD}/poly_kb.kicad_sym")(options "")(descr ""))
   (lib (name "poly_kb-rescue")(type "Legacy")(uri "${KIPRJMOD}/poly_kb-rescue.lib")(options "")(descr "")(disabled))
-  (lib (name "keebio")(type "Legacy")(uri "${KIPRJMOD}/ThirdParty/keebio-components-master/keebio.lib")(options "")(descr "")(disabled))
+  (lib (name "keebio")(type "Legacy")(uri "${KIPRJMOD}/ThirdParty/keebio-components-master/keebio.lib")(options "")(descr ""))
   (lib (name "mp2307")(type "Legacy")(uri "${KIPRJMOD}/ThirdParty/ildus-kicad-library-custom-master/mp2307.lib")(options "")(descr "")(disabled))
   (lib (name "MCU_RaspberryPi_and_Boards")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/KiCad-RP-Pico-main/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.kicad_sym")(options "")(descr ""))
   (lib (name "tm-kicad-lib")(type "Legacy")(uri "${KIPRJMOD}/ThirdParty/tm-kicad-library-master/tm-kicad-lib.lib")(options "")(descr ""))
+  (lib (name "FH34SRJ-14S-0.5SH_50_")(type "Legacy")(uri "${KIPRJMOD}/ThirdParty/FH34SRJ-14S-0.5SH_50/FH34SRJ-14S-0.5SH_50_.lib")(options "")(descr ""))
+  (lib (name "EnvOpenPico")(type "Legacy")(uri "${KIPRJMOD}/ThirdParty/EnvOpenPico-main/EnvOpenPico/EnvOpenPico.lib")(options "")(descr ""))
 )

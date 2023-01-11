@@ -3,4 +3,8 @@
   (lib (name "perigoso_Kailh")(type "KiCad")(uri "${KICAD6_3RD_PARTY}/footprints/com_github_perigoso_keyswitch-kicad-library/Switch_Keyboard_Kailh.pretty")(options "")(descr ""))
   (lib (name "keebio")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/Keebio-Parts.pretty")(options "")(descr ""))
   (lib (name "KUSO")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/KUSOboard.pretty")(options "")(descr ""))
+  (lib (name "FH34SRJ-14S-0")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/FH34SRJ-14S-0.5SH_50")(options "")(descr ""))
+  (lib (name "daprice")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/keyswitches.pretty-master")(options "")(descr ""))
+  (lib (name "Pico")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/KiCad-RP-Pico-main/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.pretty")(options "")(descr ""))
+  (lib (name "EnvUSB")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/EnvOpenPico-main/EnvPicoLiPo/Resources/HRO-TYPE-C31-M-12.pretty")(options "")(descr ""))
 )
