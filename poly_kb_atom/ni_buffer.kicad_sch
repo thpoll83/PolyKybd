@@ -339,7 +339,7 @@
   (symbol (lib_id "Logic_LevelTranslator:SN74AUP1T34DCK") (at 133.985 135.255 180) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid c47ab509-026d-48a4-bb38-9217989ef9ba)
-    (property "Reference" "U31" (id 0) (at 130.175 132.715 0))
+    (property "Reference" "U33" (id 0) (at 130.175 132.715 0))
     (property "Value" "SN74LVC1G125DCKR" (id 1) (at 133.985 125.095 0))
     (property "Footprint" "Package_TO_SOT_SMD:SOT-353_SC-70-5" (id 2) (at 133.985 117.475 0)
       (effects (font (size 1.27 1.27)) hide)

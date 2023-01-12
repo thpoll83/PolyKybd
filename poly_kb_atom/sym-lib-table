@@ -7,4 +7,5 @@
   (lib (name "tm-kicad-lib")(type "Legacy")(uri "${KIPRJMOD}/ThirdParty/tm-kicad-library-master/tm-kicad-lib.lib")(options "")(descr ""))
   (lib (name "FH34SRJ-14S-0.5SH_50_")(type "Legacy")(uri "${KIPRJMOD}/ThirdParty/FH34SRJ-14S-0.5SH_50/FH34SRJ-14S-0.5SH_50_.lib")(options "")(descr ""))
   (lib (name "EnvOpenPico")(type "Legacy")(uri "${KIPRJMOD}/ThirdParty/EnvOpenPico-main/EnvOpenPico/EnvOpenPico.lib")(options "")(descr ""))
+  (lib (name "Nexperia")(type "Legacy")(uri "${KIPRJMOD}/ThirdParty/savenlid/lib/Nexperia.lib")(options "")(descr ""))
 )

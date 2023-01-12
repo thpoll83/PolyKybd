@@ -7,4 +7,5 @@
   (lib (name "daprice")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/keyswitches.pretty-master")(options "")(descr ""))
   (lib (name "Pico")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/KiCad-RP-Pico-main/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.pretty")(options "")(descr ""))
   (lib (name "EnvUSB")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/EnvOpenPico-main/EnvPicoLiPo/Resources/HRO-TYPE-C31-M-12.pretty")(options "")(descr ""))
+  (lib (name "SOT")(type "KiCad")(uri "${KIPRJMOD}/ThirdParty/savenlid/footprints/SOT")(options "")(descr ""))
 )

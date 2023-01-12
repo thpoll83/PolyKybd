@@ -12323,17 +12323,17 @@
     (property "Reference" "J37" (id 0) (at 414.3755 289.56 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "0.96\" Display" (id 1) (at 434.34 289.56 90)
+    (property "Value" "FH12-30S-0.5SH" (id 1) (at 434.34 289.56 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "poly_kb:XUNPU-FPC-05FB-30PH20" (id 2) (at 414.02 292.1 0)
+    (property "Footprint" "Connector_FFC-FPC:Hirose_FH12-30S-0.5SH_1x30-1MP_P0.50mm_Horizontal" (id 2) (at 414.02 292.1 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "https://datasheet.lcsc.com/lcsc/2109221030_XUNPU-FPC-05FB-30PH20_C2856833.pdf" (id 3) (at 414.02 292.1 0)
+    (property "Datasheet" "https://datasheet.lcsc.com/lcsc/2004261434_HRS-Hirose-FH12-30S-0-5SH-55_C506793.pdf" (id 3) (at 414.02 292.1 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "LCSC" "C2856833" (id 4) (at 398.78 289.56 90))
-    (property "MPN" "FPC-05FB-30PH20" (id 5) (at 414.02 292.1 0)
+    (property "LCSC" "C506793" (id 4) (at 398.78 289.56 90))
+    (property "MPN" "FH12-30S-0.5SH" (id 5) (at 414.02 292.1 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid bcab4517-c1ec-499e-bf60-0482800e9de1))
@@ -12893,15 +12893,15 @@
     (in_bom yes) (on_board yes)
     (uuid 99d83d11-b838-453d-a021-daa0ba821a8f)
     (property "Reference" "J43" (id 0) (at 548.005 129.54 90))
-    (property "Value" "FPC-05F-12PH15" (id 1) (at 548.005 132.08 90))
-    (property "Footprint" "poly_kb:XUNPU-FPC-05F-12PH15" (id 2) (at 549.275 125.73 0)
+    (property "Value" "FH34SRJ-12S-0.5SH" (id 1) (at 548.005 132.08 90))
+    (property "Footprint" "poly_kb:FH34SRJ12S05SH50" (id 2) (at 549.275 125.73 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "https://datasheet.lcsc.com/lcsc/2109221030_XUNPU-FPC-05F-12PH15_C2856817.pdf" (id 3) (at 563.88 141.605 90)
+    (property "Datasheet" "https://datasheet.lcsc.com/lcsc/1912111437_HRS-Hirose-FH34SRJ-12S-0-5SH-50_C424659.pdf" (id 3) (at 563.88 141.605 90)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "LCSC" "C2856817" (id 4) (at 548.64 135.89 90))
-    (property "MPN" "FPC-05F-12PH15" (id 5) (at 549.275 125.73 0)
+    (property "LCSC" "C424659" (id 4) (at 548.64 135.89 90))
+    (property "MPN" "FH34SRJ-12S-0.5SH" (id 5) (at 549.275 125.73 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid b1ff2946-5183-42b7-a775-d364a36de6c2))
@@ -17358,7 +17358,7 @@
       (reference "J36") (unit 1) (value "FH34SRJ-14S-0.5SH") (footprint "poly_kb:FH34SRJ14S05SH50")
     )
     (path "/3e33f9c9-0497-46b7-bb2b-d0232f017745"
-      (reference "J37") (unit 1) (value "0.96\" Display") (footprint "poly_kb:XUNPU-FPC-05FB-30PH20")
+      (reference "J37") (unit 1) (value "FH12-30S-0.5SH") (footprint "Connector_FFC-FPC:Hirose_FH12-30S-0.5SH_1x30-1MP_P0.50mm_Horizontal")
     )
     (path "/6a7d08be-e394-4ca2-a475-c05057a256f5"
       (reference "J38") (unit 1) (value "Conn_01x06") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical")
@@ -17370,7 +17370,7 @@
       (reference "J40") (unit 1) (value "Conn_01x03_Male") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
     )
     (path "/99d83d11-b838-453d-a021-daa0ba821a8f"
-      (reference "J43") (unit 1) (value "FPC-05F-12PH15") (footprint "poly_kb:XUNPU-FPC-05F-12PH15")
+      (reference "J43") (unit 1) (value "FH34SRJ-12S-0.5SH") (footprint "poly_kb:FH34SRJ12S05SH50")
     )
     (path "/d2c2da56-8f2d-4b5e-bdab-e02a92608447"
       (reference "J44") (unit 1) (value "Conn_01x05") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical")
@@ -17903,20 +17903,20 @@
     (path "/d132ed7a-da3b-4d59-9b1e-9b28b8334204"
       (reference "U3") (unit 1) (value "MT9700") (footprint "Package_TO_SOT_SMD:SOT-23-5")
     )
-    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/a48221cf-2c41-4b92-8677-536dfa81d722"
-      (reference "U4") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
+    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/a7dea223-23f1-4108-a620-c973c7725973"
+      (reference "U4") (unit 1) (value "74HCT595") (footprint "SOT:SOT-763-1")
     )
-    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/6d5e0d83-8232-40cc-acdb-aa7c18220b7b"
-      (reference "U5") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
+    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/90e40116-b077-4d7e-9bb4-b9a608e83642"
+      (reference "U5") (unit 1) (value "74HCT595") (footprint "SOT:SOT-763-1")
     )
-    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/5b298751-6c02-40fa-a24c-f545ec632e4e"
-      (reference "U6") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
+    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/3f5e21a9-9ac1-47b2-b0a7-cf9edd604f97"
+      (reference "U6") (unit 1) (value "74HCT595") (footprint "SOT:SOT-763-1")
     )
-    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/f4234d4d-0685-42ef-9578-91c9044cf481"
-      (reference "U7") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
+    (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/90775456-d44d-426e-9f55-64e847e26563"
+      (reference "U7") (unit 1) (value "74HCT595") (footprint "SOT:SOT-763-1")
     )
     (path "/92e782d8-f8e0-4b6b-8c13-c5574675ce33/578e1d72-8ef4-4ac0-b24c-23843feed8de"
-      (reference "U8") (unit 1) (value "74HCT595") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
+      (reference "U8") (unit 1) (value "74HCT595") (footprint "SOT:SOT-763-1")
     )
     (path "/5b575f2a-a831-41f0-985e-3d214d07238c/e269b6e6-9935-4c4d-adf7-697611ddd102"
       (reference "U9") (unit 1) (value "W25Q64JVSSIQ") (footprint "Package_SO:SOIC-8_5.275x5.275mm_P1.27mm")
