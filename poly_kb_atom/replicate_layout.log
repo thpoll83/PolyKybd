@@ -1,5 +1,264 @@
-12-15 08:12:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 295:Plugin executed on: 'linux'
-12-15 08:12:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 296:Plugin executed with python version: '3.10.6 (main, Nov 14 2022, 16:10:14) [GCC 11.3.0]'
-12-15 08:12:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 297:KiCad build version: 6.0.9-8da3e8f707~117~ubuntu22.04.1
-12-15 08:12:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 298:Plugin version: 1.1.2
-12-15 08:12:17 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 299:Frame repr: <wx._core.Frame object at 0x7f711161ed40>
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 295:Plugin executed on: 'linux'
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 296:Plugin executed with python version: '3.10.6 (main, Nov 14 2022, 16:10:14) [GCC 11.3.0]'
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 297:KiCad build version: 6.0.11-2627ca5db0~126~ubuntu22.04.1
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 298:Plugin version: 1.1.2
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 299:Frame repr: <wx._core.Frame object at 0x7fd57ea12d40>
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 323:Preparing replicator with J7 as a reference
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 98:getting a list of all footprints on board
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2997 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3638 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C358A does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C35DA does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C353A does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3695 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2D5C does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2D80 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3683 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C28BB does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C36A9 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2A60 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C360B does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C29A7 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2D8F does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2A44 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3548 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C39A5 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3508 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3653 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C34D4 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C368F does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2D09 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C36B3 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C35C3 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C35B8 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C361C does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2D09 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3514 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3522 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C28CF does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2D80 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2DCB does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2A93 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2E3A does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3642 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2DB9 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C34AE does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C35FE does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2DA1 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2E0D does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3594 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C355D does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3575 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C294B does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C35E7 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C352E does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3625 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C28BB does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C369E does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C35CB does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2DA1 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2E3A does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C3550 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C35A2 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C362D does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C29C6 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C29B6 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C357F does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2A4A does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C39ED does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C35AF does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C34FD does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2E0D does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2D8F does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 110:Footprint kibuzzard-639C2D25 does not have Sheetfile property, it will not be replicated. Most likely it is only in schematics
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 351:source anchor footprint is 'J7'
+Located on: ['K_L6']
+With filenames: ['SSD1306_TO_SPI.kicad_sch']
+With sheet_id:['K_L6']
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 358:Corresponding footprints are 
+[('J36', ['K_B7']), ('J35', ['K_B6']), ('J34', ['K_B5']), ('J33', ['K_B4']), ('J32', ['K_B3']), ('J31', ['K_B2']), ('J30', ['K_B1']), ('J29', ['K_B8']), ('J28', ['K_L9']), ('J27', ['K_B']), ('J26', ['K_V']), ('J25', ['K_C']), ('J24', ['K_X']), ('J23', ['K_Z']), ('J22', ['K_L4']), ('J21', ['K_L8']), ('J20', ['K_G']), ('J19', ['K_F']), ('J18', ['K_D']), ('J17', ['K_S']), ('J16', ['K_A']), ('J15', ['K_L3']), ('J14', ['K_L7']), ('J13', ['K_T']), ('J12', ['K_R']), ('J11', ['K_E']), ('J10', ['K_W']), ('J9', ['K_Q']), ('J8', ['K_L2']), ('J7', ['K_L6']), ('J6', ['K_5']), ('J5', ['K_4']), ('J4', ['K_3']), ('J3', ['K_2']), ('J2', ['K_1']), ('J1', ['K_L1'])]
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 370:Showing dialog
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 376:Toolbar position: wx.Point(1690, 123)
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 382:Dialog position: wx.Point(1326, 123)
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 335:constructing a list of sheets suitable for replication on level:'K_L6', file:'SSD1306_TO_SPI.kicad_sch'
+02-10 22:43:53 com_github_MitjaNemec_ReplicateLayout.replicate_layout 372:suitable sheets are:[['K_1'], ['K_2'], ['K_3'], ['K_4'], ['K_5'], ['K_A'], ['K_B'], ['K_B1'], ['K_B2'], ['K_B3'], ['K_B4'], ['K_B5'], ['K_B6'], ['K_B7'], ['K_B8'], ['K_C'], ['K_D'], ['K_E'], ['K_F'], ['K_G'], ['K_L1'], ['K_L2'], ['K_L3'], ['K_L4'], ['K_L7'], ['K_L8'], ['K_L9'], ['K_Q'], ['K_R'], ['K_S'], ['K_T'], ['K_V'], ['K_W'], ['K_X'], ['K_Z']]
+02-10 22:44:05 com_github_MitjaNemec_ReplicateLayout.replicate_layout 335:constructing a list of sheets suitable for replication on level:'K_L6', file:'SSD1306_TO_SPI.kicad_sch'
+02-10 22:44:05 com_github_MitjaNemec_ReplicateLayout.replicate_layout 372:suitable sheets are:[['K_1'], ['K_2'], ['K_3'], ['K_4'], ['K_5'], ['K_A'], ['K_B'], ['K_B1'], ['K_B2'], ['K_B3'], ['K_B4'], ['K_B5'], ['K_B6'], ['K_B7'], ['K_B8'], ['K_C'], ['K_D'], ['K_E'], ['K_F'], ['K_G'], ['K_L1'], ['K_L2'], ['K_L3'], ['K_L4'], ['K_L7'], ['K_L8'], ['K_L9'], ['K_Q'], ['K_R'], ['K_S'], ['K_T'], ['K_V'], ['K_W'], ['K_X'], ['K_Z']]
+02-10 22:44:08 com_github_MitjaNemec_ReplicateLayout.replicate_layout 335:constructing a list of sheets suitable for replication on level:'K_L6', file:'SSD1306_TO_SPI.kicad_sch'
+02-10 22:44:08 com_github_MitjaNemec_ReplicateLayout.replicate_layout 372:suitable sheets are:[['K_1'], ['K_2'], ['K_3'], ['K_4'], ['K_5'], ['K_A'], ['K_B'], ['K_B1'], ['K_B2'], ['K_B3'], ['K_B4'], ['K_B5'], ['K_B6'], ['K_B7'], ['K_B8'], ['K_C'], ['K_D'], ['K_E'], ['K_F'], ['K_G'], ['K_L1'], ['K_L2'], ['K_L3'], ['K_L4'], ['K_L7'], ['K_L8'], ['K_L9'], ['K_Q'], ['K_R'], ['K_S'], ['K_T'], ['K_V'], ['K_W'], ['K_X'], ['K_Z']]
+02-10 22:44:17 com_github_MitjaNemec_ReplicateLayout.replicate_layout 335:constructing a list of sheets suitable for replication on level:'K_L6', file:'SSD1306_TO_SPI.kicad_sch'
+02-10 22:44:17 com_github_MitjaNemec_ReplicateLayout.replicate_layout 372:suitable sheets are:[['K_1'], ['K_2'], ['K_3'], ['K_4'], ['K_5'], ['K_A'], ['K_B'], ['K_B1'], ['K_B2'], ['K_B3'], ['K_B4'], ['K_B5'], ['K_B6'], ['K_B7'], ['K_B8'], ['K_C'], ['K_D'], ['K_E'], ['K_F'], ['K_G'], ['K_L1'], ['K_L2'], ['K_L3'], ['K_L4'], ['K_L7'], ['K_L8'], ['K_L9'], ['K_Q'], ['K_R'], ['K_S'], ['K_T'], ['K_V'], ['K_W'], ['K_X'], ['K_Z']]
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 335:constructing a list of sheets suitable for replication on level:'K_L6', file:'SSD1306_TO_SPI.kicad_sch'
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 372:suitable sheets are:[['K_1'], ['K_2'], ['K_3'], ['K_4'], ['K_5'], ['K_A'], ['K_B'], ['K_B1'], ['K_B2'], ['K_B3'], ['K_B4'], ['K_B5'], ['K_B6'], ['K_B7'], ['K_B8'], ['K_C'], ['K_D'], ['K_E'], ['K_F'], ['K_G'], ['K_L1'], ['K_L2'], ['K_L3'], ['K_L4'], ['K_L7'], ['K_L8'], ['K_L9'], ['K_Q'], ['K_R'], ['K_S'], ['K_T'], ['K_V'], ['K_W'], ['K_X'], ['K_Z']]
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 145:Replicating layout
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 146:Starting replication of sheets: [['K_1'], ['K_2'], ['K_3'], ['K_4'], ['K_5'], ['K_A'], ['K_B'], ['K_B1'], ['K_B2'], ['K_B3'], ['K_B4'], ['K_B5'], ['K_B6'], ['K_B7'], ['K_B8'], ['K_C'], ['K_D'], ['K_E'], ['K_F'], ['K_G'], ['K_L1'], ['K_L2'], ['K_L3'], ['K_L4'], ['K_L7'], ['K_L8'], ['K_L9'], ['K_Q'], ['K_R'], ['K_S'], ['K_T'], ['K_V'], ['K_W'], ['K_X'], ['K_Z']]
+on level: ['K_L6']
+with tracks=True, zone=False, text=True, containing=False, remove=False, locked=False, by_group=False
+02-10 22:44:30 root 235:updating GUI message: 'Preparing for replication'
+02-10 22:44:30 root 240:updating GUI with: 0
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 215:Getting the list of source footprints
+02-10 22:44:30 root 240:updating GUI with: 0
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 230:Getting the list of all the remaining footprints
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 235:Getting nets local to source footprints
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 238:Getting source bounding box
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 242:Getting source tracks
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 257:Getting source zones
+02-10 22:44:30 root 240:updating GUI with: 62
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 266:Getting source text items
+02-10 22:44:30 root 240:updating GUI with: 75
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 275:Getting source drawing items
+02-10 22:44:30 root 240:updating GUI with: 87
+02-10 22:44:30 root 240:updating GUI with: 100
+02-10 22:44:30 root 235:updating GUI message: 'Replicating footprints'
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 669:Replicating footprints
+02-10 22:44:30 root 240:updating GUI with: 0
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_1']
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_2']
+02-10 22:44:30 root 240:updating GUI with: 5
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_3']
+02-10 22:44:30 root 240:updating GUI with: 5
+02-10 22:44:30 root 240:updating GUI with: 6
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_4']
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_5']
+02-10 22:44:30 root 240:updating GUI with: 11
+02-10 22:44:30 root 240:updating GUI with: 12
+02-10 22:44:30 root 240:updating GUI with: 12
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_A']
+02-10 22:44:30 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_B']
+02-10 22:44:30 root 240:updating GUI with: 18
+02-10 22:44:31 root 240:updating GUI with: 19
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_B1']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_B2']
+02-10 22:44:31 root 240:updating GUI with: 25
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_B3']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_B4']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_B5']
+02-10 22:44:31 root 240:updating GUI with: 31
+02-10 22:44:31 root 240:updating GUI with: 32
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_B6']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_B7']
+02-10 22:44:31 root 240:updating GUI with: 38
+02-10 22:44:31 root 240:updating GUI with: 38
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_B8']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_C']
+02-10 22:44:31 root 240:updating GUI with: 45
+02-10 22:44:31 root 240:updating GUI with: 45
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_D']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_E']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_F']
+02-10 22:44:31 root 240:updating GUI with: 51
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_G']
+02-10 22:44:31 root 240:updating GUI with: 54
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_L1']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_L2']
+02-10 22:44:31 root 240:updating GUI with: 61
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_L3']
+02-10 22:44:31 root 240:updating GUI with: 64
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_L4']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_L7']
+02-10 22:44:31 root 240:updating GUI with: 71
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_L8']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_L9']
+02-10 22:44:31 root 240:updating GUI with: 74
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_Q']
+02-10 22:44:31 root 240:updating GUI with: 78
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_R']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_S']
+02-10 22:44:31 root 240:updating GUI with: 85
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_T']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_V']
+02-10 22:44:31 root 240:updating GUI with: 89
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_W']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_X']
+02-10 22:44:31 root 240:updating GUI with: 96
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 675:Replicating footprints on sheet ['K_Z']
+02-10 22:44:31 root 235:updating GUI message: 'Replicating tracks'
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 835:Replicating tracks
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_1']
+02-10 22:44:31 root 240:updating GUI with: 0
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_2']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_3']
+02-10 22:44:31 root 240:updating GUI with: 6
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_4']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_5']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_A']
+02-10 22:44:31 root 240:updating GUI with: 14
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_B']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_B1']
+02-10 22:44:31 root 240:updating GUI with: 21
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_B2']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_B3']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_B4']
+02-10 22:44:31 root 240:updating GUI with: 28
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_B5']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_B6']
+02-10 22:44:31 root 240:updating GUI with: 36
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_B7']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_B8']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_C']
+02-10 22:44:31 root 240:updating GUI with: 42
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_D']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_E']
+02-10 22:44:31 root 240:updating GUI with: 50
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_F']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_G']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_L1']
+02-10 22:44:31 root 240:updating GUI with: 57
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_L2']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_L3']
+02-10 22:44:31 root 240:updating GUI with: 64
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_L4']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_L7']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_L8']
+02-10 22:44:31 root 240:updating GUI with: 71
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_L9']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_Q']
+02-10 22:44:31 root 240:updating GUI with: 78
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_R']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_S']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_T']
+02-10 22:44:31 root 240:updating GUI with: 85
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_V']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_W']
+02-10 22:44:31 root 240:updating GUI with: 93
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_X']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 841:Replicating tracks on sheet ['K_Z']
+02-10 22:44:31 root 235:updating GUI message: 'Replicating text'
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 963:Replicating text
+02-10 22:44:31 root 240:updating GUI with: 0
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_1']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_2']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_3']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_4']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_5']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_A']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_B']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_B1']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_B2']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_B3']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_B4']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_B5']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_B6']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_B7']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_B8']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_C']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_D']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_E']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_F']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_G']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_L1']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_L2']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_L3']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_L4']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_L7']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_L8']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_L9']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_Q']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_R']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_S']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_T']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_V']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_W']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_X']
+02-10 22:44:31 com_github_MitjaNemec_ReplicateLayout.replicate_layout 970:Replicating text on sheet ['K_Z']
+02-10 22:44:33 com_github_MitjaNemec_ReplicateLayout.action_replicate_layout 169:Replication complete
