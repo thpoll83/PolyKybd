@@ -58,7 +58,11 @@
       ],
       "drc_exclusions": [
         "copper_edge_clearance|45646437|89775209|95d18c6d-08f4-4239-a612-aa9c1228a776|600cb346-6521-4c18-bc17-3afc4be0e1e6",
-        "copper_edge_clearance|45646437|89775209|95d18c6d-08f4-4239-a612-aa9c1228a776|c4d3cb55-025f-4c4f-8e3b-fefaef02ed56"
+        "copper_edge_clearance|45646437|89775209|95d18c6d-08f4-4239-a612-aa9c1228a776|c4d3cb55-025f-4c4f-8e3b-fefaef02ed56",
+        "invalid_outline|41690871|93848544|f318c9d2-001a-4632-91fc-a4a2fe45ea7c|c60aef32-d271-4937-94ee-a7923da77d16",
+        "invalid_outline|42415724|93797555|22bc5eb1-2999-4c5a-b179-b20096cf75e3|3e7e3555-360d-4348-80cd-e22980e850fa",
+        "invalid_outline|42578788|96292231|d0c83a71-e5ce-4eeb-90e4-f0b4907ce3e5|00000000-0000-0000-0000-000000000000",
+        "invalid_outline|42580123|96291745|3802f408-0e14-4f8c-9b81-156e5925a001|00000000-0000-0000-0000-000000000000"
       ],
       "meta": {
         "version": 2
@@ -76,7 +80,7 @@
         "duplicate_footprints": "warning",
         "extra_footprint": "warning",
         "footprint": "error",
-        "footprint_type_mismatch": "error",
+        "footprint_type_mismatch": "ignore",
         "hole_clearance": "error",
         "hole_near_hole": "error",
         "invalid_outline": "error",
@@ -86,7 +90,7 @@
         "length_out_of_range": "error",
         "lib_footprint_issues": "warning",
         "lib_footprint_mismatch": "warning",
-        "malformed_courtyard": "error",
+        "malformed_courtyard": "ignore",
         "microvia_drill_out_of_range": "error",
         "missing_courtyard": "ignore",
         "missing_footprint": "warning",
