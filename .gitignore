@@ -8,3 +8,4 @@ fp-info-cache
 poly_kb_atom/Gerber/
 *.zip
 poly_kb_atom/ThirdParty/*
+keycaps/NopSCADlib/*
