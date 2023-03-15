@@ -4,6 +4,10 @@
 
   (paper "A4")
 
+  (title_block
+    (date "2023-03-09")
+  )
+
   (lib_symbols
     (symbol "poly_kb:74HCT595BQ" (in_bom yes) (on_board yes)
       (property "Reference" "U8" (at 1.27 -26.67 90)
@@ -494,7 +498,7 @@
     (property "Value" "74HC595BQ" (at 208.915 66.04 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Nexperia595:74HC595BQ-Q100_115" (at 203.2 55.88 90)
+    (property "Footprint" "poly_kb:Nexperia 74HC595BQ DHVQFN16" (at 203.2 55.88 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Datasheet" "https://rocelec.widen.net/view/pdf/umsr6rbkih/PHGL-S-A0000283114-1.pdf?t.download=true&u=5oefqw" (at 203.2 90.17 0)
@@ -538,7 +542,7 @@
     (property "Value" "74HC595BQ" (at 57.785 66.04 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Nexperia595:74HC595BQ-Q100_115" (at 52.07 55.88 90)
+    (property "Footprint" "poly_kb:Nexperia 74HC595BQ DHVQFN16" (at 52.07 55.88 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Datasheet" "https://rocelec.widen.net/view/pdf/umsr6rbkih/PHGL-S-A0000283114-1.pdf?t.download=true&u=5oefqw" (at 52.07 90.17 0)
@@ -582,7 +586,7 @@
     (property "Value" "74HC595BQ" (at 260.985 65.405 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Nexperia595:74HC595BQ-Q100_115" (at 255.27 55.88 90)
+    (property "Footprint" "poly_kb:Nexperia 74HC595BQ DHVQFN16" (at 255.27 55.88 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Datasheet" "https://rocelec.widen.net/view/pdf/umsr6rbkih/PHGL-S-A0000283114-1.pdf?t.download=true&u=5oefqw" (at 255.27 90.17 0)
@@ -626,7 +630,7 @@
     (property "Value" "74HC595BQ" (at 165.735 65.405 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Nexperia595:74HC595BQ-Q100_115" (at 160.655 55.88 90)
+    (property "Footprint" "poly_kb:Nexperia 74HC595BQ DHVQFN16" (at 160.655 55.88 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Datasheet" "https://rocelec.widen.net/view/pdf/umsr6rbkih/PHGL-S-A0000283114-1.pdf?t.download=true&u=5oefqw" (at 160.02 90.17 0)
@@ -670,7 +674,7 @@
     (property "Value" "74HC595BQ" (at 109.855 66.04 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Nexperia595:74HC595BQ-Q100_115" (at 104.14 55.88 90)
+    (property "Footprint" "poly_kb:Nexperia 74HC595BQ DHVQFN16" (at 104.14 55.88 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Datasheet" "https://rocelec.widen.net/view/pdf/umsr6rbkih/PHGL-S-A0000283114-1.pdf?t.download=true&u=5oefqw" (at 104.14 90.17 0)

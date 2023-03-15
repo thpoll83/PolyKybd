@@ -6,6 +6,7 @@
 
   (title_block
     (title "rp2040 base circuit")
+    (date "2023-03-09")
   )
 
   (lib_symbols
@@ -3982,10 +3983,10 @@
   (symbol (lib_id "acheron_Symbols:TPD4E05U06DQAR") (at 69.215 145.415 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 855bd6c7-9d04-469b-9deb-65366737b7e0)
-    (property "Reference" "U13" (at 69.215 132.715 0)
+    (property "Reference" "U11" (at 69.215 133.35 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Value" "TPD4E05U06DQAR" (at 69.215 135.255 0)
+    (property "Value" "TPD4E05U06DQAR" (at 69.215 135.89 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Footprint" "poly_kb:USON-10" (at 69.215 118.745 0)
@@ -4010,7 +4011,7 @@
     (instances
       (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
-          (reference "U13") (unit 1)
+          (reference "U11") (unit 1)
         )
       )
     )
@@ -4485,10 +4486,10 @@
   (symbol (lib_id "Device:FerriteBead_Small") (at 52.07 70.485 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid cd8d515a-964d-4ef6-96ec-bc82d59fe786)
-    (property "Reference" "FB3" (at 55.245 69.1768 0)
+    (property "Reference" "FB1" (at 54.61 69.8119 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "GZ2012D601TF" (at 55.245 71.7168 0)
+    (property "Value" "GZ2012D601TF" (at 54.61 72.3519 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Inductor_SMD:L_0805_2012Metric" (at 50.292 70.485 90)
@@ -4505,7 +4506,7 @@
     (instances
       (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
-          (reference "FB3") (unit 1)
+          (reference "FB1") (unit 1)
         )
       )
     )
@@ -4730,7 +4731,7 @@
   (symbol (lib_id "Device:Fuse") (at 123.19 50.165 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid e9a9ae29-53a9-4602-99a0-4cc1c1dfbbd4)
-    (property "Reference" "F2" (at 123.19 43.815 90)
+    (property "Reference" "F1" (at 123.19 43.815 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "2920L030DR" (at 123.19 53.34 90)
@@ -4750,7 +4751,7 @@
     (instances
       (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
-          (reference "F2") (unit 1)
+          (reference "F1") (unit 1)
         )
       )
     )
