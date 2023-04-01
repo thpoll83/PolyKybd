@@ -1,5 +1,5 @@
 
-revision = "r8";
+revision = "r9";
 text_font = "Liberation Mono:style=Bold";
 text_size = 3;
 text_height = 0.3;
@@ -15,8 +15,8 @@ inside_y = 13.3;
 inside_hight = 3;
 
 mx_cylinder = 5.5;
-mx_cross = 4.1;
-mx_cross_width = 1.25;
+mx_cross = 4.25;
+mx_cross_width = 1.3;
 mx_cross_fillet = 0.3;
 
 disp_x = 12.2;
@@ -123,7 +123,7 @@ module mx_stem(u_size) {
         }
         //cut out cross
         translate([0,0,-surface_offset])
-            linear_extrude(height = stem_height, scale = 1)
+            linear_extrude(height = stem_height, scale = 0.97)
                 offset(r = -mx_cross_fillet) {
                     union() {
                         square([mx_cross+mx_cross_fillet, mx_cross_width+mx_cross_fillet], center = true);
@@ -139,45 +139,22 @@ module mx_stem(u_size) {
                 square([mx_cross_width+mx_cross_fillet,mx_cross+mx_cross_fillet], center = true);
     }
 }
-
-//mx_stem(u_size=1.25);
 /*
+mx_stem(u_size=1);
 display();
 cable();
 */
 
-//29p7
-/*
-translate([-25, -12, 0]) mx_stem(u_size=1.25);
-translate([-50, -12, 0]) mx_stem(u_size=1.25);
-translate([-50+12.5, -30, 0]) mx_stem(u_size=1.25);
-for ( i = [0 : 7] ){
-    if(i!=7) translate([i*25, -12, 0]) mx_stem(u_size=1);
-    if(i==0) { translate([-12.5+(i*25), -30, 0]) mx_stem(u_size=1.25); }
-    else { translate([-12.5+(i*25), -30, 0]) mx_stem(u_size=1); }
-}
-translate([-50,0,0.5]) rotate([0,90,0]) cylinder(r=0.5,h=8.5*25, $fn = 128,center=false);
-translate([-25,5,0.5]) rotate([90,0,0]) cylinder(r=0.5,h=10, $fn = 128,center=false);
-translate([-12.5-25,23,0.5]) rotate([90,0,0]) cylinder(r=0.5,h=46, $fn = 128,center=false);
-translate([-50,5,0.5]) rotate([90,0,0]) cylinder(r=0.5,h=10, $fn = 128,center=false);
-translate([-25, 12, 0]) rotate([0,0,180]) mx_stem(u_size=1.25);
-translate([-50, 12, 0]) rotate([0,0,180]) mx_stem(u_size=1.25);
-translate([-50+12.5, 30, 0]) rotate([0,0,180]) mx_stem(u_size=1.25);
-for ( i = [0 : 7] ){
-    if(i!=7) translate([i*25, 12, 0]) rotate([0,0,180]) mx_stem(u_size=1);
-    translate([-12.5+(i*25), 30, 0]) rotate([0,0,180]) mx_stem(u_size=1);
-    if(i!=7) translate([i*25,5,0.5]) rotate([90,0,0]) cylinder(r=0.5,h=10, $fn = 128,center=false);
-    translate([-12.5+i*25,23,0.5]) rotate([90,0,0]) cylinder(r=0.5,h=46, $fn = 128,center=false);
-}
-*/
-
 //10p
-
+module ten_connected_pieces() {
 for ( i = [0 : 4] ){
-    translate([i*25, -12, 0]) mx_stem(u_size=1);
-    translate([i*25, 12, 0]) rotate([0,0,180]) mx_stem(u_size=1);
-    translate([i*25-5,3,0.7]) rotate([90,0,0]) cylinder(r=0.75,h=6, $fn = 128,center=false);
-    translate([i*25-5,3,0.7]) rotate([-90,0,0]) cylinder(r1=0.75, r2=0.68, h=1.5, $fn = 128,center=false);
-    translate([i*25-5,-3,0.7]) rotate([90,0,0]) cylinder(r1=0.75, r2=0.68, h=1.5, $fn = 128,center=false);
+    translate([i*22-1.5,-5, 6])rotate([-90,180,180]) mx_stem(u_size=1);
+    translate([i*22-1.5, 5, 6]) rotate([90,0,180]) mx_stem(u_size=1);
+    translate([i*22-5,3,0.7]) rotate([90,0,0]) cylinder(r=0.75,h=6, $fn = 128,center=false);
+    translate([i*22-5,3,0.7]) rotate([-90,0,0]) cylinder(r1=0.75, r2=0.75, h=6, $fn = 128,center=false);
+    translate([i*22-5,-3,0.7]) rotate([90,0,0]) cylinder(r1=0.75, r2=0.75, h=6, $fn = 128,center=false);
 }
-translate([-5,0,0.7]) rotate([0,90,0]) cylinder(r=0.75,h=4.5*25-12.5, $fn = 128,center=false);
+translate([-5,0,0.7]) rotate([0,90,0]) cylinder(r=0.75,h=4.5*22-11, $fn = 128,center=false);
+}
+
+ten_connected_pieces();
