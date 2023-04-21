@@ -1,5 +1,5 @@
 
-revision = "r9";
+revision = "r2";
 text_font = "Liberation Mono:style=Bold";
 text_size = 3;
 text_height = 0.3;
@@ -15,8 +15,8 @@ inside_y = 13.3;
 inside_hight = 3;
 
 mx_cylinder = 5.5;
-mx_cross = 4.25;
-mx_cross_width = 1.3;
+mx_cross = 4.35;
+mx_cross_width = 1.4;
 mx_cross_fillet = 0.3;
 
 disp_x = 12.2;
@@ -68,10 +68,10 @@ module cable() {
         }
     }
 }
-module mx_stem(u_size) {
+module mx_stem(u_size, angle = 0, extra_len=0, txt=revision) {
     difference() {
         union() {
-            difference() {
+            translate([0,0,extra_len]) rotate([angle,0,0]) difference() {
                 //hollow keycap
                 union() {
                     translate([(u_size-1)*2*5,0,0]) 
@@ -111,19 +111,19 @@ module mx_stem(u_size) {
                 
                 //revision text
                 translate([0,disp_y/2-text_size/2,stem_height-disp_height-text_height+surface_offset*2])
-                    rotate([0,0,180]) linear_extrude(height = text_height) {
-                        text(revision, size = text_size, font = text_font, halign = "center", valign = "center", $fn = 16);
+                    rotate([0,0,0]) linear_extrude(height = text_height) {
+                        text(txt, size = text_size, font = text_font, halign = "center", valign = "center", $fn = 16);
                     }
             }
             //stem
             union() {
-                cylinder(r=mx_cylinder/2,h=stem_height-disp_height, $fn = 128,center=false);
-                translate([0,0,2.5]) cylinder(r1=mx_cylinder/2, r2=mx_cylinder/2+1,h=1, $fn = 128,center=false);
+                translate([0,0,0]) cylinder(r=mx_cylinder/2,h=stem_height-disp_height-1+extra_len, $fn = 128,center=false);
+                translate([0,0,2.5+extra_len]) cylinder(r1=mx_cylinder/2, r2=mx_cylinder/2+1.2,h=1.4, $fn = 128,center=false);
             }
         }
         //cut out cross
         translate([0,0,-surface_offset])
-            linear_extrude(height = stem_height, scale = 0.97)
+            linear_extrude(height = stem_height*2, scale = 0.97)
                 offset(r = -mx_cross_fillet) {
                     union() {
                         square([mx_cross+mx_cross_fillet, mx_cross_width+mx_cross_fillet], center = true);
@@ -139,22 +139,47 @@ module mx_stem(u_size) {
                 square([mx_cross_width+mx_cross_fillet,mx_cross+mx_cross_fillet], center = true);
     }
 }
+
+//mx_stem(u_size=1);
 /*
-mx_stem(u_size=1);
 display();
 cable();
 */
 
 //10p
-module ten_connected_pieces() {
+module ten_connected_pieces_1U(angle = 0, extra_len=0, txt=revision) {
 for ( i = [0 : 4] ){
-    translate([i*22-1.5,-5, 6])rotate([-90,180,180]) mx_stem(u_size=1);
-    translate([i*22-1.5, 5, 6]) rotate([90,0,180]) mx_stem(u_size=1);
-    translate([i*22-5,3,0.7]) rotate([90,0,0]) cylinder(r=0.75,h=6, $fn = 128,center=false);
-    translate([i*22-5,3,0.7]) rotate([-90,0,0]) cylinder(r1=0.75, r2=0.75, h=6, $fn = 128,center=false);
-    translate([i*22-5,-3,0.7]) rotate([90,0,0]) cylinder(r1=0.75, r2=0.75, h=6, $fn = 128,center=false);
+    translate([i*18-5,-2, 6])rotate([-90,180,180]) mx_stem(u_size=1, angle = angle, extra_len=extra_len, txt=txt);
+    translate([i*18-5, 2, 6]) rotate([90,0,180]) mx_stem(u_size=1, angle = angle, extra_len=extra_len, txt=txt);
+    translate([i*18-5,6+extra_len/2,0.7]) rotate([90,0,0]) cylinder(r=0.75,h=12+extra_len, $fn = 128,center=false);
+}
+translate([-5,0,0.7]) rotate([0,90,0]) cylinder(r=0.75,h=4.5*18.5-11, $fn = 128,center=false);
+}
+
+module ten_connected_pieces_1U25(angle = 0, extra_len=0, txt=revision) {
+for ( i = [0 : 4] ){
+    translate([i*22-5,-2, 6])rotate([-90,180,180]) mx_stem(u_size=1.23, angle = angle, extra_len=extra_len, txt=txt);
+    translate([i*22-5, 2, 6]) rotate([90,0,180]) mx_stem(u_size=1.23, angle = angle, extra_len=extra_len, txt=txt);
+    translate([i*22-5,6+extra_len/2,0.7]) rotate([90,0,0]) cylinder(r=0.75,h=12+extra_len, $fn = 128,center=false);
 }
 translate([-5,0,0.7]) rotate([0,90,0]) cylinder(r=0.75,h=4.5*22-11, $fn = 128,center=false);
 }
 
-ten_connected_pieces();
+module ten_connected_pieces_1U5(angle = 0, extra_len=0, txt=revision) {
+for ( i = [0 : 4] ){
+    translate([i*26-5,-2, 6])rotate([-90,180,180]) mx_stem(u_size=1.48, angle = angle, extra_len=extra_len, txt=txt);
+    translate([i*26-5, 2, 6]) rotate([90,0,180]) mx_stem(u_size=1.48, angle = angle, extra_len=extra_len, txt=txt);
+    translate([i*26-5,6+extra_len/2,0.7]) rotate([90,0,0]) cylinder(r=0.75,h=12+extra_len, $fn = 128,center=false);
+}
+translate([-5,0,0.7]) rotate([0,90,0]) cylinder(r=0.75,h=4.5*26-13, $fn = 128,center=false);
+}
+
+//ten_connected_pieces_1U25(angle = 10, extra_len=3, txt="R5r2");
+
+translate([0,19.25*3,0]) mx_stem(u_size=1, angle = 10, extra_len=3, txt="R5r2");
+translate([0,19.25*2,0]) mx_stem(u_size=1, angle = 5, extra_len=0.5, txt="R4r2");
+translate([0,19.25,0]) mx_stem(u_size=1, txt="R3r2");
+mx_stem(u_size=1, angle = -5, extra_len=0.5, txt="R2r2");
+translate([0,-19.25,0]) mx_stem(u_size=1, angle = 5, extra_len=0.5, txt="R1r2");
+
+//color([0,0.5,0], 0.4) translate([0,0,-1]) cube([100,100,2], center=true);

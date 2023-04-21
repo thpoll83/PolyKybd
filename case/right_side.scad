@@ -10,7 +10,7 @@ debug_ports = "poly_kb_wave_right_debug.svg";
 case_height = 17;
 case_wall_thickness = 1.5;
 case_bottom_thickness = 1.4;
-pcb_clearance = 0.5;
+pcb_clearance = 0.25;
 pcb_edge_height = 9.5;
 pcb_edge_width= 2.1;
 stand_off_extra_radius = 2.3;
@@ -18,17 +18,22 @@ stand_off_extra_radius = 2.3;
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
 text_height = 0.2;
-revision = "r5";
+revision = "r6";
 name = "PolyKybd";
-author = "Split";
+author = "Split72";
 
-module tentingHole(extra_space) {
-    if(extra_space) {
-        cylinder(h =10, r1 = 3, r2 = 3, center = false, $fn = 32);
-    } else {
-        cylinder(h =10, r1 = 2.85, r2 = 2.85, center = false, $fn = 32);
+
+module tentingHole() {
+    difference() { 
+        cylinder(h =10, r1 = 2.98, r2 = 2.98, center = false, $fn = 64);
+        union() {
+            cylinder(h =10, r1 = 2.5, r2 = 2.5, center = false, $fn = 64);
+            cube([0.5,10,10], true);
+            cube([10,0.5,10], true);
+        }
     }
-    cylinder(h =1, r1 = 4.8, r2 = 4.85, center = false, $fn = 32);
+    cylinder(h =10, r1 = 0.25, r2 = 0.25, center = false, $fn = 64);
+    cylinder(h =1, r1 = 4.8, r2 = 4.85, center = false, $fn = 64);
 }
 
 module right_case(include_debug, fdm_print) {
@@ -39,17 +44,17 @@ module right_case(include_debug, fdm_print) {
             difference() {
                 //case
                 linear_extrude(height = case_height, scale=1)
-                    offset(r=case_wall_thickness+pcb_clearance, $fn=50)
+                    offset(r=case_wall_thickness+pcb_clearance, $fn=128)
                         import(file = pcb_outline, dpi = 300);
                 //space under pcb
                 translate([0,0,case_bottom_thickness])
                 linear_extrude(height = case_height, scale=1)
-                    offset(r=-pcb_edge_width+pcb_clearance, $fn=50)
+                    offset(r=-pcb_edge_width+pcb_clearance, $fn=128)
                         import(file = pcb_outline, dpi = 300);
                 //pcb and above
                 translate([0,0,case_bottom_thickness+pcb_edge_height])
                 linear_extrude(height = case_height, scale=1)
-                    offset(r=pcb_clearance, $fn=50)
+                    offset(r=pcb_clearance, $fn=128)
                         import(file = pcb_outline, dpi = 300);
                 
             }
@@ -58,7 +63,7 @@ module right_case(include_debug, fdm_print) {
             linear_extrude(height = text_height) {
                             text(name, size = text_size, font = text_font, halign = "center", valign = "center", $fn = 50);
             }
-            translate([172,122,case_bottom_thickness])
+            translate([176,122,case_bottom_thickness])
             linear_extrude(height = text_height) {
                             text(author, size = 5, font = text_font, halign = "center", valign = "center", $fn = 50);
             }
@@ -77,8 +82,12 @@ module right_case(include_debug, fdm_print) {
                  linear_extrude(height = pcb_edge_height+case_bottom_thickness, scale=1)
                     offset(r=stand_off_extra_radius, $fn=50)
                         import(file = drill_holes, dpi = 300);
+                
+                //actual holes
                 linear_extrude(height = pcb_edge_height+case_bottom_thickness, scale=1)
+                    offset(r=-0.2, $fn=50)
                         import(file = drill_holes, dpi = 300);
+                translate([0,0,10.5]) linear_extrude(height = 1, scale=1)                         import(file = drill_holes, dpi = 300);
                 
 
             } 
@@ -106,7 +115,7 @@ module right_case(include_debug, fdm_print) {
             linear_extrude(height = text_height) {
                             text(name, size = text_size, font = text_font, halign = "center", valign = "center", $fn = 50);
         }
-        translate([108,122, text_height-0.01]) rotate([0,180,0])
+        translate([104,122, text_height-0.01]) rotate([0,180,0])
             linear_extrude(height = text_height) {
                             text(author, size = 5, font = text_font, halign = "center", valign = "center", $fn = 50);
         }
@@ -128,18 +137,22 @@ module right_case(include_debug, fdm_print) {
             linear_extrude(height = 4, scale=1)
                 import(file = usb_port_holes, dpi = 300);
         
-        translate([50,90,6]) rotate([90,0,110]) tentingHole(fdm_print);
-        translate([90,181.5,6]) rotate([90,0,0]) tentingHole(fdm_print);
-        translate([210,179,6]) rotate([90,0,0]) tentingHole(fdm_print);
+        translate([50,90,6]) rotate([90,0,110]) tentingHole();
+        translate([90,181.5,6]) rotate([90,0,0]) tentingHole();
+        translate([210,179,6]) rotate([90,0,0]) tentingHole();
         
         //debug ports - remove if not needed
         if(include_debug) {
             translate([20,0,-5]) linear_extrude(height = 30, scale=1)
             offset(r=2, $fn=50) import(file = debug_ports, dpi = 300);
         }
-        translate([0,0,-0.01])linear_extrude(height = 3.9, scale=1)
-            offset(r=+1.65, $fn=50)
+        //bottom mount points
+        translate([0,0,-0.01])linear_extrude(height = 5, scale=1)
+            offset(r=+1.48, $fn=50)
                 import(file = drill_holes, dpi = 300);
+        
+        //check hole profile:
+        //cube(105,105,100);
     }
 }
 
