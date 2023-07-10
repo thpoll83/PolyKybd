@@ -1,14 +1,15 @@
 *.sch-bak
 *.kicad_pcb-bak
-poly_kb_atom/poly_kb-backups/*
-poly_kb_atom/poly_kb_molecule_4x1_wave_right-backups/*
-poly_kb_atom/poly_kb_wave_left-backups/*
-poly_kb_atom/poly_kb_wave_right-backups/*
-poly_kb_atom/poly_kb_wave_right2-backups/*
-poly_kb_atom/connector-backups/*
-poly_kb_atom/_autosave*
-poly_kb_atom/#auto_saved_files#
+poly_kybd/poly_kb-backups/*
+poly_kybd/poly_kb_molecule_4x1_wave_right-backups/*
+poly_kybd/poly_kb_wave_left-backups/*
+poly_kybd/poly_kb_wave_right-backups/*
+poly_kybd/poly_kb_wave_right2-backups/*
+poly_kybd/connector-backups/*
+poly_kybd/_autosave*
+poly_kybd/#auto_saved_files#
 fp-info-cache
-poly_kb_atom/ThirdParty/*
+poly_kybd/ThirdParty/*
 keycaps/NopSCADlib/*
 
+poly_kybd/poly_kb_wave_left2-backups/poly_kb_wave_left2-2023-06-23_101023.zip
