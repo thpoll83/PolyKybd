@@ -12,13 +12,13 @@ case_wall_thickness = 1.5;
 case_bottom_thickness = 1.4;
 pcb_clearance = 0.25;
 pcb_edge_height = 9.5;
-pcb_edge_width= 2.1;
+pcb_edge_width= 1.4;
 stand_off_extra_radius = 2.3;
 
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
 text_height = 0.2;
-revision = "r7";
+revision = "r8";
 name = "PolyKybd";
 model_name = "Split72";
 
@@ -43,6 +43,14 @@ module standoffs(file) {
             linear_extrude(height = 1, scale=1)
                 import(file = file, dpi = 300);
     }
+}
+
+module standoffs_holes(file) {
+        //actual holes
+        translate([0,0,pcb_edge_height-2.2])
+        linear_extrude(height = 2.2, scale=1)
+            offset(r=-0.225, $fn=50)
+                import(file = file, dpi = 300);
 }
 
 module pcb_standoffs(file) {
@@ -104,7 +112,40 @@ module branding(mirror_text) {
 
 }
 
-module right_side_modular(mirror_text, fdm_print) {
+module right_side_shrink_protection() {
+        intersection() {
+        translate([0,0,case_height-1.2]) {
+            linear_extrude(height = 1.2, scale=1)
+                offset(r=pcb_clearance, $fn=128)
+                    import(file = pcb_outline, dpi = 300);
+            
+           
+        }
+        /* translate([0,0,case_height-1.2 + 18]) {
+             for ( y = [0 : 10] ){
+                 for ( x = [0 : 10] ){
+                     if(y%2==1) {
+                         translate([9+x*18,y*16,0]) cylinder(r = 8.5, h = 3, center = true, $fn=32);
+                     }else {
+                         translate([x*18,y*16,0]) cylinder(r = 8.5, h = 3, center = true, $fn=32);
+                     }
+                 }
+            }
+        }] 
+        */
+        union() {
+            translate([0,52,case_height-1.2]) cube([300,1.5,10]);
+            translate([0,110,case_height-1.2]) cube([300,1.5,10]);
+            
+            translate([30,0,case_height-1.2]) cube([1.5, 300,10]);
+            translate([100,0,case_height-1.2]) cube([1.5, 300,10]);
+            translate([160,0,case_height-1.2]) cube([1.5, 300,10]);
+        }
+    }
+}
+
+module right_side_modular(mirror_text, fdm_print, prototype, with_shrink_protection) {
+    
     //with camfer
     difference() {
         union() {
@@ -130,7 +171,7 @@ module right_side_modular(mirror_text, fdm_print) {
             //branding inside
             translate([0, 0, case_bottom_thickness]) branding(mirror_text);
 
-            //revision mark
+            // mark
             if(mirror_text) {
                 translate([220-48,55,case_bottom_thickness])
                     mirror(v=[1,0,0]) linear_extrude(height = text_height) {
@@ -149,7 +190,7 @@ module right_side_modular(mirror_text, fdm_print) {
             
             //wedge part
             intersection() {
-                rotate([-19,0,6]) translate([0,0,case_bottom_thickness/2])
+                rotate([-19,0,6]) translate([0,0,case_bottom_thickness/5*2])
                     linear_extrude(height = 10, scale=1)
                         import(file = wedge_shape, dpi = 300);
                 
@@ -159,11 +200,11 @@ module right_side_modular(mirror_text, fdm_print) {
         }
         //remove wedge bottom part
         rotate([-19,0,6]) translate([0,0,-case_bottom_thickness/2]) linear_extrude(height = 10, scale=1)                         import(file = wedge_shape, dpi = 300);
-    if(fdm_print) {
-        translate([70,80,-3.65]) 
-            for ( i = [0 : 20] ){
-                rotate([90-19,0,6]) translate([8*i-5.1,0,0]) cylinder(r1=2, r2=2, h=40, $fn=48);
-            }
+        if(fdm_print) {
+            translate([70,80,-3.65]) 
+                for ( i = [0 : 20] ){
+                    rotate([90-19,0,6]) translate([8*i-5.1,0,0]) cylinder(r1=2, r2=2, h=40, $fn=48);
+                }
         }
 
         //bottom branding
@@ -184,11 +225,18 @@ module right_side_modular(mirror_text, fdm_print) {
                 offset(r=0.9)
                     import(file = led_holes, dpi = 300);
         
-        //cut out Switches
-        translate([0,0,pcb_edge_height-1])
-            linear_extrude(height = 3, scale=1)
-                offset(r=2.5)
-                    import(file = switch_holes, dpi = 300);
+        //cut out switch
+        if(prototype) {
+             translate([0,0,pcb_edge_height+3])
+                linear_extrude(height = 3, scale=1)
+                    offset(r=2.5)
+                        import(file = switch_holes, dpi = 300);
+        } else {
+            translate([0,0,pcb_edge_height-1])
+                linear_extrude(height = 3, scale=1)
+                    offset(r=2.5)
+                        import(file = switch_holes, dpi = 300);
+        }
         
         //cut out USB
         translate([0,0,pcb_edge_height-2.2])
@@ -212,22 +260,30 @@ module right_side_modular(mirror_text, fdm_print) {
                 import(file = standoffs_pos, dpi = 300);
         
         //check hole profile:
-        //cube([120,120,100], center = true);
+        //cube([11,320,100], center = true);
+        
+        standoffs_holes(drill_holes);
     }
 }
 
 module left_case() {
-    mirror(v=[1,0,0]) right_side_modular(true, false);
+    mirror(v=[1,0,0]) {
+        //right_side_shrink_protection();
+        right_side_modular(true, false, false);
+    }
 }
 
 module right_case() {
-    right_side_modular(false, false);
+    union() {
+        //right_side_shrink_protection();
+        right_side_modular(false, false, false);
+    }
 }
 
 //spacer
 module right_spacer() {
     spacer_height = 3.6;
-    spacher_thickness = 2.5;
+    spacer_thickness = 2.5;
     shrink_radius = 0.25;//0.75;
     translate([0,0,20])
     difference() {
@@ -238,14 +294,14 @@ module right_spacer() {
                                 import(file = pcb_outline, dpi = 300);
                 translate([0,0,-1])
                 linear_extrude(height = spacer_height+2, scale=1)
-                            offset(r=-spacher_thickness-shrink_radius, $fn=50)
+                            offset(r=-spacer_thickness-shrink_radius, $fn=50)
                                 import(file = pcb_outline, dpi = 300);
             }
             for ( i = [0 : 1] ){
-                translate([47.5+92-48+2*19.05*i,-45,0]) cube([spacher_thickness,200,spacer_height]);
+                translate([47.5+92-48+2*19.05*i,-45,0]) cube([spacer_thickness,200,spacer_height]);
             }
-            translate([53,100.5-45,0]) cube([spacher_thickness,100,spacer_height]);
-            translate([1.5+63.41,36-48,0]) rotate([0,0,10]) cube([spacher_thickness,68.6,spacer_height]);
+            translate([53,100.5-45,0]) cube([spacer_thickness,100,spacer_height]);
+            translate([1.5+63.41,36-48,0]) rotate([0,0,10]) cube([spacer_thickness,68.6,spacer_height]);
         }
         
         translate([0,0,-1])
@@ -261,7 +317,7 @@ module right_spacer() {
 }
 
 //right_spacer();
-translate([5,0,0]) right_case();
+//translate([5,0,0]) right_case();
 translate([-5,0,0]) left_case();
 
 
