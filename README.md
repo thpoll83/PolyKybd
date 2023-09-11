@@ -4,19 +4,19 @@ Official hardware repository of the PolyKybd Split72 keyboard. The instructions 
 
 ![PolyKybd Split72](images/PolyKybdSplit72p.jpg)
 
-You can find the matching QMK firmware here: [https://github.com/thpoll83/qmk_firmware/tree/PolyKeyboard]()
+You can find the matching QMK firmware here: [https://github.com/thpoll83/qmk_firmware/tree/PolyKeyboard](https://github.com/thpoll83/qmk_firmware/tree/PolyKeyboard)
 
 The Kicad7 projects for the PCB are the following:
 
-[poly_kybd/poly_kb_wave_right2_plate.kicad_pro]()
-[poly_kybd/poly_kb_wave_left2_plate.kicad_pro]()
+[poly_kybd/poly_kb_wave_right2.kicad_pro](poly_kybd/poly_kb_wave_right2.kicad_pro)
+[poly_kybd/poly_kb_wave_left2.kicad_pro](poly_kybd/poly_kb_wave_left2.kicad_pro)
 
 (`wave` was the the prototype name, please just ignore the other projects)
 
 The keyboard plates are also Kicad7 projects (I used 1.2mm aluminium PCBs):
 
-[poly_kybd/poly_kb_wave_right2_plate.kicad_pro]()
-[poly_kybd/poly_kb_wave_left2_plate.kicad_pro]()
+[poly_kybd/poly_kb_wave_right2_plate.kicad_pro](poly_kybd/poly_kb_wave_right2_plate.kicad_pro)
+[poly_kybd/poly_kb_wave_left2_plate.kicad_pro](poly_kybd/poly_kb_wave_left2_plate.kicad_pro)
 
 ## How to Build
 
@@ -27,22 +27,22 @@ Independent of your choice, here are the parts you need before putting everythin
 ### Prepare Required Parts
 
 * Case (left/right) - You can either 3D print or get them CNCed (but then you should make some threads into the screw holes):
-  [case/case_polysplit72_left2_r7.stl]()
+  [case/case_polysplit72_left2_r7.stl](case/case_polysplit72_left2_r7.stl)
   Or the version with supports in the open area to avoid deformation with resin 3D prints:
-  [case/case_polysplit72_left2_r8.stl]() (But also this one turned out **with** deformations, so maybe it is best to use the one without supports and utilize a hairdryer to slightly heat the case up and then put something heavy on the bottom to make it flat - it really works)
+  [case/case_polysplit72_left2_r8.stl](case/case_polysplit72_left2_r8.stl) (But also this one turned out **with** deformations, so maybe it is best to use the one without supports and utilize a hairdryer to slightly heat the case up and then put something heavy on the bottom to make it flat - it really works)
   ![Case](images/case_l.png)
-  [case/case_polysplit72_right2_r7.stl]()
+  [case/case_polysplit72_right2_r7.stl](case/case_polysplit72_right2_r7.stl)
   ![Case](images/case_r.png)
   Again with supports:
-  [case/case_polysplit72_right2_r8.stl]()
+  [case/case_polysplit72_right2_r8.stl](case/case_polysplit72_right2_r8.stl)
 * Spacer to keep the right distance between plate and PCB (again, can be 3D printed):
   [case/spacer.stl
   ![Spacer](images/spacer.png)
   ](case/spacer.stl)
 * Assembled 4 layers PCB 1.6mm (left/right)
-  The latest gerber files with BOM and pick/place file can be found in [poly_kybd/Gerber]() I made some final adjusts on the latest version, which I did not yet order (I will let you know as soon as I did).
-  [poly_kybd/Gerber/PCB/left-side-v2.2/gerber-left-side-v2.2-22.06.2023.zip]()
-  [poly_kybd/Gerber/PCB/right-side-v2.2/gerber-right-side-v2.2-22.06.2023.zip]()
+  The latest gerber files with BOM and pick/place file can be found in [poly_kybd/Gerber](poly_kybd/Gerber) I made some final adjusts on the latest version, which I did not yet order (I will let you know as soon as I did).
+  [poly_kybd/Gerber/PCB/left-side-v2.2/gerber-left-side-v2.2-22.06.2023.zip](poly_kybd/Gerber/PCB/left-side-v2.2/gerber-left-side-v2.2-22.06.2023.zip)
+  [poly_kybd/Gerber/PCB/right-side-v2.2/gerber-right-side-v2.2-22.06.2023.zip](poly_kybd/Gerber/PCB/right-side-v2.2/gerber-right-side-v2.2-22.06.2023.zip)
 
   ![PCB](images/pcb_photo.jpeg)
 
@@ -53,8 +53,8 @@ Independent of your choice, here are the parts you need before putting everythin
 
   In case you make modifications to the PCB in Kicad and export everything you might need to change the hot swap sockets side to the back. The hot swap socket in Kicad is part of the key switch and for some reason I couldn't yet convince Kicad that the manufacturing side is the back...
 * Aluminum plates (left/right =) - Can be ordered from PCB manufactures as a 1.2mm aluminum PCB
-  [poly_kybd/Gerber/Plate/gerber-left-side-v2.2-22.06.2023.zip]()
-  [poly_kybd/Gerber/Plate/gerber-right-side-v2.2-22.06.2023.zip]()
+  [poly_kybd/Gerber/Plate/gerber-left-side-v2.2-22.06.2023.zip](poly_kybd/Gerber/Plate/gerber-left-side-v2.2-22.06.2023.zip)
+  [poly_kybd/Gerber/Plate/gerber-right-side-v2.2-22.06.2023.zip](poly_kybd/Gerber/Plate/gerber-right-side-v2.2-22.06.2023.zip)
 * Displays
   ![Displays](images/displays.png)
 
@@ -86,22 +86,22 @@ Independent of your choice, here are the parts you need before putting everythin
     | 9     | VDD       | 27    | VCOMH  |
     | 10~12 | BS0~BS2   | 28    | VCC    |
     | 13    | CS#       | 29    | VLSS   |
-* Compatible key switches - 72 pieces. I will compile a list of compatible switches, for now please take a look at my ko-fi post for that: [https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW]()
+* Compatible key switches - 72 pieces. I will compile a list of compatible switches, for now please take a look at my ko-fi post for that: [https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW](https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW)
 * Key Stems - 72 pieces, can be 3D printed (I highly recommend using an SLA printer). There are 3 different profiles available here. You can also modify the source file an make your own profile. If you take the STLs, make sure to always grab the latest version.
 
   - Flat ![Flat Profile](images/profile_flat.png)
-    For that simply use the R3 stems from the [parts]() directory (14 pieces 1.25U and 58 pieces 1U).
+    For that simply use the R3 stems from the [parts](parts) directory (14 pieces 1.25U and 58 pieces 1U).
   - Stepped ![Stepped Profile](images/profile_stepped.png)
-    These are the R2 stems from the [parts]() directory (14 pieces 1.25U and 58 pieces 1U). This works best if keyboard is inclined by 5 degrees or more.
+    These are the R2 stems from the [parts](parts) directory (14 pieces 1.25U and 58 pieces 1U). This works best if keyboard is inclined by 5 degrees or more.
   - Curved ![Curved Profile](images/profile_curved.png)
-    Here you will need R1 to R5 from the [parts]() directory. (4x 1.25U R1, 10x 1U R1, 4x 1.25U R2, 12x 1U R2, 2x 1.25U R3, 12x 1U R3, 2x 1.25U R4, 12x 1U R4, 2x 1.25U R5, 12x 1U R5)
+    Here you will need R1 to R5 from the [parts](parts) directory. (4x 1.25U R1, 10x 1U R1, 4x 1.25U R2, 12x 1U R2, 2x 1.25U R3, 12x 1U R3, 2x 1.25U R4, 12x 1U R4, 2x 1.25U R5, 12x 1U R5)
 * Status display holder (or cover/dummy in case no status display is used), can be 3D printed.
-  [parts/display_holder_r1.stl]() / [parts/display_holder_dummy_r1.stl]()
+  [parts/display_holder_r1.stl](parts/display_holder_r1.stl) / [parts/display_holder_dummy_r1.stl](parts/display_holder_dummy_r1.stl)
 * Transparent keycap covers - 72 pieces (from relegendable keycaps [like these](https://de.aliexpress.com/item/1005002996832179.html?spm=a2g0o.order_list.order_list_main.111.49985c5f1EyPsm&gatewayAdapt=glo2deu)), 58x 1U and 14x 1.25U. Various sources sell them on Alibaba, AliExpress, Amazon & Co.
 * Optional rotary encoder ([EVQWGD001](https://de.aliexpress.com/i/32990950196.html?gatewayAdapt=gloMsite2deuPcglo2deu) or [Alps EC11 Encoder](https://www.mouser.at/c/electromechanical/encoders/?m=Alps%20Alpine&series=EC11)), [pimoroni trackball](https://mou.sr/3rmFiAO) or [23mm cirque trackpad](https://www.mouser.at/ProductDetail/Cirque/TM023023-2024-002?qs=wd5RIQLrsJhgKZTW4CXgsA%3D%3D&countryCode=DE&currencyCode=EUR) (and a 12 pin FPC cable with pins on the same side, about 50mm to 70mm). For the trackpad you will need another 3D printed holder, either a high one or a low one: ![Cirque Trackpad Inserts](images/cirque_inserts.png)
-  [parts/cirque23_slim_insert_r8.stl]()
-  [parts/cirque23_insert_high_r1.stl]()
-  If you are not happy with the existing STLs, you can also modify the source file [parts/cirque23_insert.stl]() or [parts/cirque23_insert_slim.scad]().
+  [parts/cirque23_slim_insert_r8.stl](parts/cirque23_slim_insert_r8.stl)
+  [parts/cirque23_insert_high_r1.stl](parts/cirque23_insert_high_r1.stl)
+  If you are not happy with the existing STLs, you can also modify the source file [parts/cirque23_insert.stl](parts/cirque23_insert.stl) or [parts/cirque23_insert_slim.scad](parts/cirque23_insert_slim.scad).
 * Short USB-C to USB-C cable to connect the two sides (maybe around 50cm).
 * USB-C to USB-A/USB-C to connect to your computer.
   ***Note:*** I had a USB-C to USB-A cable and was sitting in front of a laptop with only USB-C ports. Without a USB-C to USB-C cable at hand, I used an USB-A to USB-C adapter. It turned out this USB-C to USB-A cable + USB-A to USB-C adapter construction was only working then the adapter was connected to the laptop. - better use a USB-C to USB-C right away.
@@ -158,6 +158,6 @@ The fun just starts now! You will recognize that there are a lot of ways to play
 
 
 This project has been an incredible amount of work, please consider supporting me if you like it:
-[https://ko-fi.com/polykb]()
+[https://ko-fi.com/polykb](https://ko-fi.com/polyk)
 ![Please support me](kofi.png)
 
