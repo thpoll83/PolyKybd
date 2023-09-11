@@ -61,7 +61,7 @@ Independent of your choice, here are the parts you need before putting everythin
   - 72 pieces 0.42 inch displays
 
     - Either you take the 0.42 inch displays from the kit which has the matching length and pin number (maybe I can make them available as single parts as well - see picture above, on the left).
-    - Or you extend [FPT042W000Z01](https://www.alibaba.com/product-detail/OLED-Display-0-42-Inch-Small_1600693977243.html) or [P34107](https://www.alibaba.com/product-detail/OLED-display-OLED-0-42-Inch_1600104997388.html) with a [30mm FPC cable](https://de.aliexpress.com/item/1005001935872949.html), 14 or 16 pins - blank pins one same side like the two right displays on the picture above. Only 14 pins are needed, however, you might want to get a 16 pin FPC and cut away 2 pins to fit the FPC into the 14 pin socket. It is easier to solder 16 pins of the display together with the 16 pins of the FPC (so the cable aligns), see here:
+    - Or you extend *[FPT042W000Z01](https://www.alibaba.com/product-detail/OLED-Display-0-42-Inch-Small_1600693977243.html) or *[P34107](https://www.alibaba.com/product-detail/OLED-display-OLED-0-42-Inch_1600104997388.html) with a [30mm FPC cable](https://de.aliexpress.com/item/1005001935872949.html) ( * I got contacted that these Alibaba links are stale and it turned out, that the moment, these do not work as the displays got removed. Let me keep them in case they come back online. Maybe you can use these as alternative, the pins are compatible: [ZJY042-7240TSWPG10](https://www.alibaba.com/product-detail/0-42-inch-72x40-OLED-display_1600820452544.html?spm=a2700.details.0.0.11f34384WPrOet) The flex cable is about 1cm shorter, so your extension needs to be 40mm instead of 30mm. I have not tried these, so you might wanna do a test first!). The FPC extension should be 14 or 16 pins - blank contacts on the same side, like the two right side displays on the picture above. Only 14 pins are needed, however, you might want to get a 16 pin FPC and cut away 2 pins to fit the FPC into the 14 pin socket. It is easier to solder 16 pins of the display together with the 16 pins of the FPC (so the cable aligns), see here:
       ![Extended Display](images/extended_display.jpg)
       To achieve this, I applied low temperature solder (138 degree C) on both, the display FPC pins and the extension FPC pins with the solder iron:
       ![Extended FPC Part 1](images/ExtendFPC_1.png)
@@ -155,3 +155,8 @@ Here is my recommended order:
 18. Congratulations! You made it! ![PolyKybd Split72](images/PolyKybdSplit72.jpg) In case you experience any issues, pleas let me know or make a PR on the build guide!
 
 The fun just starts now! You will recognize that there are a lot of ways to play around with this keyboard.
+
+
+This project has been an incredible amount of work, please consider supporting me if you like it:
+![Please support me](kofi.png)
+[https://ko-fi.com/polykb]()
