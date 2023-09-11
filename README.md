@@ -158,5 +158,6 @@ The fun just starts now! You will recognize that there are a lot of ways to play
 
 
 This project has been an incredible amount of work, please consider supporting me if you like it:
-![Please support me](kofi.png)
 [https://ko-fi.com/polykb]()
+![Please support me](kofi.png)
+
