@@ -811,7 +811,7 @@
     (pin "1" (uuid c1536655-9eaa-4ff0-8eb9-fc8ac393e72e))
     (pin "2" (uuid f708cd50-da64-4485-8814-925db79e169a))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "C6_29") (unit 1)
         )
@@ -953,7 +953,7 @@
     (pin "3" (uuid 018ae944-7a86-40b9-af98-d38db56a9415))
     (pin "4" (uuid 85a0adc4-003f-4e60-818a-b61f6a8d4e7b))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "LED29") (unit 1)
         )
@@ -1087,7 +1087,7 @@
     (pin "1" (uuid c923ca95-7c55-43a5-a30b-caa9044bc953))
     (pin "2" (uuid 12adcdd6-67d6-497a-86f9-5627e3413f39))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "C4_29") (unit 1)
         )
@@ -1227,7 +1227,7 @@
     (pin "1" (uuid dd036acd-7e6a-4f02-b188-05054236029f))
     (pin "2" (uuid 5e1ccda5-a997-475c-a565-10e978d13def))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "C1_29") (unit 1)
         )
@@ -1367,7 +1367,7 @@
     (pin "1" (uuid 7badde17-7b98-44d0-8cd6-3968a61662e3))
     (pin "2" (uuid 73852f96-067b-482b-9ff3-fd8a0f12db69))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "C5_29") (unit 1)
         )
@@ -1507,7 +1507,7 @@
     (pin "1" (uuid 3b4fe813-de35-47b4-8591-076ccef4d364))
     (pin "2" (uuid ca456ca0-5c1e-408a-8487-6d1e91aeeaee))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "C2_29") (unit 1)
         )
@@ -1647,7 +1647,7 @@
     (pin "1" (uuid c7b34bbf-fc88-46af-91a2-b2ba0b792b12))
     (pin "2" (uuid 93b94641-c46f-4918-8fbf-6b7b652a1d88))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "C3_29") (unit 1)
         )
@@ -1784,7 +1784,7 @@
     (pin "1" (uuid c19b9ffa-274a-4fda-9813-f576e9356fb4))
     (pin "2" (uuid 0e92a6d7-ccdb-4ddf-844d-a6703d4c4aab))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "SW_K_29") (unit 1)
         )
@@ -1924,7 +1924,7 @@
     (pin "1" (uuid 07ff2e9a-1b17-4485-8a26-e18e1920b350))
     (pin "2" (uuid fd03a677-6744-4f4a-bc22-5812b638af23))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "D1_29") (unit 1)
         )
@@ -2064,7 +2064,7 @@
     (pin "1" (uuid eab7c737-4450-406f-9f80-b2e18bb45dd6))
     (pin "2" (uuid 317a2bf1-677c-46ed-b6b4-eef240063844))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "R1_29") (unit 1)
         )
@@ -2213,7 +2213,7 @@
     (pin "8" (uuid 63e60461-d981-43e8-abc7-5763cb062fcf))
     (pin "9" (uuid cc37479a-24af-477f-a5af-b9d1f81337ee))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/27260850-af3c-4b8b-9ab7-244ea24742d6"
           (reference "J29") (unit 1)
         )

@@ -6,8 +6,8 @@
 
   (title_block
     (title "PolyKybd Split72 R")
-    (date "2023-06-22")
-    (rev "2.2")
+    (date "2023-09-19")
+    (rev "3")
   )
 
   (lib_symbols
@@ -10030,10 +10030,10 @@
       (effects (font (size 1.27 1.27)) (justify right) hide)
     )
   )
-  (global_label "VBUS" (shape input) (at 410.21 358.14 0) (fields_autoplaced)
+  (global_label "VSYS" (shape input) (at 410.21 358.14 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left))
     (uuid 578e6fd5-6000-4bf0-8205-d8a3cdb650c4)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 417.5217 358.0606 0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 417.7914 358.14 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
   )
@@ -10618,10 +10618,10 @@
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
   )
-  (global_label "VBUS" (shape input) (at 410.21 381 0) (fields_autoplaced)
+  (global_label "VSYS" (shape input) (at 410.21 381 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left))
     (uuid d3774bc1-56ca-4a20-aaba-8f32d459f47d)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 417.5217 380.9206 0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}" (at 417.7914 381 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
   )

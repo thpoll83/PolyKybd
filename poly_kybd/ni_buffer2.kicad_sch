@@ -172,7 +172,7 @@
     (pin "4" (uuid 15ac2b28-b9bf-4af0-b396-c3279d52727d))
     (pin "5" (uuid 1380f3a4-d029-4391-975b-ccabe6116c81))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/34c8bd98-65a2-4c99-9e47-d8cb6b5c207e"
           (reference "U14") (unit 1)
         )
@@ -222,7 +222,7 @@
     (pin "4" (uuid 8bf9cd80-cef5-4d68-a61b-8bef04c5eb66))
     (pin "5" (uuid 6f0fd2a0-43d2-4e54-94d5-df39e2889e11))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/34c8bd98-65a2-4c99-9e47-d8cb6b5c207e"
           (reference "U15") (unit 1)
         )

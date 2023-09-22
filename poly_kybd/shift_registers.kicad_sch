@@ -525,7 +525,7 @@
     (pin "8" (uuid ca445476-673e-49b6-ba0d-0755f79448b8))
     (pin "9" (uuid 5620737c-0af3-42b1-912a-50a98c2d4473))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/92e782d8-f8e0-4b6b-8c13-c5574675ce33"
           (reference "U7") (unit 1)
         )
@@ -569,7 +569,7 @@
     (pin "8" (uuid cb4ab6be-6f32-4af6-a433-c87c7878aa63))
     (pin "9" (uuid cd9a7412-0b7f-473d-8355-fff5da3099a7))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/92e782d8-f8e0-4b6b-8c13-c5574675ce33"
           (reference "U4") (unit 1)
         )
@@ -613,7 +613,7 @@
     (pin "8" (uuid 5cdadc74-74ca-4a65-ac10-d66679b8c9e0))
     (pin "9" (uuid ee0b3985-7098-460a-b6c0-f4e278a22a2a))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/92e782d8-f8e0-4b6b-8c13-c5574675ce33"
           (reference "U8") (unit 1)
         )
@@ -657,7 +657,7 @@
     (pin "8" (uuid 38a2e66c-8f49-4950-a68f-710507ac68f6))
     (pin "9" (uuid 0c0fdcb2-64a8-4eeb-b4f1-01cc8cfb9643))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/92e782d8-f8e0-4b6b-8c13-c5574675ce33"
           (reference "U6") (unit 1)
         )
@@ -701,7 +701,7 @@
     (pin "8" (uuid f8eae818-9ddc-4d29-b8aa-202d647f86de))
     (pin "9" (uuid e2abf4ec-53e5-4232-b60b-4b685c3f4966))
     (instances
-      (project "poly_kb_wave_left2"
+      (project "poly_kb_wave_right2"
         (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/92e782d8-f8e0-4b6b-8c13-c5574675ce33"
           (reference "U5") (unit 1)
         )
