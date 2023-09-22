@@ -18,7 +18,7 @@ stand_off_extra_radius = 2.3;
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
 text_height = 0.2;
-revision = "r8";
+revision = "r9";
 name = "PolyKybd";
 model_name = "Split72";
 
@@ -64,7 +64,7 @@ module pcb_standoffs(file) {
             offset(r=stand_off_extra_radius-0.6, $fn=50)
                 import(file = file, dpi = 300);
     linear_extrude(height = pcb_edge_height+case_bottom_thickness+1.5, scale=1)
-            offset(r=-0.5, $fn=50)
+            offset(r=-0.7, $fn=50)
                 import(file = file, dpi = 300);
 }
 
@@ -78,7 +78,7 @@ module tentingHole() {
         }
     }
     translate([0,0,2]) cylinder(h = 3, r1 = 2.98, r2 = 2.98, center = false, $fn = 64);
-    cylinder(h =10, r1 = 0.25, r2 = 0.25, center = false, $fn = 64);
+    cylinder(h =10, r1 = 0.5, r2 = 0.25, center = false, $fn = 64);
     cylinder(h =1, r1 = 4.8, r2 = 4.85, center = false, $fn = 64);
 }
 
@@ -144,6 +144,13 @@ module right_side_shrink_protection() {
     }
 }
 
+module infill(w,d,h,t) {
+    for ( y = [0 : 10] ){
+        translate([0,y*20,0]) cube([w,t,h]);
+        translate([y*20, 0,0]) cube([t,d,h]);
+    }
+  
+}
 module right_side_modular(mirror_text, fdm_print, prototype, with_shrink_protection) {
     
     //with camfer
@@ -169,7 +176,14 @@ module right_side_modular(mirror_text, fdm_print, prototype, with_shrink_protect
             }
             
             //branding inside
-            translate([0, 0, case_bottom_thickness]) branding(mirror_text);
+            //translate([0, 0, case_bottom_thickness]) branding(mirror_text);
+            intersection(){
+                 translate([0,0,case_bottom_thickness])
+                linear_extrude(height = case_height, scale=1)
+                    offset(r=-pcb_edge_width+pcb_clearance, $fn=128)
+                        import(file = pcb_outline, dpi = 300);
+                translate([100, -90, 0]) rotate([0,0,45]) infill(300,300,2.5,1);
+            }
 
             // mark
             if(mirror_text) {
@@ -197,6 +211,20 @@ module right_side_modular(mirror_text, fdm_print, prototype, with_shrink_protect
                 linear_extrude(height = case_height, scale=1)
                     import(file = pcb_outline, dpi = 300);
             }
+            
+            //rotate([0,0,6]) translate([15,90,0]) cube([25,25,5]);
+            //rotate([0,0,6]) translate([140,90,0]) cube([25,25,5]);
+            translate([0,-2,0]) {
+            minkowski() {
+                rotate([15,0,6]) translate([16,91,-29]) cube([23,23,3]);
+                cylinder(r=1,h=1, $fn=32);
+            }
+            minkowski() {
+                rotate([15,0,6]) translate([141,91,-29]) cube([23,23,3]);
+                cylinder(r=1,h=1, $fn=32);
+            }
+        }
+
         }
         //remove wedge bottom part
         rotate([-19,0,6]) translate([0,0,-case_bottom_thickness/2]) linear_extrude(height = 10, scale=1)                         import(file = wedge_shape, dpi = 300);
@@ -263,13 +291,26 @@ module right_side_modular(mirror_text, fdm_print, prototype, with_shrink_protect
         //cube([11,320,100], center = true);
         
         standoffs_holes(drill_holes);
+        
+        translate([0,-2,0]) {
+        rotate([15,0,6]) translate([16,91,-31.1]) cube([23,23,5]);
+        rotate([15,0,6]) translate([14,112,-28]) rotate([0,90,0]) cylinder(r=1.5,h=27, $fn=48);
+        rotate([15,0,6]) translate([141,91,-31.1]) cube([23,23,5]);
+        rotate([15,0,6]) translate([139,112,-28]) rotate([0,90,0]) cylinder(r=1.5,h=27, $fn=48);
+        rotate([15,0,6]) translate([140.5,105,-27.25]) rotate([0,90,0]) cylinder(r=0.5,h=24, $fn=48);
+        }
+        
+        translate([0,0,-20])cube([300,300,20]);
     }
+    //rotate([10,0,6]) translate([139.5,112,-18]) rotate([0,90,0]) cylinder(r=1,h=26, $fn=48);
 }
 
 module left_case() {
-    mirror(v=[1,0,0]) {
-        //right_side_shrink_protection();
-        right_side_modular(true, false, false);
+    union() {
+        mirror(v=[1,0,0]) {
+            //right_side_shrink_protection();
+            right_side_modular(true, false, true);
+        }
     }
 }
 
@@ -317,8 +358,8 @@ module right_spacer() {
 }
 
 //right_spacer();
-//translate([5,0,0]) right_case();
-translate([-5,0,0]) left_case();
+translate([5,0,0]) right_case();
+//translate([-5,0,0]) left_case();
 
 
 //translate([5,0,0]) right_spacer();
