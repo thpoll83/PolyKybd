@@ -15,7 +15,7 @@ text_font = "Liberation Mono:style=Bold";
 text_size = 5;
 
 surf_offset = 0.001;
-diameter = 23;
+diameter = 35.2;
 cutout_x = 17-0.1;
 cutout_y = 14-0.05;
 cylinder_height = 7.5;

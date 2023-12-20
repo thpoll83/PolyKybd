@@ -20,29 +20,30 @@ The keyboard plates are also Kicad7 projects (I used 1.2mm aluminium PCBs):
 
 ## How to Build
 
-I recommend waiting for the kit that contains all parts and the assembled PCBs (let's see where I am with it around the end of 2023) and please consider that these instructions are experimental. However, you can also go for the full experience and build everything from scratch right now!
+I recommend waiting for the kit that contains all parts and the assembled PCBs. Here a little preview, how that looks like:
+![Kit Preview](images/preview_kit.jpg)
+The kits are not yet ready, but you can sign up here and get notfified as soon as these are available: [https://www.crowdsupply.com/polykybd/polykybd](https://www.crowdsupply.com/polykybd/polykybd)
+
+At the moment, please consider these instructions as experimental. If you want to go ahead with the full experience and build everything from scratch right now: Give it a try and let me know how it worked out!
 
 Independent of your choice, here are the parts you need before putting everything together:
 
 ### Prepare Required Parts
 
-* Case (left/right) - You can either 3D print or get them CNCed (but then you should make some threads into the screw holes):
-  [case/case_polysplit72_left2_r7.stl](case/case_polysplit72_left2_r7.stl)
-  Or the version with supports in the open area to avoid deformation with resin 3D prints:
-  [case/case_polysplit72_left2_r8.stl](case/case_polysplit72_left2_r8.stl) (But also this one turned out **with** deformations, so maybe it is best to use the one without supports and utilize a hairdryer to slightly heat the case up and then put something heavy on the bottom to make it flat - it really works)
+* Case (left/right) - You can either 3D print or get them CNCed (but then you should add some threads to the screw holes):
+  [case/case_polysplit72_left2_r3.stl](case/case_polysplit72_left2_r3.stl)
   ![Case](images/case_l.png)
-  [case/case_polysplit72_right2_r7.stl](case/case_polysplit72_right2_r7.stl)
+  [case/case_polysplit72_right2_r3.stl](case/case_polysplit72_right2_r3.stl)
   ![Case](images/case_r.png)
-  Again with supports:
-  [case/case_polysplit72_right2_r8.stl](case/case_polysplit72_right2_r8.stl)
+  In case the resin print has some deformations, it is best to use the a hairdryer to slightly heat the case up and then put something heavy on the bottom to make it flat - it really works.
 * Spacer to keep the right distance between plate and PCB (again, can be 3D printed):
   [case/spacer.stl
   ![Spacer](images/spacer.png)
   ](case/spacer.stl)
 * Assembled 4 layers PCB 1.6mm (left/right)
   The latest gerber files with BOM and pick/place file can be found in [poly_kybd/Gerber](poly_kybd/Gerber) I made some final adjusts on the latest version, which I did not yet order (I will let you know as soon as I did).
-  [poly_kybd/Gerber/PCB/left-side-v2.2/gerber-left-side-v2.2-22.06.2023.zip](poly_kybd/Gerber/PCB/left-side-v2.2/gerber-left-side-v2.2-22.06.2023.zip)
-  [poly_kybd/Gerber/PCB/right-side-v2.2/gerber-right-side-v2.2-22.06.2023.zip](poly_kybd/Gerber/PCB/right-side-v2.2/gerber-right-side-v2.2-22.06.2023.zip)
+  [poly_kybd/Gerber/PCB/left-side-v3/gerber-left-side-v3-17.11.2023.zip](poly_kybd/Gerber/PCB/left-side-v3/gerber-left-side-v3-17.11.2023.zip)
+  [poly_kybd/Gerber/PCB/right-side-v3/gerber-right-side-v3-17.11.2023](poly_kybd/Gerber/PCB/right-side-v3/gerber-right-side-v3-17.11.2023.zip)
 
   ![PCB](images/pcb_photo.jpeg)
 
@@ -53,8 +54,8 @@ Independent of your choice, here are the parts you need before putting everythin
 
   In case you make modifications to the PCB in Kicad and export everything you might need to change the hot swap sockets side to the back. The hot swap socket in Kicad is part of the key switch and for some reason I couldn't yet convince Kicad that the manufacturing side is the back...
 * Aluminum plates (left/right =) - Can be ordered from PCB manufactures as a 1.2mm aluminum PCB
-  [poly_kybd/Gerber/Plate/gerber-left-side-v2.2-22.06.2023.zip](poly_kybd/Gerber/Plate/gerber-left-side-v2.2-22.06.2023.zip)
-  [poly_kybd/Gerber/Plate/gerber-right-side-v2.2-22.06.2023.zip](poly_kybd/Gerber/Plate/gerber-right-side-v2.2-22.06.2023.zip)
+  [poly_kybd/Gerber/Plate/gerber-left-side-v3-17.11.2023.zip](poly_kybd/Gerber/Plate/gerber-left-side-v3-17.11.2023.zip)
+  [poly_kybd/Gerber/Plate/gerber-right-side-v3-17.11.2023.zip](poly_kybd/Gerber/Plate/gerber-right-side-v3-17.11.2023.zip)
 * Displays
   ![Displays](images/displays.png)
 
@@ -104,7 +105,7 @@ Independent of your choice, here are the parts you need before putting everythin
 * Optional rotary encoder ([EVQWGD001](https://de.aliexpress.com/i/32990950196.html?gatewayAdapt=gloMsite2deuPcglo2deu) or [Alps EC11 Encoder](https://www.mouser.at/c/electromechanical/encoders/?m=Alps%20Alpine&series=EC11)), [pimoroni trackball](https://mou.sr/3rmFiAO) or [23mm cirque trackpad](https://www.mouser.at/ProductDetail/Cirque/TM023023-2024-002?qs=wd5RIQLrsJhgKZTW4CXgsA%3D%3D&countryCode=DE&currencyCode=EUR) (and a 12 pin FPC cable with pins on the same side, about 50mm to 70mm). For the trackpad you will need another 3D printed holder, either a high one or a low one: ![Cirque Trackpad Inserts](images/cirque_inserts.png)
   [parts/cirque23_slim_insert_r8.stl](parts/cirque23_slim_insert_r8.stl)
   [parts/cirque23_insert_high_r1.stl](parts/cirque23_insert_high_r1.stl)
-  If you are not happy with the existing STLs, you can also modify the source file [parts/cirque23_insert.stl](parts/cirque23_insert.stl) or [parts/cirque23_insert_slim.scad](parts/cirque23_insert_slim.scad).
+  If you are not happy with the existing STLs, you can also modify the source file [parts/cirque23_insert.stl](parts/cirque23_insert.stl) or [parts/cirque23_insert_slim.scad](parts/cirque23_insert_slim.scad). There is also an experimental version for the 35mm cirque track pad: [parts/cirque35_insert.scad](parts/cirque35_insert.scad).
 * Short USB-C to USB-C cable to connect the two sides (maybe around 50cm).
 * USB-C to USB-A/USB-C to connect to your computer.
   ***Note:*** I had a USB-C to USB-A cable and was sitting in front of a laptop with only USB-C ports. Without a USB-C to USB-C cable at hand, I used an USB-A to USB-C adapter. It turned out this USB-C to USB-A cable + USB-A to USB-C adapter construction was only working then the adapter was connected to the laptop. - better use a USB-C to USB-C right away.
