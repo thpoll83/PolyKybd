@@ -9,7 +9,7 @@ wedge_shape = "poly_kb_wave_right2-WD.svg";
 nuts_ins = "poly_kb_wave_right2-NutsInserts.svg";
 nuts = "poly_kb_wave_right2-Nuts.svg";
 
-case_height = 17;
+case_height = 17.5;
 case_wall_thickness = 1.5;
 case_bottom_thickness = 2;
 pcb_clearance = 0.25;
@@ -20,7 +20,7 @@ stand_off_extra_radius = 2.3;
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
 text_height = 0.2;
-revision = "r3";
+revision = "r4";
 name = "PolyKybd";
 model_name = "Split72";
 
@@ -37,7 +37,7 @@ module standoffs(file)
             offset(r = stand_off_extra_radius + 0.5, $fn = 50) import(file = file, dpi = 300);
 
         // actual holes
-        linear_extrude(height = pcb_edge_height + case_bottom_thickness, scale = 1) offset(r = -0.225, $fn = 50)
+        linear_extrude(height = pcb_edge_height + case_bottom_thickness, scale = 1) offset(r = 0.5, $fn = 50)
             import(file = file, dpi = 300);
         translate([ 0, 0, 10.5 ]) linear_extrude(height = 1, scale = 1) import(file = file, dpi = 300);
     }
@@ -170,7 +170,36 @@ module infill(w, d, h, t)
         translate([ y * 20, 0, 0 ]) cube([ t, d, h ]);
     }
 }
-module right_side_modular(mirror_text, fdm_print, prototype, with_shrink_protection)
+
+
+// spacer
+module inner_walls()
+{
+    spacer_height = 8;
+    spacer_thickness = 1.5;
+    shrink_radius = 0.25; // 0.75;
+    translate([ 0, 0, 1 ]) difference()
+    {
+        union()
+        {
+  
+            for (i = [0:1])
+            {
+                translate([ 47.5 + 92 - 48 + 2 * 19.05 * i, -45, 0 ]) cube([ spacer_thickness, 200, spacer_height ]);
+            }
+            translate([ 53, 100.5 - 45, 0 ]) cube([ spacer_thickness, 100, spacer_height ]);
+            translate([ 1.5 + 63.41, 36 - 48, 0 ]) rotate([ 0, 0, 10 ]) cube([ spacer_thickness, 68.6, spacer_height ]);
+        }
+
+        translate([ 0, 0, -1 ]) difference()
+        {
+            linear_extrude(height = spacer_height + 2, scale = 1) offset(r = 120) import(file = pcb_outline, dpi = 300);
+            linear_extrude(height = spacer_height + 2, scale = 1) offset(r = -shrink_radius, $fn = 50)
+                import(file = pcb_outline, dpi = 300);
+        }
+    }
+}
+module right_side_modular(mirror_text, fdm_print, with_shrink_protection)
 {
 
     // with camfer
@@ -200,6 +229,8 @@ module right_side_modular(mirror_text, fdm_print, prototype, with_shrink_protect
                     offset(r = -pcb_edge_width + pcb_clearance, $fn = 128) import(file = pcb_outline, dpi = 300);
                 translate([ 100, -90, 0 ]) rotate([ 0, 0, 45 ]) infill(300, 300, 2.5, 1);
             }
+            
+            inner_walls();
 
             // mark
             if (mirror_text)
@@ -265,23 +296,16 @@ module right_side_modular(mirror_text, fdm_print, prototype, with_shrink_protect
         translate([ 92 * 2, 0, text_height - 0.01 ]) rotate([ 0, 180, 0 ]) branding(mirror_text);
 
         // cut out LEDs
-        translate([ 0, 0, pcb_edge_height - 0.8 ]) linear_extrude(height = 2.20, scale = 1) offset(r = 0.9)
+        translate([ 0, 0, pcb_edge_height - 0.1 ]) linear_extrude(height = 2.20, scale = 1) offset(r = 0.9)
             import(file = led_holes, dpi = 300);
 
         // cut out switch
-        if (prototype)
-        {
-            translate([ 0, 0, pcb_edge_height + 3 ]) linear_extrude(height = 3, scale = 1) offset(r = 2.5)
-                import(file = switch_holes, dpi = 300);
-        }
-        else
-        {
-            translate([ 0, 0, pcb_edge_height - 1 ]) linear_extrude(height = 3, scale = 1) offset(r = 2.5)
-                import(file = switch_holes, dpi = 300);
-        }
+        translate([ 0, 0, pcb_edge_height - 0.4 ]) linear_extrude(height = 3, scale = 1) offset(r = 2.5)
+            import(file = switch_holes, dpi = 300);
+    
 
         // cut out USB
-        translate([ 0, 0, pcb_edge_height - 2.2 ]) linear_extrude(height = 4, scale = 1) offset(r = +0.4, $fn = 50)
+        translate([ 0, 0, pcb_edge_height - 1.6 ]) linear_extrude(height = 4, scale = 1) offset(r = +0.4, $fn = 50)
             import(file = usb_port_holes, dpi = 300);
 
         translate([ 0, 0, case_bottom_thickness + pcb_edge_height - 5 ]) linear_extrude(height = 10, scale = 1)
@@ -311,11 +335,11 @@ module right_side_modular(mirror_text, fdm_print, prototype, with_shrink_protect
         {
             rotate([ 15, 0, 6 ]) translate([ 14, 112.5, -27.75 ]) rotate([ 0, 90, 0 ])
                 cylinder(r = 1.5, h = 27, $fn = 48);
-            rotate([ 15, 0, 6 ]) translate([ 15.5, 102, -26.25 ]) rotate([ 0, 90, 0 ])
+            rotate([ 15, 0, 6 ]) translate([ 15.5, 105, -26.7 ]) rotate([ 0, 90, 0 ])
                 cylinder(r = 0.75, h = 24.5, $fn = 48);
             rotate([ 15, 0, 6 ]) translate([ 139, 112.5, -27.75 ]) rotate([ 0, 90, 0 ])
                 cylinder(r = 1.5, h = 27, $fn = 48);
-            rotate([ 15, 0, 6 ]) translate([ 140.5, 102, -26.25 ]) rotate([ 0, 90, 0 ])
+            rotate([ 15, 0, 6 ]) translate([ 140.5, 105, -26.7 ]) rotate([ 0, 90, 0 ])
                 cylinder(r = 0.75, h = 24.5, $fn = 48);
         }
 
@@ -333,7 +357,7 @@ module left_case()
         mirror(v = [ 1, 0, 0 ])
         {
             // right_side_shrink_protection();
-            right_side_modular(true, false, true);
+            right_side_modular(true, false, false);
         }
     }
 }
@@ -381,8 +405,8 @@ module right_spacer()
     }
 }
 
-// right_spacer();
-// translate([5,0,0]) right_case();
+//translate([5,0,0])  right_spacer();
+//translate([5,0,0]) right_case();
 translate([ -5, 0, 0 ]) left_case();
 
 // translate([5,0,0]) right_spacer();

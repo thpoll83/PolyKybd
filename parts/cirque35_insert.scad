@@ -10,7 +10,7 @@ module cube_rounded_xy(x,y,z,r, center = true) {
     }
 }
 
-revision = "r1";
+revision = "r2";
 text_font = "Liberation Mono:style=Bold";
 text_size = 5;
 
@@ -30,23 +30,23 @@ module cirque_insert() {
         union() {
             difference() {
                 union() {
-                    translate([3,0,-socket_extra_thickness/2]) cube_rounded_xy(cutout_x, cutout_y, pcb_thickness+socket_extra_thickness, 1.5);    
+                    translate([5,-5,-socket_extra_thickness/2]) cube_rounded_xy(cutout_x, cutout_y, pcb_thickness+socket_extra_thickness, 1.5);    
                     translate([0,2,pcb_thickness/2+cylinder_height/2]) 
                         cylinder(d1=diameter+2.8, d2=diameter+1.4, h=cylinder_height, center=true, $fn=128);
-                    translate([3+cutout_x/2-0.35,0,-pcb_thickness/2-socket_extra_thickness/2+0.4]) sphere(r=socket_extra_thickness*0.4, $fn=100);
-                    translate([3-cutout_x/2+0.35,0,-pcb_thickness/2-socket_extra_thickness/2+0.4]) sphere(r=socket_extra_thickness*0.4, $fn=100);  
+                    translate([5+cutout_x/2-0.35,-5,-pcb_thickness/2-socket_extra_thickness/2+0.4]) sphere(r=socket_extra_thickness*0.4, $fn=100);
+                    translate([5-cutout_x/2+0.35,-5,-pcb_thickness/2-socket_extra_thickness/2+0.4]) sphere(r=socket_extra_thickness*0.4, $fn=100);  
                    
-                    translate([3,cutout_y/2-0.35,-pcb_thickness/2-socket_extra_thickness/2+0.4]) sphere(r=socket_extra_thickness*0.4, $fn=100);
-                    translate([3+cutout_x/2-2.2,-cutout_y/2+0.35,-pcb_thickness/2-socket_extra_thickness/2+0.4]) sphere(r=socket_extra_thickness*0.4, $fn=100);
-                    translate([3-cutout_x/2+2.2,-cutout_y/2+0.35,-pcb_thickness/2-socket_extra_thickness/2+0.4]) sphere(r=socket_extra_thickness*0.4, $fn=100);
+                    translate([5,cutout_y/2-5.35,-pcb_thickness/2-socket_extra_thickness/2+0.4]) sphere(r=socket_extra_thickness*0.4, $fn=100);
+                    translate([5+cutout_x/2-2.2,-cutout_y/2+0.35-5,-pcb_thickness/2-socket_extra_thickness/2+0.4]) sphere(r=socket_extra_thickness*0.4, $fn=100);
+                    translate([5-cutout_x/2+2.2,-cutout_y/2+0.35-5,-pcb_thickness/2-socket_extra_thickness/2+0.4]) sphere(r=socket_extra_thickness*0.4, $fn=100);
                 }
                 //cutout for pcb parts
-                translate([3,0,0.5]) cube_rounded_xy(cutout_x-1.5, cutout_y-1.5, pcb_thickness+socket_extra_thickness+10.75, 1.5);    
+                translate([5,-5,0.5]) cube_rounded_xy(cutout_x-1.5, cutout_y-1.5, pcb_thickness+socket_extra_thickness+10.75, 1.5);    
                 
                 //pcb space
                 translate([0,2,pcb_thickness+1.8+5]) cylinder(d=diameter+0.5, h=2, center=true, $fn=128);
                 translate([0,2,pcb_thickness+0.9+3.5]) cylinder(d=diameter-1.0, h=8, center=true, $fn=128);
-                translate([-1,-4.25,0]) cube([8.9,4,5], center=true);
+                translate([0,-11.5,0]) cube([9,5,5], center=true);
             //revision text
             }
             
@@ -62,10 +62,10 @@ module cirque_insert() {
 
 //cirque_insert();
 union() {
-for ( i = [0 : 5] ){
+for ( i = [0 : 3] ){
     translate([-(39)*(i+1)-7.5,5.9,-5]) cylinder(r=0.75, h=5, $fn=64);
     translate([-(39)*(i+1),0,-1]) cirque_insert();
     //translate([-(45)*(i+1),0,-9]) rotate([180,0,0]) cirque_insert();
 }
-translate([-144, 5.9, -4.7]) rotate([0,90,0]) cylinder(r=0.9, h=196, $fn=64, center =true);
-}
+translate([-105, 5.9, -4.7]) rotate([0,90,0]) cylinder(r=0.9, h=119, $fn=64, center =true);
+}//h=196
