@@ -31,9 +31,9 @@ Independent of your choice, here are the parts you need before putting everythin
 ### Prepare Required Parts
 
 * Case (left/right) - You can either 3D print or get them CNCed (but then you should add some threads to the screw holes):
-  [case/case_polysplit72_left2_r3.stl](case/case_polysplit72_left2_r3.stl)
+  [case/case_polysplit72_left2_r4.stl](case/case_polysplit72_left2_r4.stl)
   ![Case](images/case_l.png)
-  [case/case_polysplit72_right2_r3.stl](case/case_polysplit72_right2_r3.stl)
+  [case/case_polysplit72_right2_r4.stl](case/case_polysplit72_right2_r4.stl)
   ![Case](images/case_r.png)
   In case the resin print has some deformations, it is best to use the a hairdryer to slightly heat the case up and then put something heavy on the bottom to make it flat - it really works.
 * Spacer to keep the right distance between plate and PCB (again, can be 3D printed):
@@ -42,8 +42,8 @@ Independent of your choice, here are the parts you need before putting everythin
   ](case/spacer.stl)
 * Assembled 4 layers PCB 1.6mm (left/right)
   The latest gerber files with BOM and pick/place file can be found in [poly_kybd/Gerber](poly_kybd/Gerber) I made some final adjusts on the latest version, which I did not yet order (I will let you know as soon as I did).
-  [poly_kybd/Gerber/PCB/left-side-v3/gerber-left-side-v3-17.11.2023.zip](poly_kybd/Gerber/PCB/left-side-v3/gerber-left-side-v3-17.11.2023.zip)
-  [poly_kybd/Gerber/PCB/right-side-v3/gerber-right-side-v3-17.11.2023](poly_kybd/Gerber/PCB/right-side-v3/gerber-right-side-v3-17.11.2023.zip)
+  [poly_kybd/Gerber/PCB/left-side-v3.1/gerber-left-side-v3.1-08.01.2024.zip](poly_kybd/Gerber/PCB/left-side-v3.1/gerber-left-side-v3.1-08.01.2024.zip)
+  [poly_kybd/Gerber/PCB/right-side-v3.1/gerber-right-side-v3.1-08.01.2024.zip](poly_kybd/Gerber/PCB/right-side-v3.1/gerber-right-side-v3.1-08.01.2024.zip)
 
   ![PCB](images/pcb_photo.jpeg)
 
@@ -109,38 +109,41 @@ Independent of your choice, here are the parts you need before putting everythin
 * Short USB-C to USB-C cable to connect the two sides (maybe around 50cm).
 * USB-C to USB-A/USB-C to connect to your computer.
   ***Note:*** I had a USB-C to USB-A cable and was sitting in front of a laptop with only USB-C ports. Without a USB-C to USB-C cable at hand, I used an USB-A to USB-C adapter. It turned out this USB-C to USB-A cable + USB-A to USB-C adapter construction was only working then the adapter was connected to the laptop. - better use a USB-C to USB-C right away.
-* 8 M3x10 or M3x8 hex screws with rounded heads.
+* 8 M3x10 hex screws with rounded heads and for the new version of the case (r4), you also need 8 M3 hex nuts.
 
 ### Put Everything Together
 
 Here is my recommended order:
 
-1. In case you want to use an [Alps EC11 Encoder](https://www.mouser.at/c/electromechanical/encoders/?m=Alps%20Alpine&series=EC11) or some remaining stock of the not any more produced [EVQWGD001](https://de.aliexpress.com/i/32990950196.html?gatewayAdapt=gloMsite2deuPcglo2deu), put it on the PCB and also put the keyboard plate once on top to make sure your encoder fits! Then solder the encoder to the board. Depending on the type of encoder, you maybe want to put a piece of Kapton tape over the legs, in case they come close to the plate (it was not necessary for mine, but there are different kinds out there).
-2. For the [pimoroni trackball](https://mou.sr/3rmFiAO), please solder on the header without the little plastic distance holder. There are various ways to do that: Either solder them on and push the plastic with some pliers off the pins (and clip away the pins on the front side of the trackball so that it is flush) or insert them from the front side, solder them on and then clip away the plastic parts. The pins are still long enough. Just go for something that works for you.
+1. In case you want to use an [Alps EC11 Encoder](https://www.mouser.at/c/electromechanical/encoders/?m=Alps%20Alpine&series=EC11) or some remaining stock of the not any more produced [EVQWGD001](https://de.aliexpress.com/i/32990950196.html?gatewayAdapt=gloMsite2deuPcglo2deu), put it on the PCB and also put the keyboard plate once on top to make sure your encoder fits! In case of the EVQWGD001, you have to remove the last pin, before soldering it to the PCB Juts clip it away. DO NOT solder it to the PCB, or otherwise it will not work:
+![EVQWGD001](images/evqwgd001.png)
+Depending on the type of EC11 encoder, you maybe want to put a piece of Kapton tape over the legs, in case they come close to the plate (it was not necessary for mine, but there are different kinds out there).
+1. For the [pimoroni trackball](https://mou.sr/3rmFiAO), please solder on the header without the little plastic distance holder. There are various ways to do that: Either solder them on and push the plastic with some pliers off the pins (and clip away the pins on the front side of the trackball so that it is flush) or insert them from the front side, solder them on and then clip away the plastic parts. The pins are still long enough. Just go for something that works for you.
    Next, put some Kapton tape on the back side of the trackball and solder it to the keyboard PCB. Make sure it is even on the front side, there will be an average 1 to 2mm distance:
    ![Pimoroni on the back side](images/pimoroni1.jpg)
    ![Pimoroni on the front side](images/pimoroni2.jpg)
    Finally also cover the trackballs front side with Kapton tape like in the picture above (or anything that pleases your eye and insulates) to avoid any shorts since the top plate is made out of Aluminum.
-3. In case you use the [23mm cirque trackpad](https://www.mouser.at/ProductDetail/Cirque/TM023023-2024-002?qs=wd5RIQLrsJhgKZTW4CXgsA%3D%3D&countryCode=DE&currencyCode=EUR), first remove R1 from the backside of the trackpad's PCB (with a solder iron or maybe a sharp knife) to activate I2C instead of SPI. Then connect the 12 pin FPC to the trackpad (and mind the pin 1 marking on the trackpad + I made my own marking on the FPC to make sure):
+2. In case you use the [23mm cirque trackpad](https://www.mouser.at/ProductDetail/Cirque/TM023023-2024-002?qs=wd5RIQLrsJhgKZTW4CXgsA%3D%3D&countryCode=DE&currencyCode=EUR), first remove R1 from the backside of the trackpad's PCB (with a solder iron or maybe a sharp knife) to activate I2C instead of SPI. Then connect the 12 pin FPC to the trackpad (and mind the pin 1 marking on the trackpad + I made my own marking on the FPC to make sure):
    ![Cirque trackpad connected](images/cirque23.jpg)
    Then, put it into the 3D printed holder. You can fix the trackpad with some adhesive tape or a few drops of super glue into the holder. Wait with connecting it to the PCB:
    ![Cirque trackpad with holder](images/cirque23_holder.jpg)
-4. Insert the 0.96 inch status display into the display holder (bend the holder back and let it snap back to bracket the display). Connect the FPC with the socket on the PCB and lock it by lowering the brown flap on the FPC side (if you don't have a status display just close the cut out with the blind lid):
+There is also an experimental version for the 35mm trackpad, take a look at the parts folder.
+3. Insert the 0.96 inch status display into the display holder (bend the holder back and let it snap back to bracket the display). Connect the FPC with the socket on the PCB and lock it by lowering the brown flap on the FPC side (if you don't have a status display just close the cut out with the blind lid):
    ![Status Display](images/status_display.jpg)
-5. Put the spacer on top.
-6. While putting the plate on top of the assembly, fit the status display holder (or blind) into the plate from the plates back side:
+4. Put the spacer on top.
+5. While putting the plate on top of the assembly, fit the status display holder (or blind) into the plate from the plates back side:
    ![Insert Status Display](images/insert_display.jpg)
    Then, the plate rests on the spacer, which again rests on the PCB. I pushed in two screws temporarily to align plate and PCB:
    ![Align the assembly](images/align_w_screw.jpg)
-7. Now would be the time to fit in the optional cirque trackpad. First get the FPC cable through the slot:
+6. Now would be the time to fit in the optional cirque trackpad. First get the FPC cable through the slot:
    ![Insert trackpad](images/insert_cirque.jpg) Next, push in the trackpad holder. It is a press-fit, so no glue needed, just push:
    ![Push in the trackpad](images/push_in_cirque.jpg)
    Finally insert the FPC cable into the cirque socket and lock it by lowering the little flap on the back side of the socket (again make sure that pin 1 meets the side with the little 1 next to the socket):
    ![Push in the trackpad](images/lock_cirque_socket.jpg)
    Depending on the keyboard side (left/right), the slot for the FPC to go through is located very close to the trackpad socket or a bit further away as on the picture.
-8. Assemble all 72 keys: Put the stem on the key switch, put the flex cable through the LED slit of the key switch and and align the display. Finally put the clear keycap over it and make sure it sits flat on the stem. The display will slide into the stem when covering with the clear keycap. You don't need to pre-bend the flex cable. I rather recommend against bending it as you might damage it. The following images shows these 3 steps: ![Key assembly](images/key_assembly.jpg)
+7. Assemble all 72 keys: Put the stem on the key switch, put the flex cable through the LED slit of the key switch and and align the display. Finally put the clear keycap over it and make sure it sits flat on the stem. The display will slide into the stem when covering with the clear keycap. You don't need to pre-bend the flex cable. I rather recommend against bending it as you might damage it. The following images shows these 3 steps: ![Key assembly](images/key_assembly.jpg)
    Now repeat this for every key-switch. A fully prepared keyboard side of switches might look like this: ![Keys assembled](images/keys-assembled.jpg)
-9. Push in one assembled key switch at each corner so that everything aligns properly. To do that, first insert the flex cable into the PCB slot and push the key switch **straight** into the hot swap socket. You can check on the backside if both pins have been inserted properly:
+8.  Push in one assembled key switch at each corner so that everything aligns properly. To do that, first insert the flex cable into the PCB slot and push the key switch **straight** into the hot swap socket. You can check on the backside if both pins have been inserted properly:
    ![Switch successfully inserted](images/hotswap1.jpg)
    Here, only one pin is in the hot-swap socket. Pull the key switch out again, straighten the bent pin and reinsert carefully:
    ![Switch with only one pin](images/hotswap2.jpg)
@@ -148,9 +151,10 @@ Here is my recommended order:
    ![No key switch](images/hotswap3.jpg)
    Now your assembly should look like this:
    ![Aligned](images/assembly_aligned.jpg)
-10. Insert the remaining key switches in the same way and check that the pins are visible as indicated above: ![All keys inserted](images/assembly_all_keys.jpg)
-11. Start inserting the flex cables into the sockets: ![All keys inserted (from backside)](images/assembly_all_keys_back.jpg) If the flex cable is not long enough for you, press the key switch to make it longer. But it should also work without doing that. You cas use some tweezers or also a toothpick to first lift the flap to unlock the socket. Insert the end part into the socket, again recommended with tweezers, but also works without (so with your hands - finger!). After inserting the flex cable, lock the socket. Lower the little flap on the back-side of the socket you lifted at the beginning: ![Insert the FPC](images/insert_fpc.jpg) The finished version should look like that: ![FPC inserted](images/fpc_inserted.jpg) Now repeat this procedure for every flex cable.
-12. Before putting the whole assembly into the case, do a function check! If you have not yet flashed the firmware to the board, build one according to the instructions on https://github.com/thpoll83/qmk_firmware/blob/PolyKeyboard/keyboards/handwired/polykybd/readme.md and flash by first pressing the boot button and then connecting the USB-C while holding the button. After the you connect just release the button and copy the .hex file to the USB drive an you are set. There is no need to connect the second side. When connected to power, after a second or two, all displays should show some characters. If not, disconnect the cable again, release the lock of the FPC display socket in question and re-insert the FPC cable, lock again and reconnect the USB-C port.
+9.  Insert the remaining key switches in the same way and check that the pins are visible as indicated above: ![All keys inserted](images/assembly_all_keys.jpg)
+10. Start inserting the flex cables into the sockets: ![All keys inserted (from backside)](images/assembly_all_keys_back.jpg) If the flex cable is not long enough for you, press the key switch to make it longer. But it should also work without doing that. You cas use some tweezers or also a toothpick to first lift the flap to unlock the socket. Insert the end part into the socket, again recommended with tweezers, but also works without (so with your hands - finger!). After inserting the flex cable, lock the socket. Lower the little flap on the back-side of the socket you lifted at the beginning: ![Insert the FPC](images/insert_fpc.jpg) The finished version should look like that: ![FPC inserted](images/fpc_inserted.jpg) Now repeat this procedure for every flex cable.
+11. In case you have a case with revision r4 or higher its now time to insert the hex nuts into the corners.
+12. Before putting the whole assembly into the case, do a function check! If you have not yet flashed the firmware to the board, build one according to the instructions on https://github.com/thpoll83/qmk_firmware/blob/PolyKeyboard/keyboards/handwired/polykybd/readme.md and flash by first pressing the boot button and then connecting the USB-C while holding the button. After the you connect just release the button and copy the .hex file to the USB drive an you are set. There is no need to connect the second side (depending on the firmware version). When connected to power, after a second or two, all displays should show some characters. If not, disconnect the cable again, release the lock of the FPC display socket in question and re-insert the FPC cable, lock again and reconnect the USB-C port.
 13. While still connected to USB-C press every key once. Each pressed key should invert its display contents. If not one or both pins might have been bent when inserting the key switch. If that is the case, pull the key switch out again, make the pins straight again and carefully insert one more time.
 14. After we confirmed that all displays and all keys do work, put the assembly into the case: ![Insert into case](images/in_case.jpg) Start on the inner side, where the two halves are connected by the bridge USB-C socket. You maybe have to give it a gentle push on the other side to go in.
 15. Insert the 4 hex screws and tighten them carefully. ![One halve assembled](images/assembled.jpg) Now repeat with the other side ;)
