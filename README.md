@@ -90,7 +90,70 @@ Independent of your choice, here are the parts you need before putting everythin
     
     If you don't need the status displays, you can close the display cut-out with the dummy holder: [Dummy Display Holder](parts/display_holder_dummy_r1.stl)
 
-* Compatible key switches - 72 pieces. I will compile a list of compatible switches, for now please take a look at my ko-fi post for that: [https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW](https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW)
+* MX Compatible key switches (3 or 5 pins) - 72 pieces. From my blog post ( [https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW](https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW) ), you can find out, that there are 2 categories of compatible key switches. The ones that work out of the box and the ones that need a little modification. Basically all switches that have an LED slit that is at least 7.5mm wide work. I tested quite some switches and here is the list of tested switches that will work for sure without modification:
+| SWITCH                            | TYPE    | MISC  |
+| --------------------------------- | ------- | ----- |
+| Aflion Tropical Waters            | Linear  | 68g   |
+| Ashkeebs Alexandrite              | Linear  | 58g   |
+| Blue Dusk Panda                   | Linear  | 62g   |
+| Gateron KS-9 (Pro) Blue           | Clicky  | 60g   |
+| Gateron KS-9 (Pro) Brown          | Tactile | 55g   |
+| Gateron KS-9 (Pro) Green          | Clicky  | 80g   |
+| Gateron KS-9 (Pro) Red            | Linear  | 45g   |
+| Gateron KS-9 (Pro) Yellow         | Linear  | 50g   |
+| Geon Black                        | Tactile | 60g   |
+| Geon Clear                        | Linear  | 60g   |
+| Geon Yellow                       | Linear  | 63.5g |
+| Glorious Panda                    | Tactile | 67g   |
+| GOJU Works x Tecsee Safety Switch | Linear  | 65g   |
+| Kailh Novel Keys Cream Switch     | Linear  | 55g   |
+| Kailh Purple Potato               | Tactile | 63.5g |
+| Kailh x Domikey Knight Saber      | Tactile | 42g   |
+| LCET Grace                        | Linear  | 50g   |
+| LCET Joker                        | Tactile | 58g   |
+| LCET Pink Queen                   | Tactile | 58g   |
+| LCET Sprout                       | Linear  | 50g   |
+| Outemu (Dustproof) Black          | Linear  | 65g   |
+| Outemu (Dustproof) Blue           | Clicky  | 65g   |
+| Outemu (Dustproof) Brown          | Tactile | 50g   |
+| Outemu (Dustproof) Red            | Linear  | 46g   |
+| Outemu Purple                     | Tactile | 45g   |
+| Outemu Teal                       | Clicky  | 70g   |
+| Owlab Neon                        | Linear  | 62g   |
+
+* Be aware that there are different batches of Gateron KS-9 (with and without 'Pro') switches. Despite the exact same name, they might need the following surgery (better ask before buy).
+So, some switches have an LED slit, but with a little plastic bar in the middle:
+![Switch with plastic bar in LED slit](images/switch_w_bar.png)
+You can simply cut it away with a knife:
+![Cut the bar away](images/cut_bar.png)
+It is not a big deal, just consider it. Here is a list of switches that I successfully tested after this little modification:
+| SWITCH                           | TYPE           | MISC |
+| -------------------------------- | -------------- | ---- |
+| Gateron KS-9 (Pro 2.0) Red       | Linear         | 45g  |
+| Gateron KS-9 (Pro 2.0) White     | Linear         | 35g  |
+| Geon HG [Haimu x Geon] Black     | Linear         | 65g  |
+| Geon HG [Haimu x Geon] White     | Tactile        | 65g  |
+| Geon HG [Haimu x Geon] Red       | Silent Linear  | 65g  |
+| Geon HG [Haimu x Geon] Yellow    | Silent Tactile | 65g  |
+| Kailh BOX V2 Red Switch          | Linear         | 40g  |
+| Kailh Box Cream                  | Linear         | 45g  |
+| Kailh Pro Purple                 | Tactile        | 50g  |
+| Kailh Pro Burgundy               | Linear         | 50g  |
+| Kailh Pro Light Green            | Clicky         | 50g  |
+| Kailh Pro Plum                   | Tactile        | 70g  |
+| Kailh Speed Gold                 | Clicky         | 50g  |
+| Kailh Speed Silver               | Linear         | 50g  |
+| Kailh Speed Bronze               | Clicky         | 50g  |
+| Kailh Speed Copper               | actile         | 40g  |
+| Kailh Speed Burnt Orange         | Linear/Tactile | 70g  |
+| Kailh Speed Pro Heavy Army Green | Clicky         | 70g  |
+| Kailh Speed Pro Heavy Yellow     | Linear         | 70g  |
+| Kailh Black                      | Linear         | 60g  |
+| Kailh RGB Red                    | Linear         | 45g  |
+| Kailh RGB Black                  | Linear         | 60g  |
+| Kailh RGB Blue                   | Clicky         | 50g  |
+| Kailh RGB Brown                  | Tactile        | 50g  |
+  
 * Key Stems - 72 pieces, can be 3D printed (I highly recommend using an SLA printer). There are 3 different profiles available here. You can also modify the source file an make your own profile. If you take the STLs, make sure to always grab the latest version.
 
   - Flat ![Flat Profile](images/profile_flat.png)
