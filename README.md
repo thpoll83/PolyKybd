@@ -6,14 +6,14 @@ Official hardware repository of the PolyKybd Split72 keyboard. The instructions 
 
 You can find the matching QMK firmware here: [https://github.com/thpoll83/qmk_firmware/tree/PolyKeyboard](https://github.com/thpoll83/qmk_firmware/tree/PolyKeyboard)
 
-The Kicad7 projects for the PCB are the following:
+The KiCad7 projects for the PCB are the following:
 
 [poly_kybd/poly_kb_wave_right2.kicad_pro](poly_kybd/poly_kb_wave_right2.kicad_pro)
 [poly_kybd/poly_kb_wave_left2.kicad_pro](poly_kybd/poly_kb_wave_left2.kicad_pro)
 
 (`wave` was the the prototype name, please just ignore the other projects)
 
-The keyboard plates are also Kicad7 projects (I used 1.2mm aluminium PCBs):
+The keyboard plates are also KiCad7 projects (I used 1.2mm aluminum PCBs):
 
 [poly_kybd/poly_kb_wave_right2_plate.kicad_pro](poly_kybd/poly_kb_wave_right2_plate.kicad_pro)
 [poly_kybd/poly_kb_wave_left2_plate.kicad_pro](poly_kybd/poly_kb_wave_left2_plate.kicad_pro)
@@ -22,7 +22,7 @@ The keyboard plates are also Kicad7 projects (I used 1.2mm aluminium PCBs):
 
 I recommend waiting for the kit that contains all parts and the assembled PCBs. Here a little preview, how that looks like:
 ![Kit Preview](images/preview_kit.jpg)
-The kits are not yet ready, but you can sign up here and get notfified as soon as these are available: [https://www.crowdsupply.com/polykybd/polykybd](https://www.crowdsupply.com/polykybd/polykybd)
+The kits are not yet ready, but you can sign up here and get notified as soon as these are available: [https://www.crowdsupply.com/polykybd/polykybd](https://www.crowdsupply.com/polykybd/polykybd)
 
 At the moment, please consider these instructions as experimental. If you want to go ahead with the full experience and build everything from scratch right now: Give it a try and let me know how it worked out!
 
@@ -48,11 +48,11 @@ Independent of your choice, here are the parts you need before putting everythin
   ![PCB](images/pcb_photo.jpeg)
 
   My recommendation is to let assemble the PCBs as there are a lot of parts with tiny footprints like the RP2040, the 72 FPC sockets and some more...
-  If your PCB fab has an option to verify the parts orientation, please make use of it. I did that as well and never bothered correcting them (since the 'upright' orientation of the part from Kicad and your PCB fab might differ).
+  If your PCB fab has an option to verify the parts orientation, please make use of it. I did that as well and never bothered correcting them (since the 'upright' orientation of the part from KiCad and your PCB fab might differ).
 
   ###### Note:
 
-  In case you make modifications to the PCB in Kicad and export everything you might need to change the hot swap sockets side to the back. The hot swap socket in Kicad is part of the key switch and for some reason I couldn't yet convince Kicad that the manufacturing side is the back...
+  In case you make modifications to the PCB in KiCad and export everything you might need to change the hot swap sockets side to the back. The hot swap socket in KiCad is part of the key switch and for some reason I couldn't yet convince KiCad that the manufacturing side is the back...
 * Aluminum plates (left/right =) - Can be ordered from PCB manufactures as a 1.2mm aluminum PCB
   [poly_kybd/Gerber/Plate/gerber-left-side-v3-17.11.2023.zip](poly_kybd/Gerber/Plate/gerber-left-side-v3-17.11.2023.zip)
   [poly_kybd/Gerber/Plate/gerber-right-side-v3-17.11.2023.zip](poly_kybd/Gerber/Plate/gerber-right-side-v3-17.11.2023.zip)
@@ -150,14 +150,14 @@ Independent of your choice, here are the parts you need before putting everythin
   | Kailh Speed Gold                 | Clicky         | 50g  |
   | Kailh Speed Silver               | Linear         | 50g  |
   | Kailh Speed Bronze               | Clicky         | 50g  |
-  | Kailh Speed Copper               | actile         | 40g  |
+  | Kailh Speed Copper               | Tactile        | 40g  |
   | Kailh Speed Burnt Orange         | Linear/Tactile | 70g  |
   | Kailh Speed Pro Heavy Army Green | Clicky         | 70g  |
   | Kailh Speed Pro Heavy Yellow     | Linear         | 70g  |
   | Kailh Black                      | Linear         | 60g  |
   | Kailh RGB Red                    | Linear         | 45g  |
   | Kailh RGB Black                  | Linear         | 60g  |
-  |  Kailh RGB Blue                   | Clicky         | 50g  |
+  | Kailh RGB Blue                   | Clicky         | 50g  |
   | Kailh RGB Brown                  | Tactile        | 50g  |
 
   There are many more switches that will work as long as they have a 7.5mm wide LED slit. Let me know in case you successfully tried another switch, then I can update the list.
@@ -214,7 +214,10 @@ There is also an experimental version for the 35mm trackpad, take a look at the 
    Depending on the keyboard side (left/right), the slot for the FPC to go through is located very close to the trackpad socket or a bit further away as on the picture.
 7. Assemble all 72 keys: Put the stem on the key switch, put the flex cable through the LED slit of the key switch and and align the display. Finally put the clear keycap over it and make sure it sits flat on the stem. The display will slide into the stem when covering with the clear keycap. You don't need to pre-bend the flex cable. I rather recommend against bending it as you might damage it. The following images shows these 3 steps: ![Key assembly](images/key_assembly.jpg)
    Now repeat this for every key-switch. A fully prepared keyboard side of switches might look like this: ![Keys assembled](images/keys-assembled.jpg)
-8.  Push in one assembled key switch at each corner so that everything aligns properly. To do that, first insert the flex cable into the PCB slot and push the key switch **straight** into the hot swap socket. You can check on the backside if both pins have been inserted properly:
+8. Push in one assembled key switch at each corner so that everything aligns properly.
+To do that, first insert the flex cable into the PCB slot and push the key switch **STRAIGHT** into the hot swap socket.
+**DO NOT** keep pushing if you feel resistance half way to the bottom, there is a danger that you detach the hot-swap from the PCB. In that case, get the switch out again, make sure the pins aren't bent and try again!
+On the backside, you can check if both pins have been inserted properly:
    ![Switch successfully inserted](images/hotswap1.jpg)
    Here, only one pin is in the hot-swap socket. Pull the key switch out again, straighten the bent pin and reinsert carefully:
    ![Switch with only one pin](images/hotswap2.jpg)
@@ -222,7 +225,7 @@ There is also an experimental version for the 35mm trackpad, take a look at the 
    ![No key switch](images/hotswap3.jpg)
    Now your assembly should look like this:
    ![Aligned](images/assembly_aligned.jpg)
-9.  Insert the remaining key switches in the same way and check that the pins are visible as indicated above: ![All keys inserted](images/assembly_all_keys.jpg)
+9. Insert the remaining key switches in the same way and check that the pins are visible as indicated above: ![All keys inserted](images/assembly_all_keys.jpg)
 10. Start inserting the flex cables into the sockets: ![All keys inserted (from backside)](images/assembly_all_keys_back.jpg) If the flex cable is not long enough for you, press the key switch to make it longer. But it should also work without doing that. You cas use some tweezers or also a toothpick to first lift the flap to unlock the socket. Insert the end part into the socket, again recommended with tweezers, but also works without (so with your hands - finger!). After inserting the flex cable, lock the socket. Lower the little flap on the back-side of the socket you lifted at the beginning: ![Insert the FPC](images/insert_fpc.jpg) The finished version should look like that: ![FPC inserted](images/fpc_inserted.jpg) Now repeat this procedure for every flex cable.
 11. In case you have a case with revision r4 or higher its now time to insert the hex nuts into the corners.
 12. Before putting the whole assembly into the case, do a function check! If you have not yet flashed the firmware to the board, build one according to the instructions on https://github.com/thpoll83/qmk_firmware/blob/PolyKeyboard/keyboards/handwired/polykybd/readme.md and flash by first pressing the boot button and then connecting the USB-C while holding the button. After the you connect just release the button and copy the .hex file to the USB drive an you are set. There is no need to connect the second side (depending on the firmware version). When connected to power, after a second or two, all displays should show some characters. If not, disconnect the cable again, release the lock of the FPC display socket in question and re-insert the FPC cable, lock again and reconnect the USB-C port.
@@ -234,6 +237,17 @@ There is also an experimental version for the 35mm trackpad, take a look at the 
 18. Congratulations! You made it! ![PolyKybd Split72](images/PolyKybdSplit72.jpg) In case you experience any issues, pleas let me know or make a PR on the build guide!
 
 The fun just starts now! You will recognize that there are a lot of ways to play around with this keyboard.
+
+## Here are some more notes on the firmware:
+
+- Currently, PolyKybd supports QMK as firmware. You can find a lot of information on https://docs.qmk.fm/
+- If you want to make use of any unicode input supporting character like emojis or characters like Æ, Ç, È etc. you need to select the input method of your operating system after pressing the Language selection key [ 🌐 ]:
+  - [ Mac ] for unicode input on MacOS *(untested)*
+  - [ Lnx ]	for unicode input on Linux using I-BUS and compatible applications/window managers
+  - [ BSD ]	for unicode input on BSD *(untested)*
+  - [ Emcs ] for unicode input in Emacs *(untested)*
+  - [ Win ] for unicode input on Windows until code point `U+FFFF` (basically excluding any emoji, additionally you might have to run `reg add "HKCU\Control Panel\Input Method" -v EnableHexNumpad -t REG_SZ -d 1` to enable that feature on Windows)
+  - [ WinC ] for unicode input via WinCompose (Please install [WinCompose](https://github.com/samhocevar/wincompose/releases/download/v0.9.11/WinCompose-Setup-0.9.11.exe) first)
 
 
 This project has been an incredible amount of work, please consider supporting me if you like it:
