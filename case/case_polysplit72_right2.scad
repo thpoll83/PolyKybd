@@ -374,8 +374,8 @@ module right_case()
 // spacer
 module right_spacer()
 {
-    spacer_height = 3.6;
-    spacer_thickness = 2.5;
+    spacer_height = 3.8;
+    spacer_thickness = 1.8;
     shrink_radius = 0.25; // 0.75;
     translate([ 0, 0, 20 ]) difference()
     {
@@ -405,8 +405,17 @@ module right_spacer()
     }
 }
 
-//translate([5,0,0])  right_spacer();
+translate([5,0,0])  right_spacer();
 //translate([5,0,0]) right_case();
-translate([ -5, 0, 0 ]) left_case();
+//translate([ -5, 0, 0 ]) left_case();
+module spacers_4x() {
+for(s = [0:3]) {
+    translate([0,0,s*5]) right_spacer();
+    translate([20,15,15*1.5+s*5]) rotate([0,90,0]) cylinder(h = 5, r = 0.75, center = true, $fn = 32);
+    translate([180,125,15*1.5+s*5]) rotate([0,90,0]) cylinder(h = 5, r = 0.75, center = true, $fn = 32);
+}
+translate([22,15,15*2]) cylinder(h = 15, r = 0.75, center = true, $fn = 32);
+translate([178,125,15*2]) cylinder(h = 15, r = 0.75, center = true, $fn = 32);
+}
 
 // translate([5,0,0]) right_spacer();
