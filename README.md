@@ -92,35 +92,42 @@ Independent of your choice, here are the parts you need before putting everythin
 
 * MX Compatible key switches (3 or 5 pins) - 72 pieces. From my blog post ( [https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW](https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW) ), you can find out, that there are 2 categories of compatible key switches. The ones that work out of the box and the ones that need a little modification. Basically all switches that have an LED slit that is at least 7.5mm wide work. I tested quite some switches and here is the list of tested switches that will work for sure without modification:
 
-  | SWITCH                            | TYPE    | MISC  |
-  | --------------------------------- | ------- | ----- |
-  | Aflion Tropical Waters            | Linear  | 68g   |
-  | Ashkeebs Alexandrite              | Linear  | 58g   |
-  | Blue Dusk Panda                   | Linear  | 62g   |
-  | Gateron KS-9 (Pro) Blue           | Clicky  | 60g   |
-  | Gateron KS-9 (Pro) Brown          | Tactile | 55g   |
-  | Gateron KS-9 (Pro) Green          | Clicky  | 80g   |
-  | Gateron KS-9 (Pro) Red            | Linear  | 45g   |
-  | Gateron KS-9 (Pro) Yellow         | Linear  | 50g   |
-  | Geon Black                        | Tactile | 60g   |
-  | Geon Clear                        | Linear  | 60g   |
-  | Geon Yellow                       | Linear  | 63.5g |
-  | Glorious Panda                    | Tactile | 67g   |
-  | GOJU Works x Tecsee Safety Switch | Linear  | 65g   |
-  | Kailh Novel Keys Cream Switch     | Linear  | 55g   |
-  | Kailh Purple Potato               | Tactile | 63.5g |
-  | Kailh x Domikey Knight Saber      | Tactile | 42g   |
-  | LCET Grace                        | Linear  | 50g   |
-  | LCET Joker                        | Tactile | 58g   |
-  | LCET Pink Queen                   | Tactile | 58g   |
-  | LCET Sprout                       | Linear  | 50g   |
-  | Outemu (Dustproof) Black          | Linear  | 65g   |
-  | Outemu (Dustproof) Blue           | Clicky  | 65g   |
-  | Outemu (Dustproof) Brown          | Tactile | 50g   |
-  | Outemu (Dustproof) Red            | Linear  | 46g   |
-  | Outemu Purple                     | Tactile | 45g   |
-  | Outemu Teal                       | Clicky  | 70g   |
-  | Owlab Neon                        | Linear  | 62g   |
+  | SWITCH                            | TYPE            | MISC  |
+  | --------------------------------- | --------------- | ----- |
+  | Aflion Tropical Waters            | Linear          | 68g   |
+  | Ashkeebs Alexandrite              | Linear          | 58g   |
+  | Blue Dusk Panda                   | Linear          | 62g   |
+  | Gateron KS-9 (Pro) Blue           | Clicky          | 60g   |
+  | Gateron KS-9 (Pro) Brown          | Tactile         | 55g   |
+  | Gateron KS-9 (Pro) Green          | Clicky          | 80g   |
+  | Gateron KS-9 (Pro) Red            | Linear          | 45g   |
+  | Gateron KS-9 (Pro) Yellow         | Linear          | 50g   |
+  | Geon Black                        | Tactile         | 60g   |
+  | Geon Clear                        | Linear          | 60g   |
+  | Geon Yellow                       | Linear          | 63.5g |
+  | Glorious Panda                    | Tactile         | 67g   |
+  | GOJU Works x Tecsee Safety Switch | Linear          | 65g   |
+  | Kailh Novel Keys Cream Switch     | Linear          | 55g   |
+  | Kailh Purple Potato               | Tactile         | 63.5g |
+  | Kailh x Domikey Knight Saber      | Tactile         | 42g   |
+  | LCET Grace                        | Linear          | 50g   |
+  | LCET Joker                        | Tactile         | 58g   |
+  | LCET Pink Queen                   | Tactile         | 58g   |
+  | LCET Sprout                       | Linear          | 50g   |
+  | Outemu (Dustproof) Black          | Linear          | 65g   |
+  | Outemu (Dustproof) Blue           | Clicky          | 65g   |
+  | Outemu (Dustproof) Brown          | Tactile         | 50g   |
+  | Outemu (Dustproof) Red            | Linear          | 46g   |
+  | Outemu Crystal Clear              | Linear          | 45g   |
+  | Outemu Dust-proof Silver          | Linear          | 45g   |
+  | Outemu Lemon                      | Silent Tactile  | 35g   |
+  | Outemu Panda                      | Tactile         | 50g   |
+  | Outemu Peach                      | Linear          | 40g   |
+  | Outemu Purple                     | Tactile         | 45g   |
+  | Outemu Ocean                      | Linear          | 35g   |
+  | Outemu Teal                       | Clicky          | 70g   |
+  | Owlab Neon                        | Linear          | 62g   |
+  | Tecsee Medium (low profile)       | Linear & Tactile| 50g   |
 
   Be aware that there are different batches of Gateron KS-9 (with and without 'Pro') switches. Despite the exact same name, they might need the following surgery (better ask before buy).
   So, some switches have an LED slit, but with a little plastic bar in the middle:
@@ -247,7 +254,7 @@ The fun just starts now! You will recognize that there are a lot of ways to play
   - [ BSD ]	for unicode input on BSD *(untested)*
   - [ Emcs ] for unicode input in Emacs *(untested)*
   - [ Win ] for unicode input on Windows until code point `U+FFFF` (basically excluding any emoji, additionally you might have to run `reg add "HKCU\Control Panel\Input Method" -v EnableHexNumpad -t REG_SZ -d 1` to enable that feature on Windows)
-  - [ WinC ] for unicode input via WinCompose (Please install [WinCompose](https://github.com/samhocevar/wincompose/releases/download/v0.9.11/WinCompose-Setup-0.9.11.exe) first)
+  - [ WinC ] for unicode input via WinCompose (Please install 6[WinCompose](https://github.com/samhocevar/wincompose/releases/download/v0.9.11/WinCompose-Setup-0.9.11.exe) first)
 
 
 This project has been an incredible amount of work, please consider supporting me if you like it:
