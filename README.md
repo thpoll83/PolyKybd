@@ -87,7 +87,7 @@ Independent of your choice, here are the parts you need before putting everythin
     | 9     | VDD       | 27    | VCOMH  |
     | 10~12 | BS0~BS2   | 28    | VCC    |
     | 13    | CS#       | 29    | VLSS   |
-    
+
     If you don't need the status displays, you can close the display cut-out with the dummy holder: [Dummy Display Holder](parts/display_holder_dummy_r1.stl)
 
 * MX Compatible key switches (3 or 5 pins) - 72 pieces. From my blog post ( [https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW](https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW) ), you can find out, that there are 2 categories of compatible key switches. The ones that work out of the box and the ones that need a little modification. Basically all switches that have an LED slit that is at least 7.5mm wide work. I tested quite some switches and here is the list of tested switches that will work for sure without modification:
@@ -97,6 +97,8 @@ Independent of your choice, here are the parts you need before putting everythin
   | Aflion Tropical Waters            | Linear          | 68g   |
   | Ashkeebs Alexandrite              | Linear          | 58g   |
   | Blue Dusk Panda                   | Linear          | 62g   |
+  | CK x Haimu Pastel Lemon           | Linear          | 63.5g |
+  | Ck x Haimu Pastel Thistle         | Tactile         | 63.5g |
   | Gateron KS-9 (Pro) Blue           | Clicky          | 60g   |
   | Gateron KS-9 (Pro) Brown          | Tactile         | 55g   |
   | Gateron KS-9 (Pro) Green          | Clicky          | 80g   |
@@ -168,7 +170,7 @@ Independent of your choice, here are the parts you need before putting everythin
   | Kailh RGB Brown                  | Tactile        | 50g  |
 
   There are many more switches that will work as long as they have a 7.5mm wide LED slit. Let me know in case you successfully tried another switch, then I can update the list.
-  
+
 * Key Stems - 72 pieces, can be 3D printed (I highly recommend using an SLA printer). There are 3 different profiles available here. You can also modify the source file an make your own profile. If you take the STLs, make sure to always grab the latest version.
 
   - Flat ![Flat Profile](images/profile_flat.png)
@@ -249,12 +251,12 @@ The fun just starts now! You will recognize that there are a lot of ways to play
 
 - Currently, PolyKybd supports QMK as firmware. You can find a lot of information on https://docs.qmk.fm/
 - If you want to make use of any unicode input supporting character like emojis or characters like Æ, Ç, È etc. you need to select the input method of your operating system after pressing the Language selection key [ 🌐 ]:
-  - [ Mac ] for unicode input on MacOS *(untested)*
+  - [ Mac ] for unicode input on MacOS (Follow the [MacOS directions](https://github.com/qmk/qmk_firmware/blob/master/docs/feature_unicode.md#-macos-))
   - [ Lnx ]	for unicode input on Linux using I-BUS and compatible applications/window managers
-  - [ BSD ]	for unicode input on BSD *(untested)*
+  - [ BSD ]	for unicode input on BSD (unimplemented in QMK, see [QMK documentation](https://github.com/qmk/qmk_firmware/blob/master/docs/feature_unicode.md#-bsd-))
   - [ Emcs ] for unicode input in Emacs *(untested)*
   - [ Win ] for unicode input on Windows until code point `U+FFFF` (basically excluding any emoji, additionally you might have to run `reg add "HKCU\Control Panel\Input Method" -v EnableHexNumpad -t REG_SZ -d 1` to enable that feature on Windows)
-  - [ WinC ] for unicode input via WinCompose (Please install 6[WinCompose](https://github.com/samhocevar/wincompose/releases/download/v0.9.11/WinCompose-Setup-0.9.11.exe) first)
+  - [ WinC ] for unicode input via WinCompose (Please install [WinCompose](https://github.com/samhocevar/wincompose/releases/download/v0.9.11/WinCompose-Setup-0.9.11.exe) first)
 
 
 This project has been an incredible amount of work, please consider supporting me if you like it:
