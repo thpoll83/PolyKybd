@@ -1,6 +1,6 @@
 # PolyKybd Split72
 
-Official hardware repository of the PolyKybd Split72 keyboard. The instructions here are still in a very early stage. There is also a build video available: https://www.youtube.com/watch?v=K5RpbYzx7gw
+Official hardware repository of the PolyKybd Split72 keyboard. If you are looking for the kit, jump immediately to https://www.crowdsupply.com/polykybd/polykybd for registration. The instructions here are still in a very early stage. There is also a build video available: https://www.youtube.com/watch?v=K5RpbYzx7gw
 
 ![PolyKybd Split72](images/PolyKybdSplit72p.jpg)
 
