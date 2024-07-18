@@ -1,7 +1,7 @@
 
 
-revision = "v3";
-text_font = "Liberation Mono:style=Bold";
+revision = "d";
+text_font = "Noto:style=Bold";
 text_size = 3;
 text_height = 0.3;
 
@@ -98,6 +98,10 @@ module mx_stem(u_size, angle = 0, extra_len = 0, txt = revision)
                     translate([ -(u_size - 1) * 2 * 5, 0, -surface_offset ])
                         linear_extrude(height = inside_hight, scale = stem_top_bottom_ratio)
                             square([ inside_x, inside_y ], center = true);
+                    //take away a little extra for the bulky switches
+                    translate([ 0, 0, -surface_offset ])
+                        linear_extrude(height = inside_hight, scale = stem_top_bottom_ratio*0.85)
+                            square([ (inside_x+inside_x+stem_x)/3, (inside_y+stem_y)/2 ], center = true);
                 }
                 // display cut-out
                 translate([ 0, disp_y_center_offset, stem_height - disp_height + surface_offset ])
@@ -127,6 +131,13 @@ module mx_stem(u_size, angle = 0, extra_len = 0, txt = revision)
                 translate(
                     [ 0, disp_y / 2 - text_size / 2, stem_height - disp_height - text_height + surface_offset * 2 ])
                     rotate([ 0, 0, 0 ]) linear_extrude(height = text_height)
+                {
+                    text(txt, size = text_size, font = text_font, halign = "center", valign = "center", $fn = 16);
+                }
+                
+                translate(
+                    [ 0, - disp_y / 3, inside_hight + text_height-0.01 ])
+                    rotate([ 180, 0, 0 ]) linear_extrude(height = text_height)
                 {
                     text(txt, size = text_size, font = text_font, halign = "center", valign = "center", $fn = 16);
                 }
@@ -269,23 +280,24 @@ module ten_connected_pieces_1U5(angle = 0, extra_len = 0, txt = revision)
 }
 
 // Stepped Profile
-// ten_connected_pieces_1U25(angle = -7, extra_len=1.5, txt=str("S ", revision));
-// ten_connected_pieces_1U(angle = -7, extra_len=1.5, txt=str("S ", revision));
+//ten_connected_pieces_1U25(angle = -7, extra_len=1.5, txt=str("S    ", revision));
+ten_connected_pieces_1U(angle = -7, extra_len=1.5, txt=str("S ", revision));
 // mx_stem(u_size=1.22, angle = -7, extra_len=1.5, txt=str("S ", revision));
 // mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S ", revision));
 
+//mx_stem(u_size=1, angle = 5, extra_len=0.5, txt=str("R1  ", revision));
 // Curved Profile
-// ten_connected_pieces_1U25(angle = 10, extra_len=4, txt=str("R5", revision));
-// ten_connected_pieces_1U25(angle = 5, extra_len=1.5, txt=str("R4", revision));
-// ten_connected_pieces_1U25(angle = 0, extra_len=0, txt=str("R3", revision));
-// ten_connected_pieces_1U25(angle = -5, extra_len=0.5, txt=str("R2", revision));
-// ten_connected_pieces_1U25(angle = 5, extra_len=0.5, txt=str("R1", revision));
+//ten_connected_pieces_1U25(angle = 10, extra_len=4, txt=str("5    ", revision));
+// ten_connected_pieces_1U25(angle = 5, extra_len=1.5, txt=str("4    ", revision));
+// ten_connected_pieces_1U25(angle = 0, extra_len=0, txt=str("3    ", revision));
+//ten_connected_pieces_1U25(angle = -5, extra_len=1, txt=str("2    ", revision));
+//ten_connected_pieces_1U25(angle = 5, extra_len=0.5, txt=str("1    ", revision));
 
-ten_connected_pieces_1U(angle = 10, extra_len = 4, txt = str("R5", revision));
-// ten_connected_pieces_1U(angle = 5, extra_len=1.5, txt=str("R4", revision));
-// ten_connected_pieces_1U(angle = 0, extra_len=0, txt=str("R3", revision));
-// ten_connected_pieces_1U(angle = -5, extra_len=0.5, txt=str("R2", revision));
-// ten_connected_pieces_1U(angle = 5, extra_len=0.5, txt=str("R1", revision));
+//ten_connected_pieces_1U(angle = 10, extra_len = 4, txt = str("5    ", revision));
+// ten_connected_pieces_1U(angle = 5, extra_len=1.5, txt=str("4    ", revision));
+// ten_connected_pieces_1U(angle = 0, extra_len=0, txt=str("3    ", revision));
+//ten_connected_pieces_1U(angle = -5, extra_len=1, txt=str("2    ", revision));
+//ten_connected_pieces_1U(angle = 5, extra_len=0.5, txt=str("1    ", revision));
 
 // Pictures
 /*

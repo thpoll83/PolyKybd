@@ -20,7 +20,7 @@ stand_off_extra_radius = 2.3;
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
 text_height = 0.2;
-revision = "r4";
+revision = "r5";
 name = "PolyKybd";
 model_name = "Split72";
 
@@ -47,9 +47,12 @@ module nuts_inserts(file1, file2)
 {
     color([ 1, 0, 0 ]) translate([ 2.6, 9.25, 8.1 ])
     {
-        linear_extrude(height = 2.55, scale = 1) offset(r = 0.1, $fn = 50) import(file = file1, dpi = 300);
-        translate([ 0, 0, -0.4 ]) linear_extrude(height = 1, scale = 1) offset(r = 0.05, $fn = 50)
-            import(file = file2, dpi = 300);
+        linear_extrude(height = 2.55, scale = 1)
+            offset(r = 0.025, $fn = 50)
+                import(file = file1, dpi = 300);
+        translate([ 0, 0, -0.4 ])
+            linear_extrude(height = 1, scale = 1)
+                import(file = file2, dpi = 300);
     }
 }
 
@@ -94,6 +97,11 @@ module tentingHoles()
     translate([ 0, 0, 6 ]) rotate([ 90, 0, 110 ]) tentingHole();
     translate([ 40, 91.5, 6 ]) rotate([ 90, 0, 0 ]) tentingHole();
     translate([ 160, 89, 6 ]) rotate([ 90, 0, 0 ]) tentingHole();
+    
+    translate([17,83.5,0]) cylinder(r=3.25, h=0.5, center = false, $fn = 64);
+    translate([167,80,0]) cylinder(r=3.25, h=0.5, center = false, $fn = 64);
+    translate([175.5,7,0]) cylinder(r=3.25, h=0.5, center = false, $fn = 64);
+    translate([11,-10,0]) cylinder(r=3.25, h=0.5, center = false, $fn = 64);
 }
 
 module branding(mirror_text)
@@ -108,6 +116,26 @@ module branding(mirror_text)
         {
             text(model_name, size = 5, font = text_font, halign = "center", valign = "center", $fn = 50);
         }
+        translate([ 178, 89.8, 0 ]) mirror(v = [ 1, 0, 0 ]) linear_extrude(height = text_height)
+        {
+            text("Limit", size = 2.5, font = text_font, halign = "center", valign = "center", $fn = 50);
+        }
+        translate([ 181, 98, 0 ]) mirror(v = [ 1, 0, 0 ]) linear_extrude(height = text_height)
+        {
+            text("V", size = 2.5, font = text_font, halign = "center", valign = "center", $fn = 50);
+        }
+        translate([ 171, 127, 0 ]) mirror(v = [ 1, 0, 0 ]) rotate([0,0,90]) linear_extrude(height = text_height)
+        {
+            text("Power", size = 2.5, font = text_font, halign = "center", valign = "center", $fn = 50);
+        }
+        translate([ 5, 84, 0 ]) mirror(v = [ 1, 0, 0 ]) linear_extrude(height = text_height)
+        {
+            text("Boot", size = 2.5, font = text_font, halign = "center", valign = "center", $fn = 50);
+        }
+        translate([ 5.5, 91.5, 0 ]) mirror(v = [ 1, 0, 0 ]) linear_extrude(height = text_height)
+        {
+            text("Reset", size = 2.5, font = text_font, halign = "center", valign = "center", $fn = 50);
+        }
     }
     else
     {
@@ -118,6 +146,26 @@ module branding(mirror_text)
         translate([ 128, 77, 0 ]) linear_extrude(height = text_height)
         {
             text(model_name, size = 5, font = text_font, halign = "center", valign = "center", $fn = 50);
+        }
+        translate([ 178, 89.8, 0 ]) linear_extrude(height = text_height)
+        {
+            text("Limit", size = 2.5, font = text_font, halign = "center", valign = "center", $fn = 50);
+        }
+        translate([ 181, 98, 0 ]) linear_extrude(height = text_height)
+        {
+            text("V", size = 2.5, font = text_font, halign = "center", valign = "center", $fn = 50);
+        }
+        translate([ 171, 127, 0 ]) rotate([0,0,90]) linear_extrude(height = text_height)
+        {
+            text("Power", size = 2.5, font = text_font, halign = "center", valign = "center", $fn = 50);
+        }
+        translate([ 5, 84, 0 ]) linear_extrude(height = text_height)
+        {
+            text("Boot", size = 2.5, font = text_font, halign = "center", valign = "center", $fn = 50);
+        }
+        translate([ 5.5, 91.5, 0 ]) linear_extrude(height = text_height)
+        {
+            text("Reset", size = 2.5, font = text_font, halign = "center", valign = "center", $fn = 50);
         }
     }
 }
@@ -199,7 +247,7 @@ module inner_walls()
         }
     }
 }
-module right_side_modular(mirror_text, fdm_print, with_shrink_protection)
+module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_infill = true)
 {
 
     // with camfer
@@ -222,12 +270,13 @@ module right_side_modular(mirror_text, fdm_print, with_shrink_protection)
                         import(file = pcb_outline, dpi = 300);
             }
 
-            // grid infill
-            intersection()
-            {
-                translate([ 0, 0, case_bottom_thickness ]) linear_extrude(height = case_height, scale = 1)
-                    offset(r = -pcb_edge_width + pcb_clearance, $fn = 128) import(file = pcb_outline, dpi = 300);
-                translate([ 100, -90, 0 ]) rotate([ 0, 0, 45 ]) infill(300, 300, 2.5, 1);
+            // grid 
+            if(grid_infill) {
+                intersection() {
+                    translate([ 0, 0, case_bottom_thickness ]) linear_extrude(height = case_height, scale = 1)
+                        offset(r = -pcb_edge_width + pcb_clearance, $fn = 128) import(file = pcb_outline, dpi = 300);
+                    translate([ 100, -90, 0 ]) rotate([ 0, 0, 45 ]) infill(300, 300, 2.5, 1);
+                }
             }
             
             inner_walls();
@@ -331,16 +380,17 @@ module right_side_modular(mirror_text, fdm_print, with_shrink_protection)
         rotate([ 12, 0, 6 ]) translate([ 16, 91, -31.1 + 6.75 ]) cube([ 23, 23, 5 ]);
         rotate([ 12, 0, 6 ]) translate([ 141, 91, -31.1 + 6.75 ]) cube([ 23, 23, 5 ]);
 
+        //axis holder for flip stand bays
         translate([ 0, -2, 0 ])
         {
             rotate([ 15, 0, 6 ]) translate([ 14, 112.5, -27.75 ]) rotate([ 0, 90, 0 ])
                 cylinder(r = 1.5, h = 27, $fn = 48);
             rotate([ 15, 0, 6 ]) translate([ 15.5, 105, -26.7 ]) rotate([ 0, 90, 0 ])
-                cylinder(r = 0.75, h = 24.5, $fn = 48);
+                cylinder(r = 0.6, h = 24.5, $fn = 48);
             rotate([ 15, 0, 6 ]) translate([ 139, 112.5, -27.75 ]) rotate([ 0, 90, 0 ])
                 cylinder(r = 1.5, h = 27, $fn = 48);
             rotate([ 15, 0, 6 ]) translate([ 140.5, 105, -26.7 ]) rotate([ 0, 90, 0 ])
-                cylinder(r = 0.75, h = 24.5, $fn = 48);
+                cylinder(r = 0.6, h = 24.5, $fn = 48);
         }
 
         translate([ 0, 0, -20 ]) cube([ 300, 300, 20 ]);
@@ -357,7 +407,7 @@ module left_case()
         mirror(v = [ 1, 0, 0 ])
         {
             // right_side_shrink_protection();
-            right_side_modular(true, false, false);
+            right_side_modular(true, false, false, true);
         }
     }
 }
@@ -367,7 +417,7 @@ module right_case()
     union()
     {
         // right_side_shrink_protection();
-        right_side_modular(false, false, false);
+        right_side_modular(false, false, false, true);
     }
 }
 
@@ -405,8 +455,8 @@ module right_spacer()
     }
 }
 
-translate([5,0,0])  right_spacer();
-//translate([5,0,0]) right_case();
+//translate([5,0,0])  right_spacer();
+translate([5,0,0]) right_case();
 //translate([ -5, 0, 0 ]) left_case();
 module spacers_4x() {
 for(s = [0:3]) {
