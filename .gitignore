@@ -1,9 +1,9 @@
 *.sch-bak
 *.kicad_pcb-bak
+*.kicad_sch-bak
 poly_kybd/_autosave*
 poly_kybd/#auto_saved_files#
 fp-info-cache
-poly_kybd/ThirdParty/*
 keycaps/NopSCADlib/*
 poly_kybd/*-backups/*
 parts/NopSCADlib/*

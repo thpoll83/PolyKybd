@@ -1,0 +1,9 @@
+[submodule "poly_kybd/thirdparty/keebio"]
+	path = poly_kybd/thirdparty/keebio
+	url = https://github.com/keebio/Keebio-Parts.pretty.git
+[submodule "poly_kybd/thirdparty/keebio-components"]
+	path = poly_kybd/thirdparty/keebio-components
+	url = https://github.com/keebio/keebio-components.git
+[submodule "poly_kybd/thirdparty/EnvOpenPico"]
+	path = poly_kybd/thirdparty/EnvOpenPico
+	url = https://github.com/Envious-Data/EnvOpenPico.git
