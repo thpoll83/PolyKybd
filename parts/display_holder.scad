@@ -80,7 +80,7 @@ module disp_holder(print_support, show_display, dummy) {
 }
 
 
-disp_holder(false, false, false);
+//disp_holder(false, false, false);
 
 module ten_connected_pieces(){
     for ( i = [0 : 4] ){
@@ -91,4 +91,4 @@ module ten_connected_pieces(){
     translate([50, 0, -6]) rotate([0,90,0]) cylinder(r=0.75, h=112, $fn=64, center =true);
 }
 
-//ten_connected_pieces();
+ten_connected_pieces();

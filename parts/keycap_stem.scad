@@ -1,6 +1,6 @@
 
 
-revision = "d";
+revision = "e";
 text_font = "Noto:style=Bold";
 text_size = 3;
 text_height = 0.3;
@@ -9,7 +9,7 @@ surface_offset = 0.001;
 stem_x = 15.5;
 stem_y = 15.475;
 stem_height = 5.65;
-stem_top_bottom_ratio = 0.87;
+stem_top_bottom_ratio = 0.85;
 
 inside_x = 13.3;
 inside_y = 13.3;
@@ -280,8 +280,8 @@ module ten_connected_pieces_1U5(angle = 0, extra_len = 0, txt = revision)
 }
 
 // Stepped Profile
-//ten_connected_pieces_1U25(angle = -7, extra_len=1.5, txt=str("S    ", revision));
-ten_connected_pieces_1U(angle = -7, extra_len=1.5, txt=str("S ", revision));
+ten_connected_pieces_1U25(angle = -7, extra_len=1.5, txt=str("S    ", revision));
+//ten_connected_pieces_1U(angle = -7, extra_len=1.5, txt=str("S   ", revision));
 // mx_stem(u_size=1.22, angle = -7, extra_len=1.5, txt=str("S ", revision));
 // mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S ", revision));
 

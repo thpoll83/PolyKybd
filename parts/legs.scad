@@ -1,3 +1,4 @@
+// PolyKybd Leg, based on:
 // https://www.thingiverse.com/thing:2132775/files
 // https://creativecommons.org/licenses/by-nc-sa/4.0/
 
@@ -28,7 +29,7 @@ top_lip_length = 2.5;  // [0:0.1:20]
 bottom_lip_length = 9.0;  // [0:0.1:20]
 
 // Arm width, in mm
-arm_width = 4;  // [1:0.1:20]
+arm_width = 3.5;  // [1:0.1:20]
 
 // Arm gap width, in mm
 arm_gap_width = 1.25;  // [0:0.1:20]
@@ -41,10 +42,13 @@ knob_diameter = 3;  // [0:0.05:20]
 knob_small_diameter = 2.75;
 
 // Knob length, in mm
-knob_length = 1.25;  // [0:0.05:20]
+knob_length = 0.9;  // [0:0.05:20]
 
 // Knob inset from end, in mm
 knob_inset = full_height/2;  // [0:0.05:20]
+
+// Font
+text_font = "Arial:style=Bold Italic";
 
 //CUSTOMIZER VARIABLES END
 
@@ -63,7 +67,8 @@ if ((top_lip_length + bottom_lip_length) > full_length)
 }
 
 
-keyboard_leg();
+//keyboard_leg();
+connected_8p();
 
 // our object, flat on xy plane for easy STL generation
 module connected_8p() {
@@ -132,13 +137,24 @@ module keyboard_leg() {
             rotate([0,90,0])
               cylinder(knob_length, knob_radius, knob_small_diameter/2, $fn=32 );
         
+            translate([0,knob_inset,full_height/2])
+            rotate([-90,0,0]) {
+              cylinder(h=3, r=0.4, $fn=32 );
+              translate([0,0,3]) sphere(r=0.4,$fn=32);
+            }
+            translate([body_width,knob_inset,full_height/2])
+            rotate([-90,0,0]) {
+              cylinder(h=3, r=0.4, $fn=32 );
+              translate([0,0,3]) sphere(r=0.4,$fn=32);
+            }
+            
           // notches on arms
           translate([0.1,knob_inset+7.9,full_height/2-0.25])
             rotate([0,90,0])
-              sphere(0.5, $fn=32 );
+              sphere(0.4, $fn=32 );
           translate([body_width-0.1,knob_inset+7.9,full_height/2-0.25])
             rotate([0,90,0])
-              sphere(0.5, $fn=32 );
+              sphere(0.4, $fn=32 );
         }
 
         // main block hollow interior
@@ -163,6 +179,13 @@ module keyboard_leg() {
           cube([arm_gap_width,arm_gap_length+2,full_height+2]);
         translate([body_width - arm_width - arm_gap_width,-2,-1])
           cube([arm_gap_width,arm_gap_length+2,full_height+2]);
+        /*
+        translate([body_width/2,7,1.5])
+        linear_extrude(height = 1)
+        {
+            text("r1", size = 4, font = text_font, halign = "center", valign = "center", $fn = 16);
+        }
+        */
 
     }
 }
