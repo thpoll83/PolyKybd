@@ -19,8 +19,8 @@ stand_off_extra_radius = 2.3;
 
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
-text_height = 0.2;
-revision = "r6";
+text_height = 0.35;
+revision = "r1.7";
 name = "PolyKybd";
 model_name = "Split72";
 
@@ -98,10 +98,10 @@ module tentingHoles()
     translate([ 40, 91.5, 6 ]) rotate([ 90, 0, 0 ]) tentingHole();
     translate([ 160, 89, 6 ]) rotate([ 90, 0, 0 ]) tentingHole();
     
-    translate([17,83.5,0]) cylinder(r=3.25, h=0.5, center = false, $fn = 64);
-    translate([167,80,0]) cylinder(r=3.25, h=0.5, center = false, $fn = 64);
-    translate([175.5,7,0]) cylinder(r=3.25, h=0.5, center = false, $fn = 64);
-    translate([11,-10,0]) cylinder(r=3.25, h=0.5, center = false, $fn = 64);
+    translate([17,83.5,0]) cylinder(r=3.25, h=0.65, center = false, $fn = 64);
+    translate([167,80,0]) cylinder(r=3.25, h=0.65, center = false, $fn = 64);
+    translate([175.5,7,0]) cylinder(r=3.25, h=0.65, center = false, $fn = 64);
+    translate([11,-10,0]) cylinder(r=3.25, h=0.65, center = false, $fn = 64);
 }
 
 module branding(mirror_text)
@@ -287,14 +287,14 @@ module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_i
                 translate([ 220 - 48, 55, case_bottom_thickness ]) mirror(v = [ 1, 0, 0 ])
                     linear_extrude(height = text_height)
                 {
-                    text(revision, size = 5, font = text_font, halign = "center", valign = "center", $fn = 16);
+                    text(revision, size = 3, font = text_font, halign = "center", valign = "center", $fn = 16);
                 }
             }
             else
             {
                 translate([ 220 - 48, 55, case_bottom_thickness ]) linear_extrude(height = text_height)
                 {
-                    text(revision, size = 5, font = text_font, halign = "center", valign = "center", $fn = 16);
+                    text(revision, size = 3, font = text_font, halign = "center", valign = "center", $fn = 16);
                 }
             }
 
@@ -362,7 +362,8 @@ module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_i
         translate([ 0, 0, pcb_edge_height - 1.6 ]) linear_extrude(height = 4, scale = 1) offset(r = +0.4, $fn = 50)
             import(file = usb_port_holes, dpi = 300);
 
-        translate([ 0, 0, case_bottom_thickness + pcb_edge_height - 5 ]) linear_extrude(height = 10, scale = 1)
+        translate([ 0, 0, case_bottom_thickness + pcb_edge_height - 4.5 ]) linear_extrude(height = 9, scale = 1)
+            offset(r = 0.7, $fn = 50)
             import(file = usb_clearance, dpi = 300);
 
         // tenting holes
@@ -478,8 +479,8 @@ module right_spacer()
 }
 
 //translate([5,0,0])  right_spacer();
-//translate([5,0,0]) right_case();
-translate([ -5, 0, 0 ]) left_case();
+translate([5,0,0]) right_case();
+//translate([ -5, 0, 0 ]) left_case();
 module spacers_4x() {
 for(s = [0:3]) {
     translate([0,0,s*5]) right_spacer();
