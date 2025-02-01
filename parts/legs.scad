@@ -9,7 +9,7 @@
 /* [Basic_Parameters] */
 
 // Body width (not including nobs), in mm
-body_width = 23.0;  // [10:0.1:80]
+body_width = 22.4;  // [10:0.1:80]
 
 // Full length, in mm
 full_length = 20.0;  // [10:0.1:80]
@@ -75,10 +75,10 @@ module connected_8p() {
 union(){
 keyboard_leg();
 
-translate([23,-2,0]) rotate([0,0,180]) keyboard_leg();
+translate([body_width,-2,0]) rotate([0,0,180]) keyboard_leg();
 for(i =[1 : 3]) {
     translate([i*29,0,0]) keyboard_leg();
-    translate([i*29+23,-2,0]) rotate([0,0,180]) keyboard_leg();
+    translate([i*29+body_width,-2,0]) rotate([0,0,180]) keyboard_leg();
     translate([i*29-6,1.9,1.9]) rotate([0,90,0])
               cylinder(6, 0.75, 0.75, $fn=32 );
     translate([i*29-6,-3.8,1.9]) rotate([0,90,0])
@@ -93,7 +93,7 @@ rotate_extrude(convexity=10, $fn=128)
 translate([-4.5,0,0])cube([10,10,10], center=true);
 }
 
-translate([4*29-4.8, -1, 1.9])
+translate([4*29-5.4, -1, 1.9])
 intersection() {
 rotate_extrude(convexity=10, $fn=128)
     translate([3, 0, 0])
@@ -139,22 +139,22 @@ module keyboard_leg() {
         
             translate([0,knob_inset,full_height/2])
             rotate([-90,0,0]) {
-              cylinder(h=3, r=0.4, $fn=32 );
-              translate([0,0,3]) sphere(r=0.4,$fn=32);
+              cylinder(h=3, r=0.6, $fn=32 );
+              translate([0,0,3]) sphere(r=0.6,$fn=32);
             }
             translate([body_width,knob_inset,full_height/2])
             rotate([-90,0,0]) {
-              cylinder(h=3, r=0.4, $fn=32 );
-              translate([0,0,3]) sphere(r=0.4,$fn=32);
+              cylinder(h=3, r=0.6, $fn=32 );
+              translate([0,0,3]) sphere(r=0.6,$fn=32);
             }
             
           // notches on arms
           translate([0.1,knob_inset+7.9,full_height/2-0.25])
             rotate([0,90,0])
-              sphere(0.4, $fn=32 );
+              sphere(0.3, $fn=32 );
           translate([body_width-0.1,knob_inset+7.9,full_height/2-0.25])
             rotate([0,90,0])
-              sphere(0.4, $fn=32 );
+              sphere(0.3, $fn=32 );
         }
 
         // main block hollow interior
