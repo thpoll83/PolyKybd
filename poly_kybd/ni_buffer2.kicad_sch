@@ -1,7 +1,7 @@
 (kicad_sch
-	(version 20231120)
+	(version 20250114)
 	(generator "eeschema")
-	(generator_version "8.0")
+	(generator_version "9.0")
 	(uuid "e9d0ca71-713b-416a-a901-9ce1b7030efc")
 	(paper "A4")
 	(lib_symbols
@@ -82,24 +82,6 @@
 						(type background)
 					)
 				)
-				(pin power_in line
-					(at -2.54 7.62 270)
-					(length 2.54)
-					(name "VCCA"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
 				(pin input line
 					(at -10.16 0 0)
 					(length 2.54)
@@ -111,6 +93,24 @@
 						)
 					)
 					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -2.54 7.62 270)
+					(length 2.54)
+					(name "VCCA"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -136,24 +136,6 @@
 						)
 					)
 				)
-				(pin output line
-					(at 10.16 0 180)
-					(length 2.54)
-					(name "B"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
 				(pin power_in line
 					(at 2.54 7.62 270)
 					(length 2.54)
@@ -172,8 +154,49 @@
 						)
 					)
 				)
+				(pin output line
+					(at 10.16 0 180)
+					(length 2.54)
+					(name "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
 			)
+			(embedded_fonts no)
 		)
+	)
+	(text "Output Enable"
+		(exclude_from_sim no)
+		(at 142.24 156.21 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "6d391e3b-ce4b-4707-a65c-1a5f6c7351b1")
+	)
+	(text "Output Enable"
+		(exclude_from_sim no)
+		(at 142.24 92.71 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "75ad9d92-aea5-4394-a653-abc9e8605d17")
 	)
 	(wire
 		(pts
@@ -275,32 +298,9 @@
 		)
 		(uuid "f0b2fc93-b4ec-43cc-b7d3-9fc517ba7cca")
 	)
-	(text "Output Enable"
-		(exclude_from_sim no)
-		(at 142.24 156.21 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "6d391e3b-ce4b-4707-a65c-1a5f6c7351b1")
-	)
-	(text "Output Enable"
-		(exclude_from_sim no)
-		(at 142.24 92.71 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "75ad9d92-aea5-4394-a653-abc9e8605d17")
-	)
 	(hierarchical_label "GND"
 		(shape input)
 		(at 139.065 151.13 270)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -312,7 +312,6 @@
 	(hierarchical_label "B_OUT"
 		(shape input)
 		(at 118.745 135.255 180)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -324,7 +323,6 @@
 	(hierarchical_label "A_OUT"
 		(shape input)
 		(at 118.745 71.755 180)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -336,7 +334,6 @@
 	(hierarchical_label "GND"
 		(shape input)
 		(at 136.525 50.165 90)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -348,7 +345,6 @@
 	(hierarchical_label "VCC"
 		(shape input)
 		(at 133.985 87.63 270)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -360,7 +356,6 @@
 	(hierarchical_label "B_IN"
 		(shape input)
 		(at 156.845 135.255 0)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -372,7 +367,6 @@
 	(hierarchical_label "GND"
 		(shape input)
 		(at 139.065 87.63 270)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -384,7 +378,6 @@
 	(hierarchical_label "GND"
 		(shape input)
 		(at 136.525 113.665 90)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -396,7 +389,6 @@
 	(hierarchical_label "VCC"
 		(shape input)
 		(at 133.985 151.13 270)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -408,7 +400,6 @@
 	(hierarchical_label "A_IN"
 		(shape input)
 		(at 156.845 71.755 0)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -426,7 +417,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "189f53d0-19bf-475b-aec3-900e3fa5004d")
-		(property "Reference" "U20"
+		(property "Reference" "U12"
 			(at 132.715 69.215 0)
 			(effects
 				(font
@@ -530,7 +521,7 @@
 			(uuid "1380f3a4-d029-4391-975b-ccabe6116c81")
 		)
 		(instances
-			(project "poly_kb_wave_left2"
+			(project "poly_corne_split42_left"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/340f60e4-2ba5-4a69-be5b-84823556915d"
 					(reference "U20")
 					(unit 1)
@@ -548,7 +539,7 @@
 					(unit 1)
 				)
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/b3eec1c7-cfcb-457c-8bc1-731941cd757b"
-					(reference "U24")
+					(reference "U?")
 					(unit 1)
 				)
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/cc4e6829-8f50-4fc4-85c0-49f5930ba461"
@@ -571,7 +562,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "d0db1e70-91d0-4b08-8e76-0897a1c38499")
-		(property "Reference" "U21"
+		(property "Reference" "U13"
 			(at 132.715 132.715 0)
 			(effects
 				(font
@@ -675,7 +666,7 @@
 			(uuid "6f0fd2a0-43d2-4e54-94d5-df39e2889e11")
 		)
 		(instances
-			(project "poly_kb_wave_left2"
+			(project "poly_corne_split42_left"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/340f60e4-2ba5-4a69-be5b-84823556915d"
 					(reference "U21")
 					(unit 1)
@@ -693,7 +684,7 @@
 					(unit 1)
 				)
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/b3eec1c7-cfcb-457c-8bc1-731941cd757b"
-					(reference "U25")
+					(reference "U?")
 					(unit 1)
 				)
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/cc4e6829-8f50-4fc4-85c0-49f5930ba461"
