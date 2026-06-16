@@ -8,3 +8,6 @@ keycaps/NopSCADlib/*
 poly_kybd/*-backups/*
 parts/NopSCADlib/*
 poly_kybd/production/*
+case/BOSL2*
+*.lck
+*.log

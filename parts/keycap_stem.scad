@@ -1,6 +1,5 @@
 
-
-revision = "e";
+revision = "α";
 text_font = "Noto:style=Bold";
 text_size = 3;
 text_height = 0.3;
@@ -81,7 +80,7 @@ module mx_stem(u_size, angle = 0, extra_len = 0, txt = revision)
             translate([ 0, 0, extra_len ]) rotate([ angle, 0, 0 ]) difference()
             {
                 // hollow keycap
-                union()
+                hull()
                 {
                     translate([ (u_size - 1) * 2 * 5, 0, 0 ])
                         linear_extrude(height = stem_height, scale = stem_top_bottom_ratio)
@@ -89,6 +88,15 @@ module mx_stem(u_size, angle = 0, extra_len = 0, txt = revision)
                     translate([ -(u_size - 1) * 2 * 5, 0, 0 ])
                         linear_extrude(height = stem_height, scale = stem_top_bottom_ratio)
                             square([ stem_x, stem_y ], center = true);
+                    translate([0, stem_y/2, 0 ])
+                        linear_extrude(height = 0.3)
+                            square([ 3, 0.4], center = true);
+                    translate([stem_x/2+(u_size - 1) * 2 * 5, 0, 0 ])
+                        linear_extrude(height = 0.3)
+                            square([ 0.4, 3], center = true);
+                    translate([-stem_x/2-(u_size - 1) * 2 * 5, 0, 0 ])
+                        linear_extrude(height = 0.3)
+                            square([ 0.4, 3], center = true);
                 }
                 union()
                 {
@@ -280,10 +288,10 @@ module ten_connected_pieces_1U5(angle = 0, extra_len = 0, txt = revision)
 }
 
 // Stepped Profile
-ten_connected_pieces_1U25(angle = -7, extra_len=1.5, txt=str("S    ", revision));
-//ten_connected_pieces_1U(angle = -7, extra_len=1.5, txt=str("S   ", revision));
-// mx_stem(u_size=1.22, angle = -7, extra_len=1.5, txt=str("S ", revision));
-// mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S ", revision));
+//ten_connected_pieces_1U25(angle = -7, extra_len=1.5, txt=str("S    ", revision));
+ten_connected_pieces_1U(angle = -7, extra_len=1.5, txt=str("S    ", revision));
+//mx_stem(u_size=1.22, angle = -7, extra_len=1.5, txt=str("S    ", revision));
+//mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
 
 //mx_stem(u_size=1, angle = 5, extra_len=0.5, txt=str("R1  ", revision));
 // Curved Profile
@@ -300,6 +308,16 @@ ten_connected_pieces_1U25(angle = -7, extra_len=1.5, txt=str("S    ", revision))
 //ten_connected_pieces_1U(angle = 5, extra_len=0.5, txt=str("1    ", revision));
 
 // Pictures
+/*
+// alpha
+rotate([8,0,0]){
+translate([0,19.25*3,0]) mx_stem(u_size=1, angle = 10, extra_len=2.5, txt="5    ");
+translate([0,19.25*2,0]) mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
+translate([0,19.25,0]) mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
+mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
+translate([0,-19.25,0]) mx_stem(u_size=1, angle = 5, extra_len=0.5, txt="1    ");
+}
+*/
 /*
 translate([0,19.25*3,0]) mx_stem(u_size=1, angle = 10, extra_len=3, txt="R5r2");
 translate([0,19.25*2,0]) mx_stem(u_size=1, angle = 5, extra_len=0.5, txt="R4r2");
