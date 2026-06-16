@@ -11,3 +11,5 @@ poly_kybd/production/*
 case/BOSL2*
 *.lck
 *.log
+poly_kybd/variations/poly_corne/*
+
