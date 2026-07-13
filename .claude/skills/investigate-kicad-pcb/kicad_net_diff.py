@@ -39,13 +39,17 @@ def ref_before(refs, idx):
 
 
 def analyze(path, names):
-    text = open(path).read()
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
     name2num = net_numbers_by_name(text)
     nums = {name2num[n]: n for n in names if n in name2num}
     refs = refs_index(text)
     pads = {n: set() for n in nums}
     for m in re.finditer(r'\(pad\s+"([^"]+)"', text):
-        seg = text[m.start():m.start() + 800]
+        # Generous window so the pad's (net ...) is found even on footprints
+        # with many properties before it. It only needs to bound the search,
+        # not delimit the pad exactly — a too-small window silently drops pads.
+        seg = text[m.start():m.start() + 4000]
         nm = re.search(r'\(net (\d+) "[^"]*"\)', seg)
         if nm and int(nm.group(1)) in nums:
             pads[int(nm.group(1))].add(f"{ref_before(refs, m.start())}.{m.group(1)}")
@@ -59,9 +63,12 @@ def analyze(path, names):
             x1, y1, x2, y2, w = map(float, m.group(1, 2, 3, 4, 5))
             segs[n].append((math.hypot(x2 - x1, y2 - y1), w, m.group(6)))
     vias = {n: 0 for n in nums}
+    # The length guard rejects a runaway non-greedy match that skipped past the
+    # real via; 2000 chars comfortably spans a via S-expr with property/tstamp
+    # blocks while still excluding a pathological jump to a distant (net ...).
     for m in re.finditer(r'\(via\b(.*?)\(net (\d+)\)', text, re.S):
         n = int(m.group(2))
-        if n in nums and len(m.group(1)) < 400:
+        if n in nums and len(m.group(1)) < 2000:
             vias[n] += 1
     missing = [n for n in names if n not in name2num]
     return nums, pads, segs, vias, missing
