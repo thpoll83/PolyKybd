@@ -8,7 +8,15 @@ from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table, Tab
                                 PageBreak, Image as RLImage)
 from reportlab.pdfgen import canvas as rl_canvas
 from PIL import Image as PILImage
-from pypdf import PdfReader, PdfWriter
+from pypdf import PdfReader, PdfWriter, PageObject, Transformation
+
+A4W, A4H = 595.275591, 841.889764   # A4 portrait in points
+import argparse, ce_common
+SECTION = "RoHS Compliance Appendix"
+_ap = argparse.ArgumentParser(); _ap.add_argument("--start", type=int, default=1)
+START = _ap.parse_args().start
+def a4_page(src):
+    return ce_common.a4_fit(src)     # scale into the shared header/footer content band
 
 RD = "/sessions/bold-festive-carson/mnt/PolyKybd/RoHS"
 OUT = "/sessions/bold-festive-carson/mnt/outputs/PolyKybd-RoHS-Appendix.pdf"
@@ -248,7 +256,7 @@ assert npages(toc_b) == n_toc, f"TOC page count changed {npages(toc_b)} vs {n_to
 writer = PdfWriter()
 def add_all(pdf_bytes):
     for p in PdfReader(io.BytesIO(pdf_bytes)).pages:
-        writer.add_page(p)
+        writer.add_page(a4_page(p))   # normalise every page to A4 portrait
 
 add_all(title_b)
 ref_start = len(writer.pages)   # 0-based index where ref table begins
@@ -269,9 +277,11 @@ for sec in sections:
     label = ", ".join(sec["manus"])
     writer.add_outline_item(f'Section {sec["num"]} — {label}', sec_page_index[sec["num"]], parent=certs_root)
 
+ce_common.stamp(writer, SECTION, START)   # header/footer + page numbers
 writer.add_metadata({"/Title":"PolyKybd RoHS Compliance Appendix","/Subject":STD})
 with open(OUT,"wb") as f:
     writer.write(f)
+print("start page:", START, "-> next section starts at page", START+len(writer.pages))
 
 print("saved", OUT)
 print("sections:", len(sections), "| total pages:", len(writer.pages))

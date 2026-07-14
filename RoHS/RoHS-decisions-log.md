@@ -55,6 +55,9 @@ so the results can be reviewed and reproduced.
   - a page list (e.g. `1,2,13,19,25`) — those pages only. Auto-selection keeps page 1 (identity) plus the
     RoHS-relevant pages and a ±1-page neighbour for context. Trimmed sections state the kept pages on the
     divider and note the full document is retained in the repo.
+- **Page size:** every page of every output PDF is normalised to **A4 portrait**. Certificate pages
+  of other sizes (Letter, etc.) are scaled to fit and centred; landscape pages (and the schematic
+  sheets) are rotated 90° so they read by turning the page clockwise (title block bottom-right).
 - **Samsung MLCC (`…CL05A105KA5NQNC_C52923.pdf`):** this is a blanket "all our MLCCs" RoHS declaration
   (page 2) that does not name individual capacitances. To show the actual parts, the selection also
   includes the manufacturer's **Product Lineup** pages: `1,2,13,19,25` — page 19 lists the exact part
