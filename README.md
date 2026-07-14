@@ -10,15 +10,20 @@ You can find the matching QMK firmware here: [https://github.com/thpoll83/qmk_fi
 
 The KiCad7 projects for the PCB are the following:
 
-[poly_kybd/poly_kb_wave_right2.kicad_pro](poly_kybd/poly_kb_wave_right2.kicad_pro)
-[poly_kybd/poly_kb_wave_left2.kicad_pro](poly_kybd/poly_kb_wave_left2.kicad_pro)
+[poly_kybd/poly_kybd_split72_right.kicad_pro](poly_kybd/poly_kybd_split72_right.kicad_pro)
+[poly_kybd/poly_kybd_split72_left.kicad_pro](poly_kybd/poly_kybd_split72_left.kicad_pro)
 
-(`wave` was the the prototype name, please just ignore the other projects)
+(please just use the projects linked above and ignore any older/backup projects in the folder)
+
+Here are the corresponding schematics for reference (left and right):
+
+![Left schematic](images/schematic_left.png)
+![Right schematic](images/schematic_right.png)
 
 The keyboard plates are also KiCad7 projects (I used 1.2mm aluminum PCBs):
 
-[poly_kybd/poly_kb_wave_right2_plate.kicad_pro](poly_kybd/poly_kb_wave_right2_plate.kicad_pro)
-[poly_kybd/poly_kb_wave_left2_plate.kicad_pro](poly_kybd/poly_kb_wave_left2_plate.kicad_pro)
+[poly_kybd/poly_kybd_split72_plate_right.kicad_pro](poly_kybd/poly_kybd_split72_plate_right.kicad_pro)
+[poly_kybd/poly_kybd_split72_plate_left.kicad_pro](poly_kybd/poly_kybd_split72_plate_left.kicad_pro)
 
 ## How to Build
 
@@ -33,9 +38,9 @@ Independent of your choice, here are the parts you need before putting everythin
 ### Prepare Required Parts
 
 * Case (left/right) - You can either 3D print or get them CNCed (but then you should add some threads to the screw holes):
-  [case/case_polysplit72_left2_r4.stl](case/case_polysplit72_left2_r4.stl)
+  [case/case_polykybd_split72_left_r7.stl](case/case_polykybd_split72_left_r7.stl)
   ![Case](images/case_l.png)
-  [case/case_polysplit72_right2_r4.stl](case/case_polysplit72_right2_r4.stl)
+  [case/case_polykybd_split72_right_r7.stl](case/case_polykybd_split72_right_r7.stl)
   ![Case](images/case_r.png)
   In case the resin print has some deformations, it is best to use the a hairdryer to slightly heat the case up and then put something heavy on the bottom to make it flat - it really works.
 * Spacer to keep the right distance between plate and PCB (again, can be 3D printed):
@@ -44,8 +49,8 @@ Independent of your choice, here are the parts you need before putting everythin
   ](case/spacer.stl)
 * Assembled 4 layers PCB 1.6mm (left/right)
   The latest gerber files with BOM and pick/place file can be found in [poly_kybd/Gerber](poly_kybd/Gerber) I made some final adjusts on the latest version, which I did not yet order (I will let you know as soon as I did).
-  [poly_kybd/Gerber/PCB/left-side-v3.1/gerber-left-side-v3.1-08.01.2024.zip](poly_kybd/Gerber/PCB/left-side-v3.1/gerber-left-side-v3.1-08.01.2024.zip)
-  [poly_kybd/Gerber/PCB/right-side-v3.1/gerber-right-side-v3.1-08.01.2024.zip](poly_kybd/Gerber/PCB/right-side-v3.1/gerber-right-side-v3.1-08.01.2024.zip)
+  [poly_kybd/Gerber/PCB/left-side-v3.2/PolyKybd_Split72_L_3.2.zip](poly_kybd/Gerber/PCB/left-side-v3.2/PolyKybd_Split72_L_3.2.zip)
+  [poly_kybd/Gerber/PCB/right-side-v3.2/PolyKybd_Split72_R_3.2.zip](poly_kybd/Gerber/PCB/right-side-v3.2/PolyKybd_Split72_R_3.2.zip)
 
   ![PCB](images/pcb_photo.jpeg)
 
@@ -64,18 +69,7 @@ Independent of your choice, here are the parts you need before putting everythin
   - 72 pieces 0.42 inch displays
 
     - Either you take the 0.42 inch displays from the kit which has the matching length and pin number (maybe I can make them available as single parts as well - see picture above, on the left).
-    - Or you extend *[FPT042W000Z01](https://www.alibaba.com/product-detail/OLED-Display-0-42-Inch-Small_1600693977243.html) or *[P34107](https://www.alibaba.com/product-detail/OLED-display-OLED-0-42-Inch_1600104997388.html) with a [30mm FPC cable](https://de.aliexpress.com/item/1005001935872949.html) ( * I got contacted that these Alibaba links are stale and it turned out, that the moment, these do not work as the displays got removed. Let me keep them in case they come back online. Maybe you can use these as alternative, the pins are compatible: [ZJY042-7240TSWPG10](https://www.alibaba.com/product-detail/0-42-inch-72x40-OLED-display_1600820452544.html?spm=a2700.details.0.0.11f34384WPrOet) The flex cable is about 1cm shorter, so your extension needs to be 40mm instead of 30mm. I have not tried these, so you might wanna do a test first!). The FPC extension should be 14 or 16 pins - blank contacts on the same side, like the two right side displays on the picture above. Only 14 pins are needed, however, you might want to get a 16 pin FPC and cut away 2 pins to fit the FPC into the 14 pin socket. It is easier to solder 16 pins of the display together with the 16 pins of the FPC (so the cable aligns), see here:
-      ![Extended Display](images/extended_display.jpg)
-      To achieve this, I applied low temperature solder (138 degree C) on both, the display FPC pins and the extension FPC pins with the solder iron:
-      ![Extended FPC Part 1](images/ExtendFPC_1.png)
-      ![Extended FPC Part 2](images/ExtendFPC_2.png)
-      Then applied some flux on just one side and orientated them straight - don't overlap the pins 100%, leave some space at the end so that excess solder can have some space to escape:
-      ![Extended FPC Part 3](images/ExtendFPC_3.png)
-      Next, I used the heat gun with maybe 160 C and heated both sides for a few seconds (you can see the solder becoming liquid again):
-      ![Extended FPC Part 4](images/ExtendFPC_4.png)
-      Finally use some tweezers to push the pins together. You will see some solder coming out at the non-overlapping part of the pins I mentioned to leave out. This is also a good way to see that all pins have sufficient solder and will connect properly:
-      ![Extended FPC Part 5](images/ExtendFPC_5.png)
-      Not every display survived this surgery, so better get more from the beginning.
+    - Or make them yourself the manual way, by extending a compatible 0.42 inch OLED with a short FPC cable and soldering the two together. See [Making the displays manually](making_the_displays_manually.md) for suppliers and the full soldering instructions.
   - (Optional) 2 pieces 0.96 inch status displays (FPW096W001Z0) or pin compatible (see below), the flex cable length should be about 40mm or you extend it on your own. You can contact this supplier: [FET](https://fetoled.en.alibaba.com/search/product), they have these displays even they are not listed in their online catalogue.
 
     | PIN   | SIGNAL    | PIN   | SIGNAL |
@@ -187,11 +181,11 @@ Independent of your choice, here are the parts you need before putting everythin
 * Optional rotary encoder ([EVQWGD001](https://de.aliexpress.com/i/32990950196.html?gatewayAdapt=gloMsite2deuPcglo2deu) or [Alps EC11 Encoder](https://www.mouser.at/c/electromechanical/encoders/?m=Alps%20Alpine&series=EC11)), [pimoroni trackball](https://mou.sr/3rmFiAO) or [23mm cirque trackpad](https://www.mouser.at/ProductDetail/Cirque/TM023023-2024-002?qs=wd5RIQLrsJhgKZTW4CXgsA%3D%3D&countryCode=DE&currencyCode=EUR) (and a 12 pin FPC cable with pins on the same side, about 50mm to 70mm). For the trackpad you will need another 3D printed holder, either a high one or a low one: ![Cirque Trackpad Inserts](images/cirque_inserts.png)
   [parts/cirque23_slim_insert_r8.stl](parts/cirque23_slim_insert_r8.stl)
   [parts/cirque23_insert_high_r1.stl](parts/cirque23_insert_high_r1.stl)
-  If you are not happy with the existing STLs, you can also modify the source file [parts/cirque23_insert.stl](parts/cirque23_insert.stl) or [parts/cirque23_insert_slim.scad](parts/cirque23_insert_slim.scad). There is also an experimental version for the 35mm cirque track pad: [parts/cirque35_insert.scad](parts/cirque35_insert.scad).
+  If you are not happy with the existing STLs, you can also modify the source file [parts/cirque23_insert.stl](parts/cirque23_insert.stl) or [parts/cirque23_slim_insert.scad](parts/cirque23_slim_insert.scad). There is also an experimental version for the 35mm cirque track pad: [parts/cirque35_insert.scad](parts/cirque35_insert.scad).
 * Short USB-C to USB-C cable to connect the two sides (maybe around 50cm).
 * USB-C to USB-A/USB-C to connect to your computer.
   ***Note:*** I had a USB-C to USB-A cable and was sitting in front of a laptop with only USB-C ports. Without a USB-C to USB-C cable at hand, I used an USB-A to USB-C adapter. It turned out this USB-C to USB-A cable + USB-A to USB-C adapter construction was only working then the adapter was connected to the laptop. - better use a USB-C to USB-C right away.
-* 8 M3x10 hex screws with rounded heads and for the new version of the case (r4), you also need 8 M3 hex nuts.
+* 8 M3x10 hex screws with rounded heads and for the current case version (r4 and later, e.g. r7), you also need 8 M3 hex nuts.
 
 ### Put Everything Together
 
