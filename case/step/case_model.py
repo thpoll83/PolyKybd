@@ -6,7 +6,8 @@ Only the ACTIVE geometry of right_side_modular() is reproduced (the large
 commented-out FDM block is not part of the metal case).  hull()->loft,
 offset(r=)->real 2D offsets with arc joints (true cylinder corners).
 """
-import contextlib, io
+import contextlib, io, math
+import numpy as np
 from build123d import *
 
 # ---- parameters (from the SCAD header) ----------------------------------
@@ -16,6 +17,18 @@ FLOOR    = 2.0
 CLEAR    = 0.15
 PCB_EDGE_H = 9.5
 X_SHIFT  = 5.0          # main(): translate([5,0,0]) right_case()
+
+# ---- bottom-plate rabbet (POST-PROCESSING feature, NOT in the .scad) -----
+# The reference parts/metal-case-*.step adds, around the wedge-cut bottom opening,
+# a rabbet that seats a bottom plate: the outer wall extends LIP_DROP below the
+# wedge plane (the "small extrusion perpendicular to the cut-off") and an inner
+# ledge sits RABBET_UP above it (the "cut-out rim"), giving a LIP_DROP+RABBET_UP
+# (~2 mm) pocket for the plate.  Measured from the reference (mine frame): wedge
+# bottom -6.21, lip bottom -7.19, ledge -5.1.  All parametric — edit freely.
+WITH_BOTTOM_RABBET = True
+LIP_DROP  = 1.0         # how far the outer lip drops below the wedge plane
+RABBET_UP = 1.0         # how far the inner ledge is recessed above the wedge plane
+LIP_W     = 4.0         # width of the outer lip band
 
 SVG = lambda n: "../" + n
 
@@ -149,7 +162,61 @@ def build_right():
     holes = Compound(led + swf + usb).moved(Location((-92, -72, 1)))
     part = part - holes
 
-    return part.moved(Location((X_SHIFT, 0, 0)))   # main(): translate([5,0,0])
+    part = part.moved(Location((X_SHIFT, 0, 0)))   # main(): translate([5,0,0])
+    if WITH_BOTTOM_RABBET:
+        part = add_bottom_rabbet(part)
+    return part
+
+
+def add_bottom_rabbet(part):
+    """Add the bottom-plate rabbet (lip + inner ledge) around the wedge-cut opening.
+
+    Works in a frame where the (slanted) wedge bottom is flattened horizontal, so the
+    lip/ledge are simple vertical extrudes, then rotates back. The tool footprint is
+    the clean outer-wall silhouette (scale 1.08 pcb_shape); the outer wall is close to
+    vertical near the bottom so this tracks the real opening on the low/front edge (the
+    primary plate seat). Returns the part unchanged on any failure.
+    """
+    try:
+        # locate the wedge bottom face (lowest downward-facing planar face)
+        best = None
+        for f in part.faces():
+            try:
+                n = f.normal_at()
+            except Exception:
+                continue
+            if n.Z < -0.3:
+                z = f.bounding_box().min.Z
+                if best is None or z < best[0]:
+                    best = (z, f, n)
+        if best is None:
+            return part
+        _, _, bn = best
+        t = np.array([0, 0, -1.0]); n = np.array([bn.X, bn.Y, bn.Z]); n = n / np.linalg.norm(n)
+        axv = np.cross(n, t); s = np.linalg.norm(axv)
+        ang = math.degrees(math.atan2(s, n @ t))
+        axv = axv / s if s > 1e-9 else np.array([1.0, 0, 0])
+        Rax = Axis((0, 0, 0), tuple(axv))
+        p = part.rotate(Rax, ang)                    # flatten the wedge plane
+        z0 = min(f.bounding_box().min.Z for f in p.faces()
+                 if (lambda nn: nn is not None and nn.Z < -0.3)(_safe_normal(f)))
+        outer = scale(pcb_shape_face(0.0), by=1.08).moved(Location((X_SHIFT, 0, z0)))
+        inner = offset(outer, amount=-LIP_W, kind=Kind.ARC)
+        band = outer - inner
+        lip = extrude(band, amount=-LIP_DROP)                              # outer lip, down
+        rab = extrude(inner.moved(Location((0, 0, -0.05))), amount=RABBET_UP + 0.05)  # ledge, up
+        p = (p + lip) - rab
+        return p.rotate(Rax, -ang)                    # rotate back
+    except Exception as e:
+        print("add_bottom_rabbet skipped:", e)
+        return part
+
+
+def _safe_normal(f):
+    try:
+        return f.normal_at()
+    except Exception:
+        return None
 
 def build_left():
     return build_right().mirror(Plane.YZ)

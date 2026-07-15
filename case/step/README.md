@@ -37,6 +37,35 @@ part of the metal case and is not reproduced.
 | LED / SW / USB holes | per-file faces `offset`+extrude, subtracted | side/edge holes |
 | left case | `right.mirror(Plane.YZ)` | one source of truth |
 
+## Bottom-plate rabbet (POST-PROCESSING feature — not in the .scad)
+
+The reference `parts/metal-case-*.step` adds, around the wedge-cut bottom opening, a
+**rabbet that seats a bottom plate** — this was a manual post-processing step, so it is
+**not** in `case_polykybd_split72_metal.scad`. It shows up as the two things you described:
+the *"small extrusion perpendicular to the cut-off"* (an outer **lip** dropping below the
+wedge plane) plus the *"inner cut-out rim"* (a recessed **ledge** the plate rests on).
+
+`add_bottom_rabbet()` reproduces it: it flattens the slanted wedge face (rotate about X by
+the wedge angle), extrudes the outer wall silhouette band **down** `LIP_DROP` for the lip
+and recesses the inner region **up** `RABBET_UP` for the ledge (pocket = `LIP_DROP+RABBET_UP`
+≈ 2 mm = `case_bottom_thickness`), then rotates back. Parameters at the top of
+`case_model.py` — measured from the reference (mine frame): wedge bottom −6.21, lip bottom
+**−7.19**, ledge **−5.1**:
+
+```python
+WITH_BOTTOM_RABBET = True
+LIP_DROP  = 1.0    # outer lip drop below the wedge plane
+RABBET_UP = 1.0    # inner ledge recess above the wedge plane
+LIP_W     = 4.0    # outer lip band width
+```
+
+Set `WITH_BOTTOM_RABBET = False` to get the pure SCAD reproduction. **Known limitation:**
+the lip footprint uses the clean `scale(1.08)` outer silhouette, which tracks the real
+opening on the low/front edge (the primary seat) but can sit up to ~a few mm proud on the
+high/back edge where the outer wall tapers inward — tune `LIP_W`/the silhouette scale if the
+back seat matters. Verified against the reference: lip bottom −7.18 (ref −7.19), overall
+height 25.68 mm (ref 26.05).
+
 ## ⚠️ Two corrections vs. the recipe (learned from the geometry)
 
 1. **Do NOT apply the `25.4/300` (dpi) scale.** The KiCad SVGs already declare their
@@ -61,9 +90,10 @@ the document height, so the coordinates line up.
 Both sides pass:
 
 - `valid B-Rep = True`
-- **curved faces > 0** (446 — real corner cylinders + rim tori)
+- **curved faces > 0** (458 — real corner cylinders + rim tori)
 - **max edge tolerance ≈ 3e-7 mm** (vs 0.148 in the mesh export)
-- ~1283 faces (vs ~15 000 facets), bbox 200.1 × 142.9 × 24.7 mm
+- ~1324 faces (vs ~15 000 facets), bbox 200.1 × 142.9 × **25.7** mm (with the bottom
+  rabbet; **24.7** mm without it, i.e. the pure SCAD reproduction)
 
 ## Memory note
 
