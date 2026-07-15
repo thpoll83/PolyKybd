@@ -182,15 +182,21 @@ def build_right():
 def add_bottom_rabbet(part):
     """Add the bottom-plate rabbet (lip + inner ledge) around the wedge-cut opening.
 
-    The lip is an EXTRUSION OF THE CUT-OFF PLANE'S OWN CROSS-SECTION, perpendicular to
-    that plane -- not a vertical silhouette. We rotate the part so the slanted wedge
-    bottom is horizontal, take that face's *actual* outer contour, extrude its outer
-    band down by LIP_DROP (the lip) and recess the inner region up by RABBET_UP (the
-    ledge), then rotate back. Requires the CONVEX outer shell (a concave contour will
-    not offset). Returns the part unchanged on any failure.
+    The lip is an EXTRUSION FROM THE CUT-OFF PLANE, perpendicular to it -- not a
+    vertical silhouette that would stick out past the tapered wall. We rotate the part
+    so the slanted wedge bottom is horizontal, build the outer-wall band from the
+    **clean convex** outer footprint (scale(1.08) of pcb_shape_convex, i.e. the loft's
+    bottom silhouette), extrude that band DOWN by LIP_DROP (the lip, perpendicular to
+    the cut plane) and recess the inner region so the ledge sits RABBET_UP above the
+    plane, then rotate back.
+
+    Clean convex tools are essential: offsetting the boolean-messy extracted bottom
+    wire leaves free edges, and the STEP then exports as an OPEN SHELL (0 solids) whose
+    bottom faces read inward in a viewer. The convex footprint booleans cleanly into a
+    single closed solid. Returns the part unchanged on any failure.
     """
     try:
-        # locate the wedge bottom face (lowest downward-facing face) and its normal
+        # locate the wedge bottom face (lowest downward-facing face) -> flatten rotation
         best = None
         for f in part.faces():
             n = _safe_normal(f)
@@ -207,19 +213,17 @@ def add_bottom_rabbet(part):
         axv = axv / s if s > 1e-9 else np.array([1.0, 0, 0])
         Rax = Axis((0, 0, 0), tuple(axv))
         p = part.rotate(Rax, ang)                    # flatten the wedge plane -> horizontal
+        z0 = min(f.bounding_box().min.Z for f in p.faces()
+                 if (_safe_normal(f) is not None and _safe_normal(f).Z < -0.3))
 
-        # the flattened wedge bottom face and its real outer contour (the cut-off section)
-        bf = None
-        for f in p.faces():
-            nn = _safe_normal(f)
-            if nn is not None and nn.Z < -0.3:
-                if bf is None or f.bounding_box().min.Z < bf.bounding_box().min.Z:
-                    bf = f
-        outer = make_face(bf.outer_wire())               # exact cut-plane cross-section
+        # clean convex outer footprint at the cut plane (= the loft bottom silhouette)
+        outer = scale(pcb_shape_convex(0.0), by=1.08).moved(Location((X_SHIFT, 0, z0)))
         inner = offset(outer, amount=-LIP_W, kind=Kind.ARC)
         band = outer - inner
-        lip = extrude(band, amount=-LIP_DROP)                              # lip: from the plane, down
-        rab = extrude(inner.moved(Location((0, 0, -0.05))), amount=RABBET_UP + 0.05)  # ledge: recess up
+        lip = extrude(band, amount=-LIP_DROP)                        # lip: from the plane, down
+        # recess the inner region: from below the lip up to the ledge (z0 + RABBET_UP)
+        rab = extrude(inner.moved(Location((0, 0, -LIP_DROP - 0.05))),
+                      amount=LIP_DROP + RABBET_UP + 0.05)
         p = (p + lip) - rab
         return p.rotate(Rax, -ang)                    # rotate back
     except Exception as e:

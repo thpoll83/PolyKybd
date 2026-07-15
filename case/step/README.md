@@ -56,15 +56,15 @@ The reference `parts/metal-case-*.step` adds, around the wedge-cut bottom openin
 the *"small extrusion perpendicular to the cut-off"* (an outer **lip** dropping below the
 wedge plane) plus the *"inner cut-out rim"* (a recessed **ledge** the plate rests on).
 
-`add_bottom_rabbet()` reproduces it. The lip is an **extrusion of the cut-off plane's own
-cross-section, perpendicular to that plane** — *not* a vertical silhouette that would stick
-out past the tapered wall. It rotates the part so the slanted wedge bottom is horizontal,
-takes that face's **actual outer contour**, extrudes its outer band **down** `LIP_DROP`
-(the lip, perpendicular to the cut plane) and recesses the inner region **up** `RABBET_UP`
-(the ledge; pocket = `LIP_DROP+RABBET_UP` ≈ 2 mm = `case_bottom_thickness`), then rotates
-back. Using the real cut-plane contour needs the **convex** outer shell (a concave contour
-won't offset). Parameters at the top of `case_model.py` — measured from the reference (mine
-frame): wedge bottom −6.21, lip bottom **−7.19**, ledge **−5.1**:
+`add_bottom_rabbet()` reproduces it. The lip is an **extrusion from the cut-off plane,
+perpendicular to it** — *not* a vertical silhouette. It rotates the part so the slanted
+wedge bottom is horizontal, builds the outer-wall band from the **clean convex** outer
+footprint (`scale(1.08)` of `pcb_shape_convex`, i.e. the loft's bottom silhouette),
+extrudes that band **down** `LIP_DROP` (the lip, perpendicular to the plane) and recesses
+the inner region so the ledge sits `RABBET_UP` above the plane (pocket = `LIP_DROP+RABBET_UP`
+≈ 2 mm = `case_bottom_thickness`), then rotates back. Parameters at the top of
+`case_model.py` — measured from the reference (mine frame): wedge bottom −6.21, lip bottom
+**−7.19**, ledge **−5.1**:
 
 ```python
 WITH_BOTTOM_RABBET = True
@@ -73,9 +73,14 @@ RABBET_UP = 1.0    # inner ledge recess above the cut-off plane
 LIP_W     = 4.0    # outer lip band width
 ```
 
-Set `WITH_BOTTOM_RABBET = False` for the pure SCAD reproduction. Verified against the
-reference: lip bottom −7.21 (ref −7.19), and the lip now follows the real opening on both
-the front and back edges; overall height 25.71 mm (ref 26.05).
+Set `WITH_BOTTOM_RABBET = False` for the pure SCAD reproduction.
+
+⚠️ **Use CLEAN convex tools, never the boolean-extracted bottom wire.** Offsetting the
+messy extracted `bf.outer_wire()` leaves free edges, and the STEP then exports as an **open
+shell** (`solids=0`) whose bottom faces read **inward** in a viewer (you see through the
+bottom). The clean convex footprint booleans into a **single closed solid** — verify with
+`solids=1, shell closed=True` (both sides pass). Verified vs the reference: lip bottom −7.18
+(ref −7.19), overall height 25.71 mm (ref 26.05).
 
 ## ⚠️ Two corrections vs. the recipe (learned from the geometry)
 
