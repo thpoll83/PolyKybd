@@ -20,6 +20,8 @@ Here are the corresponding schematics for reference (left and right):
 ![Left schematic](images/schematic_left.png)
 ![Right schematic](images/schematic_right.png)
 
+You can inspect all individual schematic sheets (with descriptions) here: [Schematic sheets](schematics.md).
+
 The keyboard plates are also KiCad7 projects (I used 1.2mm aluminum PCBs):
 
 [poly_kybd/poly_kybd_split72_plate_right.kicad_pro](poly_kybd/poly_kybd_split72_plate_right.kicad_pro)
