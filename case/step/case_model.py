@@ -104,17 +104,28 @@ def pcb_shape_face(extra_radius=0.0):
     f = centered_face("poly_kb_wave_right2-OUTLINE.svg")
     return offset(offset(f, amount=-2.0, kind=Kind.ARC), amount=radius + 2.0, kind=Kind.ARC)
 
+def pcb_shape_convex(extra_radius=0.0):
+    """CONVEX version of pcb_shape: OpenSCAD hull() convexifies, so the outer shell
+    (SCAD `hull(...)`) is the convex hull of the outline, rounded. Convex-hull the
+    outline first, then apply the same offset(-2)/offset(radius+2) rounding."""
+    radius = WALL + CLEAR + extra_radius
+    hull = convex_hull_face(centered_face("poly_kb_wave_right2-OUTLINE.svg"))
+    return offset(offset(hull, amount=-2.0, kind=Kind.ARC), amount=radius + 2.0, kind=Kind.ARC)
+
 # ==========================================================================
 def build_right():
     outline_c = centered_face("poly_kb_wave_right2-OUTLINE.svg")
 
     # ---- 1. outer shell : hull(camfer_top @ 17.5..18.5, bottom scaled 1.08 @ -5.94)
-    #  SCAD pcb_shape_camfer_top: quarter-round rim, radius 1.65 -> 2.65 as z 18.5 -> 17.5.
-    #  Reproduce as a 3-section loft: bottom(-5.94) -> widest(17.5,r2.65) -> cap(18.5,r1.65),
-    #  then round the two rim circle edges so the rim is a true torus, not a chamfer.
-    s_bot = scale(pcb_shape_face(0.0), by=1.08).moved(Location((0, 0, -6.21)))  # (-5.5-0.25)*1.08
-    s_mid = pcb_shape_face(1.0).moved(Location((0, 0, CASE_H)))          # r 2.65 @ 17.5
-    s_cap = pcb_shape_face(0.0).moved(Location((0, 0, CASE_H + 1.0)))    # r 1.65 @ 18.5
+    #  SCAD `hull(...)` is a CONVEX hull -> the outer shell is the CONVEX hull of the
+    #  outline (concavities like the front wave are filled). Using the concave outline
+    #  here (plain loft) let the convex inner-hollow pocket poke through the wall in the
+    #  front concavity = a hole. So the sections are convex (pcb_shape_convex).
+    #  pcb_shape_camfer_top: quarter-round rim, radius 1.65 -> 2.65 as z 18.5 -> 17.5;
+    #  reproduce as a 3-section loft + rounded rim edges.
+    s_bot = scale(pcb_shape_convex(0.0), by=1.08).moved(Location((0, 0, -6.21)))  # (-5.5-0.25)*1.08
+    s_mid = pcb_shape_convex(1.0).moved(Location((0, 0, CASE_H)))         # r 2.65 @ 17.5
+    s_cap = pcb_shape_convex(0.0).moved(Location((0, 0, CASE_H + 1.0)))   # r 1.65 @ 18.5
     with BuildPart() as shell:
         add(s_bot); add(s_mid); add(s_cap); loft(ruled=True)
         rim = shell.edges().filter_by(Plane.XY).group_by(Axis.Z)
@@ -171,21 +182,19 @@ def build_right():
 def add_bottom_rabbet(part):
     """Add the bottom-plate rabbet (lip + inner ledge) around the wedge-cut opening.
 
-    Works in a frame where the (slanted) wedge bottom is flattened horizontal, so the
-    lip/ledge are simple vertical extrudes, then rotates back. The tool footprint is
-    the clean outer-wall silhouette (scale 1.08 pcb_shape); the outer wall is close to
-    vertical near the bottom so this tracks the real opening on the low/front edge (the
-    primary plate seat). Returns the part unchanged on any failure.
+    The lip is an EXTRUSION OF THE CUT-OFF PLANE'S OWN CROSS-SECTION, perpendicular to
+    that plane -- not a vertical silhouette. We rotate the part so the slanted wedge
+    bottom is horizontal, take that face's *actual* outer contour, extrude its outer
+    band down by LIP_DROP (the lip) and recess the inner region up by RABBET_UP (the
+    ledge), then rotate back. Requires the CONVEX outer shell (a concave contour will
+    not offset). Returns the part unchanged on any failure.
     """
     try:
-        # locate the wedge bottom face (lowest downward-facing planar face)
+        # locate the wedge bottom face (lowest downward-facing face) and its normal
         best = None
         for f in part.faces():
-            try:
-                n = f.normal_at()
-            except Exception:
-                continue
-            if n.Z < -0.3:
+            n = _safe_normal(f)
+            if n is not None and n.Z < -0.3:
                 z = f.bounding_box().min.Z
                 if best is None or z < best[0]:
                     best = (z, f, n)
@@ -197,14 +206,20 @@ def add_bottom_rabbet(part):
         ang = math.degrees(math.atan2(s, n @ t))
         axv = axv / s if s > 1e-9 else np.array([1.0, 0, 0])
         Rax = Axis((0, 0, 0), tuple(axv))
-        p = part.rotate(Rax, ang)                    # flatten the wedge plane
-        z0 = min(f.bounding_box().min.Z for f in p.faces()
-                 if (lambda nn: nn is not None and nn.Z < -0.3)(_safe_normal(f)))
-        outer = scale(pcb_shape_face(0.0), by=1.08).moved(Location((X_SHIFT, 0, z0)))
+        p = part.rotate(Rax, ang)                    # flatten the wedge plane -> horizontal
+
+        # the flattened wedge bottom face and its real outer contour (the cut-off section)
+        bf = None
+        for f in p.faces():
+            nn = _safe_normal(f)
+            if nn is not None and nn.Z < -0.3:
+                if bf is None or f.bounding_box().min.Z < bf.bounding_box().min.Z:
+                    bf = f
+        outer = make_face(bf.outer_wire())               # exact cut-plane cross-section
         inner = offset(outer, amount=-LIP_W, kind=Kind.ARC)
         band = outer - inner
-        lip = extrude(band, amount=-LIP_DROP)                              # outer lip, down
-        rab = extrude(inner.moved(Location((0, 0, -0.05))), amount=RABBET_UP + 0.05)  # ledge, up
+        lip = extrude(band, amount=-LIP_DROP)                              # lip: from the plane, down
+        rab = extrude(inner.moved(Location((0, 0, -0.05))), amount=RABBET_UP + 0.05)  # ledge: recess up
         p = (p + lip) - rab
         return p.rotate(Rax, -ang)                    # rotate back
     except Exception as e:

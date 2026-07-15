@@ -28,7 +28,7 @@ part of the metal case and is not reproduced.
 
 | SCAD op | here | notes |
 |---|---|---|
-| `hull(camfer_top, scale(1.08) pcb_shape)` | 3-section `loft` (bottom @−6.21, widest r2.65 @17.5, cap r1.65 @18.5) + rim `fillet` | outer shell; flares to ~200 mm at the wedge-cut bottom |
+| `hull(camfer_top, scale(1.08) pcb_shape)` | 3-section `loft` of the **convex-hull** sections (bottom @−6.21, widest r2.65 @17.5, cap r1.65 @18.5) + rim `fillet` | outer shell; **`hull()` is convex** so the shell is the convex hull of the outline (see below) |
 | `offset(r=…)` corner rounding | `offset(..., kind=Kind.ARC)` | real cylindrical corner faces |
 | wedge cut-off (`rotate([-5,0,0]) cube`) | `Box` rotated −5° about X, subtracted | tented underside |
 | inner hollow (`hull() offset(outline)`) | 2-D convex hull of the outline, extruded & subtracted | `hull()` of one profile = its convex hull |
@@ -36,6 +36,17 @@ part of the metal case and is not reproduced.
 | switch/key cut-outs (`cut-outs.svg`) | X-mirrored faces extruded up, subtracted | 112 key openings |
 | LED / SW / USB holes | per-file faces `offset`+extrude, subtracted | side/edge holes |
 | left case | `right.mirror(Plane.YZ)` | one source of truth |
+
+## ⚠️ The outer shell is CONVEX (`hull()`), not the raw outline
+
+OpenSCAD `hull()` returns a **convex** hull. The SCAD builds the outer shell as
+`hull(camfer_top, pcb_shape)`, so the shell is the **convex hull** of the outline —
+concavities (the front wave, thumb notch) are filled. The inner hollow is *also*
+`hull(...)` → convex. A plain `loft` of the raw (concave) outline instead of its convex
+hull leaves the wall concave in the front while the convex inner pocket stays put, so the
+pocket **pokes through the wall = a hole in the front**. Fix: the loft sections are the
+**convex hull** of the outline (`pcb_shape_convex`), so outer ⊇ inner everywhere.
+(The concave, wave-following outline is what the *3-D-printed* case uses — a different model.)
 
 ## Bottom-plate rabbet (POST-PROCESSING feature — not in the .scad)
 
@@ -45,26 +56,26 @@ The reference `parts/metal-case-*.step` adds, around the wedge-cut bottom openin
 the *"small extrusion perpendicular to the cut-off"* (an outer **lip** dropping below the
 wedge plane) plus the *"inner cut-out rim"* (a recessed **ledge** the plate rests on).
 
-`add_bottom_rabbet()` reproduces it: it flattens the slanted wedge face (rotate about X by
-the wedge angle), extrudes the outer wall silhouette band **down** `LIP_DROP` for the lip
-and recesses the inner region **up** `RABBET_UP` for the ledge (pocket = `LIP_DROP+RABBET_UP`
-≈ 2 mm = `case_bottom_thickness`), then rotates back. Parameters at the top of
-`case_model.py` — measured from the reference (mine frame): wedge bottom −6.21, lip bottom
-**−7.19**, ledge **−5.1**:
+`add_bottom_rabbet()` reproduces it. The lip is an **extrusion of the cut-off plane's own
+cross-section, perpendicular to that plane** — *not* a vertical silhouette that would stick
+out past the tapered wall. It rotates the part so the slanted wedge bottom is horizontal,
+takes that face's **actual outer contour**, extrudes its outer band **down** `LIP_DROP`
+(the lip, perpendicular to the cut plane) and recesses the inner region **up** `RABBET_UP`
+(the ledge; pocket = `LIP_DROP+RABBET_UP` ≈ 2 mm = `case_bottom_thickness`), then rotates
+back. Using the real cut-plane contour needs the **convex** outer shell (a concave contour
+won't offset). Parameters at the top of `case_model.py` — measured from the reference (mine
+frame): wedge bottom −6.21, lip bottom **−7.19**, ledge **−5.1**:
 
 ```python
 WITH_BOTTOM_RABBET = True
-LIP_DROP  = 1.0    # outer lip drop below the wedge plane
-RABBET_UP = 1.0    # inner ledge recess above the wedge plane
+LIP_DROP  = 1.0    # lip depth, perpendicular from the cut-off plane
+RABBET_UP = 1.0    # inner ledge recess above the cut-off plane
 LIP_W     = 4.0    # outer lip band width
 ```
 
-Set `WITH_BOTTOM_RABBET = False` to get the pure SCAD reproduction. **Known limitation:**
-the lip footprint uses the clean `scale(1.08)` outer silhouette, which tracks the real
-opening on the low/front edge (the primary seat) but can sit up to ~a few mm proud on the
-high/back edge where the outer wall tapers inward — tune `LIP_W`/the silhouette scale if the
-back seat matters. Verified against the reference: lip bottom −7.18 (ref −7.19), overall
-height 25.68 mm (ref 26.05).
+Set `WITH_BOTTOM_RABBET = False` for the pure SCAD reproduction. Verified against the
+reference: lip bottom −7.21 (ref −7.19), and the lip now follows the real opening on both
+the front and back edges; overall height 25.71 mm (ref 26.05).
 
 ## ⚠️ Two corrections vs. the recipe (learned from the geometry)
 
@@ -90,10 +101,10 @@ the document height, so the coordinates line up.
 Both sides pass:
 
 - `valid B-Rep = True`
-- **curved faces > 0** (458 — real corner cylinders + rim tori)
-- **max edge tolerance ≈ 3e-7 mm** (vs 0.148 in the mesh export)
-- ~1324 faces (vs ~15 000 facets), bbox 200.1 × 142.9 × **25.7** mm (with the bottom
-  rabbet; **24.7** mm without it, i.e. the pure SCAD reproduction)
+- **curved faces > 0** (519 — real corner cylinders + rim tori)
+- **max edge tolerance ≈ 1e-5 mm** (vs 0.148 in the mesh export)
+- ~1359 faces (vs ~15 000 facets), bbox 200.1 × 142.9 × **25.7** mm (with the bottom
+  rabbet; ~24.7 mm without it, i.e. the pure SCAD reproduction)
 
 ## Memory note
 
