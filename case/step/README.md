@@ -204,16 +204,18 @@ DISPLAY_CORNER_R = 2.0   # 0 = square corners (pure SCAD)
 
 A **rotary-encoder blind pocket** is added on the pocket's **right edge**. It uses the
 encoder's **own cutout shape** — the rotated-square `cut-outs.svg` face whose corner sits
-at the pocket edge ≈(−55,−5), found by the vertex nearest `ENCODER_ANCHOR` — **enlarged**
-(offset `ENCODER_GROW`) so it reaches out to the edge, cut at the **same z-depth as the
-display box** (z 12.9–17.9) so it stays **blind** (does not break through the top skin
-z 17.9–18.5). The anchor is a final-frame coord, converted to the pre-`X_SHIFT` frame
-where the display Box + `cut_faces` live.
+at the pocket edge ≈(−55,−5), found by the vertex nearest `ENCODER_ANCHOR`. That face is
+**set aside and excluded from the switch/clearance through-cuts** so the **top skin stays
+solid** over the encoder (fully blind — the encoder seats from the open bottom, nothing
+breaks the top). The face is then **enlarged** (offset `ENCODER_GROW`) so it reaches out
+past the pocket edge, and cut at the **same z-depth as the display box** (z 12.9–17.9), a
+blind body recess under the solid skin (z 17.9–18.5). `ENCODER_ANCHOR` is a final-frame
+coord, converted to the pre-`X_SHIFT` frame where the display Box + `cut_faces` live.
 
 ```python
 WITH_ENCODER_POCKET = True
 ENCODER_ANCHOR = (-55.0, -5.0)   # final-frame corner of the encoder cutout
-ENCODER_GROW   = 3.0             # widen it out to the edge
+ENCODER_GROW   = 4.5             # offset each side: reaches the edge + ~3mm larger in x,y
 ```
 
 ## ⚠️ Two corrections vs. the recipe (learned from the geometry)

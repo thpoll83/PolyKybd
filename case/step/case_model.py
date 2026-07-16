@@ -78,7 +78,8 @@ DISPLAY_CORNER_R = 2.0    # round the 4 vertical corners of the display pocket
 # skin (z 17.9..18.5).  The face is identified by the vertex nearest ENCODER_ANCHOR.
 WITH_ENCODER_POCKET = True
 ENCODER_ANCHOR = (-55.0, -5.0)   # final-frame corner of the encoder cutout
-ENCODER_GROW   = 3.0             # offset to widen it out to the edge
+ENCODER_GROW   = 4.5             # offset (each side): +3mm/side reaches the edge, +1.5
+                                 # more makes the hull ~3mm larger in x and y
 
 # ---- embossed branding on the convex-hull front-bezel flat top (not in .scad) --
 # The SCAD `branding()` engraves "PolyKybd" (Arial Bold Italic, size 12, 0.35 deep)
@@ -248,6 +249,15 @@ def build_right(with_branding=True):
     #  send it to z<0, below the case.)  So: X-mirror faces, extrude up, translate.
     cut_faces = [f.mirror(Plane.YZ) for f in centered_faces_all("cut-outs.svg")]
     T = Location((-4.215, 0.779, 0))
+    # Set the rotary-encoder face ASIDE: it becomes a BLIND pocket (step 6), NOT a
+    # through-cut, so the top skin stays solid over it -> exclude it from the switch +
+    # clearance cuts below.  Identified by the vertex nearest ENCODER_ANCHOR.
+    enc_src = None
+    if WITH_ENCODER_POCKET:
+        eax, eay = ENCODER_ANCHOR[0] - X_SHIFT, ENCODER_ANCHOR[1]
+        enc_src = min(cut_faces, key=lambda f: min((v.X - 4.215 - eax) ** 2 +
+                                                   (v.Y + 0.779 - eay) ** 2 for v in f.vertices()))
+        cut_faces = [f for f in cut_faces if f is not enc_src]
     clr = [extrude(offset(f, amount=1.2, kind=Kind.ARC), amount=5) for f in cut_faces]
     part = _cut_batched(part, clr, T * Location((0, 0, CASE_H + 6.3 - 1.5 - 10)))
     # extrude tall enough to clear the top plate (top rim z<=18.5); start below 0 for safety
@@ -260,15 +270,10 @@ def build_right(with_branding=True):
     if DISPLAY_CORNER_R > 0:
         disp = fillet(disp.edges().filter_by(Axis.Z), radius=DISPLAY_CORNER_R)
     part = part - disp.moved(Location((-75, 21.5, 15.4)))
-    # rotary-encoder blind pocket: use the encoder's OWN cutout shape (a cut-outs.svg
-    # face), enlarged to reach the pocket edge, at the SAME z-depth as the display box
-    # (z 12.9..17.9) so it stays blind under the top skin.  cut_faces/T are pre-X_SHIFT.
-    if WITH_ENCODER_POCKET:
-        ax_, ay_ = ENCODER_ANCHOR[0] - X_SHIFT, ENCODER_ANCHOR[1]   # pre-shift anchor
-        Tx, Ty = -4.215, 0.779
-        enc_src = min(cut_faces,
-                      key=lambda f: min((v.X + Tx - ax_) ** 2 + (v.Y + Ty - ay_) ** 2
-                                        for v in f.vertices()))
+    # rotary-encoder BLIND pocket: the encoder's own cutout shape (set aside above so
+    # it never cut the top skin), enlarged to reach the pocket edge, at the SAME z-depth
+    # as the display box (z 12.9..17.9) -> a blind body recess under a solid top skin.
+    if WITH_ENCODER_POCKET and enc_src is not None:
         enc_face = offset(enc_src.moved(T), amount=ENCODER_GROW, kind=Kind.ARC)
         enc = extrude(enc_face, amount=5).moved(Location((0, 0, 12.9)))  # z 12.9..17.9
         part = part - enc
