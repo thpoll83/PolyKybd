@@ -54,7 +54,20 @@ LIP_W     = 4.0         # width of the outer lip band
 # mine frame, right side): USB1 = the side window in the left/inner wall (normal
 # +X); USB0 = the window in the back-left wall (normal -Y).
 WITH_USB_CHAMFER = True
-USB_CHAMFER = 1.2       # 45 deg lead-in depth/width on the inner face
+USB_CHAMFER = 3.0       # 45 deg lead-in depth/width on the inner face
+
+# ---- interior wall-meets-floor chamfer (POST-PROCESSING, not in the .scad) ----
+# A 45 deg chamfer along the interior seam where the inner wall meets the interior
+# floor (the top-plate underside, z=13.65).  That corner is CONCAVE, so it is done
+# the clean way the user asked for: apply the chamfer to the NEGATIVE VOLUME (the
+# inner-hollow pocket) BEFORE the boolean subtraction -- chamfering the pocket's top
+# edge leaves a 45 deg fillet-of-material transition that lands perfectly on the
+# wall/floor corner after the cut.
+#   NOTE: the interior ledge between the inner wall and the next pocket (the SCAD
+#   "border") is only ~4 mm wide, so a 3 mm chamfer consumes it and degenerates the
+#   boolean (verified: clean at <=2, broken at >=2.5).  2 mm is the clean maximum here.
+WITH_WALLFLOOR_CHAMFER = True
+WALLFLOOR_CHAMFER = 2.0
 
 # ---- embossed branding on the convex-hull front-bezel flat top (not in .scad) --
 # The SCAD `branding()` engraves "PolyKybd" (Arial Bold Italic, size 12, 0.35 deep)
@@ -63,11 +76,13 @@ USB_CHAMFER = 1.2       # 45 deg lead-in depth/width on the inner face
 # cluster (the extra bezel the hull fills in vs the concave outline).  Engraved to
 # match the SCAD (difference()); flip WITH_BRANDING/sign of depth for raised text.
 WITH_BRANDING = True
-BRAND_TEXT   = "PolyKybd"
-BRAND_SIZE   = 12.0     # SCAD text_size
+BRAND_LINES  = ("Poly", "Kybd")   # two staggered lines (Kybd sits lower+right), logo-style
+BRAND_SIZE   = 7.0      # smaller than the SCAD size-12 single line (top band is narrower)
 BRAND_DEPTH  = 0.35     # SCAD text_height
-BRAND_X      = 33.0     # centre on the front bezel flat (mine frame, right side)
-BRAND_Y      = -46.5
+BRAND_X      = 12.0     # centre of the block (mine frame, right side) - toward case centre
+BRAND_Y      = -47.0
+BRAND_STAG_X = 3.0      # 2nd line shifted +X (right) relative to the 1st
+BRAND_STAG_Y = 3.6      # half the vertical gap: line1 up +STAG_Y, line2 down -STAG_Y
 BRAND_TOP_Z  = 18.5     # flat top plateau z in the bezel region
 BRAND_FONT   = "/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf"
 
@@ -130,6 +145,19 @@ def convex_hull_face(face, grow=0.0):
     poly = make_face(Polyline(*[(x, y, 0) for x, y in hull], close=True))
     return offset(poly, amount=grow, kind=Kind.ARC) if grow else poly
 
+def _chamfered_pocket(face, height, amt):
+    """Extruded pocket (negative volume) whose top `amt` is tapered inward by `amt`
+    -- i.e. a 45 deg chamfer applied to the pocket's TOP edge.  Subtracting it leaves
+    a clean 45 deg gusset at the concave interior wall/floor corner (the "apply the
+    chamfer to the negative volume" approach).  Built as a loft (robust) rather than a
+    build123d edge chamfer, which fails on the arc-cornered pocket outline.  Returns a
+    Compound {main prism, top frustum} to subtract as one."""
+    main = extrude(face, amount=height - amt)
+    lo = face.moved(Location((0, 0, height - amt)))
+    hi = offset(face, amount=-amt, kind=Kind.ARC).moved(Location((0, 0, height)))
+    return Compound([main, loft([lo, hi])])
+
+
 def _cut_batched(part, solids, loc, batch=16):
     """Subtract many small solids in batches to keep peak memory low (112 key prisms)."""
     import gc
@@ -182,7 +210,15 @@ def build_right(with_branding=True):
 
     # ---- 3. inner hollow : convex-hull(outline offset 0.65) z -11.3..
     hoff = CLEAR + 0.5
-    hull_pocket = extrude(convex_hull_face(outline_c, grow=hoff), amount=(CASE_H + 8.3 - 0.85))
+    hull_face = convex_hull_face(outline_c, grow=hoff)
+    pocket_h = CASE_H + 8.3 - 0.85
+    # wall-meets-floor chamfer: taper the pocket's TOP edge (the negative volume) so
+    # the concave inner wall/floor (z13.65) corner gets a clean 45 deg transition
+    # after the cut -- the "apply the chamfer to the negative volume" approach.
+    if WITH_WALLFLOOR_CHAMFER:
+        hull_pocket = _chamfered_pocket(hull_face, pocket_h, WALLFLOOR_CHAMFER)
+    else:
+        hull_pocket = extrude(hull_face, amount=pocket_h)
     part = part - hull_pocket.moved(Location((0, 0, -10 - 1.3)))
 
     # ---- 4. inner border : outline offset (0.65-4) z -10..
@@ -256,34 +292,50 @@ def _usb_funnel(axis, sign, face_pos, u0, u1, v0, v1, C, uax, vax):
 
 
 def add_usb_chamfer(part):
-    """Bevel the interior wall face around each USB window (see _usb_funnel)."""
+    """Bevel the interior wall face around each USB window (see _usb_funnel).
+
+    Each funnel is CLIPPED to the wall region (a box confined to the wall thickness
+    and capped at the interior ceiling z=13.65) so the chamfer appears ONLY where the
+    cutout actually pierces the wall -- not floating in the cavity above the ceiling
+    step, nor beyond the wall.  (Without the clip the lead-in ran 'somewhere earlier'
+    than the wall on the stepped upper part of the opening.)"""
     try:
         C = USB_CHAMFER
-        f1 = _usb_funnel('x', +1, -86.7, 1.0, 13.7, 6.9, 14.9, C, 'y', 'z')  # side
-        f0 = _usb_funnel('y', -1, 61.1, -71.1, -58.5, 6.9, 14.9, C, 'x', 'z')  # back
-        return part - f1 - f0
+        Z_CEIL = 13.65   # interior ceiling: the cutout is only 'in the wall' below this
+        zc = (3.5 + Z_CEIL) / 2; zh = Z_CEIL - 3.5   # clip z-range [3.5, 13.65]
+        f1 = _usb_funnel('x', +1, -86.7, 1.0, 13.7, 6.9, 14.9, C, 'y', 'z')  # side wall
+        c1 = Box(3.8, 20.7, zh).moved(Location((-88.1, 7.35, zc)))            # x wall slab
+        f0 = _usb_funnel('y', -1, 61.1, -71.1, -58.5, 6.9, 14.9, C, 'x', 'z')  # back wall
+        c0 = Box(20.5, 3.7, zh).moved(Location((-64.75, 62.65, zc)))          # y wall slab
+        return part - (f1 & c1) - (f0 & c0)
     except Exception as e:
         print("add_usb_chamfer skipped:", e)
         return part
 
 
 def add_branding(part, x=None, y=None):
-    """Engrave BRAND_TEXT on the flat convex-hull front-bezel top (BRAND_DEPTH deep).
+    """Engrave the two-line staggered PolyKybd logo on the convex-hull bezel top.
 
-    Placed on the extra top area the convex hull fills in front of the thumb cluster
-    (the concavity the raw outline had).  Engraved like the SCAD `branding()` bottom
-    text (difference), just relocated to the top since the metal case has no FDM
-    bottom.  x/y override the centre (build_left brands the mirrored part at -x)."""
+    "Poly" sits up/left, "Kybd" down/right (BRAND_STAG_X/Y) at BRAND_SIZE, engraved
+    BRAND_DEPTH deep into the flat top area the convex hull fills in front of the
+    thumb cluster (the concavity the raw outline had) - like the SCAD `branding()`
+    bottom text (difference), relocated to the top.  x/y override the block centre
+    (build_left brands the mirrored part at -x, with fresh (un-mirrored) text so the
+    logo reads correctly on the left half too)."""
     try:
         cx = BRAND_X if x is None else x
         cy = BRAND_Y if y is None else y
-        with contextlib.redirect_stderr(io.StringIO()):
-            txt = Text(BRAND_TEXT, font_size=BRAND_SIZE, font_path=BRAND_FONT,
-                       align=(Align.CENTER, Align.CENTER))
-        # engrave: a text prism straddling the top plateau, subtracted 0.35 mm deep
-        prism = extrude(txt, amount=BRAND_DEPTH + 0.15)
-        prism = prism.moved(Location((cx, cy, BRAND_TOP_Z - BRAND_DEPTH)))
-        return part - prism
+        placed = [(BRAND_LINES[0], cx - BRAND_STAG_X, cy + BRAND_STAG_Y),
+                  (BRAND_LINES[1], cx + BRAND_STAG_X, cy - BRAND_STAG_Y)]
+        prisms = []
+        for word, wx, wy in placed:
+            with contextlib.redirect_stderr(io.StringIO()):
+                txt = Text(word, font_size=BRAND_SIZE, font_path=BRAND_FONT,
+                           align=(Align.CENTER, Align.CENTER))
+            # text prism straddling the top plateau, subtracted BRAND_DEPTH deep
+            prisms.append(extrude(txt, amount=BRAND_DEPTH + 0.15)
+                          .moved(Location((wx, wy, BRAND_TOP_Z - BRAND_DEPTH))))
+        return part - Compound(prisms)
     except Exception as e:
         print("add_branding skipped:", e)
         return part
