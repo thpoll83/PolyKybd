@@ -69,6 +69,9 @@ USB_CHAMFER = 3.0       # 45 deg lead-in depth/width on the inner face
 WITH_WALLFLOOR_CHAMFER = True
 WALLFLOOR_CHAMFER = 2.0
 
+# ---- display/encoder pocket (the Box that covers both the display and the encoder) --
+DISPLAY_CORNER_R = 2.0    # round the 4 vertical corners of the display pocket
+
 # ---- embossed branding on the convex-hull front-bezel flat top (not in .scad) --
 # The SCAD `branding()` engraves "PolyKybd" (Arial Bold Italic, size 12, 0.35 deep)
 # on the FDM case BOTTOM.  The metal case has no such bottom face, so we place the
@@ -244,7 +247,11 @@ def build_right(with_branding=True):
     part = _cut_batched(part, sw, T)
 
     # ---- 6. extra space around display : cube([30,69,5]) centred @ (-75,21.5,15.4)
-    part = part - Box(30, 69, 5).moved(Location((-75, 21.5, 15.4)))
+    #  Round the 4 vertical corners of this pocket (covers display + encoder area).
+    disp = Box(30, 69, 5)
+    if DISPLAY_CORNER_R > 0:
+        disp = fillet(disp.edges().filter_by(Axis.Z), radius=DISPLAY_CORNER_R)
+    part = part - disp.moved(Location((-75, 21.5, 15.4)))
 
     # ---- 7. LED / switch / USB holes : raw file coords, translate([-92,-72,1])
     led = [extrude(offset(f, amount=0.9, kind=Kind.ARC), amount=2.20).moved(Location((0, 0, PCB_EDGE_H - 0.1 - 0.5)))

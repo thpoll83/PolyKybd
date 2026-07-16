@@ -191,6 +191,17 @@ the right at `(BRAND_X, BRAND_Y)`, and engraves the mirrored left at `(−BRAND_
 Set `WITH_BRANDING = False` (+ `WITH_USB_CHAMFER`/`WITH_WALLFLOOR_CHAMFER = False`) for the
 pure SCAD reproduction.
 
+## Display/encoder pocket — rounded corners (not in the .scad)
+
+The SCAD's "extra space around display" is a square-cornered `cube([30,69,5])` @
+(−75, 21.5, 15.4) that covers both the status display and the rotary-encoder area. Its
+four **vertical corners are rounded** (`DISPLAY_CORNER_R`, default 2 mm) by filleting the
+box's Z-parallel edges before subtracting.
+
+```python
+DISPLAY_CORNER_R = 2.0   # 0 = square corners (pure SCAD)
+```
+
 ## ⚠️ Two corrections vs. the recipe (learned from the geometry)
 
 1. **Do NOT apply the `25.4/300` (dpi) scale.** The KiCad SVGs already declare their
