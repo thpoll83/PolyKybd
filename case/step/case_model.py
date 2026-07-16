@@ -222,7 +222,13 @@ def build_right(with_branding=True):
     part = part - hull_pocket.moved(Location((0, 0, -10 - 1.3)))
 
     # ---- 4. inner border : outline offset (0.65-4) z -10..
-    border = extrude(offset(outline_c, amount=(hoff - 4.0), kind=Kind.ARC), amount=(CASE_H + 8.3 - 0.85))
+    #  Same wall-floor chamfer on THIS negative too (the border pocket that makes the
+    #  central region thinner): taper its top edge so its step corner is chamfered.
+    border_face = offset(outline_c, amount=(hoff - 4.0), kind=Kind.ARC)
+    if WITH_WALLFLOOR_CHAMFER:
+        border = _chamfered_pocket(border_face, pocket_h, WALLFLOOR_CHAMFER)
+    else:
+        border = extrude(border_face, amount=pocket_h)
     part = part - border.moved(Location((0, 0, -10)))
 
     # ---- 5. switch cut-outs + clearance (cut-outs.svg)
@@ -271,43 +277,36 @@ def build_right(with_branding=True):
     return part
 
 
-def _usb_funnel(axis, sign, face_pos, u0, u1, v0, v1, C, uax, vax):
-    """One USB lead-in funnel (subtract to bevel the interior opening at 45 deg).
+def _usb_bottom_bevel(axis, sign, face_pos, v_bottom, C, uax, u0, u1):
+    """A 45 deg lead-in on ONLY the BOTTOM edge of a USB window -- the edge toward the
+    open bottom of the case, where nothing else is in the way (the top/sides hit the
+    interior ceiling step, so we leave them square).  A triangular prism along the
+    window bottom edge: at the inner wall surface the opening drops `C` below the
+    window bottom, tapering back to the window bottom `C` deep into the wall.
 
     axis: wall-normal axis ('x'/'y'); sign: interior direction along it (+/-1);
-    face_pos: the interior wall-surface coord on that axis; (u0..u1)x(v0..v1): the
-    window extent in the wall plane (uax,vax axes).  The funnel goes from the window
-    ENLARGED by C flush at the surface, tapering to the window SIZE C deep into the
-    wall -> a 45 deg lead-in.  (A boolean cut, so it is robust to the internal ledge
-    the window crosses; an edge chamfer there is fragile.)"""
+    face_pos: the interior wall-surface coord on that axis; v_bottom: the window bottom
+    z; uax/u0/u1: the window's long edge axis and span."""
     idx = {'x': 0, 'y': 1, 'z': 2}
-    uc = (u0 + u1) / 2; vc = (v0 + v1) / 2; du = u1 - u0; dv = v1 - v0
-    def rect(at, grow):
-        o = [0.0, 0.0, 0.0]; o[idx[axis]] = at; o[idx[uax]] = uc; o[idx[vax]] = vc
-        zdir = [0.0, 0.0, 0.0]; zdir[idx[axis]] = 1.0
-        xdir = [0.0, 0.0, 0.0]; xdir[idx[uax]] = 1.0
-        pl = Plane(origin=tuple(o), x_dir=tuple(xdir), z_dir=tuple(zdir))
-        return pl * Rectangle(du + 2 * grow, dv + 2 * grow)
-    return loft([rect(face_pos, C), rect(face_pos - sign * C, 0.0)])
+    def pt(a_val, z_val):
+        p = [0.0, 0.0, 0.0]; p[idx[axis]] = a_val; p[idx['z']] = z_val; p[idx[uax]] = u0
+        return tuple(p)
+    tri = make_face(Polyline(pt(face_pos, v_bottom),            # window bottom-inner corner
+                             pt(face_pos, v_bottom - C),        # dropped down the inner face
+                             pt(face_pos - sign * C, v_bottom),  # back to bottom, C into wall
+                             close=True))
+    d = [0.0, 0.0, 0.0]; d[idx[uax]] = 1.0
+    return extrude(tri, amount=(u1 - u0), dir=tuple(d))
 
 
 def add_usb_chamfer(part):
-    """Bevel the interior wall face around each USB window (see _usb_funnel).
-
-    Each funnel is CLIPPED to the wall region (a box confined to the wall thickness
-    and capped at the interior ceiling z=13.65) so the chamfer appears ONLY where the
-    cutout actually pierces the wall -- not floating in the cavity above the ceiling
-    step, nor beyond the wall.  (Without the clip the lead-in ran 'somewhere earlier'
-    than the wall on the stepped upper part of the opening.)"""
+    """Bottom-only USB lead-ins (toward the open bottom) -- see _usb_bottom_bevel.
+    No clip needed: below each window is clear wall down to the open bottom."""
     try:
         C = USB_CHAMFER
-        Z_CEIL = 13.65   # interior ceiling: the cutout is only 'in the wall' below this
-        zc = (3.5 + Z_CEIL) / 2; zh = Z_CEIL - 3.5   # clip z-range [3.5, 13.65]
-        f1 = _usb_funnel('x', +1, -86.7, 1.0, 13.7, 6.9, 14.9, C, 'y', 'z')  # side wall
-        c1 = Box(3.8, 20.7, zh).moved(Location((-88.1, 7.35, zc)))            # x wall slab
-        f0 = _usb_funnel('y', -1, 61.1, -71.1, -58.5, 6.9, 14.9, C, 'x', 'z')  # back wall
-        c0 = Box(20.5, 3.7, zh).moved(Location((-64.75, 62.65, zc)))          # y wall slab
-        return part - (f1 & c1) - (f0 & c0)
+        b1 = _usb_bottom_bevel('x', +1, -86.7, 6.9, C, 'y', 1.0, 13.7)      # side wall
+        b0 = _usb_bottom_bevel('y', -1, 61.1, 6.9, C, 'x', -71.1, -58.5)    # back wall
+        return part - b1 - b0
     except Exception as e:
         print("add_usb_chamfer skipped:", e)
         return part

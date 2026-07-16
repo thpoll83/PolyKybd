@@ -124,14 +124,13 @@ USB window, so the connector/cable enters cleanly. The two windows (fixed by the
 SVGs) are **USB1**, the side window in the left/inner wall (normal +X), and **USB0**, the
 window in the back-left wall (normal −Y).
 
-It is modelled as a **subtractive funnel** (`_usb_funnel`), not an edge `chamfer()`: each
-window crosses an **internal ledge** (the inner wall steps in at z≈13.7), and an edge
-chamfer across that step is fragile/failure-prone. A boolean cut isn't — the funnel is a
-`loft` from the window **enlarged by `USB_CHAMFER`** flush at the inner surface, tapering to
-the **window size** `USB_CHAMFER` deep into the wall, subtracted. Each funnel is **clipped
-to a wall slab** (`funnel & Box`) confined to the wall thickness and **capped at the ceiling
-z=13.65**, so the lead-in appears **only where the cutout pierces the wall** — not floating
-past the stepped upper opening. Params:
+It is applied on the **bottom edge only** — toward the **open bottom** of the case, where
+nothing is in the way. The window's top/sides run into the interior ceiling step (which made
+a full-perimeter lead-in awkward to contain), but below the window is clear wall all the way
+to the open bottom, so a bottom lead-in is unobstructed. `_usb_bottom_bevel` subtracts a
+**triangular prism** along the window's bottom edge: at the inner wall surface the opening
+drops `USB_CHAMFER` below the window bottom, tapering back to the window bottom `USB_CHAMFER`
+deep into the wall (a 45° ramp). No clip needed. Params:
 
 ```python
 WITH_USB_CHAMFER = True
@@ -148,7 +147,9 @@ top-plate underside, z=13.65). That corner is **concave**, so a plain subtractiv
 removes nothing — instead the chamfer is applied to the **negative volume**: `_chamfered_pocket`
 tapers the inner-hollow pocket's **top edge** inward by `WALLFLOOR_CHAMFER` (a `loft`, since a
 build123d edge `chamfer()` fails on the arc-cornered pocket), and subtracting that leaves a
-clean 45° fillet-of-material transition exactly on the wall/floor corner.
+clean 45° fillet-of-material transition exactly on the wall/floor corner. It is applied to
+**both** inner negatives — the convex hull pocket (floor z=13.65) **and** the deeper "border"
+pocket (floor z=14.95) — so the interior steps down through **two** chamfered transitions.
 
 ```python
 WITH_WALLFLOOR_CHAMFER = True
