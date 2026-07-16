@@ -202,6 +202,18 @@ box's Z-parallel edges before subtracting.
 DISPLAY_CORNER_R = 2.0   # 0 = square corners (pure SCAD)
 ```
 
+A **rotary-encoder blind pocket** is added on the pocket's **right edge** (final frame
+≈(−55,−5)): a round `Cylinder` (`ENCODER_DIAM`, default Ø10 mm) cut at the **same z-depth
+as the display box** (z 12.9–17.9) so it stays **blind** — it does not break through the
+top skin (z 17.9–18.5). `ENCODER_CENTER` is given in the final frame and converted to the
+pre-`X_SHIFT` frame where the display Box is subtracted.
+
+```python
+WITH_ENCODER_POCKET = True
+ENCODER_CENTER = (-55.0, -5.0)   # final-frame XY, right edge of the display pocket
+ENCODER_DIAM   = 10.0
+```
+
 ## ⚠️ Two corrections vs. the recipe (learned from the geometry)
 
 1. **Do NOT apply the `25.4/300` (dpi) scale.** The KiCad SVGs already declare their

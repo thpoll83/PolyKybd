@@ -71,6 +71,13 @@ WALLFLOOR_CHAMFER = 2.0
 
 # ---- display/encoder pocket (the Box that covers both the display and the encoder) --
 DISPLAY_CORNER_R = 2.0    # round the 4 vertical corners of the display pocket
+# Rotary-encoder blind pocket: an enlarged ROUND cut on the display pocket's right edge
+# (final frame ~(-55,-5)), matching the pocket's z-depth so it does NOT cut through the
+# top skin (blind).  Centre is given in the FINAL frame; converted to the pre-X_SHIFT
+# frame where the display Box is subtracted (step 6).
+WITH_ENCODER_POCKET = True
+ENCODER_CENTER = (-55.0, -5.0)   # final-frame XY (right edge of the display pocket)
+ENCODER_DIAM   = 10.0            # ~3 mm bigger each side than the existing little cut
 
 # ---- embossed branding on the convex-hull front-bezel flat top (not in .scad) --
 # The SCAD `branding()` engraves "PolyKybd" (Arial Bold Italic, size 12, 0.35 deep)
@@ -252,6 +259,13 @@ def build_right(with_branding=True):
     if DISPLAY_CORNER_R > 0:
         disp = fillet(disp.edges().filter_by(Axis.Z), radius=DISPLAY_CORNER_R)
     part = part - disp.moved(Location((-75, 21.5, 15.4)))
+    # rotary-encoder blind pocket: a round cut at the pocket's right edge, SAME z-depth
+    # as the display box (z 12.9..17.9, centre 15.4, height 5) so it stays blind under
+    # the top skin.  ENCODER_CENTER is final-frame -> pre-X_SHIFT is (x-X_SHIFT, y).
+    if WITH_ENCODER_POCKET:
+        ex, ey = ENCODER_CENTER
+        enc = Cylinder(radius=ENCODER_DIAM / 2, height=5)
+        part = part - enc.moved(Location((ex - X_SHIFT, ey, 15.4)))
 
     # ---- 7. LED / switch / USB holes : raw file coords, translate([-92,-72,1])
     led = [extrude(offset(f, amount=0.9, kind=Kind.ARC), amount=2.20).moved(Location((0, 0, PCB_EDGE_H - 0.1 - 0.5)))
