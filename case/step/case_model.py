@@ -191,21 +191,22 @@ def build_right():
 def add_bottom_rabbet(part):
     """Add the bottom-plate rabbet (lip + inner ledge) around the wedge-cut opening.
 
-    The lip must be the ACTUAL wall cross-section AT THE WEDGE PLANE, extended
-    perpendicular to that plane -- NOT the straight-cut (loft-bottom) silhouette
-    extruded at the wedge angle. The wall tapers, so the wedge plane (higher on the
-    raised/back side) meets a *narrower* wall there; using the wide loft-bottom
-    silhouette makes the lip stick out past the wall exactly where the case gets
-    thinner. So: flatten the wedge plane to horizontal, take a thin slice of the real
-    wall just above it (`part & slab` -> the true wedge-plane section), translate that
-    slice straight down by LIP_DROP (perpendicular to the plane) for the lip, then
-    recess the inner region up so the ledge sits RABBET_UP above the plane. The slice
-    follows the taper exactly, so the lip hugs the wall on every edge.
+    The lip must be a PERPENDICULAR extrusion of the cut-off AREA -- take the wedge-plane
+    section's outline (a single, constant cross-section) and extrude it straight along the
+    plane normal. Two wrong ways it went before:
+      * the `scale(1.08)` loft-bottom silhouette (the *straight-cut* section) extruded at
+        the wedge angle -> too wide on the tapered/back side, lip sticks out; and
+      * translating a thin *slice* of the wall down -> the slice carries the wall's own
+        taper, so the lip face tapers ("starts smaller then expands"), not perpendicular.
+    Right way: flatten the wedge plane to horizontal, grab the real wedge-plane bottom
+    face `bf` (the actual section, following the taper at that plane), and extrude THAT
+    face as a constant prism straight down (overlapping up into the wall so the union is
+    clean). Constant section + straight extrude = a true perpendicular lip that hugs the
+    wall. Then recess the inner region up so the ledge sits RABBET_UP above the plane.
 
-    (Using clean convex tools for the *cut* is fine -- a slightly-off recess footprint
-    only varies the ledge width; a slightly-off *lip* footprint sticks out. And never
-    offset the boolean-messy extracted bottom wire: it leaves free edges -> open shell.)
-    Returns the part unchanged on any failure.
+    (The recess *cut* can use the clean convex footprint -- a slightly-off cut only
+    changes the ledge width. Never offset the boolean-messy extracted bottom wire: it
+    leaves free edges -> open shell.) Returns the part unchanged on any failure.
     """
     try:
         # locate the wedge bottom face (lowest downward-facing face) -> flatten rotation
@@ -225,14 +226,21 @@ def add_bottom_rabbet(part):
         axv = axv / s if s > 1e-9 else np.array([1.0, 0, 0])
         Rax = Axis((0, 0, 0), tuple(axv))
         p = part.rotate(Rax, ang)                    # flatten the wedge plane -> horizontal
-        z0 = min(f.bounding_box().min.Z for f in p.faces()
-                 if (_safe_normal(f) is not None and _safe_normal(f).Z < -0.3))
 
-        # LIP: slice the real wall at the wedge plane and extend it straight down.
-        H = LIP_DROP + 0.5
-        slab = Box(400, 400, H).moved(Location((0, 0, z0 + H / 2)))
-        wall_slice = p & slab                        # true wedge-plane wall section
-        lip = wall_slice.moved(Location((0, 0, -LIP_DROP)))
+        # the real wedge-plane bottom face (flattened, lowest downward face)
+        bf = None
+        for f in p.faces():
+            nn = _safe_normal(f)
+            if nn is not None and nn.Z < -0.3:
+                if bf is None or f.bounding_box().min.Z < bf.bounding_box().min.Z:
+                    bf = f
+        z0 = bf.bounding_box().min.Z
+
+        # LIP: extrude the section face as a CONSTANT prism straight down (perpendicular),
+        # overlapping 0.5 up into the wall so the fuse is a genuine overlap (no slivers).
+        # Force dir=-Z: bf's own normal points down, so a plain negative amount would
+        # extrude the prism UP into the part (no lip below).
+        lip = extrude(bf.moved(Location((0, 0, 0.5))), amount=LIP_DROP + 0.5, dir=(0, 0, -1))
         p = p + lip
         # LEDGE: recess the inner region up (a cut tolerates a slightly-off footprint)
         inner = offset(scale(pcb_shape_convex(0.0), by=1.08), amount=-LIP_W,
