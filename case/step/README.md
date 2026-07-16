@@ -86,10 +86,20 @@ sits `RABBET_UP` above the plane (pocket = `LIP_DROP+RABBET_UP` ≈ 2 mm =
   the lip face tapers ("starts smaller then expands") instead of being perpendicular.
 
 Extruding the single wedge-plane section as a constant prism is both perpendicular *and*
-taper-free. (`extrude(bf, negative)` alone extrudes UP along the face's downward normal —
-force `dir=(0,0,-1)`. The recess *cut* can still use the clean `scale(1.08)` footprint; only
-the added *lip* must match the wall.) Parameters at the top of `case_model.py` — measured
-from the reference (mine frame): wedge bottom −6.21, lip bottom **−7.19**, ledge **−5.1**:
+taper-free. Two more traps:
+- `extrude(bf, negative)` extrudes UP along the face's downward normal — force `dir=(0,0,-1)`.
+- Extruding **from z0 with no overlap** is what keeps the lip flush with the wall (a 0.5 mm
+  overlap makes the constant prism poke ~0.1 mm past the tapering wall at the join). But the
+  lip's top face is then exactly coincident with the part's bottom face, so a plain fuse
+  opens the shell — weld it with a **glue-fuse** (`BOPAlgo_GlueShift`, see `_glue_fuse`).
+- The recess footprint is a **uniform inward offset of the real section** (a clean convex
+  polygon of `bf`'s own vertices, `offset(convex_hull_face(bf), −LIP_W)`). Using
+  `scale(1.08)` there scales about the origin, pushing the far short-side ends out more, so
+  the retained lip band comes out **wider on the short sides** — the plate recess must be a
+  uniform band on every edge.
+
+Parameters at the top of `case_model.py` — measured from the reference (mine frame): wedge
+bottom −6.21, lip bottom **−7.19**, ledge **−5.1**:
 
 ```python
 WITH_BOTTOM_RABBET = True

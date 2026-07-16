@@ -9,6 +9,22 @@ offset(r=)->real 2D offsets with arc joints (true cylinder corners).
 import contextlib, io, math
 import numpy as np
 from build123d import *
+from OCP.BRepAlgoAPI import BRepAlgoAPI_Fuse
+from OCP.BOPAlgo import BOPAlgo_GlueEnum
+from OCP.TopTools import TopTools_ListOfShape
+
+
+def _glue_fuse(a, b):
+    """Fuse two solids that share an EXACTLY coincident face (glue mode). A plain
+    boolean fuse of coincident faces leaves free edges -> open shell; glue merges
+    them. Used to weld the bottom lip prism (whose top face IS the part's bottom
+    face) without the 0.5 mm overlap that would make the constant prism protrude
+    past the tapering wall."""
+    args = TopTools_ListOfShape(); args.Append(a.wrapped)
+    tools = TopTools_ListOfShape(); tools.Append(b.wrapped)
+    fu = BRepAlgoAPI_Fuse(); fu.SetArguments(args); fu.SetTools(tools)
+    fu.SetGlue(BOPAlgo_GlueEnum.BOPAlgo_GlueShift); fu.Build()
+    return Part(fu.Shape())
 
 # ---- parameters (from the SCAD header) ----------------------------------
 CASE_H   = 17.5
@@ -200,13 +216,15 @@ def add_bottom_rabbet(part):
         taper, so the lip face tapers ("starts smaller then expands"), not perpendicular.
     Right way: flatten the wedge plane to horizontal, grab the real wedge-plane bottom
     face `bf` (the actual section, following the taper at that plane), and extrude THAT
-    face as a constant prism straight down (overlapping up into the wall so the union is
-    clean). Constant section + straight extrude = a true perpendicular lip that hugs the
-    wall. Then recess the inner region up so the ledge sits RABBET_UP above the plane.
+    face as a constant prism straight down from z0 (glue-fused so the coincident top face
+    welds without an overlap that would make the prism protrude past the tapering wall).
+    Constant section + straight extrude = a true perpendicular lip that hugs the wall.
+    Then recess the inner region up so the ledge sits RABBET_UP above the plane, using a
+    UNIFORM inward offset of the real section (so the retained lip band is the same width
+    on every side -- scale(1.08) scales about the origin and makes it non-uniform).
 
-    (The recess *cut* can use the clean convex footprint -- a slightly-off cut only
-    changes the ledge width. Never offset the boolean-messy extracted bottom wire: it
-    leaves free edges -> open shell.) Returns the part unchanged on any failure.
+    (Never offset the boolean-messy extracted bottom wire -> free edges/open shell; a
+    clean convex polygon of bf's own vertices offsets fine.) Returns part on any failure.
     """
     try:
         # locate the wedge bottom face (lowest downward-facing face) -> flatten rotation
@@ -237,14 +255,19 @@ def add_bottom_rabbet(part):
         z0 = bf.bounding_box().min.Z
 
         # LIP: extrude the section face as a CONSTANT prism straight down (perpendicular),
-        # overlapping 0.5 up into the wall so the fuse is a genuine overlap (no slivers).
-        # Force dir=-Z: bf's own normal points down, so a plain negative amount would
-        # extrude the prism UP into the part (no lip below).
-        lip = extrude(bf.moved(Location((0, 0, 0.5))), amount=LIP_DROP + 0.5, dir=(0, 0, -1))
-        p = p + lip
-        # LEDGE: recess the inner region up (a cut tolerates a slightly-off footprint)
-        inner = offset(scale(pcb_shape_convex(0.0), by=1.08), amount=-LIP_W,
-                       kind=Kind.ARC).moved(Location((X_SHIFT, 0, z0)))
+        # from z0 EXACTLY (no overlap -> no protrusion where a wider constant prism would
+        # otherwise stick out past the tapering wall). Its top face is the part's own
+        # bottom face, so weld with a glue-fuse (a plain fuse of coincident faces opens
+        # the shell). Force dir=-Z: bf's normal points down, so a negative amount would
+        # extrude UP into the part.
+        lip = extrude(bf, amount=LIP_DROP, dir=(0, 0, -1))
+        p = _glue_fuse(p, lip)
+        # LEDGE: recess the inner region up. Footprint = a UNIFORM inward offset of the
+        # real wedge-plane section (clean convex polygon of bf's own vertices), so the
+        # retained lip band is the same width on every side. (scale(1.08) scales about
+        # the origin, pushing the far short-side ends out more -> non-uniform band.)
+        inner = offset(convex_hull_face(bf), amount=-LIP_W,
+                       kind=Kind.ARC).moved(Location((0, 0, z0)))
         rab = extrude(inner.moved(Location((0, 0, -LIP_DROP - 0.05))),
                       amount=LIP_DROP + RABBET_UP + 0.05)
         p = p - rab
