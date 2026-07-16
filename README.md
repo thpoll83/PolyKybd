@@ -184,6 +184,7 @@ Independent of your choice, here are the parts you need before putting everythin
   [parts/cirque23_slim_insert_r8.stl](parts/cirque23_slim_insert_r8.stl)
   [parts/cirque23_insert_high_r1.stl](parts/cirque23_insert_high_r1.stl)
   If you are not happy with the existing STLs, you can also modify the source file [parts/cirque23_insert.stl](parts/cirque23_insert.stl) or [parts/cirque23_slim_insert.scad](parts/cirque23_slim_insert.scad). There is also an experimental version for the 35mm cirque track pad: [parts/cirque35_insert.scad](parts/cirque35_insert.scad).
+* Optional ambient-light + proximity sensor (**highly recommended**) - a [Pimoroni LTR-559 Light & Proximity Sensor breakout](https://shop.pimoroni.com/products/ltr-559-light-proximity-sensor-breakout) plus a matching 5-pin 2.54mm pin header. The Split72 PCB has a dedicated header footprint for it (labelled `3-6V / SDA / SCL / INT / GND`), sharing the Cirque I2C bus - no extra wiring. With the sensor fitted, the firmware automatically drives keycap brightness from the measured light level and wakes the displays when your hand approaches. It is entirely optional (the firmware is a clean no-op when no sensor is present) and side-agnostic (works on whichever half you solder it to). **You must fit it as the very first assembly step** - see the note in [Put Everything Together](#put-everything-together) below, because it does *not* fit through the plate hole and cannot be added later without an almost complete disassembly. ![LTR-559 soldered to the PCB](images/ltr559_soldered.jpg)
 * Short USB-C to USB-C cable to connect the two sides (maybe around 50cm).
 * USB-C to USB-A/USB-C to connect to your computer.
   ***Note:*** I had a USB-C to USB-A cable and was sitting in front of a laptop with only USB-C ports. Without a USB-C to USB-C cable at hand, I used an USB-A to USB-C adapter. It turned out this USB-C to USB-A cable + USB-A to USB-C adapter construction was only working then the adapter was connected to the laptop. - better use a USB-C to USB-C right away.
@@ -193,6 +194,21 @@ Independent of your choice, here are the parts you need before putting everythin
 
 Here is my recommended order:
 
+0. **(Optional but highly recommended) Solder the LTR-559 light + proximity sensor - do this FIRST!**
+   ⚠️ The sensor board does **not** fit through the hole in the aluminum plate, so it has to be soldered on **before** the plate goes on. If you add it later you will have to almost completely disassemble the keyboard again. So if there is any chance you want it, fit it now - it is optional in firmware and costs you nothing if you later decide not to use it.
+
+   The Split72 PCB has a labelled 5-pin footprint for the sensor (`3-6V / SDA / SCL / INT / GND`). Solder the sensor exactly like this:
+   1. Solder the 5-pin header into the PCB footprint.
+   2. The plastic spacer strip of the header now has to come off - it holds the sensor board too high to clear the plate. I simply pushed it all the way down/off the pins:
+      ![Sensor with the header spacer removed](images/ltr559_header_trimmed.jpg)
+   3. It is still too thick, so instead of the plastic spacer use a piece of paper folded twice (roughly 1-2mm) as a temporary shim to set the sensor at a nice low height while you solder the board onto the header pins:
+      ![Folded paper used as a spacer](images/ltr559_paper_shim.jpg)
+   4. After soldering, pull the paper back out. The sensor now sits low and flat, just above the PCB:
+      ![Sensor soldered flush to the PCB](images/ltr559_soldered.jpg)
+   5. To expose the sensor to ambient light, drill a **5mm hole** into the 3D-printed cap on the far right, vertically centered as shown:
+      ![5mm hole drilled into the cap](images/ltr559_cap_hole.jpg)
+
+   The sensor is auto-detected on whichever half you solder it to - no firmware option to enable. See the [firmware readme](https://github.com/thpoll83/qmk_firmware/blob/PolyKybd/keyboards/polykybd/readme.md) for how it drives auto-brightness and proximity wake.
 1. In case you want to use an [Alps EC11 Encoder](https://www.mouser.at/c/electromechanical/encoders/?m=Alps%20Alpine&series=EC11) or some remaining stock of the not any more produced [EVQWGD001](https://de.aliexpress.com/i/32990950196.html?gatewayAdapt=gloMsite2deuPcglo2deu), put it on the PCB and also put the keyboard plate once on top to make sure your encoder fits! In case of the EVQWGD001, you have to remove the last pin, before soldering it to the PCB Juts clip it away. DO NOT solder it to the PCB, or otherwise it will not work:
 ![EVQWGD001](images/evqwgd001.png)
 Depending on the type of EC11 encoder, you maybe want to put a piece of Kapton tape over the legs, in case they come close to the plate (it was not necessary for mine, but there are different kinds out there).
