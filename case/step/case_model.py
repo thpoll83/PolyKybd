@@ -277,6 +277,10 @@ def build_right(with_branding=True):
     return part
 
 
+USB_BEVEL_OVERCUT = 0.4   # start the bevel this far INTERIOR of the wall face (into the
+                          # empty cavity) so no thin sliver of wall survives at the corner
+
+
 def _usb_bottom_bevel(axis, sign, face_pos, v_bottom, C, uax, u0, u1):
     """A 45 deg lead-in on ONLY the BOTTOM edge of a USB window -- the edge toward the
     open bottom of the case, where nothing else is in the way (the top/sides hit the
@@ -285,15 +289,19 @@ def _usb_bottom_bevel(axis, sign, face_pos, v_bottom, C, uax, u0, u1):
     window bottom, tapering back to the window bottom `C` deep into the wall.
 
     axis: wall-normal axis ('x'/'y'); sign: interior direction along it (+/-1);
-    face_pos: the interior wall-surface coord on that axis; v_bottom: the window bottom
-    z; uax/u0/u1: the window's long edge axis and span."""
+    face_pos: the MEASURED interior wall-surface coord on that axis; v_bottom: the window
+    bottom z; uax/u0/u1: the window's long edge axis and span.  The inner leg is pushed
+    `USB_BEVEL_OVERCUT` interior of face_pos (into the cavity) so no wall sliver remains --
+    a sub-0.1 mm error in face_pos otherwise left a thin wall between the bevel and the
+    real inner face."""
     idx = {'x': 0, 'y': 1, 'z': 2}
+    inner = face_pos + sign * USB_BEVEL_OVERCUT      # inner leg, just inside the cavity
     def pt(a_val, z_val):
         p = [0.0, 0.0, 0.0]; p[idx[axis]] = a_val; p[idx['z']] = z_val; p[idx[uax]] = u0
         return tuple(p)
-    tri = make_face(Polyline(pt(face_pos, v_bottom),            # window bottom-inner corner
-                             pt(face_pos, v_bottom - C),        # dropped down the inner face
-                             pt(face_pos - sign * C, v_bottom),  # back to bottom, C into wall
+    tri = make_face(Polyline(pt(inner, v_bottom),              # window bottom-inner corner
+                             pt(inner, v_bottom - C),          # dropped down the inner face
+                             pt(inner - sign * C, v_bottom),   # back to bottom, C into wall
                              close=True))
     d = [0.0, 0.0, 0.0]; d[idx[uax]] = 1.0
     return extrude(tri, amount=(u1 - u0), dir=tuple(d))
@@ -301,11 +309,12 @@ def _usb_bottom_bevel(axis, sign, face_pos, v_bottom, C, uax, u0, u1):
 
 def add_usb_chamfer(part):
     """Bottom-only USB lead-ins (toward the open bottom) -- see _usb_bottom_bevel.
-    No clip needed: below each window is clear wall down to the open bottom."""
+    No clip needed: below each window is clear wall down to the open bottom.  face_pos
+    values are the MEASURED inner wall faces at each window (right side, mine frame)."""
     try:
         C = USB_CHAMFER
-        b1 = _usb_bottom_bevel('x', +1, -86.7, 6.9, C, 'y', 1.0, 13.7)      # side wall
-        b0 = _usb_bottom_bevel('y', -1, 61.1, 6.9, C, 'x', -71.1, -58.5)    # back wall
+        b1 = _usb_bottom_bevel('x', +1, -86.65, 6.9, C, 'y', 1.0, 13.7)     # side wall
+        b0 = _usb_bottom_bevel('y', -1, 62.29, 6.9, C, 'x', -71.1, -58.5)   # back wall
         return part - b1 - b0
     except Exception as e:
         print("add_usb_chamfer skipped:", e)

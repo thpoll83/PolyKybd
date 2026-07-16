@@ -130,7 +130,10 @@ a full-perimeter lead-in awkward to contain), but below the window is clear wall
 to the open bottom, so a bottom lead-in is unobstructed. `_usb_bottom_bevel` subtracts a
 **triangular prism** along the window's bottom edge: at the inner wall surface the opening
 drops `USB_CHAMFER` below the window bottom, tapering back to the window bottom `USB_CHAMFER`
-deep into the wall (a 45° ramp). No clip needed. Params:
+deep into the wall (a 45° ramp). No clip needed. The bevel's inner leg is started
+`USB_BEVEL_OVERCUT` (0.4 mm) **interior of the measured inner wall face** (into the empty
+cavity), so no thin wall sliver survives — a sub-0.1 mm error in the wall-face coordinate
+otherwise left a ~0.05 mm wall between the bevel and the real inner face. Params:
 
 ```python
 WITH_USB_CHAMFER = True
