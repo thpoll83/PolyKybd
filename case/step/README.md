@@ -70,15 +70,21 @@ The reference `parts/metal-case-*.step` adds, around the wedge-cut bottom openin
 the *"small extrusion perpendicular to the cut-off"* (an outer **lip** dropping below the
 wedge plane) plus the *"inner cut-out rim"* (a recessed **ledge** the plate rests on).
 
-`add_bottom_rabbet()` reproduces it. The lip is an **extrusion from the cut-off plane,
-perpendicular to it** — *not* a vertical silhouette. It rotates the part so the slanted
-wedge bottom is horizontal, builds the outer-wall band from the **clean convex** outer
-footprint (`scale(1.08)` of `pcb_shape_convex`, i.e. the loft's bottom silhouette),
-extrudes that band **down** `LIP_DROP` (the lip, perpendicular to the plane) and recesses
-the inner region so the ledge sits `RABBET_UP` above the plane (pocket = `LIP_DROP+RABBET_UP`
-≈ 2 mm = `case_bottom_thickness`), then rotates back. Parameters at the top of
-`case_model.py` — measured from the reference (mine frame): wedge bottom −6.21, lip bottom
-**−7.19**, ledge **−5.1**:
+`add_bottom_rabbet()` reproduces it. The lip must be the **actual wall cross-section at
+the wedge plane**, extended perpendicular to that plane. It flattens the wedge plane to
+horizontal, takes a thin slice of the **real wall** just above it (`part & slab` — the true
+wedge-plane section, which follows the taper), translates that slice **down** `LIP_DROP` for
+the lip, then recesses the inner region so the ledge sits `RABBET_UP` above the plane
+(pocket = `LIP_DROP+RABBET_UP` ≈ 2 mm = `case_bottom_thickness`), and rotates back.
+
+⚠️ **Do not build the lip from the `scale(1.08)` loft-bottom silhouette (the straight-cut
+cross-section).** The wall tapers, so the wedge plane meets a *narrower* wall on the raised
+(back) side; the wide straight-cut footprint then makes the lip **stick out past the wall
+exactly where the case gets thinner**. Slicing the real wall (`part & slab`) hugs it on
+every edge. (The recess *cut* can still use the clean `scale(1.08)` footprint — a slightly
+off cut only changes the ledge width; only the added *lip* must match the wall.) Parameters
+at the top of `case_model.py` — measured from the reference (mine frame): wedge bottom
+−6.21, lip bottom **−7.19**, ledge **−5.1**:
 
 ```python
 WITH_BOTTOM_RABBET = True

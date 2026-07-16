@@ -191,18 +191,21 @@ def build_right():
 def add_bottom_rabbet(part):
     """Add the bottom-plate rabbet (lip + inner ledge) around the wedge-cut opening.
 
-    The lip is an EXTRUSION FROM THE CUT-OFF PLANE, perpendicular to it -- not a
-    vertical silhouette that would stick out past the tapered wall. We rotate the part
-    so the slanted wedge bottom is horizontal, build the outer-wall band from the
-    **clean convex** outer footprint (scale(1.08) of pcb_shape_convex, i.e. the loft's
-    bottom silhouette), extrude that band DOWN by LIP_DROP (the lip, perpendicular to
-    the cut plane) and recess the inner region so the ledge sits RABBET_UP above the
-    plane, then rotate back.
+    The lip must be the ACTUAL wall cross-section AT THE WEDGE PLANE, extended
+    perpendicular to that plane -- NOT the straight-cut (loft-bottom) silhouette
+    extruded at the wedge angle. The wall tapers, so the wedge plane (higher on the
+    raised/back side) meets a *narrower* wall there; using the wide loft-bottom
+    silhouette makes the lip stick out past the wall exactly where the case gets
+    thinner. So: flatten the wedge plane to horizontal, take a thin slice of the real
+    wall just above it (`part & slab` -> the true wedge-plane section), translate that
+    slice straight down by LIP_DROP (perpendicular to the plane) for the lip, then
+    recess the inner region up so the ledge sits RABBET_UP above the plane. The slice
+    follows the taper exactly, so the lip hugs the wall on every edge.
 
-    Clean convex tools are essential: offsetting the boolean-messy extracted bottom
-    wire leaves free edges, and the STEP then exports as an OPEN SHELL (0 solids) whose
-    bottom faces read inward in a viewer. The convex footprint booleans cleanly into a
-    single closed solid. Returns the part unchanged on any failure.
+    (Using clean convex tools for the *cut* is fine -- a slightly-off recess footprint
+    only varies the ledge width; a slightly-off *lip* footprint sticks out. And never
+    offset the boolean-messy extracted bottom wire: it leaves free edges -> open shell.)
+    Returns the part unchanged on any failure.
     """
     try:
         # locate the wedge bottom face (lowest downward-facing face) -> flatten rotation
@@ -225,15 +228,18 @@ def add_bottom_rabbet(part):
         z0 = min(f.bounding_box().min.Z for f in p.faces()
                  if (_safe_normal(f) is not None and _safe_normal(f).Z < -0.3))
 
-        # clean convex outer footprint at the cut plane (= the loft bottom silhouette)
-        outer = scale(pcb_shape_convex(0.0), by=1.08).moved(Location((X_SHIFT, 0, z0)))
-        inner = offset(outer, amount=-LIP_W, kind=Kind.ARC)
-        band = outer - inner
-        lip = extrude(band, amount=-LIP_DROP)                        # lip: from the plane, down
-        # recess the inner region: from below the lip up to the ledge (z0 + RABBET_UP)
+        # LIP: slice the real wall at the wedge plane and extend it straight down.
+        H = LIP_DROP + 0.5
+        slab = Box(400, 400, H).moved(Location((0, 0, z0 + H / 2)))
+        wall_slice = p & slab                        # true wedge-plane wall section
+        lip = wall_slice.moved(Location((0, 0, -LIP_DROP)))
+        p = p + lip
+        # LEDGE: recess the inner region up (a cut tolerates a slightly-off footprint)
+        inner = offset(scale(pcb_shape_convex(0.0), by=1.08), amount=-LIP_W,
+                       kind=Kind.ARC).moved(Location((X_SHIFT, 0, z0)))
         rab = extrude(inner.moved(Location((0, 0, -LIP_DROP - 0.05))),
                       amount=LIP_DROP + RABBET_UP + 0.05)
-        p = (p + lip) - rab
+        p = p - rab
         return p.rotate(Rax, -ang)                    # rotate back
     except Exception as e:
         print("add_bottom_rabbet skipped:", e)
