@@ -37,6 +37,20 @@ part of the metal case and is not reproduced.
 | LED / SW / USB holes | per-file faces `offset`+extrude, subtracted | side/edge holes |
 | left case | `right.mirror(Plane.YZ)` | one source of truth |
 
+## ⚠️ OCCT can silently NO-OP a boolean cut → re-cut on the final part
+
+OpenCASCADE's boolean occasionally leaves a cut **unapplied** against a complex
+intermediate solid (it emits `Boolean operation unable to clean`): here the
+switch/LED cut of `cut-outs.svg` left **two** keycap LED round holes (wires 9 & 95)
+**capped** by the top plate (a solid layer at z 17.3–18.5) while the other 34 cut
+through — the "two keys whose round LED space isn't open" bug. The same prisms cut
+fine on a simple plate *and* re-cut fine on the final part, so the failure is
+intermediate-state-specific. Fix: **re-run the switch cut on the final geometry**
+(`build_right` step 8) — idempotent for the openings already cut, and it removes the
+caps (verified by vertical raycast: all 36 circles go to 0 crossings). If you add
+cut features and something doesn't open, raycast the suspect XY through the model and
+check for stray crossings before assuming the profile is wrong.
+
 ## ⚠️ The outer shell is CONVEX (`hull()`), not the raw outline
 
 OpenSCAD `hull()` returns a **convex** hull. The SCAD builds the outer shell as

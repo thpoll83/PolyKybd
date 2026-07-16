@@ -176,6 +176,15 @@ def build_right():
     part = part.moved(Location((X_SHIFT, 0, 0)))   # main(): translate([5,0,0])
     if WITH_BOTTOM_RABBET:
         part = add_bottom_rabbet(part)
+
+    # ---- 8. re-cut the switch/LED openings on the FINAL geometry.
+    #  OCCT's boolean occasionally NO-OPs a cut against the complex intermediate part
+    #  (the "Boolean operation unable to clean" warnings): here it silently left two
+    #  keycap LED round holes (wires 9 & 95) capped at the top plate (z 17.3-18.5) while
+    #  the other 34 cut through. Re-cutting the same prisms on the final part removes
+    #  those caps (verified 2->0 crossings) and is idempotent for the openings already
+    #  cut. Prisms are re-placed at T shifted by X_SHIFT to match the moved part.
+    part = _cut_batched(part, sw, T * Location((X_SHIFT, 0, 0)))
     return part
 
 
