@@ -117,6 +117,51 @@ bottom). The clean convex footprint booleans into a **single closed solid** — 
 `solids=1, shell closed=True` (both sides pass). Verified vs the reference: lip bottom −7.18
 (ref −7.19), overall height 25.71 mm (ref 26.05).
 
+## USB inner-wall chamfer (POST-PROCESSING feature — not in the .scad)
+
+`add_usb_chamfer()` puts a 45° lead-in on the **interior** face of the wall around each
+USB window, so the connector/cable enters cleanly. The two windows (fixed by the committed
+SVGs) are **USB1**, the side window in the left/inner wall (normal +X), and **USB0**, the
+window in the back-left wall (normal −Y).
+
+It is modelled as a **subtractive funnel** (`_usb_funnel`), not an edge `chamfer()`: each
+window crosses an **internal ledge** (the inner wall steps in at z≈13.7), and an edge
+chamfer across that step is fragile/failure-prone. A boolean cut isn't — the funnel is a
+`loft` from the window **enlarged by `USB_CHAMFER`** flush at the inner surface, tapering to
+the **window size** `USB_CHAMFER` deep into the wall, subtracted. Params:
+
+```python
+WITH_USB_CHAMFER = True
+USB_CHAMFER = 1.2      # 45° lead-in depth/width on the inner face
+```
+
+Because the funnels live **inside `build_right()`** (before the YZ mirror), the left case
+gets them for free.
+
+## Branding: engraved "PolyKybd" on the convex-hull front-bezel top (not in the .scad)
+
+The SCAD `branding()` engraves **PolyKybd** (Arial Bold Italic, size 12, 0.35 mm deep) on
+the **FDM case bottom**. The metal case has no such bottom face, so `add_branding()` places
+the same engraving on the flat top area the **convex hull** created in front of the thumb
+cluster — the extra bezel the hull fills in where the raw outline is concave (the "little
+extra area" from the convex-hull outer shell). Engraved (subtracted) to match the SCAD's
+`difference()`.
+
+```python
+WITH_BRANDING = True
+BRAND_TEXT = "PolyKybd"; BRAND_SIZE = 12.0; BRAND_DEPTH = 0.35   # = SCAD text_size/height
+BRAND_X = 33.0; BRAND_Y = -46.5; BRAND_TOP_Z = 18.5             # centre on the bezel flat
+BRAND_FONT = ".../LiberationSans-BoldItalic.ttf"                # Arial Bold Italic metric clone
+```
+
+Text is built with build123d `Text` (**Liberation Sans Bold Italic** — the metric-compatible
+Arial substitute present on Linux; there is no Arial), extruded and subtracted 0.35 mm into
+the z=18.5 plateau. ⚠️ **Branding is applied AFTER the YZ mirror, per side**, so the logo
+reads correctly (not mirror-backwards) on **both** halves: `build.py` does one heavy build
+(`build_right(with_branding=False)`, which includes the USB chamfer), engraves the right at
+`(BRAND_X, BRAND_Y)`, and engraves the mirrored left at `(−BRAND_X, BRAND_Y)`. Set
+`WITH_BRANDING = False` (and `WITH_USB_CHAMFER = False`) for the pure SCAD reproduction.
+
 ## ⚠️ Two corrections vs. the recipe (learned from the geometry)
 
 1. **Do NOT apply the `25.4/300` (dpi) scale.** The KiCad SVGs already declare their

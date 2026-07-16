@@ -46,6 +46,31 @@ LIP_DROP  = 1.0         # how far the outer lip drops below the wedge plane
 RABBET_UP = 1.0         # how far the inner ledge is recessed above the wedge plane
 LIP_W     = 4.0         # width of the outer lip band
 
+# ---- USB inner-wall chamfer (POST-PROCESSING, not in the .scad) ----------
+# A 45 deg lead-in on the INTERIOR face of the wall around each USB window, so
+# the connector/cable enters cleanly.  Modelled as a subtractive funnel (a boolean
+# cut is robust to the internal ledge the window crosses, unlike an edge chamfer).
+# The two windows are fixed by the committed SVGs (measured from the built solid,
+# mine frame, right side): USB1 = the side window in the left/inner wall (normal
+# +X); USB0 = the window in the back-left wall (normal -Y).
+WITH_USB_CHAMFER = True
+USB_CHAMFER = 1.2       # 45 deg lead-in depth/width on the inner face
+
+# ---- embossed branding on the convex-hull front-bezel flat top (not in .scad) --
+# The SCAD `branding()` engraves "PolyKybd" (Arial Bold Italic, size 12, 0.35 deep)
+# on the FDM case BOTTOM.  The metal case has no such bottom face, so we place the
+# same engraving on the flat top area the CONVEX HULL created in front of the thumb
+# cluster (the extra bezel the hull fills in vs the concave outline).  Engraved to
+# match the SCAD (difference()); flip WITH_BRANDING/sign of depth for raised text.
+WITH_BRANDING = True
+BRAND_TEXT   = "PolyKybd"
+BRAND_SIZE   = 12.0     # SCAD text_size
+BRAND_DEPTH  = 0.35     # SCAD text_height
+BRAND_X      = 33.0     # centre on the front bezel flat (mine frame, right side)
+BRAND_Y      = -46.5
+BRAND_TOP_Z  = 18.5     # flat top plateau z in the bezel region
+BRAND_FONT   = "/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf"
+
 SVG = lambda n: "../" + n
 
 # ---- SVG helpers ---------------------------------------------------------
@@ -129,7 +154,7 @@ def pcb_shape_convex(extra_radius=0.0):
     return offset(offset(hull, amount=-2.0, kind=Kind.ARC), amount=radius + 2.0, kind=Kind.ARC)
 
 # ==========================================================================
-def build_right():
+def build_right(with_branding=True):
     outline_c = centered_face("poly_kb_wave_right2-OUTLINE.svg")
 
     # ---- 1. outer shell : hull(camfer_top @ 17.5..18.5, bottom scaled 1.08 @ -5.94)
@@ -201,7 +226,67 @@ def build_right():
     #  those caps (verified 2->0 crossings) and is idempotent for the openings already
     #  cut. Prisms are re-placed at T shifted by X_SHIFT to match the moved part.
     part = _cut_batched(part, sw, T * Location((X_SHIFT, 0, 0)))
+
+    # ---- 9. USB inner chamfer + branding (post-processing, see params) --------
+    if WITH_USB_CHAMFER:
+        part = add_usb_chamfer(part)
+    if WITH_BRANDING and with_branding:
+        part = add_branding(part)
     return part
+
+
+def _usb_funnel(axis, sign, face_pos, u0, u1, v0, v1, C, uax, vax):
+    """One USB lead-in funnel (subtract to bevel the interior opening at 45 deg).
+
+    axis: wall-normal axis ('x'/'y'); sign: interior direction along it (+/-1);
+    face_pos: the interior wall-surface coord on that axis; (u0..u1)x(v0..v1): the
+    window extent in the wall plane (uax,vax axes).  The funnel goes from the window
+    ENLARGED by C flush at the surface, tapering to the window SIZE C deep into the
+    wall -> a 45 deg lead-in.  (A boolean cut, so it is robust to the internal ledge
+    the window crosses; an edge chamfer there is fragile.)"""
+    idx = {'x': 0, 'y': 1, 'z': 2}
+    uc = (u0 + u1) / 2; vc = (v0 + v1) / 2; du = u1 - u0; dv = v1 - v0
+    def rect(at, grow):
+        o = [0.0, 0.0, 0.0]; o[idx[axis]] = at; o[idx[uax]] = uc; o[idx[vax]] = vc
+        zdir = [0.0, 0.0, 0.0]; zdir[idx[axis]] = 1.0
+        xdir = [0.0, 0.0, 0.0]; xdir[idx[uax]] = 1.0
+        pl = Plane(origin=tuple(o), x_dir=tuple(xdir), z_dir=tuple(zdir))
+        return pl * Rectangle(du + 2 * grow, dv + 2 * grow)
+    return loft([rect(face_pos, C), rect(face_pos - sign * C, 0.0)])
+
+
+def add_usb_chamfer(part):
+    """Bevel the interior wall face around each USB window (see _usb_funnel)."""
+    try:
+        C = USB_CHAMFER
+        f1 = _usb_funnel('x', +1, -86.7, 1.0, 13.7, 6.9, 14.9, C, 'y', 'z')  # side
+        f0 = _usb_funnel('y', -1, 61.1, -71.1, -58.5, 6.9, 14.9, C, 'x', 'z')  # back
+        return part - f1 - f0
+    except Exception as e:
+        print("add_usb_chamfer skipped:", e)
+        return part
+
+
+def add_branding(part, x=None, y=None):
+    """Engrave BRAND_TEXT on the flat convex-hull front-bezel top (BRAND_DEPTH deep).
+
+    Placed on the extra top area the convex hull fills in front of the thumb cluster
+    (the concavity the raw outline had).  Engraved like the SCAD `branding()` bottom
+    text (difference), just relocated to the top since the metal case has no FDM
+    bottom.  x/y override the centre (build_left brands the mirrored part at -x)."""
+    try:
+        cx = BRAND_X if x is None else x
+        cy = BRAND_Y if y is None else y
+        with contextlib.redirect_stderr(io.StringIO()):
+            txt = Text(BRAND_TEXT, font_size=BRAND_SIZE, font_path=BRAND_FONT,
+                       align=(Align.CENTER, Align.CENTER))
+        # engrave: a text prism straddling the top plateau, subtracted 0.35 mm deep
+        prism = extrude(txt, amount=BRAND_DEPTH + 0.15)
+        prism = prism.moved(Location((cx, cy, BRAND_TOP_Z - BRAND_DEPTH)))
+        return part - prism
+    except Exception as e:
+        print("add_branding skipped:", e)
+        return part
 
 
 def add_bottom_rabbet(part):
@@ -284,7 +369,10 @@ def _safe_normal(f):
         return None
 
 def build_left():
-    return build_right().mirror(Plane.YZ)
+    # mirror the UN-branded base, then engrave so the logo reads correctly (not
+    # backwards) on the left half; -BRAND_X puts it on the mirrored bezel.
+    base = build_right(with_branding=False).mirror(Plane.YZ)
+    return add_branding(base, x=-BRAND_X, y=BRAND_Y) if WITH_BRANDING else base
 
 if __name__ == "__main__":
     import time
