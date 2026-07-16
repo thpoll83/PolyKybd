@@ -78,8 +78,8 @@ DISPLAY_CORNER_R = 2.0    # round the 4 vertical corners of the display pocket
 # skin (z 17.9..18.5).  The face is identified by the vertex nearest ENCODER_ANCHOR.
 WITH_ENCODER_POCKET = True
 ENCODER_ANCHOR = (-55.0, -5.0)   # final-frame corner of the encoder cutout
-ENCODER_GROW   = 4.5             # offset (each side): +3mm/side reaches the edge, +1.5
-                                 # more makes the hull ~3mm larger in x and y
+ENCODER_GROW   = 6.5             # offset (each side): reaches the edge, +3mm larger, then
+                                 # +2mm more so it doesn't leave a thin wall at the bottom
 
 # ---- embossed branding on the convex-hull front-bezel flat top (not in .scad) --
 # The SCAD `branding()` engraves "PolyKybd" (Arial Bold Italic, size 12, 0.35 deep)
