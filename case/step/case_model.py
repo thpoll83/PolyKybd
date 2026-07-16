@@ -71,13 +71,14 @@ WALLFLOOR_CHAMFER = 2.0
 
 # ---- display/encoder pocket (the Box that covers both the display and the encoder) --
 DISPLAY_CORNER_R = 2.0    # round the 4 vertical corners of the display pocket
-# Rotary-encoder blind pocket: an enlarged ROUND cut on the display pocket's right edge
-# (final frame ~(-55,-5)), matching the pocket's z-depth so it does NOT cut through the
-# top skin (blind).  Centre is given in the FINAL frame; converted to the pre-X_SHIFT
-# frame where the display Box is subtracted (step 6).
+# Rotary-encoder blind pocket: take the encoder's OWN cutout shape (the rotated-square
+# cut-outs.svg face whose corner sits at the pocket edge ~(-55,-5)), enlarge it (offset
+# ENCODER_GROW) so it reaches the display-box edge, and cut it as a BLIND pocket at the
+# SAME z-depth as the display box (z 12.9..17.9) so it does not break through the top
+# skin (z 17.9..18.5).  The face is identified by the vertex nearest ENCODER_ANCHOR.
 WITH_ENCODER_POCKET = True
-ENCODER_CENTER = (-55.0, -5.0)   # final-frame XY (right edge of the display pocket)
-ENCODER_DIAM   = 10.0            # ~3 mm bigger each side than the existing little cut
+ENCODER_ANCHOR = (-55.0, -5.0)   # final-frame corner of the encoder cutout
+ENCODER_GROW   = 3.0             # offset to widen it out to the edge
 
 # ---- embossed branding on the convex-hull front-bezel flat top (not in .scad) --
 # The SCAD `branding()` engraves "PolyKybd" (Arial Bold Italic, size 12, 0.35 deep)
@@ -259,13 +260,18 @@ def build_right(with_branding=True):
     if DISPLAY_CORNER_R > 0:
         disp = fillet(disp.edges().filter_by(Axis.Z), radius=DISPLAY_CORNER_R)
     part = part - disp.moved(Location((-75, 21.5, 15.4)))
-    # rotary-encoder blind pocket: a round cut at the pocket's right edge, SAME z-depth
-    # as the display box (z 12.9..17.9, centre 15.4, height 5) so it stays blind under
-    # the top skin.  ENCODER_CENTER is final-frame -> pre-X_SHIFT is (x-X_SHIFT, y).
+    # rotary-encoder blind pocket: use the encoder's OWN cutout shape (a cut-outs.svg
+    # face), enlarged to reach the pocket edge, at the SAME z-depth as the display box
+    # (z 12.9..17.9) so it stays blind under the top skin.  cut_faces/T are pre-X_SHIFT.
     if WITH_ENCODER_POCKET:
-        ex, ey = ENCODER_CENTER
-        enc = Cylinder(radius=ENCODER_DIAM / 2, height=5)
-        part = part - enc.moved(Location((ex - X_SHIFT, ey, 15.4)))
+        ax_, ay_ = ENCODER_ANCHOR[0] - X_SHIFT, ENCODER_ANCHOR[1]   # pre-shift anchor
+        Tx, Ty = -4.215, 0.779
+        enc_src = min(cut_faces,
+                      key=lambda f: min((v.X + Tx - ax_) ** 2 + (v.Y + Ty - ay_) ** 2
+                                        for v in f.vertices()))
+        enc_face = offset(enc_src.moved(T), amount=ENCODER_GROW, kind=Kind.ARC)
+        enc = extrude(enc_face, amount=5).moved(Location((0, 0, 12.9)))  # z 12.9..17.9
+        part = part - enc
 
     # ---- 7. LED / switch / USB holes : raw file coords, translate([-92,-72,1])
     led = [extrude(offset(f, amount=0.9, kind=Kind.ARC), amount=2.20).moved(Location((0, 0, PCB_EDGE_H - 0.1 - 0.5)))
