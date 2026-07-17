@@ -112,9 +112,9 @@ Parameters at the top of `case_model.py`:
 
 ```python
 WITH_BOTTOM_RABBET = True
-LIP_DROP  = 1.0    # lip depth, perpendicular from the cut-off plane
-RABBET_UP = 1.0    # inner ledge recess above the cut-off plane
-LIP_W     = 4.0    # outer lip band width (uniform on every edge)
+LIP_DROP  = 0.9    # lip depth, perpendicular from the cut-off plane (ref: -0.9)
+RABBET_UP = 0.6    # inner ledge recess above the cut-off plane (ref ledge ~+0.65)
+LIP_W     = 2.0    # outer lip/ledge-cut inset (uniform); MUST be < the thin front wall (see above)
 ```
 
 Set `WITH_BOTTOM_RABBET = False` for the pure SCAD reproduction.
@@ -172,15 +172,18 @@ The SCAD `branding()` engraves **PolyKybd** (Arial Bold Italic, 0.35 mm deep) on
 case bottom**. The metal case has no such bottom face, so `add_branding()` places the same
 engraving on the flat top area the **convex hull** created in front of the thumb cluster —
 the extra bezel the hull fills in where the raw outline is concave (the "little extra area"
-from the convex-hull outer shell). It is drawn as **two staggered lines** — **"Poly"** up/left,
-**"Kybd"** down/right — at a smaller size than the SCAD's single size-12 line (the top band is
-narrower), centred toward the case centre. Engraved (subtracted) to match the SCAD's `difference()`.
+from the convex-hull outer shell). It is drawn as a **single "PolyKybd" line** at a smaller
+size than the SCAD's size-12 line (the top band is narrower), centred toward the case centre.
+Engraved (subtracted) to match the SCAD's `difference()`. (`BRAND_LINES` as a 2-tuple staggers
+onto two lines — **"Poly"** up/left, **"Kybd"** down/right — via `BRAND_STAG_X/Y`; the single
+line was chosen as final. The separate raised-`hull()` **PolyKybd logo** that was tried earlier
+was dropped entirely — "better without it".)
 
 ```python
 WITH_BRANDING = True
-BRAND_LINES = ("Poly", "Kybd"); BRAND_SIZE = 7.0; BRAND_DEPTH = 0.35   # two staggered lines
-BRAND_X = 12.0; BRAND_Y = -47.0; BRAND_TOP_Z = 18.5                    # block centre on the bezel
-BRAND_STAG_X = 3.0; BRAND_STAG_Y = 3.6                                 # 2nd line offset (+X, −Y)
+BRAND_LINES = ("PolyKybd",); BRAND_SIZE = 7.0; BRAND_DEPTH = 0.35      # single line (2-tuple = staggered)
+BRAND_X = 16.0; BRAND_Y = -47.0; BRAND_TOP_Z = 18.5                    # block centre on the bezel
+BRAND_STAG_X = 3.0; BRAND_STAG_Y = 3.6                                 # 2nd-line offset if 2 lines
 BRAND_FONT = ".../LiberationSans-BoldItalic.ttf"                       # Arial Bold Italic metric clone
 ```
 
@@ -210,9 +213,18 @@ at the pocket edge ≈(−55,−5), found by the vertex nearest `ENCODER_ANCHOR`
 encoder cutout stays** (that face is still cut through with the other switches — the real
 through-hole is needed); on top of it an **enlarged BLIND body recess** is added: the same
 face **enlarged** (offset `ENCODER_GROW`) to reach past the pocket edge, cut at the **same
-z-depth as the display box** (z 12.9–17.9) so it stays under the top skin (z 17.9–18.5).
+z-depth as the display box** so it stays under the top skin.
 `ENCODER_ANCHOR` is a final-frame coord, converted to the pre-`X_SHIFT` frame where the
 display Box + `cut_faces` live.
+
+⚠️ **Top skin over BOTH recesses is 1.2 mm, not 0.6 mm (thickened for the metal case).** The
+display + encoder recesses originally floored at **z17.9**, leaving only a **0.6 mm** skin under
+the z18.5 top plateau — too thin for a *metal* case. Both were dropped to floor at **z17.3**
+(skin = 18.5 − 17.3 = **1.2 mm**) by shortening the two pockets: the display `Box` height and
+the encoder blind-recess `extrude(enc_face, amount=…)` were each reduced by 0.6 mm (encoder
+`5 → 4.4`). ⚠️ **Only the BLIND recess depths changed — the encoder *through-cut* (`enc_src` in
+`cut_faces`) is untouched.** Verify the skin with a vertical raycast over each pocket (see
+"Measuring the solid" below): a hit pair of `[17.30, 18.50]` is the correct 1.2 mm skin.
 
 The recess Y-extent is additionally grown by `ENCODER_GROW_Y` (X unchanged): the enlarged
 `enc_face` is **scaled in Y about its centre** so the bbox height grows by `ENCODER_GROW_Y`
@@ -261,22 +273,87 @@ keeping the `raw_faces_all` + `offset` path.
 
 4 pilot holes for **M2×4 self-tapping** screws that fix the bottom plate (aluminium → no
 thread; the screw cuts its own on first use, so `SCREW_HOLE_D = 1.6` is a tight thread-cutting
-pilot). Drilled in `add_bottom_rabbet` in the **wedge-flattened frame**, so they run
-perpendicular to the plate, each engaging ~`SCREW_HOLE_DEPTH` (4.5 mm) of body above the ledge.
+pilot). Drilled in `add_bottom_rabbet` in the **wedge-flattened frame** — so the hole **axes
+run perpendicular to the odd, tilted bottom plane**, not to global Z (this was an explicit
+design check). Each engages `SCREW_HOLE_DEPTH` (**6.5 mm** = the M2×4 screw + ~2 mm slack) of
+body above the ledge. `WITH_SCREW_HOLES` toggles them; positions are `SCREW_HOLES` (flattened XY).
+
 ⚠️ The case walls are thin, so the holes sit in the thicker **corner L-junctions** (outer shell
 solid, any opening faces the interior). The two **front** corners are useless — the wedge makes
 the front shallow, with no material at the ledge — so the front holes are **moved north to the
-side "knees"** (where the diagonal front wall meets the vertical side wall), the southern-most
-solid+clearance spots. Positions in `SCREW_HOLES` (flattened XY); `WITH_SCREW_HOLES` toggles them.
+side "knees"** (where the diagonal front wall meets the vertical side wall).
+
+**Placement + break-out verification (how the positions were chosen):**
+- **On the ledge shelf, not the wall.** A good spot is the **centroid of the ledge-shelf face**
+  ("middle of the ledge") — hole #1 landed there naturally; #2/#3/#4 were moved onto their own
+  shelf centroids, then nudged by hand (#2 → x99).
+- **Break-out is checked, not eyeballed.** For a candidate `(x,y)`, build the **thread envelope**
+  as a `Cylinder(radius≈1.1, Ø2.2)` (the tapped/expanded ⌀, wider than the 1.6 pilot) at the
+  hole depth and compute the **volume-fill fraction** `vol(cyl ∩ part) / vol(cyl)`. ~1.0 = fully
+  buried; a low fraction (the front holes were only ~44 % enclosed when too far inboard) means
+  the thread would break out through a wall. The front holes were pushed **1.5 mm outward** until
+  the envelope was fully enclosed (edge distance ≈ 2.3 mm).
+- The **bottom-plate SVG** (`plate_svg.py`, below) emits these same `SCREW_HOLES` as Ø2.2 M2
+  clearance circles so the plate matches the tapped case.
+
+## Bottom-plate SVG (`plate_svg.py`)
+
+Emits a flat, dimensioned SVG of the bottom plate for **both** halves
+(`bottom_plate_right.svg`, `bottom_plate_left.svg`), extracted from the built STEP:
+
+```bash
+python3 plate_svg.py        # -> bottom_plate_{right,left}.svg
+```
+
+The plate **drops into the recess and rests on the ledge**, so the cut line is the **recess
+opening**, not the rim. Everything is measured in the **wedge-flattened frame** (the plane the
+plate lies in — same `flatten()` as the rabbet/holes) and drawn top-view (Y flipped for SVG,
+un-mirrored; the left file is the pure X-mirror). Two outlines + the holes:
+- **black solid = plate cut line = recess opening** — the **ledge outer wire** at flattened
+  `z ≈ +0.64` (`outer_loop(pf, 0.64)`). Add your own ~0.1–0.2 mm inward fit clearance.
+- **grey dashed = outer rim edge** (case outer boundary) at flattened `z ≈ −0.86` — reference only.
+- **red = the 4 `SCREW_HOLES`** as **Ø2.2 mm M2-clearance** circles + centre cross-hairs.
+
+`outer_loop(pf, zlevel)` grabs the largest downward face (`normal.Z < −0.7`) whose `bbox.min.Z`
+matches the level and samples its biggest wire at 0.4 mm steps. ⚠️ The two z-levels (`+0.64`
+ledge, `−0.86` rim) are the flattened-frame rabbet levels — if `LIP_DROP`/`RABBET_UP` change,
+re-check them (they are literals in `main()`).
+
+## Measuring the solid (raycast + fill fraction)
+
+The reusable way to *measure* a built solid (skin thickness, wall thickness, hole depth) without
+eyeballing — used to verify the 1.2 mm skins and the screw break-out above:
+
+```python
+from build123d import import_step
+from OCP.gp import gp_Pnt, gp_Dir, gp_Lin
+from OCP.BRepIntCurveSurface import BRepIntCurveSurface_Inter
+part = import_step("metal-case-right.step").wrapped
+def zhits(x, y):                       # sorted Z of every surface a +Z ray through (x,y) crosses
+    it = BRepIntCurveSurface_Inter(); it.Init(part, gp_Lin(gp_Pnt(x, y, -50), gp_Dir(0, 0, 1)), 1e-7)
+    zs = []
+    while it.More(): zs.append(it.Pnt().Z()); it.Next()   # note: .Z() is a METHOD, call it
+    return sorted(zs)
+# adjacent pairs = solid spans. Over a recess: [17.30, 18.50] => 1.20 mm top skin.
+```
+
+- **Skin / wall thickness** = the gap of a solid span (`zhits` pair) over the feature.
+- **Screw break-out** = volume-fill fraction of the thread envelope:
+  `Cylinder(radius=1.1, height=h)` at the hole, then `vol(cyl & part) / vol(cyl)` (build123d
+  `&` + `GProp_GProps`/`BRepGProp.VolumeProperties_s`). ~1.0 = buried; low = breaks out.
+
+The **`verify-case-step-geometry` skill** wraps both of these + the build/validate loop.
 
 ## Acceptance (validate_step.py)
 
 Both sides pass:
 
 - `valid B-Rep = True`
-- **curved faces > 0** (519 — real corner cylinders + rim tori)
+- **exactly one solid** with positive volume (`solids == 1`) — the check that catches the
+  open-shell/inward-normal failure `BRepCheck_Analyzer.IsValid()` passes (see the rabbet notes)
+- **curved faces > 0** (~700 — real corner cylinders + rim tori)
 - **max edge tolerance ≈ 1e-5 mm** (vs 0.148 in the mesh export)
-- ~1359 faces (vs ~15 000 facets), bbox 200.1 × 142.9 × **25.7** mm (with the bottom
+- ~1643 faces (vs ~15 000 facets), bbox 200.1 × 142.9 × **25.6** mm (with the bottom
   rabbet; ~24.7 mm without it, i.e. the pure SCAD reproduction)
 
 ## Memory note
