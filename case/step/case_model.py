@@ -141,6 +141,23 @@ def raw_faces_all(fn):
             pass
     return faces
 
+
+def raw_slot_faces(fn, r):
+    """OpenSCAD `offset(r=..) import(fn)` for an SVG whose paths are OPEN strokes
+    (line segments), not filled regions -- as `poly_kb_wave_right2-LED.svg` is.
+    OpenSCAD implicitly closes each open path (a zero-area back-and-forth line) and
+    `offset(r)` inflates it into a rounded stadium SLOT of width 2r.  build123d's
+    make_face rejects the open wire, so the LED slots silently vanished; here each
+    open wire is offset by `r` (Kind.ARC) into the closed stadium outline, then faced.
+    Returns file-coord faces (like raw_faces_all)."""
+    faces = []
+    for w in _wires(fn):
+        try:
+            faces.append(make_face(offset(w, amount=r, kind=Kind.ARC)))
+        except Exception:
+            pass
+    return faces
+
 # ---- 2D convex hull of a face's vertices (Andrew monotone chain) ---------
 def convex_hull_face(face, grow=0.0):
     pts = sorted({(round(v.X, 4), round(v.Y, 4)) for v in face.vertices()})
@@ -287,8 +304,11 @@ def build_right(with_branding=True):
         part = part - enc
 
     # ---- 7. LED / switch / USB holes : raw file coords, translate([-92,-72,1])
-    led = [extrude(offset(f, amount=0.9, kind=Kind.ARC), amount=2.20).moved(Location((0, 0, PCB_EDGE_H - 0.1 - 0.5)))
-           for f in raw_faces_all("poly_kb_wave_right2-LED.svg")]
+    # LED holes are OPEN strokes -> the r=0.9 offset itself forms the slot (raw_slot_faces),
+    # so extrude directly (no second offset); raw_faces_all returned [] here, hence the
+    # LED slots had gone missing entirely.
+    led = [extrude(f, amount=2.20).moved(Location((0, 0, PCB_EDGE_H - 0.1 - 0.5)))
+           for f in raw_slot_faces("poly_kb_wave_right2-LED.svg", 0.9)]
     swf = [extrude(offset(f, amount=2.5, kind=Kind.ARC), amount=3.0).moved(Location((0, 0, PCB_EDGE_H - 0.4 - 1)))
            for f in raw_faces_all("poly_kb_wave_right2-SW.svg")]
     usb = [extrude(offset(f, amount=1.1, kind=Kind.ARC), amount=8.0).moved(Location((0, 0, PCB_EDGE_H - 1.6 - 2)))
@@ -439,21 +459,25 @@ def add_bottom_rabbet(part):
                     bf = f
         z0 = bf.bounding_box().min.Z
 
-        # LIP: extrude the section face as a CONSTANT prism straight down (perpendicular),
-        # from z0 EXACTLY (no overlap -> no protrusion where a wider constant prism would
-        # otherwise stick out past the tapering wall). Its top face is the part's own
-        # bottom face, so weld with a glue-fuse (a plain fuse of coincident faces opens
-        # the shell). Force dir=-Z: bf's normal points down, so a negative amount would
-        # extrude UP into the part.
-        lip = extrude(bf, amount=LIP_DROP, dir=(0, 0, -1))
+        # LIP: a UNIFORM-width ring inset from the wedge-plane OUTER boundary, extruded
+        # straight down (perpendicular) from z0.  NB: do NOT extrude the section face `bf`
+        # itself -- its wall-rim width is driven by where the tilted wedge plane meets the
+        # wall, so on the THIN front long edge (where the case is barely taller than the
+        # wedge plane) bf's rim pinches to ~0 and no lip appears there.  Deriving the ring
+        # from `bf.outer_wire()` (which follows the full opening perimeter, front included)
+        # minus a uniform LIP_W inset gives an equal-width lip on EVERY edge.  Its top face
+        # is coincident with the part's bottom over the wall, so glue-fuse welds it (a plain
+        # fuse of coincident faces opens the shell); the ring segments over the open bottom
+        # form the ledge the plate rests on.
+        of = make_face(bf.outer_wire())
+        of_in = offset(of, amount=-LIP_W, kind=Kind.ARC)
+        band = of - of_in
+        lip = extrude(band, amount=LIP_DROP, dir=(0, 0, -1))
         p = _glue_fuse(p, lip)
-        # LEDGE: recess the inner region up. Footprint = a UNIFORM inward offset of the
-        # real wedge-plane section (clean convex polygon of bf's own vertices), so the
-        # retained lip band is the same width on every side. (scale(1.08) scales about
-        # the origin, pushing the far short-side ends out more -> non-uniform band.)
-        inner = offset(convex_hull_face(bf), amount=-LIP_W,
-                       kind=Kind.ARC).moved(Location((0, 0, z0)))
-        rab = extrude(inner.moved(Location((0, 0, -LIP_DROP - 0.05))),
+        # LEDGE: recess the inner region (inside the lip ring) up so the ledge sits
+        # RABBET_UP above the wedge plane -- same uniform inset boundary as the lip ring
+        # (of_in already lies on the wedge plane at z0).
+        rab = extrude(of_in.moved(Location((0, 0, -LIP_DROP - 0.05))),
                       amount=LIP_DROP + RABBET_UP + 0.05)
         p = p - rab
         return p.rotate(Rax, -ang)                    # rotate back
