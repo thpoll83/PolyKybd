@@ -65,7 +65,7 @@ SCREW_HOLE_DEPTH = 4.5   # into the body from the wedge plane (M2x4 screw)
 # #2 is the mirror of #1 about the case centreline (analog + a touch more outward); #3/#4
 # sit on their local ledge-shelf centroid ("middle of the lower ledge") so the matching
 # plate hole is not out near the plate edge.
-SCREW_HOLES = [(-88.0, 62.0), (97.7, 60.0),      # #1 back-left, #2 back-right (both on ledge-shelf centroid)
+SCREW_HOLES = [(-88.0, 62.0), (99.0, 60.0),      # #1 back-left (ledge centroid), #2 back-right (x set to 99)
                (-88.5, -18.0), (99.0, -24.0)]    # #3 front-left knee, #4 front-right knee (ledge-centred)
 
 # ---- USB inner-wall chamfer (POST-PROCESSING, not in the .scad) ----------
