@@ -324,9 +324,9 @@ def build_right(with_branding=True):
             enc_face = scale(enc_face, by=(1, sy, 1))
             b2 = enc_face.bounding_box()           # build123d scale() is not about origin
             enc_face = enc_face.moved(Location((0, cy0 - (b2.min.Y + b2.max.Y) / 2, 0)))
-        enc = extrude(enc_face, amount=5)
-        enc = enc.moved(Location((0, 0, 12.9)))   # z 12.9..17.9
-        part = part - enc
+        enc = extrude(enc_face, amount=4.4)       # 4.4 (was 5): top 17.3, not 17.9, so the
+        enc = enc.moved(Location((0, 0, 12.9)))   # skin over the encoder recess is 1.2mm too
+        part = part - enc                          # (matches the display recess) z 12.9..17.3
 
     # ---- 7. LED / switch / USB holes : raw file coords, translate([-92,-72,1])
     # LED holes are OPEN strokes -> the r=0.9 offset itself forms the slot (raw_slot_faces),
