@@ -61,7 +61,7 @@ LIP_W     = 2.0         # rim/ledge-cut inset. ⚠️ Must be SMALLER than the T
 # side wall) -- the southern-most spots with solid material + clearance from the shell.
 WITH_SCREW_HOLES = True
 SCREW_HOLE_D     = 1.6   # pilot dia for M2 thread-cutting into aluminium (tight)
-SCREW_HOLE_DEPTH = 4.5   # into the body from the wedge plane (M2x4 screw)
+SCREW_HOLE_DEPTH = 6.5   # into the body from the wedge plane (M2x4 screw + 2mm extra space)
 # #2 is the mirror of #1 about the case centreline (analog + a touch more outward); #3/#4
 # sit on their local ledge-shelf centroid ("middle of the lower ledge") so the matching
 # plate hole is not out near the plate edge.
@@ -304,10 +304,13 @@ def build_right(with_branding=True):
 
     # ---- 6. extra space around display : cube([30,69,5]) centred @ (-75,21.5,15.4)
     #  Round the 4 vertical corners of this pocket (covers display + encoder area).
-    disp = Box(30, 69, 5)
+    #  Recess TOP lowered 17.9 -> 17.3 (height 5 -> 4.4, floor kept at 12.9) so the top
+    #  skin over the display/status-screen area is 1.2 mm (18.5-17.3) not 0.6 mm -- 0.6 mm
+    #  is too thin to machine in aluminium.  Pocket is 0.6 mm shallower as a result.
+    disp = Box(30, 69, 4.4)
     if DISPLAY_CORNER_R > 0:
         disp = fillet(disp.edges().filter_by(Axis.Z), radius=DISPLAY_CORNER_R)
-    part = part - disp.moved(Location((-75, 21.5, 15.4)))
+    part = part - disp.moved(Location((-75, 21.5, 15.1)))
     # rotary-encoder BLIND body recess: the encoder's own cutout shape, enlarged to
     # reach the pocket edge, at the SAME z-depth as the display box (z 12.9..17.9) so it
     # stays blind under the top skin.  ADDED on top of the actual through-cut (enc_src is
