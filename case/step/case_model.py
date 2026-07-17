@@ -60,10 +60,13 @@ LIP_W     = 2.0         # rim/ledge-cut inset. ⚠️ Must be SMALLER than the T
 # NORTH to the side-wall "knees" (where the diagonal front wall meets the vertical
 # side wall) -- the southern-most spots with solid material + clearance from the shell.
 WITH_SCREW_HOLES = True
-SCREW_HOLE_D     = 1.7   # pilot dia for M2 thread-cutting into aluminium (tight)
+SCREW_HOLE_D     = 1.6   # pilot dia for M2 thread-cutting into aluminium (tight)
 SCREW_HOLE_DEPTH = 4.5   # into the body from the wedge plane (M2x4 screw)
-SCREW_HOLES = [(-88.0, 62.0), (97.0, 61.0),    # back-left, back-right corners
-               (-90.0, -16.0), (100.0, -22.0)]  # front holes moved north to the side knees
+# #2 is the mirror of #1 about the case centreline (analog + a touch more outward); #3/#4
+# sit on their local ledge-shelf centroid ("middle of the lower ledge") so the matching
+# plate hole is not out near the plate edge.
+SCREW_HOLES = [(-88.0, 62.0), (99.0, 62.0),      # #1 back-left (kept), #2 back-right (mirror of #1)
+               (-88.5, -18.0), (99.0, -24.0)]    # #3 front-left knee, #4 front-right knee (ledge-centred)
 
 # ---- USB inner-wall chamfer (POST-PROCESSING, not in the .scad) ----------
 # A 45 deg lead-in on the INTERIOR face of the wall around each USB window, so

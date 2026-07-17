@@ -260,7 +260,7 @@ keeping the `raw_faces_all` + `offset` path.
 ## Bottom-plate screw holes (POST-PROCESSING — not in the .scad)
 
 4 pilot holes for **M2×4 self-tapping** screws that fix the bottom plate (aluminium → no
-thread; the screw cuts its own on first use, so `SCREW_HOLE_D = 1.7` is a tight thread-cutting
+thread; the screw cuts its own on first use, so `SCREW_HOLE_D = 1.6` is a tight thread-cutting
 pilot). Drilled in `add_bottom_rabbet` in the **wedge-flattened frame**, so they run
 perpendicular to the plate, each engaging ~`SCREW_HOLE_DEPTH` (4.5 mm) of body above the ledge.
 ⚠️ The case walls are thin, so the holes sit in the thicker **corner L-junctions** (outer shell
