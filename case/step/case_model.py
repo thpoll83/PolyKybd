@@ -66,7 +66,7 @@ SCREW_HOLE_DEPTH = 4.5   # into the body from the wedge plane (M2x4 screw)
 # sit on their local ledge-shelf centroid ("middle of the lower ledge") so the matching
 # plate hole is not out near the plate edge.
 SCREW_HOLES = [(-88.0, 62.0), (99.0, 60.0),      # #1 back-left (ledge centroid), #2 back-right (x set to 99)
-               (-87.5, -16.0), (97.5, -22.5)]    # #3/#4 front knees, moved inside for more plate-edge distance
+               (-88.2, -17.3), (98.6, -23.6)]    # #3/#4 front knees, moved 1.5mm outside for wall around the thread
 
 # ---- USB inner-wall chamfer (POST-PROCESSING, not in the .scad) ----------
 # A 45 deg lead-in on the INTERIOR face of the wall around each USB window, so
@@ -113,7 +113,7 @@ WITH_BRANDING = True
 BRAND_LINES  = ("PolyKybd",)  # single line (a 2-tuple would stagger onto two lines)
 BRAND_SIZE   = 7.0      # smaller than the SCAD size-12 single line (top band is narrower)
 BRAND_DEPTH  = 0.35     # SCAD text_height
-BRAND_X      = 22.0     # moved +10 in X toward the switch holes (was 12)
+BRAND_X      = 16.0     # +4 in X from the original 12 (was nudged to 22, pulled back 6)
 BRAND_Y      = -47.0
 BRAND_STAG_X = 3.0      # (two-line only) 2nd line shifted +X (right) relative to the 1st
 BRAND_STAG_Y = 3.6      # (two-line only) half the vertical gap between the two lines
