@@ -251,8 +251,23 @@ implicitly closes each degenerate path and inflates it into a rounded **slot** o
 `2·0.9`. build123d's `make_face` rejects an open wire, so `raw_faces_all` returned `[]` and
 the **LED light-pipe slots silently vanished**. `raw_slot_faces(fn, r)` reproduces OpenSCAD:
 it offsets each open wire by `r` (`Kind.ARC`) into the closed stadium outline, then faces it
-(extrude directly — the `r` offset already IS the slot, so no second offset). The switch/USB
-SVGs are filled regions and keep the `raw_faces_all` + `offset` path.
+(extrude directly — the `r` offset already IS the slot, so no second offset). ⚠️ **The switch
+SVG `poly_kb_wave_right2-SW.svg` is the SAME open-stroke case** (2 slots on the wall *opposite*
+the LED slots) — it also went through `raw_faces_all` → `[]`, so the **switch openings were
+missing too**; it now uses `raw_slot_faces(..., 2.5)`. Only the **USB** SVG is filled regions,
+keeping the `raw_faces_all` + `offset` path.
+
+## Bottom-plate screw holes (POST-PROCESSING — not in the .scad)
+
+4 pilot holes for **M2×4 self-tapping** screws that fix the bottom plate (aluminium → no
+thread; the screw cuts its own on first use, so `SCREW_HOLE_D = 1.7` is a tight thread-cutting
+pilot). Drilled in `add_bottom_rabbet` in the **wedge-flattened frame**, so they run
+perpendicular to the plate, each engaging ~`SCREW_HOLE_DEPTH` (4.5 mm) of body above the ledge.
+⚠️ The case walls are thin, so the holes sit in the thicker **corner L-junctions** (outer shell
+solid, any opening faces the interior). The two **front** corners are useless — the wedge makes
+the front shallow, with no material at the ledge — so the front holes are **moved north to the
+side "knees"** (where the diagonal front wall meets the vertical side wall), the southern-most
+solid+clearance spots. Positions in `SCREW_HOLES` (flattened XY); `WITH_SCREW_HOLES` toggles them.
 
 ## Acceptance (validate_step.py)
 

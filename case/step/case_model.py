@@ -49,6 +49,22 @@ LIP_W     = 2.0         # rim/ledge-cut inset. ⚠️ Must be SMALLER than the T
                         # into the open cavity -- at 4.0 the front ledge vanished ("rim missing on
                         # the thin edge"); 2.0 restores a uniform ledge matching the reference.
 
+# ---- bottom-plate screw pilot holes (POST-PROCESSING, not in the .scad) ----
+# 4 pilot holes for M2x4 self-tapping screws that fix the bottom plate.  Aluminium
+# case -> no thread needed, the screw cuts its own on first use; sized as a tight
+# thread-cutting pilot (~M2 tap-drill).  Positions are in the WEDGE-FLATTENED frame
+# (same flatten as the rabbet), so the holes run perpendicular to the plate.  The
+# walls are thin, so the holes sit in the thicker corner L-junctions (outer shell
+# solid, any opening faces the interior cavity).  ⚠️ The FRONT case is shallow (the
+# wedge grazes it) with no material at the ledge, so the two front holes are moved
+# NORTH to the side-wall "knees" (where the diagonal front wall meets the vertical
+# side wall) -- the southern-most spots with solid material + clearance from the shell.
+WITH_SCREW_HOLES = True
+SCREW_HOLE_D     = 1.7   # pilot dia for M2 thread-cutting into aluminium (tight)
+SCREW_HOLE_DEPTH = 4.5   # into the body from the wedge plane (M2x4 screw)
+SCREW_HOLES = [(-88.0, 62.0), (97.0, 61.0),    # back-left, back-right corners
+               (-90.0, -16.0), (100.0, -22.0)]  # front holes moved north to the side knees
+
 # ---- USB inner-wall chamfer (POST-PROCESSING, not in the .scad) ----------
 # A 45 deg lead-in on the INTERIOR face of the wall around each USB window, so
 # the connector/cable enters cleanly.  Modelled as a subtractive funnel (a boolean
@@ -312,8 +328,11 @@ def build_right(with_branding=True):
     # LED slots had gone missing entirely.
     led = [extrude(f, amount=2.20).moved(Location((0, 0, PCB_EDGE_H - 0.1 - 0.5)))
            for f in raw_slot_faces("poly_kb_wave_right2-LED.svg", 0.9)]
-    swf = [extrude(offset(f, amount=2.5, kind=Kind.ARC), amount=3.0).moved(Location((0, 0, PCB_EDGE_H - 0.4 - 1)))
-           for f in raw_faces_all("poly_kb_wave_right2-SW.svg")]
+    # SW holes are ALSO open strokes (2 slots on the wall OPPOSITE the LED slots) -> the
+    # r=2.5 offset IS the slot, so raw_slot_faces + extrude directly.  raw_faces_all returned
+    # [] here too, so these switch openings were missing entirely (like the LED slots were).
+    swf = [extrude(f, amount=3.0).moved(Location((0, 0, PCB_EDGE_H - 0.4 - 1)))
+           for f in raw_slot_faces("poly_kb_wave_right2-SW.svg", 2.5)]
     usb = [extrude(offset(f, amount=1.1, kind=Kind.ARC), amount=8.0).moved(Location((0, 0, PCB_EDGE_H - 1.6 - 2)))
            for f in raw_faces_all("poly_kb_wave_right2-USB.svg")]
     holes = Compound(led + swf + usb).moved(Location((-92, -72, 1)))
@@ -494,6 +513,15 @@ def add_bottom_rabbet(part):
         rab = extrude(inner.moved(Location((0, 0, -LIP_DROP - 0.05))),
                       amount=LIP_DROP + RABBET_UP + 0.05)
         p = p - rab
+        # SCREW HOLES: drilled in the flattened frame so they run perpendicular to the
+        # plate.  Each spans from below the lip (clearance through the rim) up SCREW_HOLE_DEPTH
+        # into the body.  Small subtractions; where the corner material is only an L-junction
+        # the hole is a partial slot (screw still cuts thread into the solid side).
+        if WITH_SCREW_HOLES:
+            h = SCREW_HOLE_DEPTH + LIP_DROP + 1.0
+            for (hx, hy) in SCREW_HOLES:
+                p = p - Cylinder(radius=SCREW_HOLE_D / 2, height=h).moved(
+                    Location((hx, hy, z0 + SCREW_HOLE_DEPTH - h / 2)))
         return p.rotate(Rax, -ang)                    # rotate back
     except Exception as e:
         print("add_bottom_rabbet skipped:", e)
