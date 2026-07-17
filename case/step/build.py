@@ -30,11 +30,18 @@ def main():
     # halves from it so the logo reads correctly on each (left is not backwards).
     t = time.time()
     base = cm.build_right(with_branding=False)
-    right = cm.add_branding(base, x=cm.BRAND_X, y=cm.BRAND_Y) if cm.WITH_BRANDING else base
+    right = base
+    if cm.WITH_BRANDING:
+        right = cm.add_branding(right, x=cm.BRAND_X, y=cm.BRAND_Y)
+    if cm.WITH_LOGO:
+        right = cm.add_logo(right, x=cm.LOGO_CENTER[0], y=cm.LOGO_CENTER[1])
     _report("right", right, time.time() - t)
     t = time.time()
     left = base.mirror(Plane.YZ)
-    left = cm.add_branding(left, x=-cm.BRAND_X, y=cm.BRAND_Y) if cm.WITH_BRANDING else left
+    if cm.WITH_BRANDING:
+        left = cm.add_branding(left, x=-cm.BRAND_X, y=cm.BRAND_Y)
+    if cm.WITH_LOGO:
+        left = cm.add_logo(left, x=-cm.LOGO_CENTER[0], y=cm.LOGO_CENTER[1], mirror_x=True)
     _report("left", left, time.time() - t)
 
 if __name__ == "__main__":

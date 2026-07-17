@@ -212,10 +212,33 @@ z-depth as the display box** (z 12.9–17.9) so it stays under the top skin (z 1
 `ENCODER_ANCHOR` is a final-frame coord, converted to the pre-`X_SHIFT` frame where the
 display Box + `cut_faces` live.
 
+The recess is additionally **extended in Y only** by `ENCODER_GROW_Y` (the blind body is
+unioned with two copies shifted ±`ENCODER_GROW_Y/2` in Y, so the X footprint is unchanged
+and the Y span grows by `ENCODER_GROW_Y` total) — tuning the fit without widening X.
+
 ```python
 WITH_ENCODER_POCKET = True
 ENCODER_ANCHOR = (-55.0, -5.0)   # final-frame corner of the encoder cutout
 ENCODER_GROW   = 3.5             # offset each side: widen the blind body recess
+ENCODER_GROW_Y = 1.0             # extra Y-only span (X left as-is)
+```
+
+## Logo: engraved PolyTasten/PolyFabriq wordmark under the display (not in the .scad)
+
+`add_logo()` engraves the stylised-keyboard wordmark from `polykybd.svg` on the **same top
+plateau (z=18.5)** as the branding text, `LOGO_DEPTH` deep, on the front bezel **under the
+display cutout**. `polykybd.svg` carries two side-by-side copies; only the left copy
+(`bbox.min.X < 28`) is kept, scaled by `LOGO_SCALE`, and re-centred on `LOGO_CENTER` from the
+**final** prism bbox (build123d's `scale()` is not about the origin, so recentring after
+scale is required). Like the text it is applied **after the YZ mirror, per side** — the left
+half passes `mirror_x=True` so the wordmark reads un-mirrored on both halves.
+
+```python
+WITH_LOGO   = True
+LOGO_SVG    = "../../polykybd.svg"
+LOGO_CENTER = (-70.0, -46.0)     # final-frame XY, front bezel under the display
+LOGO_SCALE  = 0.45               # raw wordmark ≈25×24 mm → ≈11.4×11 mm
+LOGO_DEPTH  = 0.35               # same engrave depth as the text
 ```
 
 ## ⚠️ Two corrections vs. the recipe (learned from the geometry)
