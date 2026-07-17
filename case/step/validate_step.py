@@ -10,13 +10,21 @@ import sys
 from OCP.STEPControl import STEPControl_Reader
 from OCP.BRepCheck import BRepCheck_Analyzer
 from OCP.TopExp import TopExp_Explorer
-from OCP.TopAbs import TopAbs_FACE, TopAbs_EDGE
+from OCP.TopAbs import TopAbs_FACE, TopAbs_EDGE, TopAbs_SOLID
 from OCP.TopoDS import TopoDS
 from OCP.BRepAdaptor import BRepAdaptor_Surface
 from OCP.GeomAbs import GeomAbs_Plane
 from OCP.BRep import BRep_Tool
 from OCP.Bnd import Bnd_Box
 from OCP.BRepBndLib import BRepBndLib
+from OCP.GProp import GProp_GProps
+from OCP.BRepGProp import BRepGProp
+
+
+def _count(shape, typ):
+    ex = TopExp_Explorer(shape, typ); n = 0
+    while ex.More(): n += 1; ex.Next()
+    return n
 
 
 def check(path):
@@ -41,9 +49,17 @@ def check(path):
     bb = Bnd_Box(); BRepBndLib.Add_s(s, bb)
     xmin, ymin, zmin, xmax, ymax, zmax = bb.Get()
 
-    ok = valid and curved > 0 and mt <= 1e-3 and (planar + curved) < 2000
+    # A closed solid: exactly one SOLID with positive volume.  BRepCheck_Analyzer.IsValid()
+    # is topological only -- it happily passes an OPEN SHELL (solids=0) whose bottom faces
+    # read INWARD (you see through the bottom).  This is the check that catches that.
+    n_solid = _count(s, TopAbs_SOLID)
+    g = GProp_GProps(); BRepGProp.VolumeProperties_s(s, g); vol = g.Mass()
+
+    ok = (valid and curved > 0 and mt <= 1e-3 and (planar + curved) < 2000
+          and n_solid == 1 and vol > 1.0)
     print(f"=== {path} ===")
     print(f"  valid B-Rep      : {valid}")
+    print(f"  solids           : {n_solid}   volume: {vol:.1f}")
     print(f"  faces            : {planar+curved}  (planar {planar}, curved {curved})")
     print(f"  max edge tol     : {mt:.2e} mm")
     print(f"  edges            : {n_edge}")

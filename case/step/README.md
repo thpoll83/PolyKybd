@@ -70,32 +70,39 @@ The reference `parts/metal-case-*.step` adds, around the wedge-cut bottom openin
 the *"small extrusion perpendicular to the cut-off"* (an outer **lip** dropping below the
 wedge plane) plus the *"inner cut-out rim"* (a recessed **ledge** the plate rests on).
 
-`add_bottom_rabbet()` reproduces it. Flatten the wedge plane to horizontal and grab the real
-wedge-plane bottom face `bf`, then build a **uniform-width lip ring** from `bf`'s OUTER wire:
-`band = make_face(bf.outer_wire()) − offset(that, −LIP_W)`, extruded a *constant* `LIP_DROP`
-straight down the plane normal (`dir=(0,0,-1)`). The inner region (inside the same
-`offset(outer, −LIP_W)` boundary) is then recessed so the ledge sits `RABBET_UP` above the
-plane (pocket = `LIP_DROP+RABBET_UP` ≈ 2 mm = `case_bottom_thickness`), and the part is
-rotated back.
+`add_bottom_rabbet()` reproduces it. Flatten the wedge plane to horizontal, grab the real
+wedge-plane bottom face `bf`, then — the recipe that is BOTH a uniform rim AND an
+export-stable closed solid (this took several wrong tries, see below):
+- **LIP** = a **full plate** from the real outer boundary `make_face(bf.outer_wire())`,
+  extruded a constant `LIP_DROP` straight down the plane normal (`dir=(0,0,-1)`), glue-fused
+  to the part (`BOPAlgo_GlueShift`, `_glue_fuse` — the plate top is coincident with the wall
+  bottom).
+- **LEDGE** = reopen the interior + recess it `RABBET_UP` above the plane using a
+  **convex-hull** inset `offset(convex_hull_face(bf), −LIP_W)` — leaving the `LIP_W` rim band
+  (pocket = `LIP_DROP+RABBET_UP` ≈ 2 mm = `case_bottom_thickness`). Then rotate back.
 
-⚠️ **Derive the ring from `bf.outer_wire()`, NOT from `bf` itself, and NOT from its convex
-hull.** `bf`'s *wall-rim width* is set by where the tilted wedge plane meets the wall, so on
-the **thin front long edge** — where the case is barely taller than the wedge plane — that
-rim **pinches to ~0** and `extrude(bf)` produces **no lip there** (the "rim missing on the
-thin long edge" bug). The convex hull of `bf` straight-lines any concavity and mis-insets it.
-Insetting the real outer boundary by a uniform `LIP_W` gives an equal-width rim on **every**
-edge, front included. Traps that remain:
+⚠️ **This is applied LAST in `build_right` (after the USB-chamfer + re-cut booleans), not at
+step 7.** Running those later wall/keycap booleans on top of the remodelled rabbet bottom
+turned the cut into a NO-OP that left an **open shell**.
+
+⚠️ **Two shape choices are forced by what survives STEP export** — `validate_step.py` now
+counts `solids` (must be **1**), because `BRepCheck_Analyzer.IsValid()` is topological only
+and happily passes an **open shell** (`solids=0`) whose bottom faces read **inward** (you see
+through the bottom). Both traps produce an in-memory `solids=1` that `export_step` →
+re-import collapses to `solids=0`:
+- **LIP must be the full plate, NOT a thin ring** (`of − offset(of,−LIP_W)`). The ring
+  glue-fuses to a near-degenerate solid that STEP re-reads as an open shell; the full plate
+  (single clean outer boundary) round-trips as `solids=1`. The plate still yields a uniform
+  rim because the LEDGE cut reopens its centre.
+- **LEDGE must be the convex hull, NOT a boolean-offset of the real outer wire**
+  (`offset(make_face(bf.outer_wire()),−LIP_W)`). The real-wire offset subtracts to another
+  export-unstable solid; `convex_hull_face(bf)` is a clean polygon AND — on this near-convex
+  outline (hull area within ~0.4 % of the real face) — insets to the same `LIP_W` band on
+  every edge, **front included**. (The "rim missing on the thin front edge" bug was NOT the
+  ledge — it was the old `extrude(bf)` lip, whose wall-rim width pinches to ~0 where the
+  tilted wedge plane grazes the thin front wall. The full plate covers the front, so the rim
+  is now uniform.)
 - `extrude(bf, negative)` extrudes UP along the face's downward normal — force `dir=(0,0,-1)`.
-- The lip ring's top face is coincident with the part's bottom over the wall, so a plain fuse
-  opens the shell — weld it with a **glue-fuse** (`BOPAlgo_GlueShift`, see `_glue_fuse`).
-- Earlier wrong ways (kept as a warning): a `scale(1.08)` silhouette scales about the origin
-  (non-uniform band, wider on the short sides); translating a wall *slice* down carries the
-  wall taper (lip face tapers instead of being perpendicular).
-
-Note the old warning *"never offset the extracted `bf.outer_wire()` — it leaves free edges"*
-no longer holds for `make_face(outer_wire)` then `offset(face, …, Kind.ARC)`: that path
-booleans into a **single closed solid** (verified `solids=1`, both sides PASS). It was
-offsetting the raw *wire* that failed.
 
 Parameters at the top of `case_model.py`:
 
@@ -103,7 +110,7 @@ Parameters at the top of `case_model.py`:
 WITH_BOTTOM_RABBET = True
 LIP_DROP  = 1.0    # lip depth, perpendicular from the cut-off plane
 RABBET_UP = 1.0    # inner ledge recess above the cut-off plane
-LIP_W     = 4.0    # outer lip ring width (uniform on every edge)
+LIP_W     = 4.0    # outer lip band width (uniform on every edge)
 ```
 
 Set `WITH_BOTTOM_RABBET = False` for the pure SCAD reproduction.

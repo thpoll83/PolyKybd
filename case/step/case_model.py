@@ -317,8 +317,6 @@ def build_right(with_branding=True):
     part = part - holes
 
     part = part.moved(Location((X_SHIFT, 0, 0)))   # main(): translate([5,0,0])
-    if WITH_BOTTOM_RABBET:
-        part = add_bottom_rabbet(part)
 
     # ---- 8. re-cut the switch/LED openings on the FINAL geometry.
     #  OCCT's boolean occasionally NO-OPs a cut against the complex intermediate part
@@ -332,6 +330,15 @@ def build_right(with_branding=True):
     # ---- 9. USB inner chamfer + branding (post-processing, see params) --------
     if WITH_USB_CHAMFER:
         part = add_usb_chamfer(part)
+    # ---- 10. bottom-plate rabbet -- applied LAST (after the USB-chamfer + re-cut
+    #  booleans).  The rabbet remodels the bottom wedge opening (glue-fused lip ring +
+    #  ledge cut); running the later wall booleans ON TOP of that remodelled bottom made
+    #  the cut NO-OP into an OPEN SHELL (solids=0 -- you could see through the bottom
+    #  faces).  Doing the rabbet as the final op keeps the whole part a single closed
+    #  solid.  It touches only the bottom, so ordering it after the wall/keycap ops is
+    #  geometrically equivalent.
+    if WITH_BOTTOM_RABBET:
+        part = add_bottom_rabbet(part)
     if WITH_BRANDING and with_branding:
         part = add_branding(part)
     return part
@@ -459,25 +466,29 @@ def add_bottom_rabbet(part):
                     bf = f
         z0 = bf.bounding_box().min.Z
 
-        # LIP: a UNIFORM-width ring inset from the wedge-plane OUTER boundary, extruded
-        # straight down (perpendicular) from z0.  NB: do NOT extrude the section face `bf`
-        # itself -- its wall-rim width is driven by where the tilted wedge plane meets the
-        # wall, so on the THIN front long edge (where the case is barely taller than the
-        # wedge plane) bf's rim pinches to ~0 and no lip appears there.  Deriving the ring
-        # from `bf.outer_wire()` (which follows the full opening perimeter, front included)
-        # minus a uniform LIP_W inset gives an equal-width lip on EVERY edge.  Its top face
-        # is coincident with the part's bottom over the wall, so glue-fuse welds it (a plain
-        # fuse of coincident faces opens the shell); the ring segments over the open bottom
-        # form the ledge the plate rests on.
+        # LIP: a FULL plate under the whole opening, from the REAL outer boundary
+        # `make_face(bf.outer_wire())`, extruded straight down (perpendicular) from z0.
+        # Two hard-won constraints decide this shape:
+        #  * NOT `extrude(bf)` -- `bf`'s wall-rim width is driven by where the tilted wedge
+        #    plane meets the wall, so on the THIN front long edge (case barely taller than
+        #    the wedge plane) that rim pinches to ~0 and no lip appears there. The full
+        #    outer-boundary plate covers the front too, so the rim survives (see LEDGE).
+        #  * NOT a thin RING (`of - of_in`): a ring glue-fuses to an in-memory "solid" that
+        #    STEP export re-reads as an OPEN SHELL (solids=0, bottom faces read inward --
+        #    you see through the bottom). The full plate has a single clean outer boundary,
+        #    welds coincident with the wall bottom, and survives the export round-trip.
         of = make_face(bf.outer_wire())
-        of_in = offset(of, amount=-LIP_W, kind=Kind.ARC)
-        band = of - of_in
-        lip = extrude(band, amount=LIP_DROP, dir=(0, 0, -1))
+        lip = extrude(of, amount=LIP_DROP, dir=(0, 0, -1))
         p = _glue_fuse(p, lip)
-        # LEDGE: recess the inner region (inside the lip ring) up so the ledge sits
-        # RABBET_UP above the wedge plane -- same uniform inset boundary as the lip ring
-        # (of_in already lies on the wedge plane at z0).
-        rab = extrude(of_in.moved(Location((0, 0, -LIP_DROP - 0.05))),
+        # LEDGE: reopen the interior + recess it `RABBET_UP` above the plane, leaving the
+        # LIP_W rim band. Footprint = a CLEAN CONVEX-HULL inset (`convex_hull_face(bf)`):
+        # a boolean-offset of the real outer wire subtracts to another export-unstable
+        # solid, whereas the convex hull is a clean polygon AND, on this near-convex
+        # outline (hull area within ~0.4% of the real face), insets to the same LIP_W band
+        # on every edge including the front.
+        inner = offset(convex_hull_face(bf), amount=-LIP_W,
+                       kind=Kind.ARC).moved(Location((0, 0, z0)))
+        rab = extrude(inner.moved(Location((0, 0, -LIP_DROP - 0.05))),
                       amount=LIP_DROP + RABBET_UP + 0.05)
         p = p - rab
         return p.rotate(Rax, -ang)                    # rotate back
