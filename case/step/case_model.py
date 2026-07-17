@@ -65,7 +65,7 @@ SCREW_HOLE_DEPTH = 4.5   # into the body from the wedge plane (M2x4 screw)
 # #2 is the mirror of #1 about the case centreline (analog + a touch more outward); #3/#4
 # sit on their local ledge-shelf centroid ("middle of the lower ledge") so the matching
 # plate hole is not out near the plate edge.
-SCREW_HOLES = [(-88.0, 62.0), (99.0, 62.0),      # #1 back-left (kept), #2 back-right (mirror of #1)
+SCREW_HOLES = [(-88.0, 62.0), (97.7, 60.0),      # #1 back-left, #2 back-right (both on ledge-shelf centroid)
                (-88.5, -18.0), (99.0, -24.0)]    # #3 front-left knee, #4 front-right knee (ledge-centred)
 
 # ---- USB inner-wall chamfer (POST-PROCESSING, not in the .scad) ----------
@@ -110,13 +110,13 @@ ENCODER_GROW_Y = 1.0             # extra Y-only extension of the recess (total, 
 # cluster (the extra bezel the hull fills in vs the concave outline).  Engraved to
 # match the SCAD (difference()); flip WITH_BRANDING/sign of depth for raised text.
 WITH_BRANDING = True
-BRAND_LINES  = ("Poly", "Kybd")   # two staggered lines (Kybd sits lower+right), logo-style
+BRAND_LINES  = ("PolyKybd",)  # single line (a 2-tuple would stagger onto two lines)
 BRAND_SIZE   = 7.0      # smaller than the SCAD size-12 single line (top band is narrower)
 BRAND_DEPTH  = 0.35     # SCAD text_height
 BRAND_X      = 12.0     # centre of the block (mine frame, right side) - toward case centre
 BRAND_Y      = -47.0
-BRAND_STAG_X = 3.0      # 2nd line shifted +X (right) relative to the 1st
-BRAND_STAG_Y = 3.6      # half the vertical gap: line1 up +STAG_Y, line2 down -STAG_Y
+BRAND_STAG_X = 3.0      # (two-line only) 2nd line shifted +X (right) relative to the 1st
+BRAND_STAG_Y = 3.6      # (two-line only) half the vertical gap between the two lines
 BRAND_TOP_Z  = 18.5     # flat top plateau z in the bezel region
 BRAND_FONT   = "/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf"
 
@@ -425,8 +425,11 @@ def add_branding(part, x=None, y=None):
     try:
         cx = BRAND_X if x is None else x
         cy = BRAND_Y if y is None else y
-        placed = [(BRAND_LINES[0], cx - BRAND_STAG_X, cy + BRAND_STAG_Y),
-                  (BRAND_LINES[1], cx + BRAND_STAG_X, cy - BRAND_STAG_Y)]
+        if len(BRAND_LINES) == 1:                       # single centred line "PolyKybd"
+            placed = [(BRAND_LINES[0], cx, cy)]
+        else:                                           # two staggered lines
+            placed = [(BRAND_LINES[0], cx - BRAND_STAG_X, cy + BRAND_STAG_Y),
+                      (BRAND_LINES[1], cx + BRAND_STAG_X, cy - BRAND_STAG_Y)]
         prisms = []
         for word, wx, wy in placed:
             with contextlib.redirect_stderr(io.StringIO()):
