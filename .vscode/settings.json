@@ -23,5 +23,11 @@
     ],
     "cSpell.enableFiletypes": [
         "markdown"
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#ec6308",
+        "titleBar.activeBackground": "#d03f28",
+        "titleBar.inactiveBackground": "#530404",
+        "titleBar.activeForeground": "#FEFBFB"
+    }
 }
