@@ -1,8 +1,18 @@
 # split42 (poly_corne) — board redesign notes for the next revision
 
 Collected 2026-07-17. Applies to `poly_corne_split42_left` v1.0 (the only fabbed
-layout — **all boards in hand are the LEFT layout**; the right layout exists only in
-KiCad). Items 1 and 3 are confirmed defects of v1.0; 2 and 4 are feature additions.
+layout — **all boards in hand are the LEFT layout**). Note:
+`poly_corne_split42_right.kicad_pcb` is a **byte-identical copy of
+`poly_kybd_split72_right.kicad_pcb`** (an untouched stub — the split42 right side has
+not been designed yet; that design work is item 0 below). Items 1 and 3 are confirmed
+defects of v1.0-left; 2 and 4 are feature additions.
+
+## 0. Design the split42 RIGHT board (currently a split72 stub)
+
+`poly_corne_split42_right.kicad_pcb` still IS split72-right verbatim. When deriving
+the real right board, apply items 1–4 from the start — especially item 1, since the
+orphaned link pads were evidently introduced during the left board's rework of the
+(correct) split72 layout, i.e. exactly the step about to be repeated for the right.
 
 ## 1. Link USB-C: hard-wire BOTH plug orientations (v1.0 defect — the split-link bug)
 
@@ -19,8 +29,8 @@ entire split42 "split link dead / transport_fail=100%" saga (full record:
 
 **Fix in the redesign:** route both orientation pads to the MCU in board copper —
 `USB2.8 → USB2.6` and `USB2.5 → USB2.7` (two short traces joining each B-row pad to
-its A-row partner), exactly as the (unbuilt) right layout and split72 already do.
-Keep U26 for its actual ESD job, but never as a signal path.
+its A-row partner), exactly as split72 already does. Keep U26 for its actual ESD
+job, but never as a signal path.
 
 **Bench fix for existing v1.0 boards:** reflow/populate U26, or bodge the two pad
 pairs above — on BOTH halves.
