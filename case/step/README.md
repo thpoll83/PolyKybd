@@ -96,12 +96,16 @@ re-import collapses to `solids=0`:
   rim because the LEDGE cut reopens its centre.
 - **LEDGE must be the convex hull, NOT a boolean-offset of the real outer wire**
   (`offset(make_face(bf.outer_wire()),−LIP_W)`). The real-wire offset subtracts to another
-  export-unstable solid; `convex_hull_face(bf)` is a clean polygon AND — on this near-convex
-  outline (hull area within ~0.4 % of the real face) — insets to the same `LIP_W` band on
-  every edge, **front included**. (The "rim missing on the thin front edge" bug was NOT the
-  ledge — it was the old `extrude(bf)` lip, whose wall-rim width pinches to ~0 where the
-  tilted wedge plane grazes the thin front wall. The full plate covers the front, so the rim
-  is now uniform.)
+  export-unstable solid; `convex_hull_face(bf)` is a clean polygon that insets cleanly.
+- ⚠️ **`LIP_W` must be SMALLER than the THIN front wall** (2.0, not 4.0). The ledge shelf is
+  formed by the recess cut `offset(convex_hull_face(bf),−LIP_W)` landing **inside the wall**
+  and removing material up to `z0+RABBET_UP`. On the back the wall is thick so any `LIP_W`
+  lands in it; but the **front wall is thin** (the wedge grazes it), so at `LIP_W=4` the cut
+  boundary falls **past** the wall into the already-open cavity — it removes nothing and **no
+  front ledge forms** (the "rim missing on the thin front edge" report). At `LIP_W=2` the cut
+  lands in the front wall and a uniform ledge appears, matching the reference (lip at
+  zflat −0.9, ledge at zflat +0.65, both front and back — verified against
+  `parts/metal-case-right.step` in the wedge-flattened frame).
 - `extrude(bf, negative)` extrudes UP along the face's downward normal — force `dir=(0,0,-1)`.
 
 Parameters at the top of `case_model.py`:

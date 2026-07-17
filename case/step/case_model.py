@@ -42,9 +42,12 @@ X_SHIFT  = 5.0          # main(): translate([5,0,0]) right_case()
 # (~2 mm) pocket for the plate.  Measured from the reference (mine frame): wedge
 # bottom -6.21, lip bottom -7.19, ledge -5.1.  All parametric — edit freely.
 WITH_BOTTOM_RABBET = True
-LIP_DROP  = 1.0         # how far the outer lip drops below the wedge plane
-RABBET_UP = 1.0         # how far the inner ledge is recessed above the wedge plane
-LIP_W     = 4.0         # width of the outer lip band
+LIP_DROP  = 0.9         # how far the outer lip drops below the wedge plane (ref: -0.9)
+RABBET_UP = 0.6         # how far the inner ledge is recessed above the wedge plane (ref ledge ~+0.65)
+LIP_W     = 2.0         # rim/ledge-cut inset. ⚠️ Must be SMALLER than the THIN front wall so the
+                        # convex-hull ledge cut lands IN the wall (creating the shelf), not past it
+                        # into the open cavity -- at 4.0 the front ledge vanished ("rim missing on
+                        # the thin edge"); 2.0 restores a uniform ledge matching the reference.
 
 # ---- USB inner-wall chamfer (POST-PROCESSING, not in the .scad) ----------
 # A 45 deg lead-in on the INTERIOR face of the wall around each USB window, so
