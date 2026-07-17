@@ -98,13 +98,6 @@ BRAND_STAG_Y = 3.6      # half the vertical gap: line1 up +STAG_Y, line2 down -S
 BRAND_TOP_Z  = 18.5     # flat top plateau z in the bezel region
 BRAND_FONT   = "/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf"
 
-# ---- PolyFabriq/PolyTasten logo engraved under the display, same top surface as text --
-WITH_LOGO   = True
-LOGO_SVG    = "../../polykybd.svg"   # the stylised-keyboard wordmark (repo root)
-LOGO_CENTER = (-70.0, -46.0)         # final-frame XY, on the front bezel under the display
-LOGO_SCALE  = 0.45                   # the raw logo is ~25x24 mm
-LOGO_DEPTH  = 0.35                   # engrave depth (same as the text)
-
 SVG = lambda n: "../" + n
 
 # ---- SVG helpers ---------------------------------------------------------
@@ -282,10 +275,14 @@ def build_right(with_branding=True):
     # still cut through above), so the real cutout + a widened body recess coexist.
     if WITH_ENCODER_POCKET and enc_src is not None:
         enc_face = offset(enc_src.moved(T), amount=ENCODER_GROW, kind=Kind.ARC)
+        if ENCODER_GROW_Y:   # grow the recess Y-extent by ENCODER_GROW_Y (X unchanged):
+            bb = enc_face.bounding_box()          # a single Y-scale of the face about its
+            cy0 = (bb.min.Y + bb.max.Y) / 2       # centre -> ONE clean pocket, not a
+            sy = (bb.size.Y + ENCODER_GROW_Y) / bb.size.Y   # doubled/lumpy body
+            enc_face = scale(enc_face, by=(1, sy, 1))
+            b2 = enc_face.bounding_box()           # build123d scale() is not about origin
+            enc_face = enc_face.moved(Location((0, cy0 - (b2.min.Y + b2.max.Y) / 2, 0)))
         enc = extrude(enc_face, amount=5)
-        if ENCODER_GROW_Y:   # extend Y only (X unchanged): union of two Y-shifted copies
-            dy = ENCODER_GROW_Y / 2
-            enc = enc.moved(Location((0, dy, 0))) + enc.moved(Location((0, -dy, 0)))
         enc = enc.moved(Location((0, 0, 12.9)))   # z 12.9..17.9
         part = part - enc
 
@@ -317,8 +314,6 @@ def build_right(with_branding=True):
         part = add_usb_chamfer(part)
     if WITH_BRANDING and with_branding:
         part = add_branding(part)
-    if WITH_LOGO and with_branding:
-        part = add_logo(part)
     return part
 
 
@@ -391,41 +386,6 @@ def add_branding(part, x=None, y=None):
         return part - Compound(prisms)
     except Exception as e:
         print("add_branding skipped:", e)
-        return part
-
-
-def _logo_cutter(cx, cy, mirror_x=False):
-    """Build the engraving prism-set for one PolyKybd wordmark, centred at (cx,cy).
-
-    polykybd.svg carries TWO copies of the wordmark side-by-side; we keep the
-    left copy only (bbox.min.X < 28), recentre it on its own bbox, scale by
-    LOGO_SCALE, and extrude LOGO_DEPTH deep.  import_svg already flips Y so the
-    icon reads upright.  mirror_x flips it in X so the LEFT half (whose part is
-    mirror(Plane.YZ)'d) still shows an un-mirrored wordmark."""
-    faces = [f for f in import_svg(LOGO_SVG).faces() if f.bounding_box().min.X < 28]
-    grp = scale(Compound(faces), by=LOGO_SCALE)
-    if mirror_x:
-        grp = grp.mirror(Plane.YZ)
-    prism = extrude(Compound(grp.faces()), amount=LOGO_DEPTH + 0.15)
-    # recentre on (cx,cy) from the FINAL bbox (build123d scale() is not about origin)
-    bb = prism.bounding_box()
-    dx = cx - (bb.min.X + bb.max.X) / 2
-    dy = cy - (bb.min.Y + bb.max.Y) / 2
-    dz = (BRAND_TOP_Z - LOGO_DEPTH) - bb.min.Z
-    return prism.moved(Location((dx, dy, dz)))
-
-
-def add_logo(part, x=None, y=None, mirror_x=False):
-    """Engrave the PolyTasten/PolyFabriq wordmark on the top bezel, under the
-    display cutout -- same flat top surface + engrave depth as add_branding.
-    x/y override LOGO_CENTER (build_left passes x=-LOGO_CENTER[0], mirror_x=True
-    so the wordmark reads correctly on the mirrored left half)."""
-    try:
-        cx = LOGO_CENTER[0] if x is None else x
-        cy = LOGO_CENTER[1] if y is None else y
-        return part - _logo_cutter(cx, cy, mirror_x)
-    except Exception as e:
-        print("add_logo skipped:", e)
         return part
 
 
@@ -512,11 +472,7 @@ def build_left():
     # mirror the UN-branded base, then engrave so the logo reads correctly (not
     # backwards) on the left half; -BRAND_X puts it on the mirrored bezel.
     base = build_right(with_branding=False).mirror(Plane.YZ)
-    if WITH_BRANDING:
-        base = add_branding(base, x=-BRAND_X, y=BRAND_Y)
-    if WITH_LOGO:
-        base = add_logo(base, x=-LOGO_CENTER[0], y=LOGO_CENTER[1], mirror_x=True)
-    return base
+    return add_branding(base, x=-BRAND_X, y=BRAND_Y) if WITH_BRANDING else base
 
 if __name__ == "__main__":
     import time
