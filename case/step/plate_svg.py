@@ -4,10 +4,11 @@ flattened frame (the plane the plate lies in).  Right + left halves.
 
   python3 plate_svg.py            # -> bottom_plate_right.svg, bottom_plate_left.svg
 
-Two outlines are emitted:
-  * black solid  = OUTER edge of the rim (the case outer boundary at the bottom).
-  * blue dashed  = plate seat / recess opening (the ledge outer edge, ~LIP_W inset)
-                   -- the plate perimeter if it drops INTO the recess onto the ledge.
+The plate drops INTO the recess and rests on the ledge, so the PLATE CUT LINE is the
+recess opening.  Two outlines are emitted:
+  * black solid  = plate cut line = recess opening (ledge outer edge).  Add your own
+                   fit clearance (~0.1-0.2 mm inward) so it drops in without binding.
+  * grey dashed  = OUTER edge of the rim (case outer boundary) -- reference only.
 Red = the 4 screw holes: 2.2 mm M2-clearance circles + exact-centre cross-hairs.
 SVG is in millimetres, top-view oriented (un-mirrored); the left file is the X-mirror.
 """
@@ -68,9 +69,9 @@ def write_svg(fn, rim, seat, holes):
     o = ['<?xml version="1.0" encoding="UTF-8"?>',
          '<svg xmlns="http://www.w3.org/2000/svg" width="%.2fmm" height="%.2fmm" viewBox="0 0 %.3f %.3f">' % (W, H, W, H),
          '<g fill="none" stroke-width="0.25">',
-         '<!-- outer edge of the rim (case outer boundary at the bottom) -->', poly(rim, stroke='#000000'),
-         '<!-- plate seat / recess opening (ledge outer edge, ~LIP_W inset) -->',
-         poly(seat, stroke='#0066ff', stroke_dasharray='2,1.5'),
+         '<!-- PLATE CUT LINE = recess opening (ledge outer edge) -->', poly(seat, stroke='#000000'),
+         '<!-- reference only: outer edge of the rim (case outer boundary) -->',
+         poly(rim, stroke='#aaaaaa', stroke_dasharray='2,1.5'),
          '</g>',
          '<!-- 4x M2 screw holes: %.1fmm clearance circles + exact centres -->' % HOLE_CLEAR_D,
          '<g stroke="#ff0000" stroke-width="0.25" fill="none">']
