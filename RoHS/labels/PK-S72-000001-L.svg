@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="70mm" height="40mm" viewBox="0 0 70 40">
+  <!-- PolyKybd CE label. 70 x 40 mm. Serial PK/S72-000001-L. Replace [ ... ] placeholders and
+       swap the CE mark + WEEE symbol for official artwork (CE mark min. 5 mm height). -->
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#000}
+    .t{font-size:3.6px;font-weight:bold}
+    .s{font-size:2.0px}
+    .f{font-size:2.2px}
+    .sm{font-size:1.7px;fill:#222}
+  </style>
+  <rect x="0.4" y="0.4" width="69.2" height="39.2" rx="2" fill="#fff" stroke="#000" stroke-width="0.4"/>
+
+  <text class="t" x="3" y="6.2">PolyKybd Split72</text>
+  <text class="s" x="3" y="9.4">Wired USB mechanical keyboard</text>
+
+  <text class="f" x="3" y="14.2">Mfr: PolyTasten GmbH</text>
+  <text class="f" x="3" y="17.6">[Austrian address - TO CONFIRM]</text>
+  <text class="f" x="3" y="21.0">Model: PolyKybd Split72 - Rev 3.2</text>
+  <text class="f" x="3" y="24.4">Rating: 5 V DC - 500 mA (USB)</text>
+  <text class="f" x="3" y="27.8">Designed in Austria</text>
+  <text class="f" x="3" y="31.2">S/N: PK/S72-000001-L</text>
+  <text class="sm" x="3" y="35.0">CE: EMC 2014/30/EU - RoHS 2011/65/EU - GPSR (EU) 2023/988</text>
+  <text class="sm" x="3" y="37.6">Support: tom.smart.bishop@gmail.com</text>
+
+  <!-- CE marking (placeholder geometry; replace with official artwork) -->
+  <g transform="translate(52.5,4.5)" fill="none" stroke="#000" stroke-width="1.15">
+    <path d="M 6.0 0.9 A 4.1 4.1 0 1 0 6.0 8.3"/>
+    <path d="M 14.0 0.9 A 4.1 4.1 0 1 0 14.0 8.3"/>
+    <path d="M 8.9 4.6 H 12.4"/>
+  </g>
+
+  <!-- WEEE crossed-out wheelie bin (simplified; replace with official symbol) -->
+  <g transform="translate(55.4,15.6)" fill="none" stroke="#000" stroke-width="0.45" stroke-linejoin="round">
+    <line x1="0.4" y1="1.6" x2="8.6" y2="1.6"/>
+    <path d="M 3.2 1.6 L 3.5 0.7 H 5.5 L 5.8 1.6"/>
+    <path d="M 1.2 1.6 L 1.8 8.6 H 7.2 L 7.8 1.6"/>
+    <line x1="3.1" y1="2.4" x2="3.3" y2="7.9"/>
+    <line x1="4.5" y1="2.4" x2="4.5" y2="7.9"/>
+    <line x1="5.9" y1="2.4" x2="5.7" y2="7.9"/>
+    <rect x="0.6" y="9.4" width="7.8" height="0.9" fill="#000" stroke="none"/>
+    <line x1="0.2" y1="7.6" x2="8.8" y2="1.0" stroke-width="0.6"/>
+  </g>
+</svg>
