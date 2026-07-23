@@ -13,3 +13,5 @@ case/BOSL2*
 *.log
 poly_kybd/variations/poly_corne/*
 
+__pycache__/
+*.pyc
