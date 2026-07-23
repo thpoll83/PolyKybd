@@ -476,7 +476,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "poly_kybd_split72_right.kicad_pro",
+    "filename": "poly_corne_split42_right.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -707,10 +707,6 @@
       "K_5"
     ],
     [
-      "c00665c7-238f-42f0-9cc8-e3a8fa63e130",
-      "K_L6"
-    ],
-    [
       "4cb341a3-e9cf-45fc-a94c-c7fae6c71aea",
       "K_L2"
     ],
@@ -733,10 +729,6 @@
     [
       "81428857-5563-4f54-bb0b-7627a0deeae3",
       "K_T"
-    ],
-    [
-      "5b4142ac-8b2d-4e5d-87d4-0e69e7de30b9",
-      "K_L7"
     ],
     [
       "0ee8b487-df95-43ef-b2ec-24ddab4f785b",
@@ -763,22 +755,6 @@
       "K_G"
     ],
     [
-      "1584ed85-ba55-4de7-bf87-42cb27c7a460",
-      "K_L8"
-    ],
-    [
-      "99d6bdd9-f3c7-4fe6-aae4-e577edd892a7",
-      "K_L4"
-    ],
-    [
-      "2169d46a-87d1-40eb-86ba-4a13a4180d64",
-      "K_Z"
-    ],
-    [
-      "70ef4595-7795-4d46-8de7-ecb9f4117cbd",
-      "K_X"
-    ],
-    [
       "cff50f2c-d5fc-4dc7-8daa-b4ef91ebce06",
       "K_C"
     ],
@@ -793,42 +769,6 @@
     [
       "91504d29-a738-459d-af7d-49aa9cec3947",
       "K_B"
-    ],
-    [
-      "efd0db4a-0d4d-401a-8c34-6a12f828929f",
-      "K_L9"
-    ],
-    [
-      "8c9a36ab-d08a-4e02-b358-e60f56356438",
-      "K_B1"
-    ],
-    [
-      "d6494646-d0bc-40c9-a684-d51ce02dc04d",
-      "K_B2"
-    ],
-    [
-      "f482a64b-9552-4179-a4cb-afcf9c133e8e",
-      "K_B3"
-    ],
-    [
-      "4a0bdc7b-86f0-4524-b031-947af4670ce5",
-      "K_B4"
-    ],
-    [
-      "7e4dd5e7-f13a-4b6f-9821-c603ce0a1e84",
-      "K_B5"
-    ],
-    [
-      "ab12949c-ec3d-44b1-8c5c-48bfec281847",
-      "K_B6"
-    ],
-    [
-      "0d8fabb9-b71f-42d2-b887-cd1bcb6155bb",
-      "K_B7"
-    ],
-    [
-      "27260850-af3c-4b8b-9ab7-244ea24742d6",
-      "K_B8"
     ],
     [
       "92e782d8-f8e0-4b6b-8c13-c5574675ce33",
@@ -857,10 +797,6 @@
     [
       "80ad75f2-7fa4-40bc-9096-74c93d88ca77",
       "NonInvertingBuffer5"
-    ],
-    [
-      "b3eec1c7-cfcb-457c-8bc1-731941cd757b",
-      "NonInvertingBuffer6"
     ]
   ],
   "text_variables": {}
