@@ -99,7 +99,8 @@ def trace(path):
     nets = SchNets(open(path).read())
     netlabels = defaultdict(set)
     netpins = defaultdict(list)
-    for _, name, x, y in nets.labels():
+    label_list = list(nets.labels())
+    for _, name, x, y in label_list:
         n = nets.net_of(x, y)
         if n is not None:
             netlabels[n].add(name)
@@ -109,13 +110,22 @@ def trace(path):
             n = nets.net_of(x, y)
             if n is not None:
                 netpins[n].append(f'{sname}.{pname}')
+
+    def coincident_label(x, y):
+        # A label placed directly ON a sheet pin connects with no wire at all
+        # (the hand-made boards do this for the ShiftRegisters control pins).
+        for _, name, lx, ly in label_list:
+            if abs(lx - x) < 0.02 and abs(ly - y) < 0.02:
+                return name
+        return None
+
     out = {}
     for sname, pins, _ in sheet_list:
         d = {}
         for pname, x, y in pins:
             n = nets.net_of(x, y)
             if n is None:
-                d[pname] = '-'
+                d[pname] = coincident_label(x, y) or '-'
             else:
                 labs = sorted(netlabels.get(n, set()))
                 others = [p for p in netpins[n] if p != f'{sname}.{pname}']
