@@ -12,7 +12,7 @@ both faces so it shows on whichever side ends up outward.
 Geometry is taken from the built STEP in the same wedge-flattened, top-view frame as
 plate_svg.py (the plane the plate lies in):
   * Cover OUTLINE (Edge.Cuts) = the recess opening (ledge outer wire, z ~ +0.64),
-    the black solid line in the SVG, offset INWARD by PLATE_MARGIN (0.5 mm per side)
+    the black solid line in the SVG, offset INWARD by PLATE_MARGIN (0.15 mm per side)
     so the cover drops into the recess with clearance.
   * 4x M2 clearance drill holes (Ø HOLE_CLEAR_D) at SCREW_HOLES, as non-plated
     through-holes (mounting-hole footprints).
@@ -33,6 +33,11 @@ SILK_THICK   = 1.5
 M            = 10.0     # border around the board in the KiCad sheet
 SHEET_SHIFT  = 20.0     # nudge the whole board +X/+Y so it sits clear on the sheet
 SILK_FONT    = "Arial Black"   # named TTF; KiCad fills the outline in the gerbers
+# Seat-face selection (wedge-flattened frame): the ledge/plate-seat is the largest
+# roughly-horizontal, downward-facing face near z ~ +0.64 (matches plate_svg.py).
+SEAT_FACE_NZ  = -0.7    # face normal Z below this = "mostly downward facing"
+SEAT_Z_TARGET = 0.64    # flattened-frame ledge (plate-seat) level
+SEAT_Z_TOL    = 0.12    # accepted deviation around SEAT_Z_TARGET
 _NS = uuid.UUID("0b0757a0-0000-4000-8000-000000000001")   # deterministic tstamp namespace
 
 
@@ -46,7 +51,7 @@ def seat_outline():
     cand = []
     for f in pf.faces():
         n = cm._safe_normal(f)
-        if n is not None and n.Z < -0.7 and abs(f.bounding_box().min.Z - 0.64) < 0.12:
+        if n is not None and n.Z < SEAT_FACE_NZ and abs(f.bounding_box().min.Z - SEAT_Z_TARGET) < SEAT_Z_TOL:
             b = f.bounding_box(); cand.append((b.size.X * b.size.Y, f))
     cand.sort(key=lambda t: t[0])
     w = cand[-1][1].outer_wire()
