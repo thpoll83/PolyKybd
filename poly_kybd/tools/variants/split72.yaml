@@ -1,0 +1,96 @@
+# split72 variant description — the parameter set needed to GENERATE a
+# top-level PolyKybd schematic from a KLE layout (see tools/gen_variant_sch.py).
+#
+# Everything electrical that distinguishes this board lives here; the KLE file
+# contributes only geometry + the matrix position of every key. The hand-drawn
+# sub-sheets (key cell, buffer, shift registers, MCU) stay the unit of reuse —
+# the generator only instantiates and wires them.
+
+name: poly_kybd_split72
+kle: layouts/split72.kle.json     # labels are "row,col" (firmware matrix coords)
+
+matrix:
+  rows_per_side: 5                # KLE rows 0..4 = left half, 5..9 = right half
+  cols: 8
+
+# Matrix positions that exist electrically but have NO key/display cell —
+# they are flat symbols on the board (here: the rotary-encoder push button).
+matrix_only:
+  left: [[3, 7]]
+  right: [[8, 0]]
+
+# The per-key cell sheet (switch + keycap OLED + RGB LED, 12-pin interface).
+key_cell:
+  sheet: SSD1306_TO_SPI.kicad_sch # split42 uses SSD1306_TO_SPI_NO_LED.kicad_sch
+  size: [22.86, 33.02]
+  # fixed-function cell pins -> shared nets (KeyRow/KeyCol/SCLK/SDIN/CS/LED_*
+  # are per-key and derived from the rules below)
+  nets: {D-C: D-C, RESET: RESET, GND: GND, VDD: VDD, VSUP: VSUP}
+
+# MCU sheet + complete GPIO contract. col_pins/row_pins order IS the firmware
+# MATRIX_COL_PINS / MATRIX_ROW_PINS order (split72/config.h) — Col1..ColN /
+# Row1..RowN net names attach in this order.
+mcu:
+  sheet: rp_pico.kicad_sch
+  col_pins: [GP10, GP11, GP12, GP13, GP14, GP15, GP16, GP3]
+  row_pins: [GP18, GP19, GP20, GP21, GP22]
+  pins:                           # fixed-function GPIOs -> net
+    GP0: I2C_SDA                  # Cirque trackpad / LTR-559 bus
+    GP1: I2C_SCL
+    GP2: LED_ARR_START            # WS2812_DI_PIN — RGB chain entry
+    GP4: SERIAL_COM1              # split link (full-duplex pair)
+    GP5: SERIAL_COM2
+    GP6: SCLK_RAW                 # SPI_SCK  (hand-made routes via series R)
+    GP7: SDIN_RAW                 # SPI_MOSI (hand-made routes via series R)
+    GP8: D-C                      # SPI_DC_PIN
+    GP9: RESET                    # HW_RST_PIN (also the SR MReset)
+    GP17: SPI0_CS_NC
+    GP23: TB_INT                  # trackpad data-ready
+    GP25: ENC_A                   # rotary encoder
+    GP29: ENC_B
+    GP26: SR_DATA                 # display-select shift registers
+    GP27: SR_CLOCK
+    GP28: SR_LATCH
+  power: {3V3: VDD, GND: GND, VBUS: VBUS, VSYS: VSYS}
+
+# Keycap-OLED data distribution: one ni_buffer2 per chain re-drives
+# SCLK_RAW/SDIN_RAW into SCLKn/SDINn. chains maps chain number -> the matrix
+# cols (0-based) it serves, per side. 8 columns share 7 chains; WHICH pair of
+# columns shares is a per-side board-routing choice (the split72 L/R asymmetry
+# that made invert_display()'s `c--` necessary lives in the col->CS rule, not
+# here).
+buffer:
+  sheet: ni_buffer2.kicad_sch
+  nets: {A_IN: SDIN_RAW, B_IN: SCLK_RAW, VCC: VDD, GND: GND}
+  outputs: {A_OUT: SDIN, B_OUT: SCLK}   # + chain number
+chains:
+  left:  {1: [0], 2: [1], 3: [2], 4: [3], 5: [4], 6: [5], 7: [6, 7]}
+  right: {1: [0, 1], 2: [2], 3: [3], 4: [4], 5: [5], 6: [6], 7: [7]}
+
+# Display-select (CS) contract: key at matrix (r, c) -> shift-register output
+# Out{r % rows_per_side + 1}_{bit}. The bit rule reproduces the firmware
+# key_display[] indexing (split72.c):
+#   left            : bit = c + 1                  (direct)
+#   right upper rows: bit = c                      (the invert_display c-- quirk)
+#   right bottom row: bit = c + 1                  (direct)
+shift_registers:
+  sheet: shift_registers.kicad_sch
+  count: 5
+  nets: {Data: SR_DATA, Clock: SR_CLOCK, Latch: SR_LATCH, MReset: RESET,
+         VCC: VDD, GND: GND}
+  cs_bit:
+    left:  {default: col_plus_1}
+    right: {default: col_plus_1, upper_rows: col}
+
+# Per-key RGB chain (WS2812): LED_ARR_START -> first key's LED_DIN, then
+# LED_DOUT -> LED_DIN point-to-point. Order rule measured off both hand-made
+# boards: rows top-to-bottom, each row in DECREASING matrix column.
+led_chain:
+  order: [row_asc, col_desc]
+
+# Reference hand-made schematics for --verify (contract comparison; a '?' on
+# the hand-made side — a net that disappears into flat symbols the tracer
+# can't follow, e.g. series resistors — tolerates any generated value).
+reference:
+  left: ../poly_kybd_split72_left.kicad_sch
+  right: ../poly_kybd_split72_right.kicad_sch
