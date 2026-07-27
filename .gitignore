@@ -15,3 +15,4 @@ poly_kybd/variations/poly_corne/*
 
 __pycache__/
 *.pyc
+poly_kybd/tools/out/

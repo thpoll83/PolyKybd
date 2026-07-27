@@ -13,6 +13,38 @@ needs `pip install kiutils`).
 | `kicad_sch_trace.py <board.kicad_sch>…` | Traces top-level connectivity and prints the **per-key wiring table** (Row / Col / SCLK / SDIN chain / shift-register CS output per `K_*` sheet). This is the electrical contract the firmware (`MATRIX_*_PINS`, `key_display[]`) must match — diff it between boards or against the firmware instead of eyeballing sheets. |
 | `gen_split42_right_sch.py` | **Generates** `poly_corne_split42_right.kicad_sch` from the left schematic by applying the right-half mirror (key-side `Col c → Col 7−c`, chain `n → 7−n`, per-register CS bit mirror + the thumb `Out1_7 ↔ Out3_7` pair), then **verifies** the result against the table derived from the firmware's `keyboard.json` + `split42.c key_display[]`. Non-zero exit on any mismatch. |
 | `extract_key_cluster.py <board.kicad_pcb> [--json out.json]` | Extracts the **per-key PCB cluster template** (switch + display FPC socket + passives, in switch-local coordinates) and reports which keys deviate from the majority placement. The JSON is the "golden cluster" input for automated placement. |
+| `gen_variant_sch.py variants/<v>.yaml [--verify]` | **The universal-generator first cut** (the roadmap's `gen_schematic` stage): generates a top-level `.kicad_sch` per side from a KLE layout (`layouts/*.kle.json`, geometry + matrix position per key) + a variant YAML (`variants/*.yaml`, the complete electrical parameter set). Instantiates the hand-drawn sub-sheets (key cell, ni_buffer2, shift_registers, rp_pico) at KLE-derived positions with deterministic UUIDs and wires them by rule. `--verify` traces the generated file AND the hand-made reference and diffs the canonical contracts (per-key Row/Col/chain/CS/LED-chain + MCU pin map + buffers + SR wiring) — proven to reproduce **both hand-made split72 sides** with zero mismatches. Output in `tools/out/` (gitignored). |
+
+### Variant YAML parameters (what it takes to describe a board)
+
+Measured by reproducing split72 (`variants/split72.yaml`); this is the
+parameter set a variant needs on top of its KLE geometry:
+
+- `matrix`: `rows_per_side`, `cols` (KLE rows 0..N-1 = left, N..2N-1 = right).
+- `matrix_only`: matrix positions with **no key/display cell** (the encoder
+  push buttons — flat symbols on the board, per side).
+- `key_cell`: which cell sheet (`SSD1306_TO_SPI` with RGB LED vs `_NO_LED`)
+  and its fixed nets (D-C, RESET, GND, VDD, VSUP).
+- `mcu`: `col_pins`/`row_pins` **in firmware MATRIX_*_PINS order**, all
+  fixed-function GPIOs (LED array start, SR data/clock/latch, SPI raw
+  clock/data, split link, I2C, encoder A/B, trackpad INT, D-C, RESET) and the
+  power pins.
+- `buffer` + `chains`: the display-chain partition per side — which matrix
+  cols share which SCLKn/SDINn re-drive buffer (8 cols on 7 chains; the
+  doubled pair is a per-side routing choice).
+- `shift_registers`: count, control nets (MReset shares the display RESET
+  net!) and the per-side `cs_bit` rule — `col_plus_1` (direct) or `col` for
+  the split72-right upper-rows convention that firmware `invert_display()`
+  compensates with its `c--`.
+- `led_chain`: the WS2812 daisy-chain order rule (split72, both sides:
+  `[row_asc, col_desc]` — rows top→bottom, decreasing matrix col).
+- `reference`: the hand-made schematics `--verify` compares against.
+
+⚠️ `layouts/split72.kle.json` is a copy of
+`PolyKybdHost/polyhost/res/polykybd-split72.json` (one geometry source of
+truth: firmware layout ↔ host anim geometry ↔ hardware). It carries all 74
+matrix positions (72 keys + 2 encoder pushes) and matches the firmware
+`keyboard.json` exactly. Keep the copies in sync (`cmp`).
 
 ## What the split72 / split42 schematics actually are (measured)
 
