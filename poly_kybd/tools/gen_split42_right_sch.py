@@ -41,11 +41,24 @@ the Row4 trunk (which existed only to reach a far global label) is
 replaced by a Row4 label on each moved KeyRow pin. Everything else is
 byte-identical to the left sheet. Project name, title, date are updated.
 
+RIGHT-ONLY addition: the LTR-559 light/proximity sensor block
+(ltr559.kicad_sch — the Lite-On LTR-559ALS-01 application circuit from
+DS86-2013-0003 p.4-5: sensor + 2x 1uF X7R + 10k pull-ups on SDA/SCL/INT,
+LED_K tied to LDR for the internal emitter driver, LED_A/VLED = VDD;
+I2C addr 0x23). Instantiated in the area the moved thumb blocks vacated
+and wired to the existing top-level nets: VDD, GND, I2C_SDA, I2C_SCL
+(the GP0/GP1 status-OLED bus); INT lands on a local LTR_INT net, unrouted
+— the firmware polls (base/ltr559.c, side-agnostic). This implements
+SPLIT42_REDESIGN_NOTES.md item 4 schematic-side; the PCB still needs the
+8-pin ChipLED footprint (outline: datasheet p.3, 2.36x3.94x1.35 mm) and a
+sensor window in the housing.
+
 After writing, the result is verified: the per-key wiring table is traced
 from the generated file and asserted against the table derived from
 qmk_firmware split42 keyboard.json + split42.c key_display[]; a bus-aware
 check asserts each thumb's bus cluster attaches to the target column's
-bus and not the old one. Non-zero exit on any mismatch.
+bus and not the old one; the LTR559 sheet's pin nets are asserted.
+Non-zero exit on any mismatch.
 
 Usage (from poly_kybd/):
     python3 tools/gen_split42_right_sch.py
@@ -61,6 +74,7 @@ BASE = Path(__file__).resolve().parent.parent / 'variations' / 'poly_corne'
 SRC = BASE / 'poly_corne_split42_left.kicad_sch'
 DST = BASE / 'poly_corne_split42_right.kicad_sch'
 DATE = '2026-07-29'
+ROOT_UUID = 'e63e39d7-6ac0-4ffd-8aa3-1841a4541b55'   # shared by all top files
 
 # thumb sheet -> chain/column number it attaches to on the RIGHT
 THUMBS = {'K_C': 1, 'K_V': 2, 'K_B': 3}
@@ -68,6 +82,17 @@ THUMBS = {'K_C': 1, 'K_V': 2, 'K_B': 3}
 COL_BUS_PITCH = 36.83     # drawn column bus spacing (x = 104.14 + n*36.83)
 BUS_GRID_END = 172.1      # all six column buses' grid portion ends at y=172.085
 DX = -3 * COL_BUS_PITCH   # thumb block translation: 3 columns to the left
+
+# RIGHT-ONLY addition: the LTR-559 light/proximity sensor block
+# (variations/poly_corne/ltr559.kicad_sch — the Lite-On DS86-2013-0003
+# application circuit; see SPLIT42_REDESIGN_NOTES.md item 4). Placed in the
+# area the moved thumb blocks vacated; the sheet uuid must match the
+# instance paths stored inside ltr559.kicad_sch.
+LTR_SHEET_UUID = '00004a00-0000-4000-8000-0000a1755900'
+LTR_SHEET_POS = (224.79, 190.5)
+LTR_PINS = (('VDD', 'VDD', True), ('GND', 'GND', True),
+            ('SDA', 'I2C_SDA', True), ('SCL', 'I2C_SCL', True),
+            ('INT', 'LTR_INT', False))   # INT: local net, unrouted (fw polls)
 
 # Expected right-half table: firmware keyboard.json (LAYOUT_lr_stacked42 rows
 # 4-7, matrix col c at x = 8 + c, thumbs [7,0..2] at x = 7.5/8.5/9.5) x
@@ -306,6 +331,45 @@ def generate():
         edits.append((anchor, anchor, label_block(
             'Row4', round(px + DX, 3), py, 180, 'r', n, sheet)))
 
+    # 8. LTR-559 sensor block (right-only; redesign note 4). Sheet instance
+    #    + pin stubs wired to the existing top-level nets.
+    lx, ly = LTR_SHEET_POS
+    w, h = 22.86, (len(LTR_PINS) + 1) * 2.54
+    p = [f'\t(sheet\n\t\t(at {lx:g} {ly:g})\n\t\t(size {w:g} {h:g})\n'
+         '\t\t(stroke\n\t\t\t(width 0)\n\t\t\t(type solid)\n\t\t)\n'
+         '\t\t(fill\n\t\t\t(color 0 0 0 0.0000)\n\t\t)\n'
+         f'\t\t(uuid "{LTR_SHEET_UUID}")\n'
+         f'\t\t(property "Sheetname" "LTR559"\n\t\t\t(at {lx:g} {ly - 0.7:g} 0)\n'
+         '\t\t\t(effects\n\t\t\t\t(font\n\t\t\t\t\t(size 1.27 1.27)\n\t\t\t\t)\n'
+         '\t\t\t\t(justify left bottom)\n\t\t\t)\n\t\t)\n'
+         f'\t\t(property "Sheetfile" "ltr559.kicad_sch"\n\t\t\t(at {lx:g} {ly + h + 0.7:g} 0)\n'
+         '\t\t\t(effects\n\t\t\t\t(font\n\t\t\t\t\t(size 1.27 1.27)\n\t\t\t\t)\n'
+         '\t\t\t\t(justify left top)\n\t\t\t\t(hide yes)\n\t\t\t)\n\t\t)']
+    for i, (pname, _, _) in enumerate(LTR_PINS):
+        py = round(ly + 2.54 * (i + 1), 3)
+        p.append(f'\t\t(pin "{pname}" input\n\t\t\t(at {lx + w:g} {py:g} 0)\n'
+                 '\t\t\t(effects\n\t\t\t\t(font\n\t\t\t\t\t(size 1.27 1.27)\n\t\t\t\t)\n'
+                 '\t\t\t\t(justify right)\n\t\t\t)\n'
+                 f'\t\t\t(uuid "00004a{i:02d}-0000-4000-8000-0000a17559{i:02d}")\n\t\t)')
+    p.append('\t\t(instances\n\t\t\t(project "poly_corne_split42_right"\n'
+             f'\t\t\t\t(path "/{ROOT_UUID}"\n\t\t\t\t\t(page "30")\n'
+             '\t\t\t\t)\n\t\t\t)\n\t\t)\n\t)\n')
+    edits.append((anchor, anchor, '\n'.join(p)))
+    for i, (pname, net, glob) in enumerate(LTR_PINS):
+        py = round(ly + 2.54 * (i + 1), 3)
+        sx = round(lx + w + 3.81, 3)
+        edits.append((anchor, anchor,
+                      f'\t(wire\n\t\t(pts\n\t\t\t(xy {lx + w:g} {py:g}) (xy {sx:g} {py:g})\n'
+                      '\t\t)\n\t\t(stroke\n\t\t\t(width 0)\n\t\t\t(type default)\n\t\t)\n'
+                      f'\t\t(uuid "00004a{i + 20:02x}-0000-4000-8000-0000a17559{i:02d}")\n\t)\n'))
+        kind = 'global_label' if glob else 'label'
+        shape = '\n\t\t(shape input)' if glob else ''
+        edits.append((anchor, anchor,
+                      f'\t({kind} "{net}"{shape}\n\t\t(at {sx:g} {py:g} 0)\n'
+                      '\t\t(effects\n\t\t\t(font\n\t\t\t\t(size 1.27 1.27)\n\t\t\t)\n'
+                      '\t\t\t(justify left)\n\t\t)\n'
+                      f'\t\t(uuid "00004a{i + 40:02x}-0000-4000-8000-0000a17559{i:02d}")\n\t)\n'))
+
     for m in re.finditer(r'\(project "(poly_corne_split42_left)"', t):
         if not any(sheet_block(t, sh)[0] < m.start() < sheet_block(t, sh)[1]
                    for sh in THUMBS):
@@ -364,9 +428,18 @@ def verify():
         if on_net != keys:
             fails += 1
             print(f'  FAIL {col} net keys: {sorted(on_net)} != {sorted(keys)}')
+    ltr = r.get('LTR559')
+    if ltr is None:
+        fails += 1
+        print('  FAIL LTR559 sheet missing')
+    else:
+        for pname, net, _ in LTR_PINS:
+            if ltr.get(pname) != net:
+                fails += 1
+                print(f'  FAIL LTR559 {pname}: {ltr.get(pname)} != {net}')
     fails += verify_buses()
     print(f'verify: {len(EXPECTED)} keys + MCU pins + column membership + bus '
-          f'attachment checked, {fails} failures')
+          f'attachment + LTR559 checked, {fails} failures')
     return fails
 
 

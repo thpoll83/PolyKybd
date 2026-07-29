@@ -26541,6 +26541,198 @@
 			)
 		)
 	)
+	(label "LTR_INT"
+		(at 251.46 203.2 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "00004a2c-0000-4000-8000-0000a1755904")
+	)
+	(wire
+		(pts
+			(xy 247.65 203.2) (xy 251.46 203.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00004a18-0000-4000-8000-0000a1755904")
+	)
+	(global_label "I2C_SCL"
+		(shape input)
+		(at 251.46 200.66 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "00004a2b-0000-4000-8000-0000a1755903")
+	)
+	(wire
+		(pts
+			(xy 247.65 200.66) (xy 251.46 200.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00004a17-0000-4000-8000-0000a1755903")
+	)
+	(global_label "I2C_SDA"
+		(shape input)
+		(at 251.46 198.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "00004a2a-0000-4000-8000-0000a1755902")
+	)
+	(wire
+		(pts
+			(xy 247.65 198.12) (xy 251.46 198.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00004a16-0000-4000-8000-0000a1755902")
+	)
+	(global_label "GND"
+		(shape input)
+		(at 251.46 195.58 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "00004a29-0000-4000-8000-0000a1755901")
+	)
+	(wire
+		(pts
+			(xy 247.65 195.58) (xy 251.46 195.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00004a15-0000-4000-8000-0000a1755901")
+	)
+	(global_label "VDD"
+		(shape input)
+		(at 251.46 193.04 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "00004a28-0000-4000-8000-0000a1755900")
+	)
+	(wire
+		(pts
+			(xy 247.65 193.04) (xy 251.46 193.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00004a14-0000-4000-8000-0000a1755900")
+	)
+	(sheet
+		(at 224.79 190.5)
+		(size 22.86 15.24)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "00004a00-0000-4000-8000-0000a1755900")
+		(property "Sheetname" "LTR559"
+			(at 224.79 189.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "ltr559.kicad_sch"
+			(at 224.79 206.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "VDD" input
+			(at 247.65 193.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "00004a00-0000-4000-8000-0000a1755900")
+		)
+		(pin "GND" input
+			(at 247.65 195.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "00004a01-0000-4000-8000-0000a1755901")
+		)
+		(pin "SDA" input
+			(at 247.65 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "00004a02-0000-4000-8000-0000a1755902")
+		)
+		(pin "SCL" input
+			(at 247.65 200.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "00004a03-0000-4000-8000-0000a1755903")
+		)
+		(pin "INT" input
+			(at 247.65 203.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "00004a04-0000-4000-8000-0000a1755904")
+		)
+		(instances
+			(project "poly_corne_split42_right"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(page "30")
+				)
+			)
+		)
+	)
 	(global_label "Row4"
 		(shape input)
 		(at 151.13 203.835 180)
