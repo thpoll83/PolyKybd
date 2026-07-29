@@ -11,7 +11,7 @@ needs `pip install kiutils`).
 | Tool | What it does |
 |------|--------------|
 | `kicad_sch_trace.py <board.kicad_sch>…` | Traces top-level connectivity and prints the **per-key wiring table** (Row / Col / SCLK / SDIN chain / shift-register CS output per `K_*` sheet). This is the electrical contract the firmware (`MATRIX_*_PINS`, `key_display[]`) must match — diff it between boards or against the firmware instead of eyeballing sheets. |
-| `gen_split42_right_sch.py` | **Generates** `poly_corne_split42_right.kicad_sch` from the left schematic by applying the right-half mirror (key-side `Col c → Col 7−c`, chain `n → 7−n`, per-register CS bit mirror + the thumb `Out1_7 ↔ Out3_7` pair), then **verifies** the result against the table derived from the firmware's `keyboard.json` + `split42.c key_display[]`. Non-zero exit on any mismatch. |
+| `gen_split42_right_sch.py` | **Generates** `poly_corne_split42_right.kicad_sch` from the left schematic per the split72 L/R convention (nets walk the board in physical x-order, nothing mirrored): the grid is a straight net-copy of the left and only the thumb row is re-attached to the drawn-outer-left columns (`K_C=Col1`, `K_V=Col2`, `K_B=Col3`, CS unchanged), then **verifies** the result against the table derived from the firmware's `keyboard.json` + `split42.c key_display[]`. Non-zero exit on any mismatch. |
 | `extract_key_cluster.py <board.kicad_pcb> [--json out.json]` | Extracts the **per-key PCB cluster template** (switch + display FPC socket + passives, in switch-local coordinates) and reports which keys deviate from the majority placement. The JSON is the "golden cluster" input for automated placement. |
 | `gen_variant_sch.py variants/<v>.yaml [--verify]` | **The universal-generator first cut** (the roadmap's `gen_schematic` stage): generates a top-level `.kicad_sch` per side from a KLE layout (`layouts/*.kle.json`, geometry + matrix position per key) + a variant YAML (`variants/*.yaml`, the complete electrical parameter set). Instantiates the hand-drawn sub-sheets (key cell, ni_buffer2, shift_registers, rp_pico) at KLE-derived positions with deterministic UUIDs and wires them by rule. `--verify` traces the generated file AND the hand-made reference and diffs the canonical contracts (per-key Row/Col/chain/CS/LED-chain + MCU pin map + buffers + SR wiring) — proven to reproduce **both hand-made split72 sides** with zero mismatches. Output in `tools/out/` (gitignored). |
 
@@ -56,21 +56,31 @@ are built on:
   per key (switch + keycap OLED, 10-pin interface), `ni_buffer2` per display
   chain, `shift_registers`, `rp_pico`.
 - **split72 left ↔ right differ ONLY in net assignment** — zero symbol or
-  value differences. The right side shifts the column↔chain assignment by
-  one (with the doubled chain moving from cols 7+8 to cols 1+2) and rotates
-  the bottom-row CS outputs. That mismatch between schematic pattern and
-  matrix numbering is why `split72.c invert_display()` needs its `c--`
-  shift on the right upper rows.
-- **split42 right** (generated here) instead mirrors the CS wiring so the
-  shared firmware `key_display[]` indexes directly — **no `c--`
-  equivalent**, matching the committed `split42.c`.
+  value differences. **The L/R convention (confirmed 2026-07-29 by review):
+  nothing is mirrored electrically.** On both halves the drawn sheets keep
+  their left-to-right order and the nets walk the PHYSICAL board in x-order
+  — on the right half the drawn-left keys are physically the INNER column
+  and get the LOW column nets (right K_B1/K_L1 sit at x=12.25/13.5, the
+  inner edge, on Col2; the inner stacked thumb pair B8+B1 shares the
+  doubled chain 1, mirroring the left's B7+B8 on chain 7). The split72
+  `c--` in `invert_display()` exists only because the extra 8th key (B8)
+  claims matrix col 0 on the right and shifts the grid by one.
+- **split42 right** (generated here) applies the same convention. With no
+  extra key and no stacked pair, the right GRID is a straight net-copy of
+  the left and there is **no `c--` equivalent**; only the **thumb row**
+  differs: the thumbs physically sit at the inner edge (x=7.5/8.5/9.5,
+  matrix [7,0..2]), so they attach to the drawn-outer-LEFT columns
+  (K_C=Col1/SCLK1, K_V=Col2/SCLK2, K_B=Col3/SCLK3) instead of the columns
+  drawn above them, with CS per sheet unchanged (Out1_7/Out2_7/Out3_7).
+  The committed firmware (`keyboard.json` + `split42.c key_display[]`)
+  matches this as-is — the schematic now encodes the previously
+  "unverified symmetric guess" by design. (An earlier revision of the
+  generator mirrored the columns/chains/CS instead — reviewed as wrong:
+  it reproduced the left's local thumb-attachment pattern, which under
+  the mirror lands the thumbs on the wrong columns.)
 - All four top files share the **same root UUID** (they are copies; KiCad
   tolerates it), and sub-sheets carry per-project instance data for only
   one project — KiCad regenerates the rest on open.
-- The right-thumb CS order (`Out1_7/Out2_7/Out3_7` at matrix cols 0/1/2) is
-  the firmware's **unverified symmetric guess** (`split42/split42.c`) —
-  schematic and firmware agree by construction; if bench bring-up flips the
-  firmware order, flip the pair swap in `gen_split42_right_sch.py` too.
 
 On the PCB side (`poly_corne_split42_left` v1.0, measured with
 `extract_key_cluster.py`):
@@ -95,7 +105,7 @@ layout.kle.json      physical key positions + rotations (KLE, the same
                      hardware, firmware anim geometry and display maps)
 variant.yaml         matrix size + Col/Row net map, chain partition,
                      SR chain order, options: encoder, expansion port,
-                     status OLED, LTR-559, per-side mirror rules
+                     status OLED, LTR-559, per-side net maps
         │
         ▼
 gen_schematic  ──►  top-level .kicad_sch: N key-cell sheet instances +
@@ -128,6 +138,11 @@ Design rules learned from the split72→split42 history:
 3. **Keep hand-drawn sheets as the unit of reuse.** The generator writes
    *instances and nets*, never symbol graphics — schematic quality stays
    human.
-4. **The mirror is data, not a second design.** left/right = one key list,
-   one YAML, a `side: right` flag flipping the Col/chain/CS assignment —
-   exactly what `gen_split42_right_sch.py` does today as a special case.
+4. **The side difference is data, not a second design.** left/right = one
+   key list, one YAML, a per-side net map. And it is smaller than it looks:
+   nets walk the physical board in x-order on BOTH halves (nothing is
+   mirrored electrically — see the split72 convention above), so the only
+   per-side data is where the physical oddities land (split72: which end
+   the stacked thumb pair/doubled chain sits; split42: which columns the
+   thumb row joins). `variants/split72.yaml` + `gen_variant_sch.py`
+   express exactly this today.
