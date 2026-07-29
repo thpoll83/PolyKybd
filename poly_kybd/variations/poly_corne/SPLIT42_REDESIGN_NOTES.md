@@ -16,7 +16,7 @@ defects of v1.0-left; 2 and 4 are feature additions.
 > |---|---|---|
 > | right board is a split72 stub | **verified** | `cmp` says byte-identical to `poly_kybd_split72_right.kicad_pcb` |
 > | 0 | valid | follows from the above |
-> | 1 | valid, but **relocated** — defect is at U26, not the connector | corrected by the board author; see that section |
+> | 1 | valid, **relocated** — two pad pairs at U26 are not tied together; the connector is fine | corrected by the board author; see that section |
 > | 2 | valid | `I2C_SDA`/`I2C_SCL` reach only `U10` (RP2040) and the pull-ups `R3`/`R4` — no header, no connector |
 > | 3 | **verified geometrically** | see the section |
 > | 4 | valid | no LTR-559 footprint on the board |
@@ -28,70 +28,68 @@ the real right board, apply items 1–4 from the start — especially item 1, si
 orphaned link pads were evidently introduced during the left board's rework of the
 (correct) split72 layout, i.e. exactly the step about to be repeated for the right.
 
-## 1. ESD array U26: two unconnected traces (v1.0 defect — the split-link bug)
+## 1. ESD array U26: two pairs of pads are not tied together (v1.0 defect — the split-link bug)
 
-> **CORRECTED 2026-07-29 by the board author.** The defect is at **U26, the ESD
-> protection chip: two of its traces are not connected.** The **USB-C connector
-> itself is fine** — its footprint and wiring are correct.
+> **Corrected 2026-07-29 by the board author**, twice — get this right before the
+> redesign, because the earlier readings put the defect in the wrong place.
 >
-> Everything below this note was written from the opposite reading (that the *`USB2`
-> pads* were copper-orphaned and the fix was to tie the A-row and B-row pads together,
-> keeping U26 out of the signal path). **That framing is wrong and its prescribed fix
-> should not be actioned as written** — it would add traces at the connector to work
-> around a break that is actually at U26. The observable symptom and its consequences
-> are unaffected: two of the four flow-through paths do not complete, so the link comes
-> up in only one plug orientation, and with both halves being left boards that is 1 of
-> 4 plug combinations.
->
-> Still to pin down before the redesign: **which two** U26 traces are open, and hence
-> whether the fix is completing them in copper or re-routing the channel. ⚠️ Do not try
-> to settle this from the `.kicad_pcb` — two independent geometric checks were written
-> for it and both were discarded for reporting the same fault on the known-good
-> split72 board (the trap documented in `.claude/skills/investigate-kicad-pcb`). Use
-> the B.Cu gerber or a meter.
+> **The rule: two pairs of pads must ALWAYS be connected.** The USB-C connector
+> itself is **fine** — footprint and wiring are correct. The break is at **U26**
+> (TPD4E05U06DQA ESD array), where those two pairs are not joined.
 
-### Superseded framing (kept for context — see the correction above)
+Each link signal reaches **four** U26 pads (verified from the netlist, and identical
+on split72-left):
 
-On the v1.0 **left** layout the flipped-orientation data pads of the link USB-C
-(`USB2` pad 5 = B7/COM2, pad 8 = B6/COM1) are **copper-orphaned**: they reach U26
-(TPD4E05U06DQA ESD array) but nothing continues on the other side — the only bridge
-to the RP2040 is U26's *internal* flow-through metal (pads 1↔10, 5↔6). B.Cu shows it
-directly: 4 data stubs enter U26, only 2 leave. If U26 is absent or has a cold joint,
-the link works in exactly ONE plug orientation (power flows either way — VBUS/GND are
-all hard-wired). With both halves being left boards, both cable ends carry that coin
-flip → only 1 of 4 plug-orientation combos links up. This is the root cause of the
-entire split42 "split link dead / transport_fail=100%" saga (full record:
-`qmk_firmware/keyboards/polykybd/split42/SPLIT42_LINK_STATUS.md`).
+| net | MCU | U26 pads | connector |
+|---|---|---|---|
+| `SERIAL_COM1` | `U10.6` | 1, 4, 7, 10 | `USB2.6` (A-row), `USB2.8` (B-row) |
+| `SERIAL_COM2` | `U10.7` | 2, 5, 6, 9 | `USB2.5` (B-row), `USB2.7` (A-row) |
 
-**Fix in the redesign:** route both orientation pads to the MCU in board copper —
-`USB2.8 → USB2.6` and `USB2.5 → USB2.7` (two short traces joining each B-row pad to
-its A-row partner), exactly as split72 already does. Keep U26 for its actual ESD
-job, but never as a signal path.
+Four pads per signal is two flow-through channels — one per plug orientation. Both
+have to be connected for the signal to survive a flipped plug.
 
-**Bench fix for existing v1.0 boards:** reflow/populate U26, or bodge the two pad
-pairs above — on BOTH halves.
+**On v1.0-left only the INNER two pairs are connected.** The pads sit in two columns
+0.77 mm apart at 0.5 mm pitch, so the facing pairs and their distance from the package
+centre (pads 3/8, GND — not on the COM nets) are:
 
-> ⚠️ **This item rests on the gerbers and the bench, NOT on the `.kicad_pcb`.** A
-> re-check on 2026-07-29 found the *netlist* identical to split72-left: on both
-> boards `USB2.5/.7` are one net (`SERIAL_COM2`) and `USB2.6/.8` another
-> (`SERIAL_COM1`), each also touching `U10` and four `U26` pads. So the schematic
-> intent is the same and the defect can only live in the copper. Aggregate copper is
-> near-equivalent too (`SERIAL_COM1` 48.09mm/24 seg vs split72's 48.93mm/29 seg; the
-> one real delta is that split42's COM1 has **0 vias and is B.Cu-only** where
-> split72's has 2 vias across B.Cu+In1.Cu).
->
-> A pad-to-pad copper-connectivity check was attempted and **discarded**: it reported
-> "not connected" for the *known-good* split72 board as well, which per
-> `.claude/skills/investigate-kicad-pcb` means the check is wrong, not the board.
-> Do not treat that as evidence either way.
->
-> The claim stands on what actually produced it — the B.Cu gerber (4 data stubs into
-> U26, only 2 out) and the reproducible bench behaviour (1 of 4 plug-orientation
-> combos links, across 5 boards). Both renders are in this repo:
-> [`images/split42_left_gerber_4layers.png`](../../../images/split42_left_gerber_4layers.png)
-> and [`images/split42_link_copper_comparison.png`](../../../images/split42_link_copper_comparison.png).
-> **To close this out properly, verify on the fabbed gerbers or with a meter — not
-> from the layout file.**
+| y (mm) | left | right | pair | from centre | state |
+|---|---|---|---|---|---|
+| 105.58 | 1 | 10 | **1 ↔ 10** | 1.00 | ❌ **not connected** |
+| 105.08 | 2 | 9 | 2 ↔ 9 | 0.50 | ✅ connected |
+| 104.58 | *3* | *8* | — | 0 | GND, not on a COM net |
+| 104.08 | 4 | 7 | 4 ↔ 7 | 0.50 | ✅ connected |
+| 103.58 | 5 | 6 | **5 ↔ 6** | 1.00 | ❌ **not connected** |
+
+That is exactly one missing pair per signal — `1↔10` on `SERIAL_COM1`, `5↔6` on
+`SERIAL_COM2` — hence **two pairs**. (The original version of this note named the same
+two pairs as "U26's internal flow-through metal": right pads, wrong conclusion. They
+are not a substitute for board copper.)
+
+**Consequence (unchanged, and matches the bench):** the flipped-orientation path never
+completes, so the link comes up in exactly one plug orientation. Power is unaffected
+(VBUS/GND are hard-wired), so both halves always powered normally. With both halves
+being left boards — no right board was ever fabbed — each cable end carries that same
+coin flip, so only **1 of 4** plug-orientation combinations links. This is the root
+cause of the whole "split link dead / transport_fail=100%" saga; full record in
+`qmk_firmware/keyboards/polykybd/split42/SPLIT42_LINK_STATUS.md`.
+
+**Fix in the redesign:** connect **`1↔10` and `5↔6`** at U26 in board copper, matching
+the inner pairs, so neither orientation depends on the chip being present or
+well-soldered. Apply it to the right
+board from the start (item 0) — the fault was evidently introduced when the left board
+was reworked from the correct split72 layout, which is exactly the step about to be
+repeated.
+
+⚠️ **Confirm on the bench before cutting the redesign, not from the `.kicad_pcb`.** The
+pairing above is the board author's account plus the footprint geometry; two
+independent geometric checks *of the copper* were written against the layout file and
+both were discarded for reporting the same fault on the known-good split72 board (the
+trap documented in `.claude/skills/investigate-kicad-pcb`). Use the B.Cu gerber or a
+meter. Evidence renders:
+[`images/split42_left_gerber_4layers.png`](../../../images/split42_left_gerber_4layers.png),
+[`images/split42_link_copper_comparison.png`](../../../images/split42_link_copper_comparison.png).
+
+**Bench fix for existing v1.0 boards:** bodge `U26.1↔U26.10` and `U26.5↔U26.6` — on BOTH halves.
 
 ## 2. Break out I2C0 with a header for the status OLED
 
