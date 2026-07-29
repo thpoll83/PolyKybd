@@ -69,9 +69,11 @@ are built on:
   extra key and no stacked pair, the right GRID is a straight net-copy of
   the left and there is **no `c--` equivalent**; only the **thumb row**
   differs: the thumbs physically sit at the inner edge (x=7.5/8.5/9.5,
-  matrix [7,0..2]), so they attach to the drawn-outer-LEFT columns
-  (K_C=Col1/SCLK1, K_V=Col2/SCLK2, K_B=Col3/SCLK3) instead of the columns
-  drawn above them, with CS per sheet unchanged (Out1_7/Out2_7/Out3_7).
+  matrix [7,0..2]), so they belong to the outer-left columns
+  (K_C=Col1/SCLK1, K_V=Col2/SCLK2, K_B=Col3/SCLK3) with CS per sheet
+  unchanged (Out1_7/Out2_7/Out3_7). Drawing-wise the thumb sheet blocks
+  are MOVED under drawn columns 1–3 (inline with their SDIN/SCLK buses,
+  which just extend straight down to them — no cross-sheet routing).
   The committed firmware (`keyboard.json` + `split42.c key_display[]`)
   matches this as-is — the schematic now encodes the previously
   "unverified symmetric guess" by design. (An earlier revision of the
