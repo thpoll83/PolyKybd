@@ -30,8 +30,13 @@ Mechanically, per thumb cell: the KeyCol branch wires (stub + feeder into
 the shared column trunk) are deleted and a global label Col<n> is placed
 directly ON the pin (the same label-on-pin style the hand-made boards use
 for the ShiftRegisters control pins); the per-pin SCLK/SDIN chain labels
-are renamed. Everything else — every symbol, value, wire, UUID — is
-byte-identical to the left sheet. Project name, title and date are updated.
+are renamed; and the DRAWN BUS is re-routed to match — the feeder joining
+the thumb's local bus cluster to the old drawn column's bus is cut, and
+new bus segments run the target column's bus down and across (one lane
+per thumb, below the sheet content) to the cluster, so the drawing shows
+the thumb hanging on the chain-1/2/3 bus, not chain 4/5/6. Everything
+else — every symbol, value, wire, UUID — is byte-identical to the left
+sheet. Project name, title and date are updated.
 
 After writing, the result is verified: the per-key wiring table is traced
 from the generated file and asserted against the table derived from
@@ -76,12 +81,33 @@ EXPECTED = {
 }
 
 
+COL_BUS_PITCH = 36.83     # drawn column bus spacing (x = 104.14 + n*36.83)
+BUS_GRID_END = 172.1      # all six column buses' grid portion ends at y=172.085
+LANE_Y0, LANE_STEP = 226.06, 2.54   # reroute lanes, below all drawn content
+
+
 def sheet_pin_pos(text, sheet, pin):
     i = text.find(f'"{sheet}"')
     s = text.rfind('(sheet\n', 0, i)
     blk = text[s:text.find('\n\t)', s) + 3]
     m = re.search(r'\(pin "%s" \w+\s*\(at ([\-\d.]+) ([\-\d.]+) (\d+)\)' % pin, blk)
     return float(m.group(1)), float(m.group(2)), int(m.group(3))
+
+
+def bus_segments(text):
+    return [tuple(map(float, m.groups())) + (m.start(), m.end()) for m in re.finditer(
+        r'\t\(bus\s*\(pts\s*\(xy ([\-\d.]+) ([\-\d.]+)\) \(xy ([\-\d.]+) ([\-\d.]+)\)'
+        r'[\s\S]{0,220}?\n\t\)\n', text)]
+
+
+def bus_entries(text):
+    """(wire-side x, y, bus-side x, y) per bus_entry."""
+    out = []
+    for m in re.finditer(r'\(bus_entry\s*\(at ([\-\d.]+) ([\-\d.]+)\)\s*'
+                         r'\(size ([\-\d.]+) ([\-\d.]+)\)', text):
+        x, y, dx, dy = map(float, m.groups())
+        out.append((x, y, x + dx, y + dy))
+    return out
 
 
 def branch_segments(nets, px, py):
@@ -153,6 +179,52 @@ def generate():
             if hits != 1:
                 sys.exit(f'FATAL: {sheet} {base} label instance: {hits} matches (expected 1)')
 
+        # 3. The drawn BUS: the thumb's local bus cluster still fed into the
+        #    old drawn column's bus. Cut the feeder and re-route the cluster
+        #    to the target (drawn-left) column's bus via a lane below the
+        #    sheet content, so the drawing shows the thumb on chain <n>.
+        px, py, _ = sheet_pin_pos(t, sheet, 'SCLK')
+        stub_x = px + 1.27
+        pin_ys = set()
+        for pin in ('SDIN', 'SCLK', 'D-C', 'RESET', 'GND', 'VDD', 'VSUP'):
+            try:
+                _, y, _ = sheet_pin_pos(t, sheet, pin)
+                pin_ys.add(round(y, 2))
+            except AttributeError:
+                pass
+        cluster = [(bx, by) for wx, wy, bx, by in bus_entries(t)
+                   if abs(wx - stub_x) < 0.03 and round(wy, 2) in pin_ys]
+        if len(cluster) < 5:
+            sys.exit(f'FATAL: {sheet}: found only {len(cluster)} bus entries')
+        old_x = cluster[0][0]
+        cluster_top = min(by for _, by in cluster)
+        cluster_bot = max(by for _, by in cluster)
+        target_x = round(old_x - 3 * COL_BUS_PITCH, 2)
+
+        cut = 0
+        target_bottom = None
+        for x1, y1, x2, y2, s, e in bus_segments(t):
+            if abs(x1 - old_x) < 0.03 and abs(x2 - old_x) < 0.03 \
+                    and min(y1, y2) >= BUS_GRID_END - 0.05 \
+                    and max(y1, y2) <= cluster_top + 0.02:
+                edits.append((s, e, ''))
+                cut += 1
+            if abs(x1 - target_x) < 0.03 and abs(x2 - target_x) < 0.03:
+                target_bottom = max(target_bottom or 0, y1, y2)
+        if cut < 1 or target_bottom is None:
+            sys.exit(f'FATAL: {sheet}: feeder cut={cut}, target bus bottom={target_bottom}')
+
+        lane = LANE_Y0 + (n - 1) * LANE_STEP
+        anchor = t.find('\t(sheet_instances')
+        for i, (xa, ya, xb, yb) in enumerate((
+                (target_x, target_bottom, target_x, lane),
+                (target_x, lane, old_x, lane),
+                (old_x, lane, old_x, cluster_bot))):
+            edits.append((anchor, anchor,
+                          f'\t(bus\n\t\t(pts\n\t\t\t(xy {xa:g} {ya:g}) (xy {xb:g} {yb:g})\n'
+                          f'\t\t)\n\t\t(stroke\n\t\t\t(width 0)\n\t\t\t(type default)\n\t\t)\n'
+                          f'\t\t(uuid "0000{n}b{i:02d}-0000-4000-8000-{sheet.lower().replace("_", ""):0>12}")\n\t)\n'))
+
     for m in re.finditer(r'\(project "(poly_corne_split42_left)"', t):
         edits.append((m.start(1), m.end(1), 'poly_corne_split42_right'))
     m = re.search(r'\(title "(PolyCorne Split L)"', t)
@@ -196,7 +268,70 @@ def verify():
         if on_net != keys:
             fails += 1
             print(f'  FAIL {col} net keys: {sorted(on_net)} != {sorted(keys)}')
-    print(f'verify: {len(EXPECTED)} keys + MCU pins + column membership checked, {fails} failures')
+    fails += verify_buses()
+    print(f'verify: {len(EXPECTED)} keys + MCU pins + column membership + bus '
+          f'attachment checked, {fails} failures')
+    return fails
+
+
+def verify_buses():
+    """The DRAWN buses must tell the same story as the nets: each thumb's
+    bus cluster reaches the target column's cells and not the old ones."""
+    t = DST.read_text()
+    segs = bus_segments(t)
+    parent = {}
+
+    def find(a):
+        while parent.get(a, a) != a:
+            a = parent[a]
+        return a
+
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+
+    pts = {}
+    for i, (x1, y1, x2, y2, _, _) in enumerate(segs):
+        for p in ((round(x1, 2), round(y1, 2)), (round(x2, 2), round(y2, 2))):
+            if p in pts:
+                union(('b', i), pts[p])
+            pts[p] = ('b', i) if p not in pts else pts[p]
+            union(('b', i), pts[p])
+
+    def comp_of(x, y):
+        p = (round(x, 2), round(y, 2))
+        if p in pts:
+            return find(pts[p])
+        for i, (x1, y1, x2, y2, _, _) in enumerate(segs):
+            if min(x1, x2) - 0.02 <= x <= max(x1, x2) + 0.02 \
+                    and min(y1, y2) - 0.02 <= y <= max(y1, y2) + 0.02:
+                return find(('b', i))
+        return None
+
+    entries = bus_entries(t)
+
+    def cell_bus_comps(sheet):
+        px, py, _ = sheet_pin_pos(t, sheet, 'SCLK')
+        stub_x = px + 1.27
+        out = set()
+        for wx, wy, bx, by in entries:
+            if abs(wx - stub_x) < 0.03 and abs(wy - py) < 26:
+                c = comp_of(bx, by)
+                if c is not None:
+                    out.add(c)
+        return out
+
+    fails = 0
+    for thumb, good, bad in (('K_C', 'K_L2', 'K_E'), ('K_V', 'K_Q', 'K_R'),
+                             ('K_B', 'K_W', 'K_T')):
+        tc, gc, bc = cell_bus_comps(thumb), cell_bus_comps(good), cell_bus_comps(bad)
+        if not tc or not tc <= gc:
+            fails += 1
+            print(f'  FAIL bus: {thumb} cluster not attached to {good}\'s column bus')
+        if tc & bc:
+            fails += 1
+            print(f'  FAIL bus: {thumb} cluster still attached to {bad}\'s column bus')
     return fails
 
 
