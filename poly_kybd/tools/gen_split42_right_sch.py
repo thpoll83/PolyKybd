@@ -84,10 +84,12 @@ BUS_GRID_END = 172.1      # all six column buses' grid portion ends at y=172.085
 DX = -3 * COL_BUS_PITCH   # thumb block translation: 3 columns to the left
 
 # RIGHT-ONLY addition: the LTR-559 light/proximity sensor block
-# (variations/poly_corne/ltr559.kicad_sch — the Lite-On DS86-2013-0003
-# application circuit; see SPLIT42_REDESIGN_NOTES.md item 4). Placed in the
-# area the moved thumb blocks vacated; the sheet uuid must match the
-# instance paths stored inside ltr559.kicad_sch.
+# (poly_kybd/ltr559.kicad_sch — the Lite-On DS86-2013-0003 application
+# circuit; see SPLIT42_REDESIGN_NOTES.md item 4). The sheet lives with the
+# other shared sub-sheets (ni_buffer2, shift_registers, rp_pico) so future
+# split72 revisions can instantiate it too; referenced here relatively.
+# Placed in the area the moved thumb blocks vacated; the sheet uuid must
+# match the instance paths stored inside ltr559.kicad_sch.
 LTR_SHEET_UUID = '00004a00-0000-4000-8000-0000a1755900'
 LTR_SHEET_POS = (224.79, 190.5)
 LTR_PINS = (('VDD', 'VDD', True), ('GND', 'GND', True),
@@ -342,7 +344,7 @@ def generate():
          f'\t\t(property "Sheetname" "LTR559"\n\t\t\t(at {lx:g} {ly - 0.7:g} 0)\n'
          '\t\t\t(effects\n\t\t\t\t(font\n\t\t\t\t\t(size 1.27 1.27)\n\t\t\t\t)\n'
          '\t\t\t\t(justify left bottom)\n\t\t\t)\n\t\t)\n'
-         f'\t\t(property "Sheetfile" "ltr559.kicad_sch"\n\t\t\t(at {lx:g} {ly + h + 0.7:g} 0)\n'
+         f'\t\t(property "Sheetfile" "../../ltr559.kicad_sch"\n\t\t\t(at {lx:g} {ly + h + 0.7:g} 0)\n'
          '\t\t\t(effects\n\t\t\t\t(font\n\t\t\t\t\t(size 1.27 1.27)\n\t\t\t\t)\n'
          '\t\t\t\t(justify left top)\n\t\t\t\t(hide yes)\n\t\t\t)\n\t\t)']
     for i, (pname, _, _) in enumerate(LTR_PINS):

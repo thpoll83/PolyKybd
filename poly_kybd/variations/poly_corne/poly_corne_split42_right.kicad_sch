@@ -26665,7 +26665,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "ltr559.kicad_sch"
+		(property "Sheetfile" "../../ltr559.kicad_sch"
 			(at 224.79 206.44 0)
 			(effects
 				(font
