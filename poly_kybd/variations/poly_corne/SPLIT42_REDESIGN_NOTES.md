@@ -16,7 +16,7 @@ defects of v1.0-left; 2 and 4 are feature additions.
 > |---|---|---|
 > | right board is a split72 stub | **verified** | `cmp` says byte-identical to `poly_kybd_split72_right.kicad_pcb` |
 > | 0 | valid | follows from the above |
-> | 1 | valid, **not verifiable from the .kicad_pcb** | see the note in that section |
+> | 1 | valid, but **relocated** — defect is at U26, not the connector | corrected by the board author; see that section |
 > | 2 | valid | `I2C_SDA`/`I2C_SCL` reach only `U10` (RP2040) and the pull-ups `R3`/`R4` — no header, no connector |
 > | 3 | **verified geometrically** | see the section |
 > | 4 | valid | no LTR-559 footprint on the board |
@@ -28,7 +28,29 @@ the real right board, apply items 1–4 from the start — especially item 1, si
 orphaned link pads were evidently introduced during the left board's rework of the
 (correct) split72 layout, i.e. exactly the step about to be repeated for the right.
 
-## 1. Link USB-C: hard-wire BOTH plug orientations (v1.0 defect — the split-link bug)
+## 1. ESD array U26: two unconnected traces (v1.0 defect — the split-link bug)
+
+> **CORRECTED 2026-07-29 by the board author.** The defect is at **U26, the ESD
+> protection chip: two of its traces are not connected.** The **USB-C connector
+> itself is fine** — its footprint and wiring are correct.
+>
+> Everything below this note was written from the opposite reading (that the *`USB2`
+> pads* were copper-orphaned and the fix was to tie the A-row and B-row pads together,
+> keeping U26 out of the signal path). **That framing is wrong and its prescribed fix
+> should not be actioned as written** — it would add traces at the connector to work
+> around a break that is actually at U26. The observable symptom and its consequences
+> are unaffected: two of the four flow-through paths do not complete, so the link comes
+> up in only one plug orientation, and with both halves being left boards that is 1 of
+> 4 plug combinations.
+>
+> Still to pin down before the redesign: **which two** U26 traces are open, and hence
+> whether the fix is completing them in copper or re-routing the channel. ⚠️ Do not try
+> to settle this from the `.kicad_pcb` — two independent geometric checks were written
+> for it and both were discarded for reporting the same fault on the known-good
+> split72 board (the trap documented in `.claude/skills/investigate-kicad-pcb`). Use
+> the B.Cu gerber or a meter.
+
+### Superseded framing (kept for context — see the correction above)
 
 On the v1.0 **left** layout the flipped-orientation data pads of the link USB-C
 (`USB2` pad 5 = B7/COM2, pad 8 = B6/COM1) are **copper-orphaned**: they reach U26
