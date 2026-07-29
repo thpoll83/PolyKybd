@@ -7267,16 +7267,6 @@
 		)
 		(uuid "242d3c02-ef09-4637-9251-711c939b9201")
 	)
-	(bus
-		(pts
-			(xy 214.63 172.085) (xy 214.63 201.295)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2444f275-30f8-43dd-9071-8095feb2594c")
-	)
 	(wire
 		(pts
 			(xy 100.33 167.005) (xy 101.6 167.005)
@@ -8656,16 +8646,6 @@
 			(type default)
 		)
 		(uuid "51495a97-c08f-4421-9acb-7b9ebbbcdf6a")
-	)
-	(bus
-		(pts
-			(xy 251.46 172.085) (xy 251.46 201.295)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "51bd37f9-3964-4bb9-aed5-594001d6da44")
 	)
 	(polyline
 		(pts
@@ -12786,16 +12766,6 @@
 			(type default)
 		)
 		(uuid "db41fdb1-e38a-4724-8f57-ad76ecf91283")
-	)
-	(bus
-		(pts
-			(xy 288.29 172.085) (xy 288.29 201.295)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "db5fc341-2b67-400a-a72e-1427682417f8")
 	)
 	(wire
 		(pts
@@ -26695,6 +26665,36 @@
 			)
 		)
 	)
+	(bus
+		(pts
+			(xy 288.29 231.14) (xy 288.29 216.535)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00003b02-0000-4000-8000-0000000000kb")
+	)
+	(bus
+		(pts
+			(xy 177.8 231.14) (xy 288.29 231.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00003b01-0000-4000-8000-0000000000kb")
+	)
+	(bus
+		(pts
+			(xy 177.8 172.085) (xy 177.8 231.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00003b00-0000-4000-8000-0000000000kb")
+	)
 	(global_label "Col3"
 		(shape input)
 		(at 270.51 216.535 270)
@@ -26706,6 +26706,36 @@
 		)
 		(uuid "00003c01-0000-4000-8000-0000000000kb")
 	)
+	(bus
+		(pts
+			(xy 251.46 228.6) (xy 251.46 216.535)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00002b02-0000-4000-8000-0000000000kv")
+	)
+	(bus
+		(pts
+			(xy 140.97 228.6) (xy 251.46 228.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00002b01-0000-4000-8000-0000000000kv")
+	)
+	(bus
+		(pts
+			(xy 140.97 172.085) (xy 140.97 228.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00002b00-0000-4000-8000-0000000000kv")
+	)
 	(global_label "Col2"
 		(shape input)
 		(at 233.68 216.535 270)
@@ -26716,6 +26746,36 @@
 			(justify right)
 		)
 		(uuid "00002c01-0000-4000-8000-0000000000kv")
+	)
+	(bus
+		(pts
+			(xy 214.63 226.06) (xy 214.63 216.535)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00001b02-0000-4000-8000-0000000000kc")
+	)
+	(bus
+		(pts
+			(xy 104.14 226.06) (xy 214.63 226.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00001b01-0000-4000-8000-0000000000kc")
+	)
+	(bus
+		(pts
+			(xy 104.14 172.085) (xy 104.14 226.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00001b00-0000-4000-8000-0000000000kc")
 	)
 	(global_label "Col1"
 		(shape input)
