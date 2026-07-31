@@ -9,6 +9,10 @@ wedge_shape = "poly_kb_wave_right2-WD.svg";
 nuts_ins = "poly_kb_wave_right2-NutsInserts.svg";
 nuts = "poly_kb_wave_right2-Nuts.svg";
 
+// one-piece LED diffuser frame — provides diffuser_frame_left_clearance(),
+// which right_spacer() subtracts so its ribs are notched where the web crosses
+use <../parts/diffuser_frame_left.scad>
+
 case_height = 17.5;
 case_wall_thickness = 1.5;
 case_bottom_thickness = 2;
@@ -445,11 +449,46 @@ module right_case()
 }
 
 // spacer
-module right_spacer()
+//
+// r1.1 (2026-07-31): notched for the one-piece LED diffuser frame
+//     (parts/diffuser_frame_{left,right}.scad).  That frame's connecting web
+//     hangs 1.0 mm below the plate, i.e. in the top 1 mm of this spacer, and
+//     crossed the four inner ribs in 9 places (223 mm^3 of interference,
+//     measured).  Rather than deleting the ribs — which are what stops a
+//     182 x 129 mm ring from folding up during assembly — the frame's own
+//     diffuser_frame_left_clearance() is subtracted, so each rib is notched
+//     only where the web passes and keeps full height everywhere else.
+//
+//     The notch is cut into BOTH faces with the same pattern.  This part is
+//     otherwise a plain prism, which is why ONE printed spacer serves both
+//     halves: flipping it over is the same as mirroring it, and the two plate
+//     halves are exact mirror images.  Notching only the top would have put
+//     the notch underneath when flipped and broken that.  With both faces cut,
+//     whichever way up it goes the notch is on top and matches that half's
+//     frame (the frames are exact mirrors too — see mirror_x() in
+//     parts/tools/gen_diffuser_frame.py).  Ribs keep 3.8 - 2*1.3 = 1.2 mm of
+//     height at the crossings and stay continuous.
+//
+//     spacer_height stays 3.8 mm: the plate top must sit 5.0 mm above the PCB
+//     (3.8 + 1.2 mm plate) for MX plate-mount switches, and the web needs only
+//     1.0 mm of the 3.8 mm gap, so there is nothing to gain by raising it.
+//     spacer_thickness stays 1.8 mm — the current spacer is confirmed working
+//     on hardware and the web comes no closer than 6.14 mm to the outline, so
+//     there is nothing here that needs changing either.
+//
+// notch_diffuser_frame = false gives the original, un-notched part.
+module right_spacer(notch_diffuser_frame = true)
 {
     spacer_height = 3.8;
     spacer_thickness = 1.8;
     shrink_radius = 0.25; // 0.75;
+
+    // plate KiCad coords -> this file's coords (fitted against the plate
+    // outline: mean nearest-neighbour distance 0.000 mm)
+    frame_xy = [ 92.19, 71.79 ];
+
+    difference()
+    {
     translate([ 0, 0, 20 ]) difference()
     {
         union()
@@ -475,6 +514,17 @@ module right_spacer()
             linear_extrude(height = spacer_height + 2, scale = 1) offset(r = -shrink_radius, $fn = 50)
                 import(file = pcb_outline, dpi = 300);
         }
+    }
+
+    if (notch_diffuser_frame)
+    {
+        // top face
+        translate([ frame_xy[0], frame_xy[1], 20 + spacer_height ])
+            diffuser_frame_left_clearance();
+        // bottom face, same pattern, so the part stays symmetric top-to-bottom
+        translate([ frame_xy[0], frame_xy[1], 20 ]) mirror(v = [ 0, 0, 1 ])
+            diffuser_frame_left_clearance();
+    }
     }
 }
 
