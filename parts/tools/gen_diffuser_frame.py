@@ -393,21 +393,59 @@ def _adjacency(segs):
     return adj
 
 
-def graph_connected(segs, leds):
-    """Is every diffuser still reachable from every other through `segs`?"""
+def _reachable(segs, leds):
+    """Set of cap nodes reachable from the first one, plus the cap-node map."""
     adj = _adjacency(segs)
-    caps = _cap_nodes(leds)
-    # a diffuser's own cap welds together every stem that lands on it, so treat
-    # all nodes within the cap footprint of one LED as a single node
+    caps = _cap_nodes(leds)          # one boss key per LED
     start = next((k for k in caps if k in adj), None)
     if start is None:
-        return False
+        return caps, adj, set()
     seen, stack = {start}, [start]
     while stack:
         for nb in adj.get(stack.pop(), ()):
             if nb not in seen:
-                seen.add(nb); stack.append(nb)
-    return all(k in seen for k in caps if k in adj) and len(caps) == len(leds)
+                seen.add(nb)
+                stack.append(nb)
+    return caps, adj, seen
+
+
+def count_components(segs, leds):
+    """How many separate pieces the diffusers fall into (1 = one part)."""
+    adj = _adjacency(segs)
+    caps = _cap_nodes(leds)
+    if len(caps) != len(leds):
+        return len(leds)             # boss keys collided — treat as broken
+    seen, comps = set(), 0
+    for k in caps:
+        if k in seen:
+            continue
+        if k not in adj:
+            comps += 1               # a diffuser with no stem is its own piece
+            seen.add(k)
+            continue
+        comps += 1
+        stack = [k]
+        seen.add(k)
+        while stack:
+            for nb in adj.get(stack.pop(), ()):
+                if nb not in seen:
+                    seen.add(nb)
+                    stack.append(nb)
+    return comps
+
+
+def graph_connected(segs, leds):
+    """Is every diffuser joined to every other through `segs`?
+
+    Each LED contributes exactly one node — its boss key, the point every stem
+    that serves it is welded to.  A diffuser with no stem at all has no node in
+    the adjacency map, and must fail here rather than be skipped: this is the
+    only safety gate the thinning loop has.
+    """
+    caps, adj, seen = _reachable(segs, leds)
+    if len(caps) != len(leds):
+        return False
+    return all(k in adj and k in seen for k in caps)
 
 
 def prune_dead_ends(segs, leds):
@@ -622,10 +660,13 @@ def build(side='left'):
         segs = [s for idx, s in enumerate(segs) if idx not in dropped]
         segs = prune_dead_ends(segs, leds)
         after = sum(seg_len(s) for s in segs)
+        pct = 100 * (before - after) / before if before else 0.0
         print(f'  thinned {len(dropped)}/{len(cand)} long vertical runs: '
-              f'{before:.0f} -> {after:.0f} mm ({100*(before-after)/before:.0f}% less stem)')
+              f'{before:.0f} -> {after:.0f} mm ({pct:.0f}% less stem)')
 
-    comps = len({find(i) for i in range(n)})
+    # NOT from `parent`: that only tracks the rung/link phases, so it would
+    # under-report after thinning and dead-end pruning removed rails.
+    comps = count_components(segs, leds)
     total = sum(sum(math.dist(s['pts'][k], s['pts'][k + 1])
                     for k in range(len(s['pts']) - 1)) for s in segs)
     print(f'  segments {len(segs)} ({sum(1 for s in segs if s["kind"]=="rung")} rungs, '
@@ -687,8 +728,9 @@ def emit_scad(side, D, path):
 //             Do this BEFORE the plate meets the spacer — the slide needs the
 //             space under the plate to be clear.
 //
-//  The spacer is notched for this web: see right_spacer() /
-//  spacer_for_plate_{side}() in case/case_polykybd_split72_lr.scad.
+//  The spacer is notched for this web: see right_spacer() in
+//  case/case_polykybd_split72_lr.scad.  One spacer serves both halves —
+//  flip it over for the other one.
 //  ---------------------------------------------------------------------
 // ===========================================================================
 
@@ -787,7 +829,9 @@ if __name__ == '__main__':
     args = ap.parse_args()
     left = None
     for side in (args.sides or ['left', 'right']):
-        assert side in ('left', 'right'), side
+        # not an assert: `python -O` strips those
+        if side not in ('left', 'right'):
+            sys.exit(f"error: unknown side {side!r} (expected 'left' or 'right')")
         print(side)
         if side == 'right':
             # exact mirror of the left half — see mirror_x()
@@ -796,5 +840,8 @@ if __name__ == '__main__':
         else:
             D = build(side)
             left = D
+        if D['comps'] != 1:
+            sys.exit(f"error: the {side} frame falls into {D['comps']} separate "
+                     f"pieces — refusing to write it")
         p = emit_scad(side, D, os.path.join(args.out_dir, f'diffuser_frame_{side}.scad'))
         print('  wrote', os.path.relpath(p, REPO))

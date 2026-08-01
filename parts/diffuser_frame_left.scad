@@ -27,8 +27,9 @@
 //             Do this BEFORE the plate meets the spacer — the slide needs the
 //             space under the plate to be clear.
 //
-//  The spacer is notched for this web: see right_spacer() /
-//  spacer_for_plate_left() in case/case_polykybd_split72_lr.scad.
+//  The spacer is notched for this web: see right_spacer() in
+//  case/case_polykybd_split72_lr.scad.  One spacer serves both halves —
+//  flip it over for the other one.
 //  ---------------------------------------------------------------------
 // ===========================================================================
 
