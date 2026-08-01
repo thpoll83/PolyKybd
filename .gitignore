@@ -13,3 +13,7 @@ case/BOSL2*
 *.log
 poly_kybd/variations/poly_corne/*
 
+
+# Python bytecode (parts/tools/ generator)
+__pycache__/
+*.pyc
