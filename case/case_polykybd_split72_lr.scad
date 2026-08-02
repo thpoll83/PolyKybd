@@ -581,15 +581,39 @@ module right_spacer(notch_diffuser_frame = true)
 //translate([5,0,0])  right_spacer();
 translate([5,0,0]) right_case();
 //translate([ -5, 0, 0 ]) left_case();
-module spacers_4x() {
-for(s = [0:3]) {
-    translate([0,0,s*5]) right_spacer();
-    translate([20,15,15*1.5+s*5]) rotate([0,90,0]) cylinder(h = 5, r = 0.75, center = true, $fn = 32);
-    translate([180,125,15*1.5+s*5]) rotate([0,90,0]) cylinder(h = 5, r = 0.75, center = true, $fn = 32);
+// n copies on one sprue, so a print service that bills per repeated part sees a
+// single piece — the same reason the diffusers became one frame.  1.5 mm rods:
+// two vertical posts, plus a short pin tying every copy to each post.  Snip the
+// pins and clean the stubs after printing.
+//
+// The z figures have to track right_spacer(): it builds at z = 20 and is
+// spacer_height tall.  They are repeated here because those are locals of that
+// module and cannot be read from outside.
+spacer_stack_pitch = 5;      // 3.8 mm part + 1.2 mm gap
+
+module spacers_stacked(n = 4)
+{
+    part_h = 3.8;            // = spacer_height in right_spacer()
+    z0     = 20;             // = the translate inside right_spacer()
+    span   = (n - 1) * spacer_stack_pitch + part_h;
+
+    for (s = [0:n - 1])
+    {
+        translate([ 0, 0, s * spacer_stack_pitch ]) right_spacer();
+
+        // pin each copy to both posts, at its mid-height
+        for (p = [[ 20, 15 ], [ 180, 125 ]])
+            translate([ p[0], p[1], z0 + part_h / 2 + s * spacer_stack_pitch ])
+                rotate([ 0, 90, 0 ]) cylinder(h = 5, r = 0.75, center = true, $fn = 32);
+    }
+
+    // the posts, spanning the whole stack
+    for (p = [[ 22, 15 ], [ 178, 125 ]])
+        translate([ p[0], p[1], z0 + span / 2 ])
+            cylinder(h = span, r = 0.75, center = true, $fn = 32);
 }
-translate([22,15,15*2]) cylinder(h = 15, r = 0.75, center = true, $fn = 32);
-translate([178,125,15*2]) cylinder(h = 15, r = 0.75, center = true, $fn = 32);
-}
+
+module spacers_4x() { spacers_stacked(4); }
 
 //translate([5,0,0]) right_spacer();
 //spacers_4x();
