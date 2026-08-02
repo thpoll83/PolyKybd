@@ -51,10 +51,15 @@ module _stem_left(a, b) {
 
 // Grown, open-topped copy of the web — the spacer subtracts this so its ribs
 // are notched exactly where the web crosses them and keep full height elsewhere.
-module diffuser_frame_left_clearance(extra = 0.3, up = 6) {
-    translate([0, 0, -web_t - extra])
-        linear_extrude(web_t + extra + up)
-            offset(r = extra) diffuser_frame_left_web_2d();
+//
+// lat and deep are SEPARATE on purpose.  `deep` sets how far into the spacer
+// the notch reaches, so it must stay small or the ribs get cut clean through.
+// `lat` sets how wide the notch is, and wants to be big enough that a rib the
+// notch only partly overlaps is removed rather than left as a fragile fin.
+module diffuser_frame_left_clearance(lat = 0.3, deep = 0.3, up = 6) {
+    translate([0, 0, -web_t - deep])
+        linear_extrude(web_t + deep + up)
+            offset(r = lat) diffuser_frame_left_web_2d();
 }
 
 module diffuser_frame_left_web_2d() {

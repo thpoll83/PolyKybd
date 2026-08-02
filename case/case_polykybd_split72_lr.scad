@@ -25,6 +25,7 @@ text_font = "Arial:style=Bold Italic";
 text_size = 12;
 text_height = 0.35;
 revision = "r1.7";
+spacer_revision = "r1.2";
 name = "PolyKybd";
 model_name = "Split72";
 
@@ -239,7 +240,15 @@ module inner_walls()
             {
                 translate([ 47.5 + 92 - 48 + 2 * 19.05 * i, -45, 0 ]) cube([ spacer_thickness, 200, spacer_height ]);
             }
-            translate([ 53, 100.5 - 45, 0 ]) cube([ spacer_thickness, 100, spacer_height ]);
+            // (the former rib at x=53 is gone — see the r1.2 note above)
+
+            // revision, standing proud of the inner wall face
+            translate([ rev_face[0], rev_face[1], spacer_height / 2 ])
+                rotate([ 0, 0, rev_edge_ang + 180 ]) rotate([ 90, 0, 0 ])
+                    linear_extrude(height = rev_emboss)
+                        text(str("SPACER ", spacer_revision), size = 2.2,
+                             font = text_font, halign = "center",
+                             valign = "center", $fn = 32);
             translate([ 1.5 + 63.41, 36 - 48, 0 ]) rotate([ 0, 0, 10 ]) cube([ spacer_thickness, 68.6, spacer_height ]);
         }
 
@@ -469,6 +478,19 @@ module right_case()
 //     parts/tools/gen_diffuser_frame.py).  Ribs keep 3.8 - 2*1.3 = 1.2 mm of
 //     height at the crossings and stay continuous.
 //
+// r1.2 (2026-07-31): removed the inner rib at x=53 and widened the notch.
+//     Measured along each rib, the rail at x=54.57 left that rib as a 50.5 mm
+//     run of 0.28 mm wall — a fin with no stiffness that would simply snap off,
+//     plus 39.5 mm of stub.  Its channel is only 3.45 mm wide, so a 2.0 mm rail
+//     and a 1.8 mm rib cannot both fit: the rib had to go.  The remaining ribs
+//     are healthy (150 mm and 162 mm solid; the rotated one is untouched).
+//     The notch is also widened sideways to 1.0 mm, which clears the two ~3 mm
+//     0.06 mm slivers the old 0.3 mm notch grazed off ribs B and C.  Lateral
+//     and depth clearance are separate parameters so widening does not also cut
+//     deeper.  The revision is embossed standing on the inner wall face so it
+//     is readable from inside the ring without touching the flat top/bottom
+//     faces; bump spacer_revision when this part changes.
+//
 //     spacer_height stays 3.8 mm: the plate top must sit 5.0 mm above the PCB
 //     (3.8 + 1.2 mm plate) for MX plate-mount switches, and the web needs only
 //     1.0 mm of the 3.8 mm gap, so there is nothing to gain by raising it.
@@ -487,6 +509,32 @@ module right_spacer(notch_diffuser_frame = true)
     // outline: mean nearest-neighbour distance 0.000 mm)
     frame_xy = [ 92.19, 71.79 ];
 
+    // 1.0 mm sideways so a rib the notch only partly overlaps is removed
+    // instead of surviving as a fin; 0.3 mm deep so ribs keep their height
+    notch_lat  = 1.0;
+    notch_deep = 0.3;
+
+    // Revision, embossed standing on the INNER face of the wall so it neither
+    // touches the top/bottom faces (which must stay flat and symmetric — the
+    // part is flipped over to serve the other half) nor the diffuser frame,
+    // whose nearest stem edge is 6.14 mm inside the outline against this
+    // text's 2.45 mm.  Placed on the longest straight run of the outline
+    // (69.3 mm, 5 deg, inward normal (-0.09, +1.00), midpoint (96.7, 22.3)),
+    // offset inward by shrink_radius + spacer_thickness to land on the wall.
+    // rev_bite sinks the extrusion into the wall so the glyphs FUSE with it —
+    // anchoring exactly on the face makes them touch at a zero-thickness plane
+    // and they come out as separate floating bodies.
+    // rev_along slides the label along that edge into the clear 36.3 mm
+    // stretch between the ribs at x=91.5 and x=129.6 — centred on the edge
+    // midpoint it ran straight through the first of them.
+    rev_edge_ang = 5.0;
+    rev_along    = 14.9;
+    rev_emboss   = 0.4;
+    rev_bite     = 0.3;
+    rev_inset    = shrink_radius + spacer_thickness - rev_bite;
+    rev_face     = [ 96.7 + cos(rev_edge_ang) * rev_along - 0.09 * rev_inset,
+                     22.3 + sin(rev_edge_ang) * rev_along + 1.00 * rev_inset ];
+
     difference()
     {
     translate([ 0, 0, 20 ]) difference()
@@ -504,7 +552,15 @@ module right_spacer(notch_diffuser_frame = true)
             {
                 translate([ 47.5 + 92 - 48 + 2 * 19.05 * i, -45, 0 ]) cube([ spacer_thickness, 200, spacer_height ]);
             }
-            translate([ 53, 100.5 - 45, 0 ]) cube([ spacer_thickness, 100, spacer_height ]);
+            // (the former rib at x=53 is gone — see the r1.2 note above)
+
+            // revision, standing proud of the inner wall face
+            translate([ rev_face[0], rev_face[1], spacer_height / 2 ])
+                rotate([ 0, 0, rev_edge_ang + 180 ]) rotate([ 90, 0, 0 ])
+                    linear_extrude(height = rev_emboss)
+                        text(str("SPACER ", spacer_revision), size = 2.2,
+                             font = text_font, halign = "center",
+                             valign = "center", $fn = 32);
             translate([ 1.5 + 63.41, 36 - 48, 0 ]) rotate([ 0, 0, 10 ]) cube([ spacer_thickness, 68.6, spacer_height ]);
         }
 
@@ -520,10 +576,10 @@ module right_spacer(notch_diffuser_frame = true)
     {
         // top face
         translate([ frame_xy[0], frame_xy[1], 20 + spacer_height ])
-            diffuser_frame_left_clearance();
+            diffuser_frame_left_clearance(notch_lat, notch_deep);
         // bottom face, same pattern, so the part stays symmetric top-to-bottom
         translate([ frame_xy[0], frame_xy[1], 20 ]) mirror(v = [ 0, 0, 1 ])
-            diffuser_frame_left_clearance();
+            diffuser_frame_left_clearance(notch_lat, notch_deep);
     }
     }
 }
