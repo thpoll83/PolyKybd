@@ -470,16 +470,16 @@ module right_case()
 //     parts/tools/gen_diffuser_frame.py).  Ribs keep 3.8 - 2*1.3 = 1.2 mm of
 //     height at the crossings and stay continuous.
 //
-// r1.2 (2026-07-31): removed the inner rib at x=53 and widened the notch.
-//     Measured along each rib, the rail at x=54.57 left that rib as a 50.5 mm
-//     run of 0.28 mm wall — a fin with no stiffness that would simply snap off,
-//     plus 39.5 mm of stub.  Its channel is only 3.45 mm wide, so a 2.0 mm rail
-//     and a 1.8 mm rib cannot both fit: the rib had to go.  The remaining ribs
-//     are healthy (150 mm and 162 mm solid; the rotated one is untouched).
-//     The notch is also widened sideways to 1.0 mm, which clears the two ~3 mm
-//     0.06 mm slivers the old 0.3 mm notch grazed off ribs B and C.  Lateral
-//     and depth clearance are separate parameters so widening does not also cut
-//     deeper.  The revision is embossed standing on the inner wall face so it
+// r1.2 (2026-07-31): widened the notch so it cannot leave fins.
+//     Measured along each rib, the old 0.3 mm notch left the rib at x=53 as a
+//     50.5 mm run of 0.28 mm wall — a fin with no stiffness that would simply
+//     snap off.  Widening the notch sideways to 1.0 mm makes it span
+//     52.57..56.57, which fully covers that rib's 53.00..54.80: the rib is now
+//     cleanly cut where the rail runs and keeps its solid ends, instead of
+//     surviving as a wall.  The same widening clears the two ~3 mm 0.06 mm
+//     slivers the old notch grazed off the ribs at x=91.5 and x=129.6.
+//     Lateral and depth clearance are SEPARATE parameters: depth must stay
+//     small or the ribs get cut clean through over their whole height.  The revision is embossed standing on the inner wall face so it
 //     is readable from inside the ring without touching the flat top/bottom
 //     faces; bump spacer_revision when this part changes.
 //
@@ -521,7 +521,7 @@ module right_spacer(notch_diffuser_frame = true)
     // midpoint it ran straight through the first of them.
     rev_edge_ang = 5.0;
     rev_along    = 14.9;
-    rev_emboss   = 0.4;
+    rev_emboss   = 0.7;
     rev_bite     = 0.3;
     rev_inset    = shrink_radius + spacer_thickness - rev_bite;
     rev_face     = [ 96.7 + cos(rev_edge_ang) * rev_along - 0.09 * rev_inset,
@@ -544,13 +544,13 @@ module right_spacer(notch_diffuser_frame = true)
             {
                 translate([ 47.5 + 92 - 48 + 2 * 19.05 * i, -45, 0 ]) cube([ spacer_thickness, 200, spacer_height ]);
             }
-            // (the former rib at x=53 is gone — see the r1.2 note above)
+            translate([ 53, 100.5 - 45, 0 ]) cube([ spacer_thickness, 100, spacer_height ]);
 
             // revision, standing proud of the inner wall face
             translate([ rev_face[0], rev_face[1], spacer_height / 2 ])
                 rotate([ 0, 0, rev_edge_ang + 180 ]) rotate([ 90, 0, 0 ])
                     linear_extrude(height = rev_emboss)
-                        text(str("SPACER ", spacer_revision), size = 2.2,
+                        text(str("SPACER ", spacer_revision), size = 2.8,
                              font = text_font, halign = "center",
                              valign = "center", $fn = 32);
             translate([ 1.5 + 63.41, 36 - 48, 0 ]) rotate([ 0, 0, 10 ]) cube([ spacer_thickness, 68.6, spacer_height ]);
