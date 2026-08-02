@@ -240,15 +240,7 @@ module inner_walls()
             {
                 translate([ 47.5 + 92 - 48 + 2 * 19.05 * i, -45, 0 ]) cube([ spacer_thickness, 200, spacer_height ]);
             }
-            // (the former rib at x=53 is gone — see the r1.2 note above)
-
-            // revision, standing proud of the inner wall face
-            translate([ rev_face[0], rev_face[1], spacer_height / 2 ])
-                rotate([ 0, 0, rev_edge_ang + 180 ]) rotate([ 90, 0, 0 ])
-                    linear_extrude(height = rev_emboss)
-                        text(str("SPACER ", spacer_revision), size = 2.2,
-                             font = text_font, halign = "center",
-                             valign = "center", $fn = 32);
+            translate([ 53, 100.5 - 45, 0 ]) cube([ spacer_thickness, 100, spacer_height ]);
             translate([ 1.5 + 63.41, 36 - 48, 0 ]) rotate([ 0, 0, 10 ]) cube([ spacer_thickness, 68.6, spacer_height ]);
         }
 
