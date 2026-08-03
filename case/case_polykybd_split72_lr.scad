@@ -491,7 +491,8 @@ module right_case()
 //     on hardware and the web comes no closer than 6.14 mm to the outline, so
 //     there is nothing here that needs changing either.
 //
-// notch_diffuser_frame = false gives the original, un-notched part.
+// notch_diffuser_frame = false gives back the ORIGINAL part, unchanged: no
+// notch on either face and no engraved revision, for builds with no frame.
 module right_spacer(notch_diffuser_frame = true)
 {
     spacer_height = 3.8;
@@ -568,13 +569,16 @@ module right_spacer(notch_diffuser_frame = true)
             diffuser_frame_left_clearance(notch_lat, notch_deep);
     }
 
-    // revision, engraved into the inner wall face
-    translate([ rev_face[0], rev_face[1], 20 + spacer_height / 2 ])
-        rotate([ 0, 0, rev_edge_ang + 180 ]) rotate([ 90, 0, 0 ])
-            linear_extrude(height = rev_depth + rev_over)
-                text(str("SPACER ", spacer_revision), size = 2.8,
-                     font = text_font, halign = "center",
-                     valign = "center", $fn = 32);
+    // Revision, engraved into the inner wall face.  Gated on the same flag as
+    // the notch: the revision identifies THIS design, so notch_diffuser_frame
+    // = false has to give back the original part with nothing added or removed.
+    if (notch_diffuser_frame)
+        translate([ rev_face[0], rev_face[1], 20 + spacer_height / 2 ])
+            rotate([ 0, 0, rev_edge_ang + 180 ]) rotate([ 90, 0, 0 ])
+                linear_extrude(height = rev_depth + rev_over)
+                    text(str("SPACER ", spacer_revision), size = 2.8,
+                         font = text_font, halign = "center",
+                         valign = "center", $fn = 32);
     }
 }
 

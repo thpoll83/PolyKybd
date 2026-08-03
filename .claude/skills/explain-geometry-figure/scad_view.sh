@@ -13,6 +13,11 @@
 # Env: SIZE=WxH  CENTRE=x,y,z  DIST=n  SCHEME="Tomorrow Night"  PREVIEW=1
 set -euo pipefail
 
+if (( $# < 2 || $# > 3 )); then
+  echo "usage: $(basename "$0") out.png model.scad [top|front|iso|<camera>]" >&2
+  exit 64
+fi
+
 out=$1; scad=$2; view=${3:-iso}
 size=${SIZE:-1000x760}
 centre=${CENTRE:-0,0,0}

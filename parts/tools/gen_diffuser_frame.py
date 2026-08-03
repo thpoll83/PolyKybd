@@ -546,7 +546,8 @@ def build(side='left'):
     parent = list(range(n))
     def uf_find(x):
         while parent[x] != x:
-            parent[x] = parent[parent[x]]; x = parent[x]
+            parent[x] = parent[parent[x]]
+            x = parent[x]
         return x
     def union(a, b):
         ra, rb = uf_find(a), uf_find(b)

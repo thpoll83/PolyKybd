@@ -34,11 +34,15 @@ Two deliverables, usually both:
    the alternative (numbers in your head, shape in the script) is how a figure ends
    up contradicting its own caption.
 
-2. **Write the script in the scratchpad**, importing `figlib.py` from this skill dir:
+2. **Write the script in the scratchpad**, importing `figlib.py` from this skill
+   directory. Resolve it from the repo root rather than hardcoding a checkout path
+   (`git rev-parse --show-toplevel` if you need it in a shell):
 
    ```python
-   import sys, math
-   sys.path.insert(0, '/home/user/PolyKybd/.claude/skills/explain-geometry-figure')
+   import sys, math, subprocess
+   REPO = subprocess.run(['git', 'rev-parse', '--show-toplevel'],
+                         capture_output=True, text=True, check=True).stdout.strip()
+   sys.path.insert(0, f'{REPO}/.claude/skills/explain-geometry-figure')
    from figlib import Fig, C
 
    R, CH = 3.5, 0.25

@@ -14,6 +14,7 @@ geometry there, draw with these helpers, then Fig.png() and LOOK at the result.
     f.save('/tmp/.../fig.svg'); f.png()
 """
 import base64
+import html
 import subprocess
 
 
@@ -42,7 +43,10 @@ class Fig:
 
     # ---- primitives --------------------------------------------------------
     def txt(self, x, y, s, size=17, fill=C.FG, anchor='start', bold=False):
+        # Escaped, or a label with & or < silently produces invalid SVG -- and
+        # labels are routinely built from filenames and measured values.
         w = 'bold' if bold else 'normal'
+        s = html.escape(str(s), quote=False)
         self.o.append(f'<text x="{x:.1f}" y="{y:.1f}" fill="{fill}" font-size="{size}" '
                       f'text-anchor="{anchor}" font-weight="{w}">{s}</text>')
 
