@@ -16,6 +16,7 @@ geometry there, draw with these helpers, then Fig.png() and LOOK at the result.
 import base64
 import html
 import subprocess
+from pathlib import Path
 
 
 class C:
@@ -113,7 +114,8 @@ class Fig:
         """Embed a PNG by value (base64).  Relative hrefs are fragile — don't.
 
         clip = (x, y, w, h) keeps a scaled-up render off the title/footer."""
-        b64 = base64.b64encode(open(png_path, 'rb').read()).decode()
+        with open(png_path, 'rb') as fh:
+            b64 = base64.b64encode(fh.read()).decode()
         cp = ''
         if clip:
             self._clip += 1
@@ -126,13 +128,15 @@ class Fig:
 
     # ---- output ------------------------------------------------------------
     def save(self, path):
-        open(path, 'w').write('\n'.join(self.o + ['</svg>']))
-        self.path = path
-        return path
+        # Normalized to Path, so png() works whether you passed a str or a Path.
+        self.path = Path(path)
+        with open(self.path, 'w', encoding='utf-8') as fh:
+            fh.write('\n'.join(self.o + ['</svg>']))
+        return self.path
 
     def png(self, out=None, width=None):
         """rsvg-convert the saved SVG.  Read the PNG back and LOOK at it."""
-        out = out or self.path.rsplit('.', 1)[0] + '.png'
-        subprocess.run(['rsvg-convert', '-w', str(width or self.w), self.path, '-o', out],
-                       check=True)
+        out = Path(out) if out else self.path.with_suffix('.png')
+        subprocess.run(['rsvg-convert', '-w', str(width or self.w),
+                        str(self.path), '-o', str(out)], check=True)
         return out

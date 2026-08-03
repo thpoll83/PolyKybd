@@ -732,10 +732,12 @@ def emit_scad(side, D, path):
 
 use <diffuser.scad>
 
-// The web hangs below the plate (plate underside is z = 0) INSIDE diffuser()'s
-// bottom cap stack, which occupies z = -2*cap_thickness .. 0 ( = -1.5 .. 0 with
-// the stock values).  The web is the shallower of the two, so it welds to the
-// cap over its full 1.0 mm and the cap's taper hangs 0.5 mm below it.
+// The web hangs below the plate (plate underside is z = 0) EXACTLY co-planar
+// with diffuser()'s bottom cap, which occupies z = -2*cap_thickness_bot .. 0
+// ( = -1.0 .. 0 with the stock values).  Keep the two equal: a cap that hangs
+// below the web meets it at a feather edge, and a web deeper than the spacer
+// can be notched for on both faces breaks the one-part-serves-both-halves
+// spacer.  See the cap_thickness_bot note in diffuser.scad.
 web_t  = 1.0;
 stem_w = {D['stem_w']};
 
