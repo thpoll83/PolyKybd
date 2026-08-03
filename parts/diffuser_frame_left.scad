@@ -10,7 +10,7 @@
 //  diffuser() module, used unmodified — this file adds only the web.
 //
 //  ---------------------------------------------------------------------
-//  revision   r1.0          generated 2026-07-31
+//  revision   r1.0          generated 2026-08-03
 //  source     poly_kybd/poly_kybd_split72_plate_left.kicad_pcb
 //  diffusers  36
 //  web        54 rungs + 30 rails + 5 routed links,

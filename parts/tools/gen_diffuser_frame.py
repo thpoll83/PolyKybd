@@ -22,7 +22,7 @@ Usage:
     python3 gen_diffuser_frame.py            # both halves
     python3 gen_diffuser_frame.py left
 """
-import sys, os, re, math, json, heapq, argparse, collections
+import sys, os, re, math, json, heapq, argparse, collections, datetime
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -31,7 +31,9 @@ def plate_path(side):
 
 
 REV  = "r1.0"
-DATE = "2026-07-31"
+# Stamped into the generated header, so it must be the date this actually ran —
+# a frozen constant silently claims the wrong day after the next regeneration.
+DATE = datetime.date.today().isoformat()
 
 # ======================================================================
 # from sexp.py
@@ -74,7 +76,8 @@ def first(node, name):
 # ======================================================================
 
 def load(path):
-    return parse(open(path,encoding='utf-8').read())[0]
+    with open(path, encoding='utf-8') as fh:
+        return parse(fh.read())[0]
 
 def arc_points(s,m,e,n=24):
     (sx,sy),(mx,my),(ex,ey)=s,m,e
@@ -181,13 +184,12 @@ def extract(path):
 
 
 # ---------------------------------------------------------------- parameters
-STEM_W   = 1.6    # stem width (mm)
+STEM_W   = 2.0    # stem width (mm) -- resin, so 2 mm is fine
 CLEAR    = 0.40   # clearance from a switch cut-out edge (mm)
 CAP_R    = 3.5    # diffuser cap radius (stems may start anywhere on the cap)
 GRID     = 0.5    # router grid (mm)
 TURN_PEN = 0.0    # cost added per direction change (keeps runs straight)
 EDGE_MARGIN = 2.0 # keep the web this far inside the plate outline
-LADDER_MAX  = 42.0 # add redundant links up to this length (stiffness)
 
 SQ2 = math.sqrt(2)
 
@@ -212,11 +214,6 @@ def poly_dist(p, poly):
             if x < a[0] + (y - a[1]) / (b[1] - a[1]) * (b[0] - a[0]):
                 inside = not inside
     return -best if inside else best
-
-
-def bbox(poly):
-    xs = [p[0] for p in poly]; ys = [p[1] for p in poly]
-    return min(xs), min(ys), max(xs), max(ys)
 
 
 def strip_led_bump(poly, leds, r=2.7):
@@ -348,20 +345,18 @@ def simplify(field, pts):
 
 
 
-# ---------------------------------------------------------------- parameters
-STEM_W    = 2.0    # stem width  (mm)  -- user: resin, 2 mm is fine
-CLEAR     = 0.40   # clearance to any switch opening (mm)
-CAP_R     = 3.5    # diffuser cap radius (mm)
+# ------------------------------------------------- parameters (topology only;
+# the shared ones -- STEM_W, CLEAR, CAP_R, EDGE_MARGIN -- live in the router
+# parameter block above and are NOT repeated here)
 RUNG_OFF  = 1.90   # rung offset from the LED centre, toward the round side (mm)
 COL_TOL   = 0.6    # x tolerance when grouping LEDs into columns (mm)
 BAND_MERGE = 12.0  # columns closer than this are one band (no rail fits between)
-EDGE_MARGIN = 2.0
 CAP_WELD_Y = 0.80  # min local-y of a stem anchor (cap starts at 0.25)
 CAP_WELD_R = 3.00  # max radius of a stem anchor (cap radius is 3.5)
 THIN_VERTICALS = True  # drop every second long row-to-row run to save resin
 OUTER_RAILS_FULL = True  # leave the two outermost channels fully connected
 INNER_KEEP_EVERY = 3     # inner channels: keep 1 long run in N (2 in a row may go)
-SHORT_RAIL = 5.0   # rail runs below this join two columns at one row: always keep  # max radius of a stem anchor (cap radius is 3.5)
+SHORT_RAIL = 5.0   # rail runs below this join two columns at one row: always keep
 
 PAD = STEM_W / 2 + CLEAR
 
@@ -549,12 +544,12 @@ def build(side='left'):
 
     # ---- connectivity bookkeeping ------------------------------------------
     parent = list(range(n))
-    def find(x):
+    def uf_find(x):
         while parent[x] != x:
             parent[x] = parent[parent[x]]; x = parent[x]
         return x
     def union(a, b):
-        ra, rb = find(a), find(b)
+        ra, rb = uf_find(a), uf_find(b)
         if ra != rb:
             parent[ra] = rb
 
@@ -608,20 +603,20 @@ def build(side='left'):
             print(f'  !! LED {i} has no weldable cap cell')
 
     guard = 0
-    while len({find(i) for i in range(n)}) > 1 and guard < 60:
+    while len({uf_find(i) for i in range(n)}) > 1 and guard < 60:
         guard += 1
-        root = find(0)
-        src = [c for i in range(n) if find(i) == root for c in ports[i]]
+        root = uf_find(0)
+        src = [c for i in range(n) if uf_find(i) == root for c in ports[i]]
         dist, prev = dijkstra(field, src)
         best = None
         for j in range(n):
-            if find(j) == root:
+            if uf_find(j) == root:
                 continue
             r = best_at(dist, ports[j])
             if r and (best is None or r[0] < best[0]):
                 best = (r[0], r[1], j)
         if best is None:
-            print('  !! cannot reach', [i for i in range(n) if find(i) != root])
+            print('  !! cannot reach', [i for i in range(n) if uf_find(i) != root])
             break
         L, st, j = best
         path = simplify(field, [field.xy(*c) for c in trace(prev, st)])
@@ -793,7 +788,8 @@ module diffuser_frame_{side}_web_2d() {{
 
 diffuser_frame_{side}();
 """)
-    open(path, 'w').write('\n'.join(L))
+    with open(path, 'w', encoding='utf-8') as fh:
+        fh.write('\n'.join(L))
     return path
 
 
