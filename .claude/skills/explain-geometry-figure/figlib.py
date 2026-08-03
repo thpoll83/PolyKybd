@@ -136,6 +136,8 @@ class Fig:
 
     def png(self, out=None, width=None):
         """rsvg-convert the saved SVG.  Read the PNG back and LOOK at it."""
+        if self.path is None:
+            raise RuntimeError('call save() before png() — there is no SVG to convert yet')
         out = Path(out) if out else self.path.with_suffix('.png')
         subprocess.run(['rsvg-convert', '-w', str(width or self.w),
                         str(self.path), '-o', str(out)], check=True)
