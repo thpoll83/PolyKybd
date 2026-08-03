@@ -21,12 +21,13 @@
 use <diffuser_frame_left.scad>
 use <diffuser_frame_right.scad>
 
-frame_stack_pitch = 5;      // 3.2 mm part + 1.8 mm gap
+frame_stack_pitch = 5.5;    // 3.7 mm part + 1.8 mm gap
 
-// These track diffuser_frame_*(): the part spans z = -1 .. 2.2, of which the
-// web — the only thing present at a rail — is z = -1 .. 0.
+// These track diffuser_frame_*(), which in turn tracks diffuser.scad: the 1.5 mm
+// top flange and the 1.0 mm bottom one put the part at z = -1 .. 2.7, of which
+// the web — the only thing present at a rail — is z = -1 .. 0.
 frame_lo  = -1.0;
-frame_h   =  3.2;
+frame_h   =  3.7;
 web_mid   = -0.5;
 
 // The sprue must be the WEAKEST thing here, so it breaks at the gate and not
