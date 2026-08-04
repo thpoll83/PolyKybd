@@ -9,6 +9,10 @@ wedge_shape = "poly_kb_wave_right2-WD.svg";
 nuts_ins = "poly_kb_wave_right2-NutsInserts.svg";
 nuts = "poly_kb_wave_right2-Nuts.svg";
 
+// one-piece LED diffuser frame — provides diffuser_frame_left_clearance(),
+// which right_spacer() subtracts so its ribs are notched where the web crosses
+use <../parts/diffuser_frame_left.scad>
+
 case_height = 17.5;
 case_wall_thickness = 1.5;
 case_bottom_thickness = 2;
@@ -21,6 +25,7 @@ text_font = "Arial:style=Bold Italic";
 text_size = 12;
 text_height = 0.35;
 revision = "r1.7";
+spacer_revision = "r1.1";
 name = "PolyKybd";
 model_name = "Split72";
 
@@ -445,11 +450,88 @@ module right_case()
 }
 
 // spacer
-module right_spacer()
+//
+// r1.1 (2026-07-31): notched for the one-piece LED diffuser frame
+//     (parts/diffuser_frame_{left,right}.scad), and given an engraved revision.
+//     The spacer carried no revision before this, so the shipped part up to now
+//     is r1.0 and everything here is a single step to r1.1.
+//
+//     The frame's connecting web hangs 1.0 mm below the plate, i.e. in the top
+//     1 mm of this spacer, and crossed the four inner ribs in 9 places (223
+//     mm^3 of interference, measured).  Rather than deleting the ribs — which
+//     are what stops a 182 x 129 mm ring from folding up during assembly — the
+//     frame's own diffuser_frame_left_clearance() is subtracted, so each rib is
+//     notched only where the web passes and keeps full height elsewhere.
+//
+//     The notch is 1.0 mm wider than the web sideways but only 0.3 mm deeper.
+//     The two are SEPARATE parameters and must stay that way: depth has to be
+//     small or the ribs get cut clean through over their whole height, while
+//     width has to be generous or a rib the notch only partly overlaps survives
+//     as a fin.  At 0.3 mm the rib at x=53 was left as a 50.5 mm run of 0.28 mm
+//     wall; at 1.0 mm the notch spans 52.57..56.57, fully covering that rib's
+//     53.00..54.80, so it is cleanly cut where the rail runs and keeps its
+//     solid ends.  The same widening clears two ~3 mm 0.06 mm slivers off the
+//     ribs at x=91.5 and x=129.6.
+//
+//     The notch is cut into BOTH faces with the same pattern.  This part is
+//     otherwise a plain prism, which is why ONE printed spacer serves both
+//     halves: flipping it over is the same as mirroring it, and the two plate
+//     halves are exact mirror images.  Notching only the top would have put the
+//     notch underneath when flipped and broken that.
+//
+//     The revision is ENGRAVED into the inner wall face rather than raised off
+//     it: a sunk label adds no fragile protruding feature and cannot foul
+//     anything during assembly.  It is on a vertical face, so it is invisible
+//     from a top view — look at the inner side of the bottom wall.
+//
+//     spacer_height stays 3.8 mm: the plate top must sit 5.0 mm above the PCB
+//     (3.8 + 1.2 mm plate) for MX plate-mount switches, and the web needs only
+//     1.0 mm of the 3.8 mm gap, so there is nothing to gain by raising it.
+//     spacer_thickness stays 1.8 mm — the current spacer is confirmed working
+//     on hardware and the web comes no closer than 6.14 mm to the outline, so
+//     there is nothing here that needs changing either.
+//
+// notch_diffuser_frame = false gives back the ORIGINAL part, unchanged: no
+// notch on either face and no engraved revision, for builds with no frame.
+module right_spacer(notch_diffuser_frame = true)
 {
     spacer_height = 3.8;
     spacer_thickness = 1.8;
     shrink_radius = 0.25; // 0.75;
+
+    // plate KiCad coords -> this file's coords (fitted against the plate
+    // outline: mean nearest-neighbour distance 0.000 mm)
+    frame_xy = [ 92.19, 71.79 ];
+
+    // 1.0 mm sideways so a rib the notch only partly overlaps is removed
+    // instead of surviving as a fin; 0.3 mm deep so ribs keep their height
+    notch_lat  = 1.0;
+    notch_deep = 0.3;
+
+    // Revision, embossed standing on the INNER face of the wall so it neither
+    // touches the top/bottom faces (which must stay flat and symmetric — the
+    // part is flipped over to serve the other half) nor the diffuser frame,
+    // whose nearest stem edge is 6.14 mm inside the outline against this
+    // text's 2.45 mm.  Placed on the longest straight run of the outline
+    // (69.3 mm, 5 deg, inward normal (-0.09, +1.00), midpoint (96.7, 22.3)),
+    // offset inward by shrink_radius + spacer_thickness to land on the wall.
+    // rev_along slides the label along that edge into the clear 36.3 mm
+    // stretch between the ribs at x=91.5 and x=129.6 — centred on the edge
+    // midpoint it ran straight through the first of them.
+    // The label is SUBTRACTED, so the anchor sits rev_depth back from the inner
+    // face and the extrusion runs inward through it: that carves a rev_depth
+    // pocket, and rev_over carries the cut past the face so it breaks through
+    // cleanly instead of leaving a zero-thickness skin.
+    rev_edge_ang = 5.0;
+    rev_along    = 14.9;
+    rev_depth    = 0.5;
+    rev_over     = 0.3;
+    rev_inset    = shrink_radius + spacer_thickness - rev_depth;
+    rev_face     = [ 96.7 + cos(rev_edge_ang) * rev_along - 0.09 * rev_inset,
+                     22.3 + sin(rev_edge_ang) * rev_along + 1.00 * rev_inset ];
+
+    difference()
+    {
     translate([ 0, 0, 20 ]) difference()
     {
         union()
@@ -476,20 +558,66 @@ module right_spacer()
                 import(file = pcb_outline, dpi = 300);
         }
     }
+
+    if (notch_diffuser_frame)
+    {
+        // top face
+        translate([ frame_xy[0], frame_xy[1], 20 + spacer_height ])
+            diffuser_frame_left_clearance(notch_lat, notch_deep);
+        // bottom face, same pattern, so the part stays symmetric top-to-bottom
+        translate([ frame_xy[0], frame_xy[1], 20 ]) mirror(v = [ 0, 0, 1 ])
+            diffuser_frame_left_clearance(notch_lat, notch_deep);
+    }
+
+    // Revision, engraved into the inner wall face.  Gated on the same flag as
+    // the notch: the revision identifies THIS design, so notch_diffuser_frame
+    // = false has to give back the original part with nothing added or removed.
+    if (notch_diffuser_frame)
+        translate([ rev_face[0], rev_face[1], 20 + spacer_height / 2 ])
+            rotate([ 0, 0, rev_edge_ang + 180 ]) rotate([ 90, 0, 0 ])
+                linear_extrude(height = rev_depth + rev_over)
+                    text(str("SPACER ", spacer_revision), size = 2.8,
+                         font = text_font, halign = "center",
+                         valign = "center", $fn = 32);
+    }
 }
 
 //translate([5,0,0])  right_spacer();
 translate([5,0,0]) right_case();
 //translate([ -5, 0, 0 ]) left_case();
-module spacers_4x() {
-for(s = [0:3]) {
-    translate([0,0,s*5]) right_spacer();
-    translate([20,15,15*1.5+s*5]) rotate([0,90,0]) cylinder(h = 5, r = 0.75, center = true, $fn = 32);
-    translate([180,125,15*1.5+s*5]) rotate([0,90,0]) cylinder(h = 5, r = 0.75, center = true, $fn = 32);
+// n copies on one sprue, so a print service that bills per repeated part sees a
+// single piece — the same reason the diffusers became one frame.  1.5 mm rods:
+// two vertical posts, plus a short pin tying every copy to each post.  Snip the
+// pins and clean the stubs after printing.
+//
+// The z figures have to track right_spacer(): it builds at z = 20 and is
+// spacer_height tall.  They are repeated here because those are locals of that
+// module and cannot be read from outside.
+spacer_stack_pitch = 5;      // 3.8 mm part + 1.2 mm gap
+
+module spacers_stacked(n = 4)
+{
+    part_h = 3.8;            // = spacer_height in right_spacer()
+    z0     = 20;             // = the translate inside right_spacer()
+    span   = (n - 1) * spacer_stack_pitch + part_h;
+
+    for (s = [0:n - 1])
+    {
+        translate([ 0, 0, s * spacer_stack_pitch ]) right_spacer();
+
+        // pin each copy to both posts, at its mid-height
+        for (p = [[ 20, 15 ], [ 180, 125 ]])
+            translate([ p[0], p[1], z0 + part_h / 2 + s * spacer_stack_pitch ])
+                rotate([ 0, 90, 0 ]) cylinder(h = 5, r = 0.75, center = true, $fn = 32);
+    }
+
+    // the posts, spanning the whole stack
+    for (p = [[ 22, 15 ], [ 178, 125 ]])
+        translate([ p[0], p[1], z0 + span / 2 ])
+            cylinder(h = span, r = 0.75, center = true, $fn = 32);
 }
-translate([22,15,15*2]) cylinder(h = 15, r = 0.75, center = true, $fn = 32);
-translate([178,125,15*2]) cylinder(h = 15, r = 0.75, center = true, $fn = 32);
-}
+
+module spacers_4x() { spacers_stacked(4); }
 
 //translate([5,0,0]) right_spacer();
 //spacers_4x();
