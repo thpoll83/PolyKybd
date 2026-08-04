@@ -36,6 +36,8 @@ PARTS = os.path.join(REPO, 'parts')
 
 MIN_WALL = 0.99          # mm; the web is 1.0, so anything under this is a defect
 VENDOR_FLOOR = 0.80      # mm; what the print service quoted as its minimum
+COLLISION_EPS = 0.01     # mm^3; a degenerate boolean can leave sliver facets
+                         # with a tiny positive volume -- not a real interference
 FRAME_XY = (92.19, 71.79)   # frame origin in spacer coordinates (right_spacer())
 SPACER_Z = (23.8, -20.0)    # top-face and flipped placements
 
@@ -51,12 +53,22 @@ def check(ok, label, detail=''):
 
 # ---------------------------------------------------------------- mesh utils
 def load_stl(path):
-    with open(path) as fh:
-        txt = fh.read()
+    """Parse an ASCII STL.  Validated at the source: every consumer here would
+    otherwise inherit a silent truncation (min_wall dropping facets) or an
+    unrelated-looking crash (min() on an empty sequence)."""
+    try:
+        with open(path, encoding='utf-8') as fh:
+            txt = fh.read()
+    except UnicodeDecodeError:
+        raise RuntimeError(f'{path}: not ASCII -- this repo ships ASCII STLs, '
+                           f'and a binary one cannot be parsed here') from None
     v = [tuple(map(float, m)) for m in
          re.findall(r'vertex\s+(\S+)\s+(\S+)\s+(\S+)', txt)]
     n = [tuple(map(float, m)) for m in
          re.findall(r'facet normal\s+(\S+)\s+(\S+)\s+(\S+)', txt)]
+    if not v or len(v) % 3 or len(n) * 3 != len(v):
+        raise RuntimeError(f'{path}: not a parseable ASCII STL '
+                           f'({len(n)} normals, {len(v)} vertices)')
     return [(v[i], v[i + 1], v[i + 2]) for i in range(0, len(v), 3)], n
 
 
@@ -113,7 +125,7 @@ def min_wall(tris, norms, maxt=4.0, cell=3.0):
                 for cz in range(int(lo[2] // cell), int(hi[2] // cell) + 1):
                     grid[(cx, cy, cz)].append(i)
     out = []
-    for i, (t, n) in enumerate(zip(tris, norms)):
+    for i, (t, n) in enumerate(zip(tris, norms, strict=True)):
         ln = math.sqrt(n[0] ** 2 + n[1] ** 2 + n[2] ** 2)
         if ln == 0:
             continue
@@ -143,34 +155,21 @@ def min_wall(tris, norms, maxt=4.0, cell=3.0):
 
 
 # ------------------------------------------------------------ openscad utils
-def scad_to_stl(src, workdir):
-    """Render a scad snippet to an ASCII STL.  Returns None when the result is
-    empty -- which for an intersection() is the ANSWER, not an error."""
-    sf = os.path.join(workdir, 'q.scad')
-    of = os.path.join(workdir, 'q.stl')
-    with open(sf, 'w') as fh:
-        fh.write(src)
-    r = subprocess.run(['openscad', '-o', of, '--export-format', 'asciistl', sf],
-                       capture_output=True, text=True)
-    if 'Current top level object is empty' in (r.stderr + r.stdout):
-        return None
-    if not os.path.exists(of) or os.path.getsize(of) == 0:
-        raise RuntimeError(f'openscad produced nothing:\n{r.stderr[-800:]}')
-    return of
-
-
 def intersect_volume(placement, workdir):
     """mm^3 of overlap between the notched spacer and the frame."""
     src = ('use <case_polykybd_split72_lr.scad>\n'
            'use <../parts/diffuser_frame_left.scad>\n'
            f'intersection() {{ right_spacer(); {placement} diffuser_frame_left(); }}\n')
-    sf = os.path.join(CASE, '_check_tmp.scad')
-    with open(sf, 'w') as fh:
+    # Must live in CASE: `use <case_polykybd_split72_lr.scad>` resolves relative
+    # to the scad file, not the cwd.  Unique name so two runs cannot delete each
+    # other's input.
+    fd, sf = tempfile.mkstemp(prefix='_check_tmp_', suffix='.scad', dir=CASE)
+    with os.fdopen(fd, 'w') as fh:
         fh.write(src)
     try:
         of = os.path.join(workdir, 'x.stl')
         r = subprocess.run(['openscad', '-o', of, '--export-format', 'asciistl', sf],
-                           capture_output=True, text=True, cwd=CASE)
+                           capture_output=True, text=True, cwd=CASE, timeout=900)
         if 'Current top level object is empty' in (r.stderr + r.stdout):
             return 0.0
         if not os.path.exists(of) or os.path.getsize(of) == 0:
@@ -178,7 +177,10 @@ def intersect_volume(placement, workdir):
         tris, _ = load_stl(of)
         return volume(tris) * 1000.0
     finally:
-        os.path.exists(sf) and os.remove(sf)
+        try:
+            os.remove(sf)
+        except FileNotFoundError:
+            pass
 
 
 # -------------------------------------------------------------------- checks
@@ -193,12 +195,13 @@ def revision_zone(side):
     p = os.path.join(PARTS, f'diffuser_frame_{side}.scad')
     with open(p) as fh:
         src = fh.read()
-    web_t = float(re.search(r'^web_t\s*=\s*([\d.]+)', src, re.M).group(1))
+    wt = re.search(r'^web_t\s*=\s*([\d.]+)', src, re.M)
     m = re.search(r'translate\(\[(-?[\d.]+), (-?[\d.]+)\]\) square\(\[([\d.]+), ([\d.]+)\]'
                   r', center = true\);\s*// pad for the revision', src)
     d = re.search(r'_revision\(\).*?linear_extrude\(([\d.]+)\)', src, re.S)
-    if not (m and d):
+    if not (wt and m and d):
         return None
+    web_t = float(wt.group(1))
     cx, cy, w, h = (float(m.group(i)) for i in range(1, 5))
     depth = float(d.group(1))
     return dict(x=(cx - w / 2, cx + w / 2), y=(cy - h / 2, cy + h / 2),
@@ -219,6 +222,8 @@ def check_meshes():
               + (f', {nm} bad edges' if nm else ''))
 
         zone = revision_zone(side)
+        check(zone is not None, f'{side}: revision zone found in the scad source',
+              '' if zone else 'min wall below would measure the engraving as a wall')
         def in_zone(c):
             return zone and all(zone[k][0] - 0.05 <= c[i] <= zone[k][1] + 0.05
                                 for i, k in enumerate('xyz'))
@@ -272,11 +277,24 @@ def check_plate_trap():
     print('\nplate trap (cap overhang past the d=5 plug)')
     with open(os.path.join(PARTS, 'diffuser.scad')) as fh:
         src = fh.read()
-    g = lambda n: float(re.search(rf'^{n}\s*=\s*([\d.]+)', src, re.M).group(1))
+
+    missing = []
+
+    def g(n):
+        """A renamed constant must FAIL the check, not raise AttributeError."""
+        m = re.search(rf'^{n}\s*=\s*([\d.]+)', src, re.M)
+        if not m:
+            missing.append(n)
+            return 0.0
+        return float(m.group(1))
+
     W = g('cutout_diameter') + g('cap_overlap') * 2       # cap circle diameter
     R, PR = W / 2, g('cutout_diameter') / 2
     CH = W / 2 - 2.25 - g('cap_overlap')                  # chord, from the clip square
     trim, ang = g('cap_trim'), math.radians(g('cap_trim_angle'))
+    if missing:
+        return check(False, 'cap overhangs the plug everywhere',
+                     'cannot read ' + ', '.join(missing) + ' from diffuser.scad')
 
     def in_cap(x, y):
         if y < CH or x * x + y * y > R * R:
@@ -300,8 +318,15 @@ def check_plate_trap():
             continue
         if lo - PR < worst:
             worst, wx = lo - PR, (ux * lo, uy * lo)
-    check(worst > 0.05, 'cap overhangs the plug everywhere',
-          f'worst {worst:+.3f} mm at ({wx[0]:+.2f}, {wx[1]:+.2f})')
+    if wx is None:
+        # Reachable exactly when a diffuser.scad edit leaves no cap above the
+        # chord -- e.g. a smaller cap_overlap or a larger cap_trim.  That is the
+        # change this check exists to catch, so it must FAIL, not crash.
+        check(False, 'cap overhangs the plug everywhere',
+              'no cap boundary found -- check cap_overlap / cap_trim in diffuser.scad')
+    else:
+        check(worst > 0.05, 'cap overhangs the plug everywhere',
+              f'worst {worst:+.3f} mm at ({wx[0]:+.2f}, {wx[1]:+.2f})')
 
 
 def check_spacer(workdir):
@@ -311,11 +336,12 @@ def check_spacer(workdir):
             ('spacer flipped',
              f'mirror([0,0,1]) translate([{FRAME_XY[0]},{FRAME_XY[1]},{SPACER_Z[1]}])')):
         v = intersect_volume(placement, workdir)
-        check(v == 0.0, f'no collision, {name}', f'{v:.1f} mm3 overlap')
+        check(v <= COLLISION_EPS, f'no collision, {name}',
+              f'{v:.3f} mm3 overlap (tolerance {COLLISION_EPS} mm3)')
     # positive control: displace the frame and the same test must SEE a collision
     v = intersect_volume(
         f'translate([{FRAME_XY[0]},{FRAME_XY[1]},{SPACER_Z[0] - 2}])', workdir)
-    check(v > 0.0, 'control: a 2 mm displacement is detected',
+    check(v > COLLISION_EPS * 100, 'control: a 2 mm displacement is detected',
           f'{v:.1f} mm3 overlap')
 
 
@@ -326,14 +352,25 @@ def main():
     a = ap.parse_args()
 
     print('Checking the one-piece LED diffuser frame')
-    check_meshes()
-    check_mirror()
-    check_plate_trap()
+    # A gating script reports FAIL; it does not hand back a traceback.  Anything
+    # raised here (unparseable STL, openscad missing or hung) becomes a failure
+    # line naming the stage, and still exits non-zero.
+    for name, fn in (('mesh checks', check_meshes),
+                     ('symmetry', check_mirror),
+                     ('plate trap', check_plate_trap)):
+        try:
+            fn()
+        except Exception as exc:                      # noqa: BLE001 - report, don't crash
+            check(False, f'{name} could not run', f'{type(exc).__name__}: {exc}')
     if a.quick:
         print('\nspacer clearance    SKIPPED (--quick)')
     else:
-        with tempfile.TemporaryDirectory() as wd:
-            check_spacer(wd)
+        try:
+            with tempfile.TemporaryDirectory() as wd:
+                check_spacer(wd)
+        except Exception as exc:                      # noqa: BLE001
+            check(False, 'spacer clearance could not run',
+                  f'{type(exc).__name__}: {exc}')
 
     print()
     if FAILURES:
