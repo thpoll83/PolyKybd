@@ -166,14 +166,24 @@ def intersect_volume(placement, workdir):
     fd, sf = tempfile.mkstemp(prefix='_check_tmp_', suffix='.scad', dir=CASE)
     with os.fdopen(fd, 'w') as fh:
         fh.write(src)
+    # Its own output file per call.  Sharing one path across the three
+    # placements means a failed export silently re-reads the PREVIOUS
+    # placement's mesh and reports its volume as this one's clearance.
+    ofd, of = tempfile.mkstemp(prefix='x_', suffix='.stl', dir=workdir)
+    os.close(ofd)
+    os.remove(of)                    # openscad writes it; absence is the signal
     try:
-        of = os.path.join(workdir, 'x.stl')
         r = subprocess.run(['openscad', '-o', of, '--export-format', 'asciistl', sf],
                            capture_output=True, text=True, cwd=CASE, timeout=900)
-        if 'Current top level object is empty' in (r.stderr + r.stdout):
+        out = r.stderr + r.stdout
+        # Order matters: openscad exits 1 for an EMPTY result and 1 for a syntax
+        # error alike (verified), so the marker has to be tested before the code.
+        if 'Current top level object is empty' in out:
             return 0.0
+        if r.returncode != 0:
+            raise RuntimeError(f'openscad exited {r.returncode}:\n{out[-800:]}')
         if not os.path.exists(of) or os.path.getsize(of) == 0:
-            raise RuntimeError(f'openscad produced nothing:\n{r.stderr[-800:]}')
+            raise RuntimeError(f'openscad produced nothing:\n{out[-800:]}')
         tris, _ = load_stl(of)
         return volume(tris) * 1000.0
     finally:
