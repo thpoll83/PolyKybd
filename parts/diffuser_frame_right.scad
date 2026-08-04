@@ -10,7 +10,7 @@
 //  diffuser() module, used unmodified — this file adds only the web.
 //
 //  ---------------------------------------------------------------------
-//  revision   r1.0          generated 2026-08-03
+//  revision   r1.1          generated 2026-08-04
 //  source     poly_kybd/poly_kybd_split72_plate_right.kicad_pcb
 //  diffusers  36
 //  web        54 rungs + 30 rails + 5 routed links,
@@ -171,6 +171,7 @@ module diffuser_frame_right_web_2d() {
         _stem_right([45.024, -32.205], [47.500, -33.499]);  // link
         _stem_right([47.500, -33.499], [64.500, -37.999]);  // link
         _stem_right([64.500, -37.999], [67.086, -38.464]);  // link
+        translate([37.623, 24.026]) square([2.6, 5.4], center = true);  // pad for the revision engraving
     }
 }
 
@@ -215,10 +216,25 @@ module diffuser_frame_right_diffusers() {
     translate([-10.002, 36.413, 0]) rotate([0, 0, 0.00]) diffuser();  // LED 35
 }
 
+// Revision, engraved into the UNDERSIDE of the longest rail
+// (19.05 mm of 2.0 mm wide stem).  That face points down into the spacer gap,
+// so the marking is invisible in the assembled keyboard but readable on the
+// loose part.  The glyphs are mirrored because you read this face from BELOW.
+module diffuser_frame_right_revision() {
+    translate([37.623, 24.026, -web_t])
+        linear_extrude(0.15)
+            rotate(90) mirror([1, 0, 0])
+                text("R r1.1", size = 1.0, font = "Arial:style=Bold",
+                     halign = "center", valign = "center", $fn = 32);
+}
+
 module diffuser_frame_right() {
-    union() {
-        diffuser_frame_right_diffusers();
-        diffuser_frame_right_web();
+    difference() {
+        union() {
+            diffuser_frame_right_diffusers();
+            diffuser_frame_right_web();
+        }
+        diffuser_frame_right_revision();
     }
 }
 

@@ -30,7 +30,18 @@ def plate_path(side):
     return os.path.join(REPO, "poly_kybd", f"poly_kybd_split72_plate_{side}.kicad_pcb")
 
 
-REV  = "r1.0"
+REV  = "r1.1"          # r1.0 is the file the print service refused (pre thin-wall rework)
+# Revision engraving: cut into the UNDERSIDE of the longest rail, which is 2.0 mm
+# wide and 19.05 mm long -- room enough, and that face points into the spacer gap
+# where nothing sees it.  0.15 mm deep, so 0.85 mm of web is left under the
+# letters: below the 1.0 mm the rest of the part holds, still above the 0.8 mm
+# floor the print service quoted.
+REV_SIZE  = 1.0        # cap height (mm)
+REV_PAD   = (2.6, 5.4) # the rail is widened to this over the text, so no letter
+                       # comes within 0.8 mm of a free edge (2.65 mm is all the
+                       # switch-opening clearance allows there -- measured)
+REV_DEPTH = 0.15
+REV_FONT  = "Arial:style=Bold"
 # Stamped into the generated header, so it must be the date this actually ran —
 # a frozen constant silently claims the wrong day after the next regeneration.
 DATE = datetime.date.today().isoformat()
@@ -695,6 +706,21 @@ def emit_scad(side, D, path):
     nlink = sum(1 for x in D['segs'] if x['kind'] == 'link')
 
     L = []
+    # Revision marking goes on the longest rail: the most material with nothing
+    # else near it.  Computed here because the web 2D needs its pad.
+    _rails = []
+    for seg in D['segs']:
+        if seg['kind'] != 'rail':
+            continue
+        pts = [S(p) for p in seg['pts']]
+        for a, b in zip(pts, pts[1:]):
+            _rails.append((math.hypot(b[0] - a[0], b[1] - a[1]), a, b))
+    _rails.sort(key=lambda r: -r[0])
+    rev_len, _ra, _rb = _rails[0]
+    rev_xy = ((_ra[0] + _rb[0]) / 2, (_ra[1] + _rb[1]) / 2)
+    rev_vertical = abs(_ra[0] - _rb[0]) < 1e-6
+    rev_label = f"{side[0].upper()} {REV}"
+
     L.append(f"""// ===========================================================================
 //  PolyKybd split72 — one-piece LED diffuser frame ({side} half)
 //
@@ -771,6 +797,9 @@ module diffuser_frame_{side}_web_2d() {{
         for a, b in zip(pts, pts[1:]):
             L.append(f"        _stem_{side}([{a[0]:.3f}, {a[1]:.3f}], "
                      f"[{b[0]:.3f}, {b[1]:.3f}]);  // {seg['kind']}")
+    L.append(f"        translate([{rev_xy[0]:.3f}, {rev_xy[1]:.3f}]) "
+             f"square([{REV_PAD[0]}, {REV_PAD[1]}], center = true);"
+             f"  // pad for the revision engraving")
     L.append("    }\n}\n")
     L.append(f"module diffuser_frame_{side}_web() {{ translate([0, 0, -web_t]) "
              f"linear_extrude(web_t) diffuser_frame_{side}_web_2d(); }}\n")
@@ -784,10 +813,25 @@ module diffuser_frame_{side}_web_2d() {{
                  f"diffuser();  // LED {i}")
     L.append("}\n")
 
-    L.append(f"""module diffuser_frame_{side}() {{
-    union() {{
-        diffuser_frame_{side}_diffusers();
-        diffuser_frame_{side}_web();
+    L.append(f"""// Revision, engraved into the UNDERSIDE of the longest rail
+// ({rev_len:.2f} mm of 2.0 mm wide stem).  That face points down into the spacer gap,
+// so the marking is invisible in the assembled keyboard but readable on the
+// loose part.  The glyphs are mirrored because you read this face from BELOW.
+module diffuser_frame_{side}_revision() {{
+    translate([{rev_xy[0]:.3f}, {rev_xy[1]:.3f}, -web_t])
+        linear_extrude({REV_DEPTH})
+            rotate({90 if rev_vertical else 0}) mirror([1, 0, 0])
+                text("{rev_label}", size = {REV_SIZE}, font = "{REV_FONT}",
+                     halign = "center", valign = "center", $fn = 32);
+}}
+
+module diffuser_frame_{side}() {{
+    difference() {{
+        union() {{
+            diffuser_frame_{side}_diffusers();
+            diffuser_frame_{side}_web();
+        }}
+        diffuser_frame_{side}_revision();
     }}
 }}
 
