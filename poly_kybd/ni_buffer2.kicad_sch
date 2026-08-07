@@ -495,7 +495,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 136.525 71.755 0)
 			(effects
 				(font
@@ -640,7 +640,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 136.525 135.255 0)
 			(effects
 				(font
