@@ -4,46 +4,33 @@
 	(generator_version "9.0")
 	(uuid "e9d0ca71-713b-416a-a901-9ce1b7030efc")
 	(paper "A4")
+	(title_block
+		(title "Non Inverting Buffer")
+		(date "2026-08-06")
+		(rev "v3.3")
+	)
 	(lib_symbols
-		(symbol "Logic_LevelTranslator:SN74AUP1T34DCK"
+		(symbol "74xGxx:74AHC1G125"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
 			(property "Reference" "U"
-				(at -6.35 6.35 0)
+				(at -2.54 3.81 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 				)
 			)
-			(property "Value" "SN74AUP1T34DCK"
-				(at 11.43 6.35 0)
+			(property "Value" "74AHC1G125"
+				(at 0 -3.81 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 				)
 			)
-			(property "Footprint" "Package_TO_SOT_SMD:SOT-353_SC-70-5"
-				(at 0 -17.78 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "http://www.ti.com/lit/ds/symlink/sn74aup1t34.pdf"
-				(at 0 -15.24 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "1-Bit Unidirectional Voltage-Level Translator, SC-70"
+			(property "Footprint" ""
 				(at 0 0 0)
 				(effects
 					(font
@@ -52,7 +39,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "Noninverting"
+			(property "Datasheet" "http://www.ti.com/lit/sg/scyt129e/scyt129e.pdf"
 				(at 0 0 0)
 				(effects
 					(font
@@ -61,7 +48,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "SOT*353*"
+			(property "Description" "Single Buffer Gate Tri-State, Low-Voltage CMOS"
 				(at 0 0 0)
 				(effects
 					(font
@@ -70,10 +57,29 @@
 					(hide yes)
 				)
 			)
-			(symbol "SN74AUP1T34DCK_0_1"
-				(rectangle
-					(start -7.62 -5.08)
-					(end 7.62 5.08)
+			(property "ki_keywords" "Single Gate Buff Tri-State LVC CMOS"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "SOT* SG-*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "74AHC1G125_0_1"
+				(polyline
+					(pts
+						(xy -7.62 6.35) (xy -7.62 -6.35) (xy 5.08 0) (xy -7.62 6.35)
+					)
 					(stroke
 						(width 0.254)
 						(type default)
@@ -82,10 +88,12 @@
 						(type background)
 					)
 				)
+			)
+			(symbol "74AHC1G125_1_1"
 				(pin input line
-					(at -10.16 0 0)
-					(length 2.54)
-					(name "A"
+					(at -15.24 0 0)
+					(length 7.62)
+					(name "~"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -101,16 +109,16 @@
 					)
 				)
 				(pin power_in line
-					(at -2.54 7.62 270)
-					(length 2.54)
-					(name "VCCA"
+					(at -5.08 10.16 270)
+					(length 5.08)
+					(name "VCC"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "1"
+					(number "5"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -119,8 +127,8 @@
 					)
 				)
 				(pin power_in line
-					(at 0 -7.62 90)
-					(length 2.54)
+					(at -5.08 -10.16 90)
+					(length 5.08)
 					(name "GND"
 						(effects
 							(font
@@ -136,17 +144,17 @@
 						)
 					)
 				)
-				(pin power_in line
-					(at 2.54 7.62 270)
-					(length 2.54)
-					(name "VCCB"
+				(pin input inverted
+					(at 0 10.16 270)
+					(length 7.62)
+					(name "~"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "5"
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -154,10 +162,10 @@
 						)
 					)
 				)
-				(pin output line
-					(at 10.16 0 180)
-					(length 2.54)
-					(name "B"
+				(pin tri_state line
+					(at 12.7 0 180)
+					(length 7.62)
+					(name "~"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -189,7 +197,7 @@
 	)
 	(text "Output Enable"
 		(exclude_from_sim no)
-		(at 142.24 92.71 90)
+		(at 144.78 92.71 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -200,107 +208,107 @@
 	)
 	(wire
 		(pts
-			(xy 136.525 50.165) (xy 136.525 64.135)
+			(xy 118.745 71.755) (xy 123.825 71.755)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "306e002f-0a5b-43e5-b25d-de3a30145877")
+		(uuid "06b276af-1440-4887-bec3-2f87d744c7c5")
 	)
 	(wire
 		(pts
-			(xy 139.065 79.375) (xy 139.065 87.63)
+			(xy 156.845 71.755) (xy 151.765 71.755)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "415fd0e3-bdee-445b-88fa-90b1de0a55c3")
+		(uuid "0db7f71b-52c2-4587-9c21-513295d510b7")
 	)
 	(wire
 		(pts
-			(xy 139.065 142.875) (xy 139.065 151.13)
+			(xy 141.605 50.165) (xy 141.605 61.595)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "67a650f8-8593-4d2a-a6a4-394d793f02e4")
+		(uuid "1b610e8c-f7b7-4e7d-9327-cb9862fb5acd")
 	)
 	(wire
 		(pts
-			(xy 118.745 71.755) (xy 126.365 71.755)
+			(xy 136.525 87.63) (xy 136.525 81.915)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "6fc2f2c7-1865-4d55-bb3d-81b35a000d59")
+		(uuid "36ca5b37-52d3-46bd-a461-e8a4d00948e4")
 	)
 	(wire
 		(pts
-			(xy 133.985 142.875) (xy 133.985 151.13)
+			(xy 141.605 113.665) (xy 141.605 125.095)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "75b57f23-cf18-42cd-8e25-bfe5e55be3bd")
+		(uuid "46050b06-58d6-4854-9590-2bd58b5609c2")
 	)
 	(wire
 		(pts
-			(xy 133.985 79.375) (xy 133.985 87.63)
+			(xy 156.845 135.255) (xy 151.765 135.255)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "7ded9a64-091b-4682-93a6-747fae163ba0")
+		(uuid "4f59316b-3ca9-4817-ac73-2642e19c2d7f")
 	)
 	(wire
 		(pts
-			(xy 136.525 113.665) (xy 136.525 127.635)
+			(xy 141.605 151.13) (xy 141.605 145.415)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "a15617ef-4e75-4cd7-944b-9b69c04b39d2")
+		(uuid "5da13bbf-3f76-48bf-8828-0875c8ecc132")
 	)
 	(wire
 		(pts
-			(xy 118.745 135.255) (xy 126.365 135.255)
+			(xy 141.605 87.63) (xy 141.605 81.915)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "e8e448fb-9d1a-464a-9ae3-51b1d18612f4")
+		(uuid "a98cfd8c-0faa-45ec-a31c-40fdfc3e4e84")
 	)
 	(wire
 		(pts
-			(xy 146.685 71.755) (xy 156.845 71.755)
+			(xy 118.745 135.255) (xy 123.825 135.255)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "ef686a33-c978-4c79-b3be-5643cdae5a52")
+		(uuid "b269a4e0-2446-4041-8e27-3fb427aa19ec")
 	)
 	(wire
 		(pts
-			(xy 146.685 135.255) (xy 156.845 135.255)
+			(xy 136.525 151.13) (xy 136.525 145.415)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "f0b2fc93-b4ec-43cc-b7d3-9fc517ba7cca")
+		(uuid "cd6aa0a2-c5d2-4da4-9ae4-a886e1b3f614")
 	)
-	(hierarchical_label "GND"
+	(hierarchical_label "VCC"
 		(shape input)
-		(at 139.065 151.13 270)
+		(at 141.605 151.13 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -333,7 +341,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape input)
-		(at 136.525 50.165 90)
+		(at 141.605 50.165 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -342,9 +350,9 @@
 		)
 		(uuid "5bd718d6-51ea-454f-a694-8cf68fd05903")
 	)
-	(hierarchical_label "VCC"
+	(hierarchical_label "GND"
 		(shape input)
-		(at 133.985 87.63 270)
+		(at 136.525 87.63 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -364,9 +372,9 @@
 		)
 		(uuid "65107a06-0547-472a-95a4-93dff6aae8f5")
 	)
-	(hierarchical_label "GND"
+	(hierarchical_label "VCC"
 		(shape input)
-		(at 139.065 87.63 270)
+		(at 141.605 87.63 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -377,7 +385,7 @@
 	)
 	(hierarchical_label "GND"
 		(shape input)
-		(at 136.525 113.665 90)
+		(at 141.605 113.665 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -386,9 +394,9 @@
 		)
 		(uuid "a811ce0a-4e91-410f-9c13-22bd43c465b6")
 	)
-	(hierarchical_label "VCC"
+	(hierarchical_label "GND"
 		(shape input)
-		(at 133.985 151.13 270)
+		(at 136.525 151.13 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -409,7 +417,7 @@
 		(uuid "c9be25f7-31e5-42d6-bdff-618389f5bd16")
 	)
 	(symbol
-		(lib_id "Logic_LevelTranslator:SN74AUP1T34DCK")
+		(lib_id "74xGxx:74AHC1G125")
 		(at 136.525 71.755 180)
 		(unit 1)
 		(exclude_from_sim no)
@@ -425,8 +433,8 @@
 				)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
-			(at 136.525 61.595 0)
+		(property "Value" "74AHC1G125GW,125"
+			(at 127.254 64.516 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -442,7 +450,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 136.525 56.515 0)
 			(effects
 				(font
@@ -460,7 +468,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 136.525 71.755 0)
 			(effects
 				(font
@@ -469,7 +477,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 136.525 71.755 0)
 			(effects
 				(font
@@ -478,7 +486,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 136.525 71.755 0)
 			(effects
 				(font
@@ -554,7 +562,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Logic_LevelTranslator:SN74AUP1T34DCK")
+		(lib_id "74xGxx:74AHC1G125")
 		(at 136.525 135.255 180)
 		(unit 1)
 		(exclude_from_sim no)
@@ -570,8 +578,8 @@
 				)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
-			(at 136.525 125.095 0)
+		(property "Value" "74AHC1G125GW,125"
+			(at 128.27 129.032 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -587,7 +595,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 136.525 120.015 0)
 			(effects
 				(font
@@ -605,7 +613,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 136.525 135.255 0)
 			(effects
 				(font
@@ -614,7 +622,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 136.525 135.255 0)
 			(effects
 				(font
@@ -623,7 +631,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 136.525 135.255 0)
 			(effects
 				(font
