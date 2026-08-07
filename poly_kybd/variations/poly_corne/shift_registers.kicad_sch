@@ -40,7 +40,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://rocelec.widen.net/view/pdf/umsr6rbkih/PHGL-S-A0000283114-1.pdf?t.download=true&u=5oefqw"
+			(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf"
 				(at 0 0 0)
 				(effects
 					(font
@@ -58,7 +58,7 @@
 					(hide yes)
 				)
 			)
-			(property "MPN" "C3303719"
+			(property "MPN" "74HC595BQ,115"
 				(at 0 0 0)
 				(effects
 					(font
@@ -1041,7 +1041,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://rocelec.widen.net/view/pdf/umsr6rbkih/PHGL-S-A0000283114-1.pdf?t.download=true&u=5oefqw"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf"
 			(at 86.36 102.87 0)
 			(effects
 				(font
@@ -1059,7 +1059,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C3303719"
+		(property "MPN" "74HC595BQ,115"
 			(at 86.36 102.87 0)
 			(effects
 				(font
@@ -1068,7 +1068,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C3303719"
+		(property "JLC" "C730243"
 			(at 86.36 102.87 0)
 			(effects
 				(font
@@ -1077,7 +1077,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C3303719"
+		(property "LCSC" "C730243"
 			(at 86.36 102.87 0)
 			(effects
 				(font
@@ -1199,7 +1199,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://rocelec.widen.net/view/pdf/umsr6rbkih/PHGL-S-A0000283114-1.pdf?t.download=true&u=5oefqw"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf"
 			(at 194.31 102.87 0)
 			(effects
 				(font
@@ -1217,7 +1217,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C3303719"
+		(property "MPN" "74HC595BQ,115"
 			(at 194.31 102.87 0)
 			(effects
 				(font
@@ -1226,7 +1226,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C3303719"
+		(property "JLC" "C730243"
 			(at 194.31 102.87 0)
 			(effects
 				(font
@@ -1235,7 +1235,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C3303719"
+		(property "LCSC" "C730243"
 			(at 194.31 102.87 0)
 			(effects
 				(font
@@ -1357,7 +1357,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://rocelec.widen.net/view/pdf/umsr6rbkih/PHGL-S-A0000283114-1.pdf?t.download=true&u=5oefqw"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74HC_HCT595.pdf"
 			(at 138.43 102.87 0)
 			(effects
 				(font
@@ -1375,7 +1375,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C3303719"
+		(property "MPN" "74HC595BQ,115"
 			(at 138.43 102.87 0)
 			(effects
 				(font
@@ -1384,7 +1384,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C3303719"
+		(property "JLC" "C730243"
 			(at 138.43 102.87 0)
 			(effects
 				(font
@@ -1393,7 +1393,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C3303719"
+		(property "LCSC" "C730243"
 			(at 138.43 102.87 0)
 			(effects
 				(font

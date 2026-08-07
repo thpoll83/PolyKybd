@@ -3006,7 +3006,7 @@
 					(justify left)
 				)
 			)
-			(property "Value" "W25Q64JVXGIQ"
+			(property "Value" "W25Q64JVXGIM"
 				(at 52.07 5.08 0)
 				(effects
 					(font
@@ -11021,7 +11021,7 @@
 				)
 			)
 		)
-		(property "Value" "W25Q64JVXGIQ"
+		(property "Value" "W25Q64JVXGIM"
 			(at 76.2 224.79 0)
 			(effects
 				(font
@@ -11039,7 +11039,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.winbond.com/hq/search-resource-file.jsp?partNo=W25Q64JVXGIQ&type=datasheet"
+		(property "Datasheet" "https://www.winbond.com/resource-files/W25Q64JV%20RevK%2003102021%20Plus.pdf"
 			(at 100.33 229.235 0)
 			(effects
 				(font
@@ -11058,7 +11058,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C2940195"
+		(property "MPN" "W25Q64JVXGIM"
 			(at 100.33 231.775 0)
 			(effects
 				(font
@@ -11068,7 +11068,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C2940195"
+		(property "JLC" "C5440778"
 			(at 48.26 229.235 0)
 			(effects
 				(font
@@ -11077,7 +11077,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C2940195"
+		(property "LCSC" "C5440778"
 			(at 48.26 229.235 0)
 			(effects
 				(font
@@ -11086,7 +11086,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "winbond"
+		(property "Manufacturer" "Winbond"
 			(at 48.26 229.235 0)
 			(effects
 				(font
@@ -12309,7 +12309,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL10C6R8DB8NNNC_C170128.pdf"
+		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Samsung-Electro-Mechanics-CL10C6R8CB8NNNC_C318672.pdf"
 			(at 238.76 53.975 0)
 			(effects
 				(font
@@ -12327,7 +12327,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C170128"
+		(property "MPN" "CL10C6R8CB8NNNC"
 			(at 238.76 53.975 0)
 			(effects
 				(font
@@ -12336,7 +12336,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C170128"
+		(property "JLC" "C318672"
 			(at 238.76 53.975 0)
 			(effects
 				(font
@@ -12354,7 +12354,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C170128"
+		(property "LCSC" "C318672"
 			(at 238.76 53.975 0)
 			(effects
 				(font

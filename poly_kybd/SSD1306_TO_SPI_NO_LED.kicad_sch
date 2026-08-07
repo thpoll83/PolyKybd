@@ -2054,7 +2054,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_1810010229_CEC-Shenzhen-Zhenhua-XinYun-Elec-CA45-A-25V-4-7uF-K_C129569.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/40002/293d.pdf"
 			(at 54.61 69.85 0)
 			(effects
 				(font
@@ -2072,7 +2072,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C118249"
+		(property "MPN" "293D475X9025A2TE3"
 			(at 54.61 69.85 0)
 			(effects
 				(font
@@ -2081,7 +2081,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C118249"
+		(property "JLC" "C5380411"
 			(at 54.61 69.85 0)
 			(effects
 				(font
@@ -2090,7 +2090,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C118249"
+		(property "LCSC" "C5380411"
 			(at 54.61 69.85 0)
 			(effects
 				(font
@@ -2099,7 +2099,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Sunlord"
+		(property "Manufacturer" "Vishay"
 			(at 54.61 69.85 0)
 			(effects
 				(font
