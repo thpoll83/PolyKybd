@@ -8,7 +8,25 @@ The instructions here are still in a very early stage. There is also a build vid
 
 You can find the matching QMK firmware here: [https://github.com/thpoll83/qmk_firmware/tree/PolyKybd](https://github.com/thpoll83/qmk_firmware/tree/PolyKybd)
 
-The KiCad7 projects for the PCB are the following:
+## Cloning this repository
+
+This repo is big — around 800 MB of history. Most of that is the board files themselves: the
+decorative silkscreen artwork is stored as vector polygons, which makes a single `.kicad_pcb`
+around 50 MB, and there are several design generations in the history.
+
+If you just want the current files, use a partial clone. Git then downloads file contents only
+when you actually touch them, so a fresh checkout takes seconds instead of many minutes:
+
+```
+git clone --filter=blob:none https://github.com/thpoll83/PolyKybd.git
+```
+
+The full history is still there and everything works normally — `git log`, `git checkout`, opening
+the boards in KiCad. Older revisions of large files are simply fetched on demand. If you want a
+plain full clone instead, just leave the `--filter` off.
+
+The PCB projects are the following (**KiCad 9** — the schematics were migrated to the version 9
+file format, so KiCad 8 and earlier can no longer open them):
 
 [poly_kybd/poly_kybd_split72_right.kicad_pro](poly_kybd/poly_kybd_split72_right.kicad_pro)
 [poly_kybd/poly_kybd_split72_left.kicad_pro](poly_kybd/poly_kybd_split72_left.kicad_pro)
@@ -22,7 +40,8 @@ Here are the corresponding schematics for reference (left and right):
 
 You can inspect all individual schematic sheets (with descriptions) here: [Schematic sheets](schematics.md).
 
-The keyboard plates are also KiCad7 projects (I used 1.2mm aluminum PCBs):
+The keyboard plates are also KiCad projects, still in an older file format but they open fine in
+KiCad 9 (I used 1.2mm aluminum PCBs):
 
 [poly_kybd/poly_kybd_split72_plate_right.kicad_pro](poly_kybd/poly_kybd_split72_plate_right.kicad_pro)
 [poly_kybd/poly_kybd_split72_plate_left.kicad_pro](poly_kybd/poly_kybd_split72_plate_left.kicad_pro)
