@@ -17665,7 +17665,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "7b1ef761-26e7-4b08-8680-94bacff67bda")
@@ -17677,7 +17677,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -17705,7 +17705,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -17719,7 +17719,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -17733,7 +17733,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -17747,7 +17747,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -20095,7 +20095,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "c20a84db-54ff-46e1-aa04-834aa17d1789")
@@ -20107,7 +20107,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -20135,7 +20135,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -20149,7 +20149,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -20163,7 +20163,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -20177,7 +20177,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -34418,7 +34418,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "6b8d4686-fe4f-4106-984a-510db8985d9d")
@@ -34430,7 +34430,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -34458,7 +34458,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -34472,7 +34472,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -34486,7 +34486,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -34500,7 +34500,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -35284,7 +35284,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "a4ba6bd9-4147-4459-89dd-5fa6a849b83c")
@@ -35296,7 +35296,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -35324,7 +35324,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -35338,7 +35338,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -35352,7 +35352,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -35366,7 +35366,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -38689,7 +38689,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "9be0b8f4-aa9d-4bb2-92bd-5fcef0ca9770")
@@ -38701,7 +38701,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -38729,7 +38729,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -38743,7 +38743,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -38757,7 +38757,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -38771,7 +38771,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -43458,7 +43458,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "2eef0896-3367-4ed2-8ef1-2854b5a17a5f")
@@ -43470,7 +43470,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -43498,7 +43498,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -43512,7 +43512,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -43526,7 +43526,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -43540,7 +43540,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -49792,7 +49792,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "e87c7bdd-4b10-4cef-be96-07077e07dfbb")
@@ -49804,7 +49804,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -49832,7 +49832,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -49846,7 +49846,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -49860,7 +49860,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -49874,7 +49874,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -71530,7 +71530,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "525422a6-b4de-4511-84ce-ce1ece4e4f8a")
@@ -71542,7 +71542,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -71570,7 +71570,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -71584,7 +71584,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -71598,7 +71598,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -71612,7 +71612,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -74357,7 +74357,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "f2c47c53-8d50-4eb1-b718-25c9a1fb778e")
@@ -74369,7 +74369,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -74397,7 +74397,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -74411,7 +74411,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -74425,7 +74425,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -74439,7 +74439,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -100028,7 +100028,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "410655dd-36b4-4f1e-925c-d9be3e2f483e")
@@ -100040,7 +100040,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -100068,7 +100068,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -100082,7 +100082,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -100096,7 +100096,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -100110,7 +100110,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -100907,7 +100907,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "f602aca1-848e-4ac7-9550-2861953458b5")
@@ -100919,7 +100919,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -100947,7 +100947,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -100961,7 +100961,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -100975,7 +100975,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -100989,7 +100989,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -105257,7 +105257,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SN74LVC1G126DBVR"
+		(property "Value" "74AHC1G125GW,125"
 			(at 0 -2 0)
 			(layer "B.Fab")
 			(uuid "f1abc783-21fd-4a02-a31c-d368bb0021fa")
@@ -105269,7 +105269,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/cn/lit/gpn/sn74ahc1g125"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/74AHC_AHCT1G125.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -105297,7 +105297,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C151890"
+		(property "MPN" "74AHC1G125GW,125"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -105311,7 +105311,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C151890"
+		(property "JLC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -105325,7 +105325,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C151890"
+		(property "LCSC" "C85397"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -105339,7 +105339,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "TI"
+		(property "Manufacturer" "Nexperia"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
