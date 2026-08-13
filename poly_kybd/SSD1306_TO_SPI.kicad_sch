@@ -6,8 +6,8 @@
 	(paper "A5")
 	(title_block
 		(title "Display Adapter, LED & Switch")
-		(date "2024-10-11")
-		(rev "3.2")
+		(date "2026-08-13")
+		(rev "3.3")
 		(company "thpoll")
 	)
 	(lib_symbols
