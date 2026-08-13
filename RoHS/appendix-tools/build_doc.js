@@ -70,4 +70,4 @@ const doc = new Document({
   }],
 });
 
-Packer.toBuffer(doc).then(b=>{fs.writeFileSync("/sessions/bold-festive-carson/mnt/outputs/EU-Declaration-of-Conformity.docx",b);console.log("written");});
+Packer.toBuffer(doc).then(b=>{fs.writeFileSync(require("path").join(__dirname,"..","EU-Declaration-of-Conformity.docx"),b);console.log("written");});

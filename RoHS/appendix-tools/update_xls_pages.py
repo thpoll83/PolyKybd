@@ -9,7 +9,10 @@ from pypdf import PdfReader
 from xlutils.copy import copy
 from xlwt import easyxf
 
-RD = "/sessions/bold-festive-carson/mnt/PolyKybd/RoHS"
+# Paths are resolved relative to this script so the tools run from a
+# checkout. Override the RoHS directory with POLYKYBD_ROHS if needed.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+RD = os.environ.get("POLYKYBD_ROHS", os.path.dirname(_HERE))
 XLS = os.path.join(RD, "parts-to-pdf-reference.xls")
 COL = 7  # new 'Appendix Pages' column
 
