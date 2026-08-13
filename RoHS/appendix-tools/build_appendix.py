@@ -18,8 +18,11 @@ START = _ap.parse_args().start
 def a4_page(src):
     return ce_common.a4_fit(src)     # scale into the shared header/footer content band
 
-RD = "/sessions/bold-festive-carson/mnt/PolyKybd/RoHS"
-OUT = "/sessions/bold-festive-carson/mnt/outputs/PolyKybd-RoHS-Appendix.pdf"
+# Paths are resolved relative to this script so the tools run from a
+# checkout. Override the RoHS directory with POLYKYBD_ROHS if needed.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+RD = os.environ.get("POLYKYBD_ROHS", os.path.dirname(_HERE))
+OUT = os.path.join(RD, "PolyKybd-RoHS-Appendix.pdf")
 STD = "Directive 2011/65/EU (RoHS) as amended by (EU) 2015/863"
 PAGE = A4
 MARGIN = 16*mm

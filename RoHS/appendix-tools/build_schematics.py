@@ -10,8 +10,12 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from pypdf import PdfReader, PdfWriter
 
-SD  = "/sessions/bold-festive-carson/mnt/PolyKybd/RoHS/schematics"
-OUT = "/sessions/bold-festive-carson/mnt/outputs/PolyKybd-Schematics.pdf"
+# Paths are resolved relative to this script so the tools run from a
+# checkout. Override the RoHS directory with POLYKYBD_ROHS if needed.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+RD = os.environ.get("POLYKYBD_ROHS", os.path.dirname(_HERE))
+SD  = os.path.join(RD, "schematics")
+OUT = os.path.join(RD, "PolyKybd-Schematics.pdf")
 
 # order requested: left, right, RP2040, key block, then other subsystems
 BLOCKS = [

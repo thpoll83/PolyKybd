@@ -5,7 +5,11 @@ import io, os, warnings, sys; warnings.filterwarnings("ignore")
 import cairosvg
 from gerbonara import LayerStack
 
-BASE = "/sessions/bold-festive-carson/mnt/outputs"
+# Paths are resolved relative to this script so the tools run from a
+# checkout. Override the RoHS directory with POLYKYBD_ROHS if needed.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+RD = os.environ.get("POLYKYBD_ROHS", os.path.dirname(_HERE))
+BASE = RD
 OUTDIR = os.path.join(BASE, "pcb_pages"); os.makedirs(OUTDIR, exist_ok=True)
 LAYER_KEYS = [
     ("top","copper"), ("inner_2","copper"), ("inner_3","copper"), ("bottom","copper"),

@@ -1,7 +1,7 @@
 # PolyKybd — RoHS Documentation Decisions Log
 
 Standard applied throughout: **Directive 2011/65/EU (RoHS) as amended by (EU) 2015/863.**
-Last updated: 2026-07-13.
+Last updated: 2026-08-07.
 
 This file records the decisions made while assembling the RoHS evidence for the CE technical file,
 so the results can be reviewed and reproduced.
@@ -75,6 +75,67 @@ Each trimmed certificate was checked to confirm the specific part number appears
     (coverage list includes "SOT", i.e. SY6280AAC's package). The part number SY6280 does not appear in the
     document, so no part-specific page can be added; U3 → SY6280AAC linkage is via the reference table/divider.
 
+## v3.3 part changes — 2026-08-07
+
+Five parts were retargeted because the ordered ones went **EOL at JLCPCB** ("no longer
+manufactured", 0 stock). Certificate consequences:
+
+| Ref | Was | Now | Certificate |
+|---|---|---|---|
+| C4_1-C4_36, C33, C34 | Sunlord `C118249` | **Vishay** 293D475X9025A2TE3 `C5380411` | **changed** → `vishay-rohs-20250901.pdf` |
+| C5, C11 | Samsung `C170128` | Samsung CL10C6R8CB8NNNC `C318672` | unchanged — same blanket declaration |
+| U4-U8 | Nexperia `C3303719` | Nexperia 74HC595BQ,115 `C730243` | unchanged — same MPN, same statement |
+| U9 | Winbond `C2940195` XGIQ | Winbond W25Q64JVXGIM `C5440778` | unchanged — family-level evidence |
+| U12-U25 | TI SN74LVC1G126DBVR | **Nexperia** 74AHC1G125GW,125 `C85397` | **changed** → Nexperia statement |
+
+### New evidence
+- **`vishay-rohs-20250901.pdf`** — Vishay ROHS Compliance Statement, 1 September 2025, signed by
+  Roy Shoshani (COO Semiconductors / CTO). Header cites *"Directives 2002/95/EG, 2011/65/EU,
+  2015/863/EU (RoHS I – III)"*. Company-wide: certifies that all products *identified as
+  RoHS-compliant* meet those directives. Our part is `293D475X9025A2TE3` — the **`E3` termination
+  suffix is Vishay's lead-free code**, and the 293D datasheet states "Terminations: 100 % matte tin
+  standard" and warns that parts with lead (Pb) terminations are *not* RoHS-compliant. Source:
+  `vishay.com/doc?49157`. One page, so `Appendix Pages = all`.
+- **`nexperia-74AHC1G125-datasheet.pdf`** — Nexperia 74AHC1G125/74AHCT1G125 data sheet, Rev 15.1,
+  28 August 2024. Supporting documentation for the new buffer; not itself the RoHS evidence.
+
+### U12–U25 buffer — re-pointed to the Nexperia statement
+The fitted part is now Nexperia `74AHC1G125GW,125` (SOT-353), so the TI datasheet no longer
+applies. The existing **`Nexperia - Statement on RoHS 20241008.pdf`** covers it: it is company-wide
+across all Nexperia semiconductor products and cites the correct directives.
+
+**Checked the exemption appendix (page 3):** it lists 37 packages that exceed the 0.1 % lead limit
+and rely on RoHS exemptions 7(a) / 7(c)-I. **Neither SOT-353 (U12–U25) nor DHVQFN-16 (U4–U8) is on
+that list**, so both Nexperia parts are compliant outright, with no exemption claimed. Rows 37 and
+41 now share one certificate and therefore one appendix section.
+
+The reference also fixes the old `U12-U23,U?,U?` designator string → **`U12-U25`**, closing the
+housekeeping item below. Qty stays 14 (one buffer per package; the earlier "two per package" note
+was based on the wrong part).
+
+- `sn74lvc1g126.pdf` **deleted** — datasheet for a part that was never fitted.
+- `sunlord-rohs.pdf` / `sunlord-rohs-en-translated.pdf` and
+  `2410010304_Texas-Instruments-SN74AHC1G125DCKR_C151890.pdf` are now unreferenced but **kept**:
+  they document what the built **v3.2** boards actually shipped with.
+
+### Samsung 6.8 pF — traceability note
+The manufacturer is unchanged, so the blanket "all our MLCCs" declaration (page 2) still applies
+and no new document is needed. But part-level traceability is now weaker, and the page selection
+is stale:
+- The Product Lineup lists `CL10C6R8**D**B8NNN` (±0.5 pF, the **old** part) on **page 14** — which
+  the current selection `1,2,13,19,25` does not even include.
+- The new `CL10C6R8**C**B8NNNC` (±0.25 pF) does **not appear anywhere** in the document.
+
+So C5/C11 now sit in the same category as Silergy below: covered by a blanket report that does not
+name the part, with linkage via the reference table and section divider. Consider adding page 14.
+
+### Winbond flash — directive version caveat
+`winbond-W25Q64JV-rohs.png` is page 59 of the W25Q64JV datasheet; the RoHS claim is Note 2 under
+Absolute Maximum Ratings. It is titled **W25Q64JV** (the family), so it covers `XGIM` exactly as it
+covered `XGIQ` — no new document needed. **However it cites RoHS `2002/95/EU`**, the superseded
+directive, not 2011/65/EU + 2015/863. Worth requesting a current Winbond declaration before the
+technical file is finalised.
+
 ## Reproduce
 From `RoHS/`:
 1. `python3 appendix-tools/update_xls_pages.py` — (re)writes the `Appendix Pages` column from the certs.
@@ -83,6 +144,19 @@ From `RoHS/`:
    Requires `xlrd`, `pypdf`, `reportlab`, `pdfplumber`, `Pillow`.
 
 ## Open housekeeping (not compliance blockers)
-- The BOM row for U12–U23 still contains two unnamed designators (`U?,U?`); resolve when convenient.
+- ~~The BOM row for U12–U23 still contains two unnamed designators (`U?,U?`)~~ — **resolved
+  2026-08-07**, now `U12-U25`.
+- ~~`PolyKybd-RoHS-Appendix.pdf` and `PolyKybd-Schematics.pdf` are stale~~ — **both regenerated
+  2026-08-07** from the v3.3 sources.
+- ~~Both appendix tools carry a hardcoded sandbox path~~ — **fixed 2026-08-07**; all six tools now
+  resolve paths relative to the checkout, overridable with `POLYKYBD_ROHS`.
+- Some certificates in `RoHS/` are referenced by no BOM line (Aerosemi MT9700, Fenghua RC-02W,
+  Prosperity MCS0530, Uniroyal 0603WAF); confirm whether they are alternates/DNPs or should be
+  linked. Since 2026-08-07 this also covers `sunlord-rohs.pdf` and the TI buffer datasheet, which
+  are **deliberately** kept as the record of what the built v3.2 boards shipped with.
+
+**→ See `CE-document-status.md`** for the full state of every compiled document and the remaining
+certificate questions (compliance matrix, PCB layers, Declaration of Conformity, the Winbond
+directive version, the Samsung page selection, and JUSHUO vs Hirose on J1–J36).
 - Some certificates in `RoHS/` are not referenced by any BOM line (e.g. Aerosemi MT9700, Fenghua RC-02W,
   Prosperity MCS0530, Uniroyal 0603WAF); confirm whether they are alternates/DNPs or should be linked.

@@ -21882,7 +21882,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_1810121532_Silergy-Corp-SY6280AAC_C55136.pdf"
+		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Samsung-Electro-Mechanics-CL10C6R8CB8NNNC_C318672.pdf"
 			(at 525.145 370.84 0)
 			(effects
 				(font
@@ -22013,7 +22013,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL10C6R8DB8NNNC_C170128.pdf"
+		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Samsung-Electro-Mechanics-CL10C6R8CB8NNNC_C318672.pdf"
 			(at 534.035 300.355 0)
 			(effects
 				(font
@@ -22031,7 +22031,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C170128"
+		(property "MPN" "CL10C6R8CB8NNNC"
 			(at 534.035 300.355 0)
 			(effects
 				(font
@@ -22040,7 +22040,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C170128"
+		(property "JLC" "C318672"
 			(at 534.035 300.355 0)
 			(effects
 				(font
@@ -22058,7 +22058,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C170128"
+		(property "LCSC" "C318672"
 			(at 534.035 300.355 0)
 			(effects
 				(font
@@ -22134,7 +22134,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0712KL_C114659.pdf"
+		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Samsung-Electro-Mechanics-CL10C6R8CB8NNNC_C318672.pdf"
 			(at 530.225 300.355 0)
 			(effects
 				(font

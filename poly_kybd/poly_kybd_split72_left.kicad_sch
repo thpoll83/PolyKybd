@@ -30978,7 +30978,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_1810010229_CEC-Shenzhen-Zhenhua-XinYun-Elec-CA45-A-25V-4-7uF-K_C129569.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/40002/293d.pdf"
 			(at 447.04 306.705 0)
 			(effects
 				(font
@@ -30996,7 +30996,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C118249"
+		(property "MPN" "293D475X9025A2TE3"
 			(at 439.42 313.055 90)
 			(effects
 				(font
@@ -31004,7 +31004,7 @@
 				)
 			)
 		)
-		(property "JLC" "C118249"
+		(property "JLC" "C5380411"
 			(at 447.04 306.705 0)
 			(effects
 				(font
@@ -31013,7 +31013,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C118249"
+		(property "LCSC" "C5380411"
 			(at 447.04 306.705 0)
 			(effects
 				(font
@@ -31022,7 +31022,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Sunlord"
+		(property "Manufacturer" "Vishay"
 			(at 447.04 306.705 0)
 			(effects
 				(font
@@ -33901,7 +33901,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_1810010229_CEC-Shenzhen-Zhenhua-XinYun-Elec-CA45-A-25V-4-7uF-K_C129569.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/40002/293d.pdf"
 			(at 449.58 311.785 0)
 			(effects
 				(font
@@ -33919,7 +33919,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C118249"
+		(property "MPN" "293D475X9025A2TE3"
 			(at 452.755 315.595 90)
 			(effects
 				(font
@@ -33927,7 +33927,7 @@
 				)
 			)
 		)
-		(property "JLC" "C118249"
+		(property "JLC" "C5380411"
 			(at 449.58 311.785 0)
 			(effects
 				(font
@@ -33936,7 +33936,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C118249"
+		(property "LCSC" "C5380411"
 			(at 449.58 311.785 0)
 			(effects
 				(font
@@ -33945,7 +33945,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Sunlord"
+		(property "Manufacturer" "Vishay"
 			(at 449.58 311.785 0)
 			(effects
 				(font
@@ -34023,7 +34023,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL10C6R8DB8NNNC_C170128.pdf"
+		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Samsung-Electro-Mechanics-CL10C6R8CB8NNNC_C318672.pdf"
 			(at 534.035 300.355 0)
 			(effects
 				(font
@@ -34041,7 +34041,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C170128"
+		(property "MPN" "CL10C6R8CB8NNNC"
 			(at 534.035 300.355 0)
 			(effects
 				(font
@@ -34050,7 +34050,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C170128"
+		(property "JLC" "C318672"
 			(at 534.035 300.355 0)
 			(effects
 				(font
@@ -34068,7 +34068,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C170128"
+		(property "LCSC" "C318672"
 			(at 534.035 300.355 0)
 			(effects
 				(font
