@@ -1,0 +1,46 @@
+# Treat genuine binaries as binary.
+#
+# Without this git tries to diff them as text. PolyKybd-Schematics.pdf alone
+# renders as ~1.35 million lines of "changed text" on every regeneration, which
+# bloats diffs, slows git and makes review output useless. Marking them binary
+# makes git report "Bin <old> -> <new> bytes" instead.
+#
+# This affects diff/merge behaviour only - it does not change how objects are
+# stored, so it neither shrinks nor grows the repository.
+
+# Documents
+*.pdf   binary
+*.docx  binary
+*.xls   binary
+*.xlsx  binary
+*.ods   binary
+
+# Images
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+
+# 3D and mechanical
+*.stl   binary
+*.step  binary
+*.stp   binary
+*.wrl   binary
+*.3dshapes binary
+
+# Archives and fabrication output
+*.zip   binary
+*.7z    binary
+*.gz    binary
+
+# KiCad sources are text and diff usefully - left alone deliberately:
+#   *.kicad_pcb, *.kicad_sch, *.kicad_sym, *.kicad_mod, *.kicad_pro,
+#   *.gbr/.gtl/.gbl/.drl and the CSV exports.
+# They are large, but a readable diff on them has repeatedly been the thing
+# that caught mistakes, so they stay text.
+
+# Normalise line endings for the text formats we do hand-edit.
+*.md    text
+*.py    text
+*.sh    text eol=lf
