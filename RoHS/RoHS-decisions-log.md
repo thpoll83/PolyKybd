@@ -146,11 +146,17 @@ From `RoHS/`:
 ## Open housekeeping (not compliance blockers)
 - ~~The BOM row for U12–U23 still contains two unnamed designators (`U?,U?`)~~ — **resolved
   2026-08-07**, now `U12-U25`.
-- **`PolyKybd-RoHS-Appendix.pdf` and `PolyKybd-Schematics.pdf` are stale** — they predate the v3.3
-  part changes and still contain the TI buffer section. Regenerate both (the schematics PDF needs
-  a KiCad export first).
-- **Both appendix tools carry a hardcoded sandbox path** left from a cloud session:
-  `RD = "/sessions/bold-festive-carson/mnt/PolyKybd/RoHS"` in `update_xls_pages.py` and the same in
-  `build_appendix.py`'s `OUT`. They must be made repo-relative before either can run locally.
+- ~~`PolyKybd-RoHS-Appendix.pdf` and `PolyKybd-Schematics.pdf` are stale~~ — **both regenerated
+  2026-08-07** from the v3.3 sources.
+- ~~Both appendix tools carry a hardcoded sandbox path~~ — **fixed 2026-08-07**; all six tools now
+  resolve paths relative to the checkout, overridable with `POLYKYBD_ROHS`.
+- Some certificates in `RoHS/` are referenced by no BOM line (Aerosemi MT9700, Fenghua RC-02W,
+  Prosperity MCS0530, Uniroyal 0603WAF); confirm whether they are alternates/DNPs or should be
+  linked. Since 2026-08-07 this also covers `sunlord-rohs.pdf` and the TI buffer datasheet, which
+  are **deliberately** kept as the record of what the built v3.2 boards shipped with.
+
+**→ See `CE-document-status.md`** for the full state of every compiled document and the remaining
+certificate questions (compliance matrix, PCB layers, Declaration of Conformity, the Winbond
+directive version, the Samsung page selection, and JUSHUO vs Hirose on J1–J36).
 - Some certificates in `RoHS/` are not referenced by any BOM line (e.g. Aerosemi MT9700, Fenghua RC-02W,
   Prosperity MCS0530, Uniroyal 0603WAF); confirm whether they are alternates/DNPs or should be linked.
