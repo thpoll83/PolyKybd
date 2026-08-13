@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "rp2040 base circuit")
-		(date "2024-10-11")
-		(rev "3.2")
+		(date "2026-08-13")
+		(rev "3.3")
 	)
 	(lib_symbols
 		(symbol "Connector:TestPoint_Flag"

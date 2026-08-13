@@ -6,8 +6,8 @@
 	(paper "A2")
 	(title_block
 		(title "PolyKybd Split L")
-		(date "2024-11-11")
-		(rev "3.2")
+		(date "2026-08-13")
+		(rev "3.3")
 	)
 	(lib_symbols
 		(symbol "Connector_Generic:Conn_01x03"
