@@ -22,13 +22,15 @@ This file records *what is still outstanding*.
 
 | Document | Blocked on | What is needed |
 |---|---|---|
-| **`PolyKybd-RoHS-Compliance-Matrix.xlsx`** | nothing — **can be done now** | 6 rows are wrong. See §2 |
-| **`PolyKybd-PCB-Layers.pdf`** | **A6** — v3.3 gerber export | `pcb_render.py` reads gerbers from `RoHS/pcb/<side>`; only v2.2/v3/v3.1/v3.2 exist. Regenerate after the v3.3 export, then `pcb_merge.py` |
+| ~~`PolyKybd-RoHS-Compliance-Matrix.xlsx`~~ | — | ✅ **done 2026-08-13.** See §2 |
+| **`PolyKybd-PCB-Layers.pdf`** | ~~A6~~ — **now unblocked**, v3.3 gerbers exist | `pcb_render.py` reads gerbers from `RoHS/pcb/<side>`; copy the v3.3 sets there, render, then `pcb_merge.py`. Needs `cairosvg` + `gerbonara`; note `cairosvg` needs a native cairo DLL that is **not present on this Windows box** — `gerbonara` + Pillow rasterising works as an alternative |
 | **`EU-Declaration-of-Conformity.docx`** | **GmbH registration** + EMC report | Every field is still a `[TO CONFIRM]` placeholder: DoC number, revision, manufacturer name, address, contact. Must name **PolyTasten GmbH**, not Thomas Pollak |
 
 ---
 
-## 2. `PolyKybd-RoHS-Compliance-Matrix.xlsx` — six rows to correct
+## 2. `PolyKybd-RoHS-Compliance-Matrix.xlsx` — ✅ corrected 2026-08-13
+
+*Kept for the record; all of the below is now applied.*
 
 Sheet **Compliance Matrix**:
 
@@ -113,15 +115,11 @@ alternates/DNPs or should be linked.
 
 ## 4. Housekeeping
 
-- **`.gitattributes` — mark PDFs binary.** `PolyKybd-Schematics.pdf` diffs as *text*
-  (~1.35 M lines) because nothing marks it binary. Harmless but it bloats diffs and slows git
-  on 15–37 MB files. One line fixes it:
-  ```
-  *.pdf binary
-  *.xls binary
-  *.xlsx binary
-  *.docx binary
-  ```
+- ~~**`.gitattributes` — mark PDFs binary.**~~ ✅ **done 2026-08-13.** A repo-root
+  `.gitattributes` now marks PDFs, Office documents, images, 3D files and archives binary.
+  Verified: `PolyKybd-Schematics.pdf` reports `Bin 37253660 -> 37253659 bytes` instead of
+  ~1.35 M lines of text. KiCad sources stay text on purpose — a readable diff on them is what
+  caught the property-only scope of the recent part swaps.
 - **Tool dependencies.** The appendix tools need `xlrd`, `pypdf`, `reportlab`, `pdfplumber`,
   `Pillow`, and — for writing the .xls — `xlutils` and `xlwt`. `openpyxl` for the matrix.
   `pcb_render.py` additionally needs `cairosvg` and `gerbonara`, which are **not installed**.
