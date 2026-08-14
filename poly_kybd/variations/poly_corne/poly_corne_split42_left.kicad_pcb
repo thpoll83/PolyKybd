@@ -27611,7 +27611,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC0402FR-071KL_C144789.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -27637,7 +27637,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C144789"
+		(property "JLC" "C71623"
 			(at 236.178 160.63 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -27650,7 +27650,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C144789"
+		(property "LCSC" "C71623"
 			(at 236.178 160.63 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -27663,7 +27663,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C144789"
+		(property "MPN" "CRCW04021K00FKED"
 			(at 236.178 160.63 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -27676,7 +27676,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "Yageo"
+		(property "Manufacturer" "Vishay"
 			(at 236.178 160.63 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -45875,7 +45875,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC0402FR-071KL_C144789.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -45899,7 +45899,7 @@
 				)
 			)
 		)
-		(property "JLC" "C144789"
+		(property "JLC" "C71623"
 			(at 238.71 -154.79 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -45912,7 +45912,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C144789"
+		(property "LCSC" "C71623"
 			(at 238.71 -154.79 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -45925,7 +45925,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C144789"
+		(property "MPN" "CRCW04021K00FKED"
 			(at 238.71 -154.79 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -45938,7 +45938,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "Yageo"
+		(property "Manufacturer" "Vishay"
 			(at 238.71 -154.79 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -81347,7 +81347,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC0402FR-071KL_C144789.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -81371,7 +81371,7 @@
 				)
 			)
 		)
-		(property "JLC" "C144789"
+		(property "JLC" "C71623"
 			(at 0 0 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -81384,7 +81384,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C144789"
+		(property "LCSC" "C71623"
 			(at 0 0 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -81397,7 +81397,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C144789"
+		(property "MPN" "CRCW04021K00FKED"
 			(at 0 0 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -81410,7 +81410,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "Yageo"
+		(property "Manufacturer" "Vishay"
 			(at 0 0 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -90389,7 +90389,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC0402FR-071KL_C144789.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -90413,7 +90413,7 @@
 				)
 			)
 		)
-		(property "JLC" "C144789"
+		(property "JLC" "C71623"
 			(at 253.642382 -127.6403 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -90426,7 +90426,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C144789"
+		(property "LCSC" "C71623"
 			(at 253.642382 -127.6403 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -90439,7 +90439,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C144789"
+		(property "MPN" "CRCW04021K00FKED"
 			(at 253.642382 -127.6403 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -90452,7 +90452,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "Yageo"
+		(property "Manufacturer" "Vishay"
 			(at 253.642382 -127.6403 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -103564,7 +103564,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC0402FR-071KL_C144789.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -103590,7 +103590,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C144789"
+		(property "JLC" "C71623"
 			(at 279.65 134.85 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -103603,7 +103603,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C144789"
+		(property "LCSC" "C71623"
 			(at 279.65 134.85 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -103616,7 +103616,7 @@
 				(justify mirror)
 			)
 		)
-		(property "MPN" "C144789"
+		(property "MPN" "CRCW04021K00FKED"
 			(at 279.65 134.85 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -103629,7 +103629,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Manufacturer" "Yageo"
+		(property "Manufacturer" "Vishay"
 			(at 279.65 134.85 0)
 			(layer "B.Fab")
 			(hide yes)
