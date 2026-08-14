@@ -87,7 +87,32 @@ applies and **no new document is required**. But part-level traceability got wea
 
 Option 1 is consistent with existing practice and costs nothing.
 
-### c. JUSHUO connectors J1–J36 — coverage still unverified
+### c. GigaDevice — evidence staged, **not** wired into the technical file
+
+The Winbond flash pre-order for v3.3 (`C5440778`) **failed**, so GigaDevice `GD25Q64EQIGR`
+(`C3202817`) is under evaluation as the second source for U9. Its RoHS evidence has been
+collected in advance and is held in `RoHS/`, but **is deliberately not referenced from
+`parts-to-pdf-reference.xls` or the compliance matrix** — the part is not on the board.
+
+| File | What it is |
+|---|---|
+| `gigadevice-rohs-declaration-webcapture-20260814.pdf` | **Capture of a public web page**, not a manufacturer-issued certificate. GigaDevice publishes its RoHS 2.0 Declaration as a web page only |
+| `gigadevice-iso14001-2015.pdf` | Genuine signed certificate — reg. 50050943 UM15, valid 2023-09-21 → 2026-09-20 |
+
+**Content is good, form is weak.** The declaration cites the current directives
+(2011/65/EU + (EU) 2015/863) — unlike Winbond's, which cites the superseded 2002/95/EU — and
+lists all ten substances at the correct limits. But it carries no date, revision or
+signatory. Part-level linkage comes from the datasheet ordering table, which decodes suffix
+`G` as "Pb Free + Halogen Free Green Package"; the part is `GD25Q64E`**`Q`**`I`**`G`**`R`.
+
+**Open action:** request a dated, signed RoHS declaration from GigaDevice naming the part,
+as was obtained for Vishay. Ask at the same time as the pre-order. The capture is interim
+evidence and should be replaced if a signed document is issued.
+
+Full sourcing analysis, including the boot2 compatibility constraint that governs which
+flash can be used at all: `notes/flash-second-sourcing.md` in the **polykybd-costing** repo.
+
+### d. JUSHUO connectors J1–J36 — coverage still unverified
 
 Three JUSHUO RoHS PDFs are on file (`Jushuo_SZXEC24000437502/504/505`). They are **encrypted,
 image-only scans with no text layer**, so it could not be confirmed whether they cover the
@@ -96,7 +121,7 @@ while the board ships **Hirose** `C324724` (row 16 of the .xls points at the Hir
 
 **Action:** resolve the manufacturer discrepancy first, then confirm certificate coverage.
 
-### d. Unreferenced certificates — confirm intent
+### e. Unreferenced certificates — confirm intent
 
 Now unreferenced but **deliberately kept**, as they document what the built **v3.2** boards
 shipped with:
