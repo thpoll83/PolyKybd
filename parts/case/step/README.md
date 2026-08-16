@@ -12,13 +12,13 @@ STEP has true planar/cylindrical surfaces and tight tolerances — instead of th
 ```bash
 pip install build123d          # pulls in OCP (OpenCASCADE bindings)
 pip install matplotlib         # only for `make preview`
-make                           # -> ../../export/case_split72/metal-case-{right,left}.step + validate
+make                           # -> ../../export/case/metal-case-{right,left}.step + validate
 make preview                   # -> compare.png : this model vs the original mesh
 ```
 
 `build.py` builds both sides (left = right mirrored across YZ) and writes STEP + a
 coarse STL for preview. `validate_step.py` is the acceptance test; `render_compare.py`
-renders this model beside `../../export/case_split72/case_polykybd_split72_metal.stl`.
+renders this model beside `../../export/case/case_polykybd_split72_metal.stl`.
 
 ## What is reproduced
 

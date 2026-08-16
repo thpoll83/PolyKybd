@@ -5,6 +5,7 @@
 #   parts/keycap_stem/build_stems.sh R2 R3            # only those profiles
 #   parts/keycap_stem/build_stems.sh --width 1U R5    # one width
 #   parts/keycap_stem/build_stems.sh --list           # show the table, export nothing
+#   parts/keycap_stem/build_stems.sh --fetch-font     # install Noto per-user first
 #
 # The profile table below IS the definition of a row.  It used to live only as
 # commented-out top-level calls at the bottom of keycap_stem.scad, exported by
@@ -39,17 +40,34 @@ S            -7      1.5        S
 S5           10      2.5        S5
 "
 
-want_profiles=(); want_widths=(1U 1U25); do_list=0
+want_profiles=(); want_widths=(1U 1U25); do_list=0; do_fetch=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --list)  do_list=1 ;;
+    --fetch-font) do_fetch=1 ;;
     --width) shift; want_widths=("$1") ;;
-    -h|--help) sed -n '2,9p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,10p' "$0"; exit 0 ;;
     -*) echo "unknown option: $1" >&2; exit 64 ;;
     *)  want_profiles+=("$1") ;;
   esac
   shift
 done
+
+# Same source and mechanism as the firmware's fonts/dl-fonts.sh (the `Noto Sans`
+# entry of its noto-fonts.yaml).  Installed per-user, so no root is needed.  It
+# is the variable font: fontconfig exposes its named instances, so
+# `Noto:style=Bold` resolves to a real Bold rather than a synthesised one.
+NOTO_URL='https://raw.githubusercontent.com/google/fonts/main/ofl/notosans/NotoSans%5Bwdth%2Cwght%5D.ttf'
+NOTO_DEST="${XDG_DATA_HOME:-$HOME/.local/share}/fonts/polykybd/NotoSans.ttf"
+
+fetch_noto() {
+  mkdir -p "$(dirname "$NOTO_DEST")"
+  echo "  fetch $NOTO_DEST"
+  if command -v curl >/dev/null; then curl -fsSL "$NOTO_URL" -o "$NOTO_DEST"
+  else                                wget -q "$NOTO_URL" -O "$NOTO_DEST"; fi
+  fc-cache -f >/dev/null 2>&1 || true
+}
+[ "$do_fetch" = 1 ] && fetch_noto
 
 command -v openscad >/dev/null || { echo "openscad not on PATH" >&2; exit 69; }
 
@@ -58,7 +76,7 @@ command -v openscad >/dev/null || { echo "openscad not on PATH" >&2; exit 69; }
 # the glyphs are just the wrong shape, and nothing in the output says so.
 if ! fc-match "Noto:style=Bold" 2>/dev/null | grep -qi noto; then
   echo "WARNING: no Noto font -- the engraved revision will render in a substitute face." >&2
-  echo "         apt-get install fonts-noto-core" >&2
+  echo "         run with --fetch-font (per-user, no root), or apt-get install fonts-noto-core" >&2
 fi
 
 # OpenSCAD does not emit facets in a stable order between runs, so re-exporting

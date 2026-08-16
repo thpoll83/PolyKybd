@@ -44,7 +44,7 @@ def add(ax, tris, color, elev, azim):
 
 def main():
     mine = load_stl("metal-case-right.stl")
-    orig = load_stl("../../export/case_split72/case_polykybd_split72_metal.stl")
+    orig = load_stl("../../export/case/case_polykybd_split72_metal.stl")
     print("mine tris", len(mine), "orig tris", len(orig))
     fig = plt.figure(figsize=(16, 9))
     views = [("top", 90, -90), ("iso", 35, -60)]

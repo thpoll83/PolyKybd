@@ -25,14 +25,22 @@ scripts sit together, and nothing generated is ever mixed in with a source.
 | `parts/models/` | reference meshes (display glass, FFC cable) — visualisation only, not printed |
 | `parts/README.md` | the index: which part, which source, what to print |
 
-The groups are `case_split72`, `case_right_side`, `plate`, `diffuser`,
+The groups are `case` (every case variant: the FDM split72 left/right, the
+metal/CNC one, POM, right2 and the right-side case, plus the spacer they
+share and the STEP pipeline under `case/step/`), `plate`, `diffuser`,
 `keycap_stem`, `display_holder`, `cirque_insert`, `cover_insert`,
-`rotary_enc_insert`, `legs`, `led_caps`, `case_insert`.
+`rotary_enc_insert`, `legs`, `case_insert`.
+
+⚠️ **Keep every case variant in `case/` — they SHARE the imported KiCad SVG
+outlines.** `right_side.scad` and `case_polykybd_split72_lr.scad` both
+`import("poly_kb_wave_right_case-*.svg")`, and an `import()` path resolves
+relative to the .scad file just as `use <>` does, so splitting the variants
+into sibling folders silently breaks whichever one loses the SVGs.
 
 ⚠️ **The two build scripts write a temporary driver `.scad` beside the sources
 and `use <>` it**, because `use <>` resolves relative to the *.scad file*, not
 the cwd (see the trap below). `parts/diffuser/check_frame.py` writes its temp
-driver into `parts/case_split72/` for the same reason — it needs
+driver into `parts/case/` for the same reason — it needs
 `case_polykybd_split72_lr.scad`'s `right_spacer()` and reaches the frame as
 `use <../diffuser/diffuser_frame_left.scad>`. Both are gitignored as
 `_build_*.scad` / `_check_tmp_*.scad`; moving either script to another folder
@@ -95,7 +103,10 @@ Four traps, each of which has cost real time:
 
 `use <>` imports a file's modules and **ignores its top-level geometry**, which is
 how `parts/diffuser/diffuser.scad` can render a whole print plate on its own while
-`diffuser_frame_*.scad` pulls just `diffuser()` out of it.
+`diffuser_frame_*.scad` pulls just `diffuser()` out of it. ⚠️ `led_caps.scad`
+(the superseded earlier generation, kept beside it) defines `diffuser()`,
+`diffuser_cluster()` and `torus()` under the SAME names — so a file that
+`use <>`s both silently gets one set of definitions.
 
 ## Verifying a printed part
 

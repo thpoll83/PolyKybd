@@ -70,7 +70,7 @@ def check(path):
 
 
 if __name__ == "__main__":
-    paths = sys.argv[1:] or ["../../export/case_split72/metal-case-right.step",
-                         "../../export/case_split72/metal-case-left.step"]
+    paths = sys.argv[1:] or ["../../export/case/metal-case-right.step",
+                         "../../export/case/metal-case-left.step"]
     all_ok = all(check(p) for p in paths)
     sys.exit(0 if all_ok else 1)

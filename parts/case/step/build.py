@@ -4,7 +4,7 @@ import os, time, gc
 # The STEP is a committed deliverable, so it goes to the repo-wide export tree;
 # the STL is only for render_compare/xsections and stays here (gitignored).
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                   "..", "..", "export", "case_split72")
+                   "..", "..", "export", "case")
 
 # Cap the address space: OCCT's allocator over-reserves during the 112-key-hole
 # booleans and can trip the container OOM killer even with plenty of RAM free.

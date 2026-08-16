@@ -59,15 +59,15 @@ Independent of your choice, here are the parts you need before putting everythin
 ### Prepare Required Parts
 
 * Case (left/right) - You can either 3D print or get them CNCed (but then you should add some threads to the screw holes):
-  [parts/export/case_split72/case_polykybd_split72_left_r7.stl](parts/export/case_split72/case_polykybd_split72_left_r7.stl)
+  [parts/export/case/case_polykybd_split72_left_r7.stl](parts/export/case/case_polykybd_split72_left_r7.stl)
   ![Case](images/case_l.png)
-  [parts/export/case_split72/case_polykybd_split72_right_r7.stl](parts/export/case_split72/case_polykybd_split72_right_r7.stl)
+  [parts/export/case/case_polykybd_split72_right_r7.stl](parts/export/case/case_polykybd_split72_right_r7.stl)
   ![Case](images/case_r.png)
   In case the resin print has some deformations, it is best to use the a hairdryer to slightly heat the case up and then put something heavy on the bottom to make it flat - it really works.
 * Spacer to keep the right distance between plate and PCB (again, can be 3D printed):
-  [parts/export/case_split72/spacer.stl
+  [parts/export/case/spacer.stl
   ![Spacer](images/spacer.png)
-  ](parts/export/case_split72/spacer.stl)
+  ](parts/export/case/spacer.stl)
 * Assembled 4 layers PCB 1.6mm (left/right)
   The latest gerber files with BOM and pick/place file can be found in [poly_kybd/Gerber](poly_kybd/Gerber) I made some final adjusts on the latest version, which I did not yet order (I will let you know as soon as I did).
   [poly_kybd/Gerber/PCB/left-side-v3.2/PolyKybd_Split72_L_3.2.zip](poly_kybd/Gerber/PCB/left-side-v3.2/PolyKybd_Split72_L_3.2.zip)

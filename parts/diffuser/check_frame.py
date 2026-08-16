@@ -33,7 +33,7 @@ import tempfile
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Sources live beside this script; every generated mesh lives in the repo-wide
 # export tree under the part group's own name.
-CASE = os.path.join(REPO, 'parts', 'case_split72')
+CASE = os.path.join(REPO, 'parts', 'case')
 SRC = os.path.dirname(os.path.abspath(__file__))
 EXPORT = os.path.join(REPO, 'parts', 'export', 'diffuser')
 

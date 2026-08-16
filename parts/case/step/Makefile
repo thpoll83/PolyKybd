@@ -5,7 +5,7 @@
 # Preview/validation extras: matplotlib (render), OCP (validate, comes with build123d).
 
 PY  ?= python3
-OUT ?= ../../export/case_split72
+OUT ?= ../../export/case
 
 .PHONY: all step validate preview clean
 

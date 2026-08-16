@@ -1,3 +1,12 @@
+// SUPERSEDED -- the earlier generation of the LED diffuser, kept for reference.
+// The part in use is diffuser.scad (+ the generated diffuser_frame_*.scad).
+//
+// Each cap here is a ~7 x 4.2 x 3.2 mm D-shaped light pipe with a flange on
+// both faces, clipping through a 5 mm hole in a 1.2 mm PCB; the top level lays
+// out 4 rings of 19 on a torus sprue.
+//
+// NOTE: this file defines diffuser(), diffuser_cluster() and torus(), the SAME
+// module names as diffuser.scad next to it -- never `use <>` both from one file.
 
 pcb_thickness = 1.2;
 cap_thickness = 0.5; //will be doubled
