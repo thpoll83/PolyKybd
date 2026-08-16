@@ -30,14 +30,17 @@ parts/
 | Cirque trackpad insert | `export/cirque_insert/cirque23_slim_insert_r8.stl` (23 mm), `cirque23_insert_high_r1.stl` (raised); 35 mm is experimental | `cirque_insert/*.scad` |
 | Cover insert | `export/cover_insert/cover_insert_r3_10p.stl` | `cover_insert/cover_insert.scad` |
 | Rotary encoder insert | `export/rotary_enc_insert/rotary_enc_insert_r1.stl` | `rotary_enc_insert/rotary_enc_nsert.scad` |
-| Case insert | `export/case_insert/case_ins_r2.stl` (4 frames on a runner, 119 × 39 × 3.8 mm), `case_ins_leg_v0.stl` (25.5 × 18.35 × 3.8 mm) | ⚠️ no CAD source is committed for these |
+| Tenting legs | `export/legs/legs_r2_8p.stl` (8 legs, 4 mirrored pairs at 29 mm pitch, 119 × 39 × 3.8 mm) | `legs/legs.scad` (`connected_8p()`) |
 
 `diffuser/led_caps.scad` is the **earlier generation** of the LED diffuser: one
 cap is a ~7 × 4.2 × 3.2 mm D-shaped light pipe flanged on both faces, clipping
 through a 5 mm hole in a 1.2 mm PCB, laid out 4 rings × 19 on a torus sprue. It
 defines the same module names as `diffuser.scad`, so never `use <>` both from
-one file. Both `case_ins_*` meshes are 3.8 mm thick — the same `spacer_height`
-as `right_spacer()` — so they belong to the spacer layer.
+one file. The two leg meshes were committed as `case_ins_r2.stl` / `case_ins_leg_v0.stl`,
+which read as "case insert" and hid what they were: `legs.scad` re-exports
+`legs_r2_8p.stl` to within a micron (identical facet count, volume and bounding
+box), and `legs_v0_1p.stl` is one older single leg. Their 3.8 mm thickness is
+shared with the spacer, which is what makes them easy to mistake for one.
 
 `models/` is **not** printable output: `display_glass.stl`, `keycap_display.stl`,
 `keycap_display_cable.stl`, `display_holder_wdisplay.stl` and

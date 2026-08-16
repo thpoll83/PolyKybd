@@ -29,7 +29,7 @@ The groups are `case` (every case variant: the FDM split72 left/right, the
 metal/CNC one, POM, right2 and the right-side case, plus the spacer they
 share and the STEP pipeline under `case/step/`), `plate`, `diffuser`,
 `keycap_stem`, `display_holder`, `cirque_insert`, `cover_insert`,
-`rotary_enc_insert`, `legs`, `case_insert`.
+`rotary_enc_insert`, `legs`.
 
 ⚠️ **Keep every case variant in `case/` — they SHARE the imported KiCad SVG
 outlines.** `right_side.scad` and `case_polykybd_split72_lr.scad` both
@@ -138,6 +138,17 @@ wrong before the fourth answered the question:
 - **Report the AREA below a threshold, not the infimum.** Every polygon corner
   tapers to zero thickness at its apex, so the minimum is always ~0 and tells you
   nothing; how *much* material is thin is the number that decides anything.
+
+⚠️ **Identify an orphan mesh by re-exporting the candidate source and comparing,
+not by its filename.** Two meshes committed as `case_ins_r2.stl` /
+`case_ins_leg_v0.stl` were grouped as a "case insert" on the strength of that
+prefix, and separately guessed to be the plate-to-PCB spacer (they are 3.8 mm
+thick, the same as `right_spacer()`, so the guess was reasonable). Re-exporting
+`legs.scad` settled it in one command: same 32202 facets, same 5263.0 mm³, same
+bounding box, 100 % of facets equal at 3 dp -- they are the **tenting legs**
+(`connected_8p()`, 8 legs in 4 mirrored pairs). Now `export/legs/legs_r2_8p.stl`.
+Float noise between OpenSCAD builds means an exact facet-set compare returns
+False, so compare rounded, or on count+volume+bbox.
 
 ## Keycap stems
 
