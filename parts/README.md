@@ -40,7 +40,9 @@ one file. `diff_v2.stl` ("diffuser v2") is its committed plate: a fresh export
 of `led_caps.scad` gives the same 210240 facets, the same 4062.9 mm³ and the
 same bounding box, but only ~88 % of facets agree to the millimetre, so it came
 from a slightly different revision of the source — `build_parts.sh led_caps`
-therefore writes its own file rather than overwriting it. The two leg meshes were committed as `case_ins_r2.stl` / `case_ins_leg_v0.stl`,
+therefore writes its own file rather than overwriting it.
+
+The two leg meshes were committed as `case_ins_r2.stl` / `case_ins_leg_v0.stl`,
 which read as "case insert" and hid what they were: `legs.scad` re-exports
 `legs_r2_8p.stl` to within a micron (identical facet count, volume and bounding
 box), and `legs_v0_1p.stl` is one older single leg. Their 3.8 mm thickness is
@@ -88,7 +90,7 @@ orientations.
 Everything else is still exported from the OpenSCAD GUI by opening the `.scad`
 and saving into the matching `export/` folder.
 
-## Two things that will bite you
+## Three things that will bite you
 
 - **STL format is mixed and that is deliberate.** The diffuser frames are
   **ASCII** (`check_frame.py` parses them and refuses binary); every other part
