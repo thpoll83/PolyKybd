@@ -165,8 +165,17 @@ comment to the .scad.
   absent.** `keycap_stem.scad` asks for `text_font = "Noto:style=Bold"`, and
   fontconfig substitutes (DejaVu Sans Bold in a bare container) rather than
   failing — the plate exports fine and nothing in the output mentions it. In a
-  fresh container: `apt-get install fonts-noto-core`. `build_stems.sh` warns via
-  `fc-match`, which is the only reason this is visible at all.
+  fresh container: `apt-get install fonts-noto-core`, or `build_stems.sh
+  --fetch-font` (per-user, no root). `build_stems.sh` warns via `fc-match`,
+  which is the only reason this is visible at all.
+- ⚠️ **WHICH Noto also matters — `--fetch-font` on a machine that already has one
+  will make every later re-export report `CHANGED`.** The engraving is tessellated
+  from whatever file fontconfig resolves, and the downloaded *variable* NotoSans
+  and a distro *static* NotoSans-Bold do not agree: measured 46192 vs 44912 facets
+  on the same plate, at identical volume and bounding box. That is a real
+  difference in the glyph outlines, well above what the settle rounding absorbs, so
+  it is not a bug in the comparison — it is the comparison working. Use
+  `--fetch-font` to acquire a Noto where there is none, not to "refresh" one.
 - **`R1` and `S1` are deliberately identical geometry** (angle 5, extra_len 0.5)
   and differ only in the engraving. That is what the source says — don't "fix" it.
 - **Judge a regenerated plate by bbox + volume, not by facet count.** Text

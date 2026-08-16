@@ -33,28 +33,11 @@ done
 # openscad exports geometry without a display; only PNG rendering needs xvfb.
 command -v openscad >/dev/null || { echo "openscad not on PATH" >&2; exit 69; }
 
-# OpenSCAD does not emit facets in a stable order between runs, so an export with
-# no design change still rewrites the whole file -- 23k lines of diff on the right
-# frame alone, which buries any real change.  Compare geometrically and put the
-# committed bytes back when only the ordering moved.
+
+# Keep the committed bytes when only the facet order moved -- see the helper
+# for why the comparison is rounded.
 settle() {
-  python3 - "$1" <<'PY'
-import re, subprocess, sys
-p = sys.argv[1]
-r = subprocess.run(['git', 'show', f'HEAD:{p}'], capture_output=True, text=True)
-if r.returncode:                       # new file, nothing to compare against
-    print('new'); sys.exit(0)
-def key(txt):
-    v = [tuple(map(float, m)) for m in
-         re.findall(r'vertex\s+(\S+)\s+(\S+)\s+(\S+)', txt)]
-    return sorted(tuple(sorted(v[i:i+3])) for i in range(0, len(v), 3))
-new = open(p).read()
-if key(r.stdout) == key(new):
-    open(p, 'w').write(r.stdout)       # identical solid -- keep the committed bytes
-    print('unchanged')
-else:
-    print('CHANGED')
-PY
+  python3 parts/settle_mesh.py "$1"
 }
 
 export_scad() {   # <out.stl> <scad source line>

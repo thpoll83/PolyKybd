@@ -57,6 +57,13 @@ done
 # entry of its noto-fonts.yaml).  Installed per-user, so no root is needed.  It
 # is the variable font: fontconfig exposes its named instances, so
 # `Noto:style=Bold` resolves to a real Bold rather than a synthesised one.
+# ⚠️ This CHANGES which Noto fontconfig resolves, and the engraved glyphs are
+# tessellated from whichever file wins -- so a re-export afterwards differs
+# from meshes built against a distro-packaged Noto and settle reports CHANGED
+# (measured: the variable font gives 46192 facets where the static Bold gives
+# 44912, same volume and bounding box).  That is a real difference in the
+# engraving, not noise the rounding can absorb, so use this to GET a Noto when
+# there is none -- not on a machine that already has one.
 NOTO_URL='https://raw.githubusercontent.com/google/fonts/main/ofl/notosans/NotoSans%5Bwdth%2Cwght%5D.ttf'
 NOTO_DEST="${XDG_DATA_HOME:-$HOME/.local/share}/fonts/polykybd/NotoSans.ttf"
 
@@ -79,30 +86,11 @@ if ! fc-match "Noto:style=Bold" 2>/dev/null | grep -qi noto; then
   echo "         run with --fetch-font (per-user, no root), or apt-get install fonts-noto-core" >&2
 fi
 
-# OpenSCAD does not emit facets in a stable order between runs, so re-exporting
-# an unchanged part still rewrites the whole binary blob.  Compare the solids
-# and put the committed bytes back when only the ordering moved.
+
+# Keep the committed bytes when only the facet order moved -- see the helper
+# for why the comparison is rounded.
 settle() {
-  python3 - "$1" <<'PY'
-import struct, subprocess, sys
-p = sys.argv[1]
-r = subprocess.run(['git', 'show', f'HEAD:{p}'], capture_output=True)
-if r.returncode:
-    print('new'); sys.exit(0)
-def key(b):
-    n = struct.unpack('<I', b[80:84])[0]
-    if len(b) != 84 + 50 * n:
-        return None                       # not a binary STL -- never claim equal
-    return sorted(tuple(sorted(struct.unpack('<9f', b[84+50*i+12:84+50*i+48])))
-                  for i in range(n))
-new = open(p, 'rb').read()
-a, b = key(r.stdout), key(new)
-if a is not None and a == b:
-    open(p, 'wb').write(r.stdout)         # identical solid -- keep committed bytes
-    print('unchanged')
-else:
-    print('CHANGED')
-PY
+  python3 parts/settle_mesh.py "$1"
 }
 
 mkdir -p "$OUT"

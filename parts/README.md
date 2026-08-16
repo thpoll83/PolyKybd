@@ -99,6 +99,10 @@ and saving into the matching `export/` folder.
   `Noto:style=Bold`; without it fontconfig silently substitutes another face and
   the plate exports looking fine. `build_stems.sh --fetch-font` downloads it to
   `~/.local/share/fonts/` (no root), the same source the firmware's `dl-fonts.sh`
-  uses; `apt-get install fonts-noto-core` works too.
+  uses; `apt-get install fonts-noto-core` works too. ⚠️ Use `--fetch-font` to get
+  a Noto when there is none, **not** on a machine that already has one: the
+  downloaded variable font and a packaged static Bold tessellate the engraving
+  differently (46192 vs 44912 facets on the same plate, identical volume and
+  bounding box), so a re-export afterwards legitimately reports `CHANGED`.
 - **Every case variant shares the imported KiCad SVG outlines**, and `import()`
   resolves relative to the .scad file — so they all have to stay in `case/`.

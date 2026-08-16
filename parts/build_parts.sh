@@ -41,33 +41,11 @@ done
 
 command -v openscad >/dev/null || { echo "openscad not on PATH" >&2; exit 69; }
 
-# OpenSCAD does not emit facets in a stable order between runs, and different
-# builds of it disagree in the last few float digits, so a re-export of an
-# UNCHANGED part still rewrites the whole mesh.  Compare rounded (a micron is
-# far below anything printable) and put the committed bytes back when only that
-# noise moved -- otherwise every run shows up as a multi-MB diff.
+
+# Keep the committed bytes when only the facet order moved -- see the helper
+# for why the comparison is rounded.
 settle() {
-  python3 - "$1" <<'PY'
-import struct, subprocess, sys
-p = sys.argv[1]
-r = subprocess.run(['git', 'show', f'HEAD:{p}'], capture_output=True)
-if r.returncode:
-    print('new'); sys.exit(0)
-def key(b, nd=3):
-    n = struct.unpack('<I', b[80:84])[0]
-    if len(b) != 84 + 50 * n:
-        return None                       # not a binary STL -- never claim equal
-    return sorted(tuple(sorted(round(x, nd) for x in
-                              struct.unpack('<9f', b[84+50*i+12:84+50*i+48])))
-                  for i in range(n))
-new = open(p, 'rb').read()
-a, b = key(r.stdout), key(new)
-if a is not None and a == b:
-    open(p, 'wb').write(r.stdout)         # same solid -- keep the committed bytes
-    print('unchanged')
-else:
-    print('CHANGED')
-PY
+  python3 parts/settle_mesh.py "$1"
 }
 
 printf '%-10s %-30s %s\n' NAME SOURCE OUTPUT
