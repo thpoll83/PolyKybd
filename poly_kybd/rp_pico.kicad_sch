@@ -8838,7 +8838,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC0402FR-071KL_C144789.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 261.62 70.485 0)
 			(effects
 				(font
@@ -8856,7 +8856,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C144789"
+		(property "MPN" "CRCW04021K00FKED"
 			(at 261.62 70.485 0)
 			(effects
 				(font
@@ -8865,7 +8865,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C144789"
+		(property "JLC" "C71623"
 			(at 261.62 70.485 0)
 			(effects
 				(font
@@ -8874,7 +8874,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C144789"
+		(property "LCSC" "C71623"
 			(at 261.62 70.485 0)
 			(effects
 				(font
@@ -8883,7 +8883,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Yageo"
+		(property "Manufacturer" "Vishay"
 			(at 261.62 70.485 0)
 			(effects
 				(font
@@ -13605,7 +13605,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC0402FR-071KL_C144789.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 346.71 78.74 0)
 			(effects
 				(font
@@ -13623,7 +13623,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C144789"
+		(property "MPN" "CRCW04021K00FKED"
 			(at 346.71 78.74 0)
 			(effects
 				(font
@@ -13632,7 +13632,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C144789"
+		(property "JLC" "C71623"
 			(at 346.71 78.74 0)
 			(effects
 				(font
@@ -13641,7 +13641,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C144789"
+		(property "LCSC" "C71623"
 			(at 346.71 78.74 0)
 			(effects
 				(font
@@ -13650,7 +13650,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Yageo"
+		(property "Manufacturer" "Vishay"
 			(at 346.71 78.74 0)
 			(effects
 				(font
@@ -14418,7 +14418,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC0402FR-071KL_C144789.pdf"
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
 			(at 33.02 229.235 0)
 			(effects
 				(font
@@ -14436,7 +14436,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C144789"
+		(property "MPN" "CRCW04021K00FKED"
 			(at 33.02 229.235 0)
 			(effects
 				(font
@@ -14445,7 +14445,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C144789"
+		(property "JLC" "C71623"
 			(at 33.02 229.235 0)
 			(effects
 				(font
@@ -14454,7 +14454,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C144789"
+		(property "LCSC" "C71623"
 			(at 33.02 229.235 0)
 			(effects
 				(font
@@ -14463,7 +14463,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Yageo"
+		(property "Manufacturer" "Vishay"
 			(at 33.02 229.235 0)
 			(effects
 				(font
