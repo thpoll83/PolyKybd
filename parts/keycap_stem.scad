@@ -289,7 +289,14 @@ module ten_connected_pieces_1U5(angle = 0, extra_len = 0, txt = revision)
 
 // Stepped Profile
 //ten_connected_pieces_1U25(angle = -7, extra_len=1.5, txt=str("S    ", revision));
-ten_connected_pieces_1U(angle = -7, extra_len=1.5, txt=str("S    ", revision));
+//ten_connected_pieces_1U(angle = -7, extra_len=1.5, txt=str("S    ", revision));
+
+//ten_connected_pieces_1U25(angle = 10, extra_len=2.5, txt=str("S5   ", revision));
+//ten_connected_pieces_1U(angle = 10, extra_len=2.5, txt=str("S5   ", revision));
+
+//ten_connected_pieces_1U25(angle = 5, extra_len=0.5, txt=str("S1   ", revision));
+ten_connected_pieces_1U(angle = 5, extra_len=0.5, txt=str("S1   ", revision));
+
 //mx_stem(u_size=1.22, angle = -7, extra_len=1.5, txt=str("S    ", revision));
 //mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
 
@@ -308,14 +315,15 @@ ten_connected_pieces_1U(angle = -7, extra_len=1.5, txt=str("S    ", revision));
 //ten_connected_pieces_1U(angle = 5, extra_len=0.5, txt=str("1    ", revision));
 
 // Pictures
-/*
+
 // alpha
+/*
 rotate([8,0,0]){
-translate([0,19.25*3,0]) mx_stem(u_size=1, angle = 10, extra_len=2.5, txt="5    ");
+translate([0,19.25*3,0]) mx_stem(u_size=1, angle = 10, extra_len=2.5, txt=str("S5   ", revision));
 translate([0,19.25*2,0]) mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
 translate([0,19.25,0]) mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
 mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
-translate([0,-19.25,0]) mx_stem(u_size=1, angle = 5, extra_len=0.5, txt="1    ");
+translate([0,-19.25,0]) mx_stem(u_size=1, angle = 5, extra_len=0.5, txt=str("S1   ", revision));
 }
 */
 /*
