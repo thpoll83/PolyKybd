@@ -22,12 +22,12 @@ scripts sit together, and nothing generated is ever mixed in with a source.
 | `poly_kybd/*.kicad_pcb` | the boards; the **authoritative** source for hole positions and rotations |
 | `parts/<group>/` | the CAD sources for one part group, plus the scripts that build and verify it |
 | `parts/export/<group>/` | everything generated: `.stl`, `.step`, `.3mf`. **Never hand-edited** |
-| `parts/models/` | reference meshes (display glass, FFC cable) — visualisation only, not printed |
+| `parts/models/` | reference meshes (display glass, FFC cable) and `plate.scad` — visualisation only, never printed |
 | `parts/README.md` | the index: which part, which source, what to print |
 
 The groups are `case` (every case variant: the FDM split72 left/right, the
 metal/CNC one, POM, right2 and the right-side case, plus the spacer they
-share and the STEP pipeline under `case/step/`), `plate`, `diffuser`,
+share and the STEP pipeline under `case/step/`), `diffuser`,
 `keycap_stem`, `display_holder`, `cirque_insert`, `cover_insert`,
 `rotary_enc_insert`, `legs`.
 

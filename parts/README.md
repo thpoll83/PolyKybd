@@ -29,7 +29,7 @@ parts/
 | Status display holder | `export/display_holder/display_holder_r1.stl`, or `display_holder_dummy_r1.stl` to blank the cut-out | `display_holder/display_holder.scad` |
 | Cirque trackpad insert | `export/cirque_insert/cirque23_slim_insert_r8.stl` (23 mm), `cirque23_insert_high_r1.stl` (raised); 35 mm is experimental | `cirque_insert/*.scad` |
 | Cover insert | `export/cover_insert/cover_insert_r3_10p.stl` | `cover_insert/cover_insert.scad` |
-| Rotary encoder insert | `export/rotary_enc_insert/rotary_enc_insert_r1.stl` | `rotary_enc_insert/rotary_enc_nsert.scad` |
+| Rotary encoder insert | `export/rotary_enc_insert/rotary_enc_insert_r1.stl` | `rotary_enc_insert/rotary_enc_insert.scad` |
 | Tenting legs | `export/legs/legs_r2_8p.stl` (8 legs, 4 mirrored pairs at 29 mm pitch, 119 × 39 × 3.8 mm) | `legs/legs.scad` (`connected_8p()`) |
 
 `diffuser/led_caps.scad` is the **earlier generation** of the LED diffuser: one
@@ -46,9 +46,13 @@ which read as "case insert" and hid what they were: `legs.scad` re-exports
 box), and `legs_v0_1p.stl` is one older single leg. Their 3.8 mm thickness is
 shared with the spacer, which is what makes them easy to mistake for one.
 
-`models/` is **not** printable output: `display_glass.stl`, `keycap_display.stl`,
-`keycap_display_cable.stl`, `display_holder_wdisplay.stl` and
-`right_side_model.wrl` exist to visualise how a part fits.
+`models/` is **not** printable output — it holds what only ever existed to
+visualise how a part fits: `display_glass.stl`, `keycap_display.stl`,
+`keycap_display_cable.stl`, `display_holder_wdisplay.stl` (the holder shown with
+its display in place), `right_side_model.wrl`, and `plate.scad`, which appears to
+have been a 3D model of the switch plate rather than a printed part — it imports
+SVGs from a `poly_kb_atom/` directory that is not in this repo, so it has not
+built for a long time.
 
 ## Building
 
@@ -96,6 +100,3 @@ and saving into the matching `export/` folder.
   uses; `apt-get install fonts-noto-core` works too.
 - **Every case variant shares the imported KiCad SVG outlines**, and `import()`
   resolves relative to the .scad file — so they all have to stay in `case/`.
-
-`plate/plate.scad` imports SVGs from a `poly_kb_atom/` directory that is
-not in this repo, so it does not currently build.
