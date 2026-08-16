@@ -24,7 +24,7 @@ parts/
 | Case, right side | `export/case/right_side_case.3mf`, `right_side_spacer.3mf` | `case/right_side.scad` |
 | Spacer | `export/case/spacer.stl` — or `spacer_diffuser_frame.stl` when the LED diffuser frame is fitted (it is notched for the frame's web on **both** faces, so one part serves either half) | `right_spacer()` in `case/case_polykybd_split72_lr.scad` |
 | LED diffuser frame | `export/diffuser/diffuser_frame_{left,right}.stl` (`_4x` = four stacked per plate) | `diffuser/` — **generated from the plate PCB**, see below |
-| LED diffuser, old generation | superseded, no mesh committed — export `diffuser/led_caps.scad` if you need it | `diffuser/led_caps.scad` |
+| LED diffuser, old generation | `export/diffuser/diff_v2.stl` (4 rings × 19 caps, 97 × 97 × 6.2 mm) | `diffuser/led_caps.scad` |
 | Keycap stems | `export/keycap_stem/keycap_stem_revAlpha_{1U,1U25}_{R1..R5,S1,S,S5}_10p.stl` | `keycap_stem/keycap_stem.scad` |
 | Status display holder | `export/display_holder/display_holder_r1.stl`, or `display_holder_dummy_r1.stl` to blank the cut-out | `display_holder/display_holder.scad` |
 | Cirque trackpad insert | `export/cirque_insert/cirque23_slim_insert_r8.stl` (23 mm), `cirque23_insert_high_r1.stl` (raised); 35 mm is experimental | `cirque_insert/*.scad` |
@@ -36,7 +36,11 @@ parts/
 cap is a ~7 × 4.2 × 3.2 mm D-shaped light pipe flanged on both faces, clipping
 through a 5 mm hole in a 1.2 mm PCB, laid out 4 rings × 19 on a torus sprue. It
 defines the same module names as `diffuser.scad`, so never `use <>` both from
-one file. The two leg meshes were committed as `case_ins_r2.stl` / `case_ins_leg_v0.stl`,
+one file. `diff_v2.stl` ("diffuser v2") is its committed plate: a fresh export
+of `led_caps.scad` gives the same 210240 facets, the same 4062.9 mm³ and the
+same bounding box, but only ~88 % of facets agree to the millimetre, so it came
+from a slightly different revision of the source — `build_parts.sh led_caps`
+therefore writes its own file rather than overwriting it. The two leg meshes were committed as `case_ins_r2.stl` / `case_ins_leg_v0.stl`,
 which read as "case insert" and hid what they were: `legs.scad` re-exports
 `legs_r2_8p.stl` to within a micron (identical facet count, volume and bounding
 box), and `legs_v0_1p.stl` is one older single leg. Their 3.8 mm thickness is
@@ -48,9 +52,9 @@ shared with the spacer, which is what makes them easy to mistake for one.
 
 ## Building
 
-Two parts have a one-command build; run it rather than exporting by hand,
-because in both cases doing it by hand is what let an export fall a revision
-behind.
+Three build scripts.  Run them rather than exporting by hand -- doing it by hand
+is what let an export fall a revision behind, and what let a mesh sit in the tree
+for years under a name that did not say which source made it.
 
 ```bash
 parts/diffuser/build_frame.sh          # regenerate from the PCB, export, verify
@@ -59,7 +63,17 @@ parts/diffuser/build_frame.sh --check  # verify the committed meshes only
 parts/keycap_stem/build_stems.sh       # every profile, both widths
 parts/keycap_stem/build_stems.sh R2 R3 # just those rows
 parts/keycap_stem/build_stems.sh --list
+
+parts/build_parts.sh                   # the simple parts (top level IS the plate)
+parts/build_parts.sh led_caps          # opt-in: the superseded diffuser
+parts/build_parts.sh --list
 ```
+
+All three re-export idempotently: OpenSCAD emits facets in an unstable order and
+different builds of it disagree in the last float digits, so each script compares
+the result against the committed mesh and puts the committed bytes back when only
+that noise moved.  A clean re-run therefore prints `unchanged` and leaves the tree
+untouched.
 
 The diffuser frame is **generated from `poly_kybd/poly_kybd_split72_plate_*.kicad_pcb`**
 — read hole positions and rotations from the board, never from the SVG exports.
