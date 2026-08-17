@@ -4,16 +4,21 @@
 poly_kybd/_autosave*
 poly_kybd/#auto_saved_files#
 fp-info-cache
-keycaps/NopSCADlib/*
 poly_kybd/*-backups/*
-parts/NopSCADlib/*
+parts/**/NopSCADlib/*
 poly_kybd/production/*
-case/BOSL2*
+parts/**/BOSL2*
 *.lck
 *.log
 poly_kybd/variations/poly_corne/*
 
 
-# Python bytecode (parts/tools/ generator)
+# Scratch drivers: build_frame.sh / build_stems.sh / check_frame.py write a
+# temporary .scad beside the sources (`use <>` is relative to the .scad file)
+# and delete it again; a crashed run can leave one behind.
+parts/**/_build_*.scad
+parts/**/_check_tmp_*.scad
+
+# Python bytecode (parts/diffuser/ generator)
 __pycache__/
 *.pyc

@@ -59,15 +59,15 @@ Independent of your choice, here are the parts you need before putting everythin
 ### Prepare Required Parts
 
 * Case (left/right) - You can either 3D print or get them CNCed (but then you should add some threads to the screw holes):
-  [case/case_polykybd_split72_left_r7.stl](case/case_polykybd_split72_left_r7.stl)
+  [parts/export/case/case_polykybd_split72_left_r7.stl](parts/export/case/case_polykybd_split72_left_r7.stl)
   ![Case](images/case_l.png)
-  [case/case_polykybd_split72_right_r7.stl](case/case_polykybd_split72_right_r7.stl)
+  [parts/export/case/case_polykybd_split72_right_r7.stl](parts/export/case/case_polykybd_split72_right_r7.stl)
   ![Case](images/case_r.png)
-  In case the resin print has some deformations, it is best to use the a hairdryer to slightly heat the case up and then put something heavy on the bottom to make it flat - it really works.
+  In case the resin print has some deformations, it is best to use a hairdryer to slightly heat the case up and then put something heavy on the bottom to make it flat - it really works.
 * Spacer to keep the right distance between plate and PCB (again, can be 3D printed):
-  [case/spacer.stl
+  [parts/export/case/spacer.stl
   ![Spacer](images/spacer.png)
-  ](case/spacer.stl)
+  ](parts/export/case/spacer.stl)
 * Assembled 4 layers PCB 1.6mm (left/right)
   The latest gerber files with BOM and pick/place file can be found in [poly_kybd/Gerber](poly_kybd/Gerber) I made some final adjusts on the latest version, which I did not yet order (I will let you know as soon as I did).
   [poly_kybd/Gerber/PCB/left-side-v3.2/PolyKybd_Split72_L_3.2.zip](poly_kybd/Gerber/PCB/left-side-v3.2/PolyKybd_Split72_L_3.2.zip)
@@ -105,7 +105,7 @@ Independent of your choice, here are the parts you need before putting everythin
     | 10~12 | BS0~BS2   | 28    | VCC    |
     | 13    | CS#       | 29    | VLSS   |
 
-    If you don't need the status displays, you can close the display cut-out with the dummy holder: [Dummy Display Holder](parts/display_holder_dummy_r1.stl)
+    If you don't need the status displays, you can close the display cut-out with the dummy holder: [Dummy Display Holder](parts/export/display_holder/display_holder_dummy_r1.stl)
 
 * MX Compatible key switches (3 or 5 pins) - 72 pieces. From my blog post ( [https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW](https://ko-fi.com/post/More-Key-Switch-Testing-While-Waiting-For-The-Asse-B0B8HX1HW) ), you can find out, that there are 2 categories of compatible key switches. The ones that work out of the box and the ones that need a little modification. Basically all switches that have an LED slit that is at least 7.5mm wide work. I tested quite some switches and here is the list of tested switches that will work for sure without modification:
 
@@ -197,12 +197,12 @@ Independent of your choice, here are the parts you need before putting everythin
   - Curved ![Curved Profile](images/profile_curved.png)
     Here you will need R1 to R5 from the [parts](parts) directory. (4x 1.25U R1, 10x 1U R1, 4x 1.25U R2, 12x 1U R2, 2x 1.25U R3, 12x 1U R3, 2x 1.25U R4, 12x 1U R4, 2x 1.25U R5, 12x 1U R5)
 * Status display holder (or cover/dummy in case no status display is used), can be 3D printed.
-  [parts/display_holder_r1.stl](parts/display_holder_r1.stl) / [parts/display_holder_dummy_r1.stl](parts/display_holder_dummy_r1.stl)
+  [parts/export/display_holder/display_holder_r1.stl](parts/export/display_holder/display_holder_r1.stl) / [parts/export/display_holder/display_holder_dummy_r1.stl](parts/export/display_holder/display_holder_dummy_r1.stl)
 * Transparent keycap covers - 72 pieces (from relegendable keycaps [like these](https://de.aliexpress.com/item/1005002996832179.html?spm=a2g0o.order_list.order_list_main.111.49985c5f1EyPsm&gatewayAdapt=glo2deu)), 58x 1U and 14x 1.25U. Various sources sell them on Alibaba, AliExpress, Amazon & Co.
 * Optional rotary encoder ([EVQWGD001](https://de.aliexpress.com/i/32990950196.html?gatewayAdapt=gloMsite2deuPcglo2deu) or [Alps EC11 Encoder](https://www.mouser.at/c/electromechanical/encoders/?m=Alps%20Alpine&series=EC11)), [pimoroni trackball](https://mou.sr/3rmFiAO) or [23mm cirque trackpad](https://www.mouser.at/ProductDetail/Cirque/TM023023-2024-002?qs=wd5RIQLrsJhgKZTW4CXgsA%3D%3D&countryCode=DE&currencyCode=EUR) (and a 12 pin FPC cable with pins on the same side, about 50mm to 70mm). For the trackpad you will need another 3D printed holder, either a high one or a low one: ![Cirque Trackpad Inserts](images/cirque_inserts.png)
-  [parts/cirque23_slim_insert_r8.stl](parts/cirque23_slim_insert_r8.stl)
-  [parts/cirque23_insert_high_r1.stl](parts/cirque23_insert_high_r1.stl)
-  If you are not happy with the existing STLs, you can also modify the source file [parts/cirque23_insert.stl](parts/cirque23_insert.stl) or [parts/cirque23_slim_insert.scad](parts/cirque23_slim_insert.scad). There is also an experimental version for the 35mm cirque track pad: [parts/cirque35_insert.scad](parts/cirque35_insert.scad).
+  [parts/export/cirque_insert/cirque23_slim_insert_r8.stl](parts/export/cirque_insert/cirque23_slim_insert_r8.stl)
+  [parts/export/cirque_insert/cirque23_insert_high_r1.stl](parts/export/cirque_insert/cirque23_insert_high_r1.stl)
+  If you are not happy with the existing STLs, you can also modify the source file [parts/cirque_insert/cirque23_insert.scad](parts/cirque_insert/cirque23_insert.scad) or [parts/cirque_insert/cirque23_slim_insert.scad](parts/cirque_insert/cirque23_slim_insert.scad). There is also an experimental version for the 35mm cirque track pad: [parts/cirque_insert/cirque35_insert.scad](parts/cirque_insert/cirque35_insert.scad).
 * Optional ambient-light + proximity sensor (**highly recommended**) - a [Pimoroni LTR-559 Light & Proximity Sensor breakout](https://shop.pimoroni.com/products/ltr-559-light-proximity-sensor-breakout) plus a matching 5-pin 2.54mm pin header. The Split72 PCB has a dedicated header footprint for it (labelled `3-6V / SDA / SCL / INT / GND`), sharing the Cirque I2C bus - no extra wiring. With the sensor fitted, the firmware automatically drives keycap brightness from the measured light level and wakes the displays when your hand approaches. It is entirely optional (the firmware is a clean no-op when no sensor is present) and side-agnostic (works on whichever half you solder it to). **You must fit it as the very first assembly step** - see the note in [Put Everything Together](#put-everything-together) below, because it does *not* fit through the plate hole and cannot be added later without an almost complete disassembly. ![LTR-559 soldered to the PCB](images/ltr559_soldered.jpg)
   ***Note:*** each half has a **single** expansion slot that takes exactly **one** of these optional add-ons - a rotary encoder, a pointing device (trackball/trackpad), *or* the light sensor. So on a given half the sensor is mutually exclusive with the encoder and the pointing device: fitting the sensor means that half has no encoder/trackpad. (You can still put the sensor on one half and a pointing device or encoder on the other.)
 * Short USB-C to USB-C cable to connect the two sides (maybe around 50cm).

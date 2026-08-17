@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working in the
 **PolyKybd** repo: the KiCad boards under `poly_kybd/`, the OpenSCAD case and
-printed parts under `case/` and `parts/`.
+printed parts under `parts/`.
 
 For the firmware see [`../qmk_firmware/CLAUDE.md`](../qmk_firmware/CLAUDE.md);
 for the host app [`../PolyKybdHost/CLAUDE.md`](../PolyKybdHost/CLAUDE.md). The
@@ -13,21 +13,55 @@ keep committing to a branch whose PR has merged.
 
 ## Layout
 
+**One folder per part group under `parts/`, and every generated mesh under
+`parts/export/<same folder name>/`.** So a part's sources and its build/verify
+scripts sit together, and nothing generated is ever mixed in with a source.
+
 | Path | What |
 |------|------|
 | `poly_kybd/*.kicad_pcb` | the boards; the **authoritative** source for hole positions and rotations |
-| `case/` | OpenSCAD case, plate and spacer, plus their exported `.stl` |
-| `parts/` | printed parts (diffusers, inserts, keycap stems), their `.stl` |
-| `parts/tools/` | generators and verifiers that read the boards and emit/check parts |
+| `parts/<group>/` | the CAD sources for one part group, plus the scripts that build and verify it |
+| `parts/export/<group>/` | everything generated: `.stl`, `.step`, `.3mf`. **Never hand-edited** |
+| `parts/models/` | reference meshes (display glass, FFC cable) and `plate.scad` — visualisation only, never printed |
+| `parts/README.md` | the index: which part, which source, what to print |
+
+The groups are `case` (every case variant: the FDM split72 left/right, the
+metal/CNC one, POM, right2 and the right-side case, plus the spacer they
+share and the STEP pipeline under `case/step/`), `diffuser`,
+`keycap_stem`, `display_holder`, `cirque_insert`, `cover_insert`,
+`rotary_enc_insert`, `legs`.
+
+⚠️ **Keep every case variant in `case/` — they SHARE the imported KiCad SVG
+outlines.** `right_side.scad` and `case_polykybd_split72_lr.scad` both
+`import("poly_kb_wave_right_case-*.svg")`, and an `import()` path resolves
+relative to the .scad file just as `use <>` does, so splitting the variants
+into sibling folders silently breaks whichever one loses the SVGs.
+
+⚠️ **The two build scripts write a temporary driver `.scad` beside the sources
+and `use <>` it**, because `use <>` resolves relative to the *.scad file*, not
+the cwd (see the trap below). `parts/diffuser/check_frame.py` writes its temp
+driver into `parts/case/` for the same reason — it needs
+`case_polykybd_split72_lr.scad`'s `right_spacer()` and reaches the frame as
+`use <../diffuser/diffuser_frame_left.scad>`. Both are gitignored as
+`_build_*.scad` / `_check_tmp_*.scad`; moving either script to another folder
+breaks the resolution **silently**, into an empty object.
 
 **Read geometry from the `.kicad_pcb`, not from the SVG exports** — the SVGs
 carry a DPI-scaling risk and lose the per-part rotations (the split72 thumb keys
-run up to 20° off axis). `parts/tools/gen_diffuser_frame.py` is the worked
+run up to 20° off axis). `parts/diffuser/gen_diffuser_frame.py` is the worked
 example; the `investigate-kicad-pcb` skill covers reading boards generally.
 
-**STLs in this repo are ASCII**, ~170 MB of them. Binary would be ~5× smaller but
-neither format diffs usefully, and mixing the two is worse than either — keep
-exporting ASCII.
+⚠️ **STL format is per part group, and the repo is genuinely mixed — check the
+neighbours before exporting.** An earlier version of this file claimed "STLs in
+this repo are ASCII"; that is true only of the **diffuser frames**. Everything
+else — keycap stems, inserts, cases, spacers — is **binary** (the files start
+`OpenSCAD Model`, not `solid`), because they were exported from the GUI, whose
+default is binary. Neither format diffs usefully, so the rule is **match the
+sibling files in the same export folder**, which is what the two build scripts
+already do (`--export-format asciistl` for the frames, `binstl` for the stems).
+It matters beyond taste: `check_frame.py`'s `load_stl()` parses ASCII only and
+refuses a binary file outright, so an ASCII→binary slip on a frame turns a
+verification into an error.
 
 ## OpenSCAD
 
@@ -49,7 +83,7 @@ Four traps, each of which has cost real time:
   "no collision"**. It is a false PASS, not an error. **Always pair a
   clearance/collision test with a positive control** that displaces the part a
   couple of mm and confirms the test still reports an overlap;
-  `parts/tools/check_frame.py` does exactly this.
+  `parts/diffuser/check_frame.py` does exactly this.
 - ⚠️ **openscad exits `1` for an EMPTY result and `1` for a syntax error alike**
   (both verified). So the return code cannot classify the outcome: test for the
   `Current top level object is empty` marker **first**, then treat any remaining
@@ -64,23 +98,26 @@ Four traps, each of which has cost real time:
   run to run, so re-exporting an *unchanged* design still rewrites the whole file
   (23k lines of diff on one frame), burying any real change. Compare meshes as a
   **sorted facet multiset**, not with `cmp` — and when only the order moved, put
-  the committed bytes back. `parts/tools/build_frame.sh` does this automatically;
+  the committed bytes back. `parts/diffuser/build_frame.sh` does this automatically;
   the same trick is what proves a refactor left the solid alone.
 
 `use <>` imports a file's modules and **ignores its top-level geometry**, which is
-how `parts/diffuser.scad` can render a whole print plate on its own while
-`diffuser_frame_*.scad` pulls just `diffuser()` out of it.
+how `parts/diffuser/diffuser.scad` can render a whole print plate on its own while
+`diffuser_frame_*.scad` pulls just `diffuser()` out of it. ⚠️ `led_caps.scad`
+(the superseded earlier generation, kept beside it) defines `diffuser()`,
+`diffuser_cluster()` and `torus()` under the SAME names — so a file that
+`use <>`s both silently gets one set of definitions.
 
 ## Verifying a printed part
 
-**`parts/tools/build_frame.sh` is the whole loop** — regenerate the `.scad` from
+**`parts/diffuser/build_frame.sh` is the whole loop** — regenerate the `.scad` from
 the board, export every STL (both frames plus both stacked ones), then verify.
 Run it after any edit to `diffuser.scad` or the generator; `--no-4x` skips the
 slow stacked exports for a quick iteration, `--check` verifies without exporting.
 Doing the steps by hand is where they get missed: a `diffuser.scad` change alters
 the stacked pair too, and forgetting them leaves those a revision behind.
 
-`parts/tools/check_frame.py` is the verifier it calls: watertight, minimum wall,
+`parts/diffuser/check_frame.py` is the verifier it calls: watertight, minimum wall,
 left/right symmetry, plate trap, and spacer clearance in both flip orientations.
 It exits non-zero on failure. Extend it rather than re-deriving these by hand —
 and note it deliberately reports FAIL rather than raising, because a gating script
@@ -101,6 +138,74 @@ wrong before the fourth answered the question:
 - **Report the AREA below a threshold, not the infimum.** Every polygon corner
   tapers to zero thickness at its apex, so the minimum is always ~0 and tells you
   nothing; how *much* material is thin is the number that decides anything.
+
+⚠️ **Identify an orphan mesh by re-exporting the candidate source and comparing,
+not by its filename.** Two meshes committed as `case_ins_r2.stl` /
+`case_ins_leg_v0.stl` were grouped as a "case insert" on the strength of that
+prefix, and separately guessed to be the plate-to-PCB spacer (they are 3.8 mm
+thick, the same as `right_spacer()`, so the guess was reasonable). Re-exporting
+`legs.scad` settled it in one command: same 32202 facets, same 5263.0 mm³, same
+bounding box, 100 % of facets equal at 3 dp -- they are the **tenting legs**
+(`connected_8p()`, 8 legs in 4 mirrored pairs). Now `export/legs/legs_r2_8p.stl`.
+Float noise between OpenSCAD builds means an exact facet-set compare returns
+False, so compare rounded, or on count+volume+bbox.
+
+## Keycap stems
+
+**One `.scad` per plate in `parts/keycap_stem/variants/`, over a library that has
+NO top-level geometry** — `R1..R5` curved and `S1`/`S`/`S5` stepped, each in both
+`1U` and `1U25`, sixteen files. Each `include`s `../keycap_stem.scad` and makes a
+single call, so a variant renders on its own: what you open in the GUI is exactly
+what gets exported, and `variants/<x>.scad` → `export/keycap_stem/<x>.stl` with no
+name munging. `parts/keycap_stem/build_stems.sh` walks the directory and holds no
+table of its own, so **adding a plate is adding a file**.
+
+- **`include`, not `use`, in a variant.** `use` imports modules but *not*
+  variables, and the engraved `revision` is a variable. That is also why the
+  library must stay free of top-level geometry: `include` executes it, so
+  anything left there would appear in all sixteen plates. The photo arrangements
+  that used to sit at the bottom of the library live in `preview_stems.scad`
+  (a `view=` selector), which the build script does not export.
+- The profile set previously existed **only** as commented-out calls at the
+  bottom of `keycap_stem.scad`, exported by uncommenting one line at a time —
+  exactly how revAlpha shipped the stepped plates while the curved `R2..R5` were
+  missing for a whole revision.
+- ⚠️ **Verify a refactor here by re-exporting all sixteen — but expect only the
+  plates YOUR machine last exported to report `unchanged`.** The library/variant
+  split was checked this way and came back 8 `unchanged` / 8 `CHANGED`, split
+  exactly along who exported what: the eight R2–R5 plates (exported in this
+  container) were byte-identical, while R1 and the three S plates (exported by
+  the author on their own machine) differed. That is **not** a refactor failure —
+  each of the eight was confirmed to have an identical bounding box and a volume
+  within 0.04%, i.e. only the engraving is tessellated differently, per the Noto
+  note above. **Restore them (`git checkout`) rather than committing the
+  rewrite**, or you trade ~16 MB of diff for a re-tessellated `α`. A single plate
+  is not a sufficient check either way, since the two widths and the two profile
+  families take different code paths.
+
+- ⚠️ **The engraved revision silently renders in the WRONG FACE when Noto is
+  absent.** `keycap_stem.scad` asks for `text_font = "Noto:style=Bold"`, and
+  fontconfig substitutes (DejaVu Sans Bold in a bare container) rather than
+  failing — the plate exports fine and nothing in the output mentions it. In a
+  fresh container: `apt-get install fonts-noto-core`, or `build_stems.sh
+  --fetch-font` (per-user, no root). `build_stems.sh` warns via `fc-match`,
+  which is the only reason this is visible at all.
+- ⚠️ **WHICH Noto also matters — `--fetch-font` on a machine that already has one
+  will make every later re-export report `CHANGED`.** The engraving is tessellated
+  from whatever file fontconfig resolves, and the downloaded *variable* NotoSans
+  and a distro *static* NotoSans-Bold do not agree: measured 46192 vs 44912 facets
+  on the same plate, at identical volume and bounding box. That is a real
+  difference in the glyph outlines, well above what the settle rounding absorbs, so
+  it is not a bug in the comparison — it is the comparison working. Use
+  `--fetch-font` to acquire a Noto where there is none, not to "refresh" one.
+- **`R1` and `S1` are deliberately identical geometry** (angle 5, extra_len 0.5)
+  and differ only in the engraving. That is what the source says — don't "fix" it.
+- **Judge a regenerated plate by bbox + volume, not by facet count.** Text
+  tessellation depends on the installed font *version*, so the triangle count
+  moves between machines while the part is unchanged: regenerating the committed
+  revAlpha R1 here reproduced its bounding box to 0.01 mm and its volume to
+  0.01 % while the facet count differed by 2240. That comparison is what proved
+  the commented "Curved Profile" parameters really are the alpha R-set.
 
 ## Design rules for resin-printed parts
 
