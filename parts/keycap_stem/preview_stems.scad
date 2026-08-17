@@ -43,7 +43,7 @@ module profile_row(angles, lens, labels) {
 
 if (view == "curved")
     profile_row([ 5, -5, 0, 5, 10 ], [ 0.5, 1, 0, 1.5, 4 ],
-                [ "1    ", "2    ", "3    ", "4    ", "5    " ]);
+                [ "R1   ", "R2   ", "R3   ", "R4   ", "R5   " ]);
 
 if (view == "stepped")
     profile_row([ 5, -7, -7, -7, 10 ], [ 0.5, 1.5, 1.5, 1.5, 2.5 ],
@@ -55,7 +55,7 @@ if (view == "stepped_uniform")
 
 if (view == "flat")
     profile_row([ 0, 0, 0, 0, 0 ], [ 0, 0, 0, 0, 0 ],
-                [ "3    ", "3    ", "3    ", "3    ", "3    " ]);
+                [ "R3   ", "R3   ", "R3   ", "R3   ", "R3   " ]);
 
 // The r2 revision's curved parameters, which differ from revAlpha's (R5 lifted
 // 3 not 4, R4 0.5 not 1.5, R2 0.5 not 1) -- keep them apart when comparing.

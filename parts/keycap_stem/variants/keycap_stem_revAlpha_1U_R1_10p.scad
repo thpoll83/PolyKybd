@@ -13,4 +13,4 @@
 include <../keycap_stem.scad>
 
 // angle = tilt of the cap in degrees; extra_len = how far the stem is raised, mm.
-ten_connected_pieces_1U(angle = 5, extra_len = 0.5, txt = str("1    ", revision));
+ten_connected_pieces_1U(angle = 5, extra_len = 0.5, txt = str("R1   ", revision));
