@@ -25,7 +25,7 @@ parts/
 | Spacer | `export/case/spacer.stl` — or `spacer_diffuser_frame.stl` when the LED diffuser frame is fitted (it is notched for the frame's web on **both** faces, so one part serves either half) | `right_spacer()` in `case/case_polykybd_split72_lr.scad` |
 | LED diffuser frame | `export/diffuser/diffuser_frame_{left,right}.stl` (`_4x` = four stacked per plate) | `diffuser/` — **generated from the plate PCB**, see below |
 | LED diffuser, old generation | `export/diffuser/diff_v2.stl` (4 rings × 19 caps, 97 × 97 × 6.2 mm) | `diffuser/led_caps.scad` |
-| Keycap stems | `export/keycap_stem/keycap_stem_revAlpha_{1U,1U25}_{R1..R5,S1,S,S5}_10p.stl` | `keycap_stem/keycap_stem.scad` |
+| Keycap stems | `export/keycap_stem/keycap_stem_revAlpha_{1U,1U25}_{R1..R5,S1,S,S5}_10p.stl` | one file per plate in `keycap_stem/variants/`, over the shared `keycap_stem/keycap_stem.scad` |
 | Status display holder | `export/display_holder/display_holder_r1.stl`, or `display_holder_dummy_r1.stl` to blank the cut-out | `display_holder/display_holder.scad` |
 | Cirque trackpad insert | `export/cirque_insert/cirque23_slim_insert_r8.stl` (23 mm), `cirque23_insert_high_r1.stl` (raised); 35 mm is experimental | `cirque_insert/*.scad` |
 | Cover insert | `export/cover_insert/cover_insert_r3_10p.stl` | `cover_insert/cover_insert.scad` |
@@ -66,8 +66,8 @@ for years under a name that did not say which source made it.
 parts/diffuser/build_frame.sh          # regenerate from the PCB, export, verify
 parts/diffuser/build_frame.sh --check  # verify the committed meshes only
 
-parts/keycap_stem/build_stems.sh       # every profile, both widths
-parts/keycap_stem/build_stems.sh R2 R3 # just those rows
+parts/keycap_stem/build_stems.sh            # every variant in variants/
+parts/keycap_stem/build_stems.sh 1U_R2 S1   # only variants matching those
 parts/keycap_stem/build_stems.sh --list
 
 parts/build_parts.sh                   # the simple parts (top level IS the plate)
@@ -80,6 +80,17 @@ different builds of it disagree in the last float digits, so each script compare
 the result against the committed mesh and puts the committed bytes back when only
 that noise moved.  A clean re-run therefore prints `unchanged` and leaves the tree
 untouched.
+
+The keycap stems are **one `.scad` per plate** in `keycap_stem/variants/`, each
+`include`-ing the shared `keycap_stem.scad` and making a single call, so a plate
+renders on its own — open the variant in OpenSCAD and you are looking at exactly
+what gets exported (`variants/<x>.scad` → `export/keycap_stem/<x>.stl`).  Adding a
+plate means adding a file; `build_stems.sh` walks the directory and has no table
+of its own.  ⚠️ On a machine that did not export them, some plates will report
+`CHANGED` purely because the engraved revision tessellates differently under a
+different Noto (see below) — check the bounding box and volume before believing
+the geometry moved, and `git checkout` rather than committing the rewrite.  `keycap_stem/preview_stems.scad` holds the row-lineup arrangements
+used for photos — not print plates, so nothing there is exported.
 
 The diffuser frame is **generated from `poly_kybd/poly_kybd_split72_plate_*.kicad_pcb`**
 — read hole positions and rotations from the board, never from the SVG exports.

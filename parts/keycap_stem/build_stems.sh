@@ -1,54 +1,36 @@
 #!/usr/bin/env bash
 # Export the keycap stem print plates (10 pieces per plate).
 #
-#   parts/keycap_stem/build_stems.sh                  # every profile, both widths
-#   parts/keycap_stem/build_stems.sh R2 R3            # only those profiles
-#   parts/keycap_stem/build_stems.sh --width 1U R5    # one width
-#   parts/keycap_stem/build_stems.sh --list           # show the table, export nothing
-#   parts/keycap_stem/build_stems.sh --fetch-font     # install Noto per-user first
+#   parts/keycap_stem/build_stems.sh                       # every variant
+#   parts/keycap_stem/build_stems.sh 1U_R2 1U25_R3         # matching ones only
+#   parts/keycap_stem/build_stems.sh --list                # show them, export nothing
+#   parts/keycap_stem/build_stems.sh --fetch-font          # install Noto per-user first
 #
-# The profile table below IS the definition of a row.  It used to live only as
-# commented-out top-level calls at the bottom of keycap_stem.scad, exported by
-# uncommenting one line at a time in the GUI -- which is why the curved R2..R5
-# plates were missing from revAlpha for a whole revision while the stepped ones
-# were current.  Add a row here, not a comment there.
+# There is no profile table in this script and no generated driver file: each
+# plate is its own .scad in variants/, and this walks that directory.  So the
+# thing you export is the thing you can open in the GUI, and adding a plate is
+# adding a file rather than editing this script.
 #
-#   angle     tilt of the cap in degrees (rotate about x)
-#   extra_len how far the stem is raised, mm
-#   label     engraved on the plate, prefixed to the revision glyph
+# That layout is the fix for how the curved R2..R5 plates went missing from
+# revAlpha for a whole revision: the profile set used to exist only as
+# commented-out calls at the bottom of keycap_stem.scad, which you uncommented
+# one line at a time to export.
 #
-# R1..R5 are the CURVED profile (row 1 = closest to the user), S1/S/S5 the
-# STEPPED one.  Note R1 and S1 are deliberately the same geometry (angle 5,
-# extra_len 0.5) and differ only in the engraving -- that is what the source
-# says, not a copy/paste slip.
+# Output name = variant name, so variants/<x>.scad -> parts/export/keycap_stem/<x>.stl.
 set -euo pipefail
 
 cd "$(dirname "$0")/../.."                  # repo root
-SRC=parts/keycap_stem                       # keycap_stem.scad lives here
+SRC=parts/keycap_stem/variants
 OUT=parts/export/keycap_stem
-REV="α"                                     # matches `revision` in keycap_stem.scad
 
-#             angle  extra_len  label
-PROFILES="
-R1            5      0.5        1
-R2           -5      1          2
-R3            0      0          3
-R4            5      1.5        4
-R5           10      4          5
-S1            5      0.5        S1
-S            -7      1.5        S
-S5           10      2.5        S5
-"
-
-want_profiles=(); want_widths=(1U 1U25); do_list=0; do_fetch=0
+want=(); do_list=0; do_fetch=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --list)  do_list=1 ;;
     --fetch-font) do_fetch=1 ;;
-    --width) shift; want_widths=("$1") ;;
-    -h|--help) sed -n '2,10p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,19p' "$0"; exit 0 ;;
     -*) echo "unknown option: $1" >&2; exit 64 ;;
-    *)  want_profiles+=("$1") ;;
+    *)  want+=("$1") ;;
   esac
   shift
 done
@@ -86,46 +68,40 @@ if ! fc-match "Noto:style=Bold" 2>/dev/null | grep -qi noto; then
   echo "         run with --fetch-font (per-user, no root), or apt-get install fonts-noto-core" >&2
 fi
 
-
 # Keep the committed bytes when only the facet order moved -- see the helper
 # for why the comparison is rounded.
 settle() {
   python3 parts/settle_mesh.py "$1"
 }
 
-mkdir -p "$OUT"
-printf '%-10s %6s %10s  %-6s %s\n' PROFILE ANGLE EXTRA_LEN LABEL OUTPUT
-echo "$PROFILES" | while read -r prof ang xlen label; do
-  [ -n "${prof:-}" ] || continue
-  if [ ${#want_profiles[@]} -gt 0 ] && ! printf '%s\n' "${want_profiles[@]}" | grep -qx "$prof"; then
-    continue
-  fi
-  for w in "${want_widths[@]}"; do
-    case "$w" in
-      1U)   mod=ten_connected_pieces_1U ;;
-      1U25) mod=ten_connected_pieces_1U25 ;;
-      *) echo "unknown width: $w (want 1U or 1U25)" >&2; exit 64 ;;
-    esac
-    out="$OUT/keycap_stem_rev${REV/α/Alpha}_${w}_${prof}_10p.stl"
-    printf '%-10s %6s %10s  %-6s %s ' "$prof" "$ang" "$xlen" "$label" "$out"
-    [ "$do_list" = 1 ] && { echo; continue; }
+shopt -s nullglob
+variants=("$SRC"/*.scad)
+[ ${#variants[@]} -gt 0 ] || { echo "no variants in $SRC" >&2; exit 1; }
 
-    # The driver must sit beside keycap_stem.scad: `use <>` resolves relative to
-    # the .scad file, not the cwd.  A driver written elsewhere finds no modules
-    # and exports an EMPTY plate -- which openscad reports the same way as a
-    # syntax error, so check for the marker rather than trusting the exit code.
-    tmp=$(mktemp "$SRC/_build_XXXXXX.scad")
-    trap 'rm -f "$tmp"' EXIT
-    # Trailing spaces in the label are load-bearing: the text is halign="center",
-    # so the padding is what shifts the glyphs clear of the display cut-out.
-    printf 'use <keycap_stem.scad>\n%s(angle=%s, extra_len=%s, txt="%-5s%s");\n' \
-           "$mod" "$ang" "$xlen" "$label" "$REV" > "$tmp"
-    log=$(openscad -o "$out" --export-format binstl "$tmp" 2>&1) || true
-    rm -f "$tmp"; trap - EXIT
-    if printf '%s' "$log" | grep -q 'Current top level object is empty'; then
-      echo "EMPTY -- the driver found no geometry"; exit 1
-    fi
-    [ -s "$out" ] || { echo "EXPORT FAILED"; printf '%s\n' "$log" | tail -3 >&2; exit 1; }
-    settle "$out"
-  done
+mkdir -p "$OUT"
+printf '%-42s %s\n' VARIANT OUTPUT
+matched=0
+for v in "${variants[@]}"; do
+  name=$(basename "$v" .scad)
+  if [ ${#want[@]} -gt 0 ]; then
+    hit=0
+    for w in "${want[@]}"; do case "$name" in *"$w"*) hit=1 ;; esac; done
+    [ "$hit" = 1 ] || continue
+  fi
+  matched=$((matched + 1))
+  out="$OUT/$name.stl"
+  printf '%-42s %s ' "$name" "$out"
+  [ "$do_list" = 1 ] && { echo; continue; }
+
+  # openscad exits 1 for an empty result and 1 for a syntax error alike, so test
+  # for the marker before trusting the exit code.  An empty result here would
+  # mean the variant's `include <../keycap_stem.scad>` failed to resolve.
+  log=$(openscad -o "$out" --export-format binstl "$v" 2>&1) || true
+  if printf '%s' "$log" | grep -q 'Current top level object is empty'; then
+    echo "EMPTY -- $v produced no geometry"; exit 1
+  fi
+  [ -s "$out" ] || { echo "EXPORT FAILED"; printf '%s\n' "$log" | tail -3 >&2; exit 1; }
+  settle "$out"
 done
+
+[ "$matched" -gt 0 ] || { echo "no variant matched: ${want[*]}" >&2; exit 64; }

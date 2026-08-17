@@ -1,0 +1,16 @@
+// PolyKybd keycap stem -- curved profile, row 1 (closest to the user), 1U, 10 pieces per plate.
+//
+// One variation per file, so this renders on its own: open it in OpenSCAD to
+// see exactly what parts/keycap_stem/build_stems.sh exports to
+// parts/export/keycap_stem/keycap_stem_revAlpha_1U_R1_10p.stl (the .stl name matches this filename).
+// Shared modules and parameters are in ../keycap_stem.scad; `include` rather
+// than `use` because the engraved `revision` is a variable, and `use` imports
+// modules only.
+
+// R1 and S1 are deliberately the SAME geometry (angle 5, extra_len 0.5) and
+// differ only in the engraving -- that is what the source says, not a slip.
+
+include <../keycap_stem.scad>
+
+// angle = tilt of the cap in degrees; extra_len = how far the stem is raised, mm.
+ten_connected_pieces_1U(angle = 5, extra_len = 0.5, txt = str("1    ", revision));

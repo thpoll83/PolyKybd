@@ -188,12 +188,6 @@ module mx_stem(u_size, angle = 0, extra_len = 0, txt = revision)
     }
 }
 
-// mx_stem(u_size=1);
-/*
-display();
-cable();
-*/
-
 // 10p
 module ten_connected_pieces_1U(angle = 0, extra_len = 0, txt = revision)
 {
@@ -287,66 +281,17 @@ module ten_connected_pieces_1U5(angle = 0, extra_len = 0, txt = revision)
     }
 }
 
-// Stepped Profile
-//ten_connected_pieces_1U25(angle = -7, extra_len=1.5, txt=str("S    ", revision));
-//ten_connected_pieces_1U(angle = -7, extra_len=1.5, txt=str("S    ", revision));
-
-//ten_connected_pieces_1U25(angle = 10, extra_len=2.5, txt=str("S5   ", revision));
-//ten_connected_pieces_1U(angle = 10, extra_len=2.5, txt=str("S5   ", revision));
-
-//ten_connected_pieces_1U25(angle = 5, extra_len=0.5, txt=str("S1   ", revision));
-ten_connected_pieces_1U(angle = 5, extra_len=0.5, txt=str("S1   ", revision));
-
-//mx_stem(u_size=1.22, angle = -7, extra_len=1.5, txt=str("S    ", revision));
-//mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
-
-//mx_stem(u_size=1, angle = 5, extra_len=0.5, txt=str("R1  ", revision));
-// Curved Profile
-//ten_connected_pieces_1U25(angle = 10, extra_len=4, txt=str("5    ", revision));
-// ten_connected_pieces_1U25(angle = 5, extra_len=1.5, txt=str("4    ", revision));
-// ten_connected_pieces_1U25(angle = 0, extra_len=0, txt=str("3    ", revision));
-//ten_connected_pieces_1U25(angle = -5, extra_len=1, txt=str("2    ", revision));
-//ten_connected_pieces_1U25(angle = 5, extra_len=0.5, txt=str("1    ", revision));
-
-//ten_connected_pieces_1U(angle = 10, extra_len = 4, txt = str("5    ", revision));
-// ten_connected_pieces_1U(angle = 5, extra_len=1.5, txt=str("4    ", revision));
-// ten_connected_pieces_1U(angle = 0, extra_len=0, txt=str("3    ", revision));
-//ten_connected_pieces_1U(angle = -5, extra_len=1, txt=str("2    ", revision));
-//ten_connected_pieces_1U(angle = 5, extra_len=0.5, txt=str("1    ", revision));
-
-// Pictures
-
-// alpha
-/*
-rotate([8,0,0]){
-translate([0,19.25*3,0]) mx_stem(u_size=1, angle = 10, extra_len=2.5, txt=str("S5   ", revision));
-translate([0,19.25*2,0]) mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
-translate([0,19.25,0]) mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
-mx_stem(u_size=1, angle = -7, extra_len=1.5, txt=str("S    ", revision));
-translate([0,-19.25,0]) mx_stem(u_size=1, angle = 5, extra_len=0.5, txt=str("S1   ", revision));
-}
-*/
-/*
-translate([0,19.25*3,0]) mx_stem(u_size=1, angle = 10, extra_len=3, txt="R5r2");
-translate([0,19.25*2,0]) mx_stem(u_size=1, angle = 5, extra_len=0.5, txt="R4r2");
-translate([0,19.25,0]) mx_stem(u_size=1, txt="R3r2");
-mx_stem(u_size=1, angle = -5, extra_len=0.5, txt="R2r2");
-translate([0,-19.25,0]) mx_stem(u_size=1, angle = 5, extra_len=0.5, txt="R1r2");
-*/
-/*
-rotate([0,0,0]){
-translate([0,19.25*3,0]) mx_stem(u_size=1, angle = -5, extra_len=0.5, txt="R2r2");
-translate([0,19.25*2,0]) mx_stem(u_size=1, angle = -5, extra_len=0.5, txt="R2r2");
-translate([0,19.25,0]) mx_stem(u_size=1, angle = -5, extra_len=0.5, txt="R2r2");
-mx_stem(u_size=1, angle = -5, extra_len=0.5, txt="R2r2");
-translate([0,-19.25,0]) mx_stem(u_size=1, angle = -5, extra_len=0.5, txt="R2r2");
-}
-*/
-/*
-translate([0,19.25*3,0]) mx_stem(u_size=1, angle = 0, extra_len=0, txt="R3r3");
-translate([0,19.25*2,0]) mx_stem(u_size=1, angle = 0, extra_len=0, txt="R3r3");
-translate([0,19.25,0]) mx_stem(u_size=1, angle = 0, extra_len=0, txt="R3r3");
-mx_stem(u_size=1, angle = 0, extra_len=0, txt="R3r3");
-translate([0,-19.25,0]) mx_stem(u_size=1, angle = 0, extra_len=0, txt="R3r3");
-*/
-// color([0,0.5,0], 0.4) translate([0,0,-1]) cube([100,100,2], center=true);
+// ---------------------------------------------------------------------------
+// LIBRARY ONLY -- deliberately no top-level geometry below this line.
+//
+// Every print plate is its own file in variants/, which `include`s this one and
+// makes exactly one call.  Two reasons that matters: `include` (unlike `use`)
+// would EXECUTE any top-level geometry left here, so every variant would carry
+// it; and the profile set used to live here as commented-out calls that you
+// uncommented one at a time to export, which is how the curved R2..R5 plates
+// went missing from revAlpha for a whole revision.
+//
+// Add a plate  -> add a file in variants/  (build_stems.sh discovers it).
+// Look at one  -> open that file in OpenSCAD; it renders on its own.
+// The arrangement renders used for photos live in preview_stems.scad.
+// ---------------------------------------------------------------------------

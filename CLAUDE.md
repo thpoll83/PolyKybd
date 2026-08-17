@@ -152,14 +152,36 @@ False, so compare rounded, or on count+volume+bbox.
 
 ## Keycap stems
 
-**`parts/keycap_stem/build_stems.sh` is the whole loop**, and the profile table
-inside it is the definition of a row — `R1..R5` curved, `S1`/`S`/`S5` stepped,
-each `(angle, extra_len, label)`, exported for both `1U` and `1U25`. That table
-used to exist only as commented-out top-level calls at the bottom of
-`keycap_stem.scad`, exported by uncommenting one line at a time in the GUI,
-which is exactly how revAlpha ended up shipping the stepped plates while the
-curved `R2..R5` were missing for a whole revision. Add a row to the table, not a
-comment to the .scad.
+**One `.scad` per plate in `parts/keycap_stem/variants/`, over a library that has
+NO top-level geometry** — `R1..R5` curved and `S1`/`S`/`S5` stepped, each in both
+`1U` and `1U25`, sixteen files. Each `include`s `../keycap_stem.scad` and makes a
+single call, so a variant renders on its own: what you open in the GUI is exactly
+what gets exported, and `variants/<x>.scad` → `export/keycap_stem/<x>.stl` with no
+name munging. `parts/keycap_stem/build_stems.sh` walks the directory and holds no
+table of its own, so **adding a plate is adding a file**.
+
+- **`include`, not `use`, in a variant.** `use` imports modules but *not*
+  variables, and the engraved `revision` is a variable. That is also why the
+  library must stay free of top-level geometry: `include` executes it, so
+  anything left there would appear in all sixteen plates. The photo arrangements
+  that used to sit at the bottom of the library live in `preview_stems.scad`
+  (a `view=` selector), which the build script does not export.
+- The profile set previously existed **only** as commented-out calls at the
+  bottom of `keycap_stem.scad`, exported by uncommenting one line at a time —
+  exactly how revAlpha shipped the stepped plates while the curved `R2..R5` were
+  missing for a whole revision.
+- ⚠️ **Verify a refactor here by re-exporting all sixteen — but expect only the
+  plates YOUR machine last exported to report `unchanged`.** The library/variant
+  split was checked this way and came back 8 `unchanged` / 8 `CHANGED`, split
+  exactly along who exported what: the eight R2–R5 plates (exported in this
+  container) were byte-identical, while R1 and the three S plates (exported by
+  the author on their own machine) differed. That is **not** a refactor failure —
+  each of the eight was confirmed to have an identical bounding box and a volume
+  within 0.04%, i.e. only the engraving is tessellated differently, per the Noto
+  note above. **Restore them (`git checkout`) rather than committing the
+  rewrite**, or you trade ~16 MB of diff for a re-tessellated `α`. A single plate
+  is not a sufficient check either way, since the two widths and the two profile
+  families take different code paths.
 
 - ⚠️ **The engraved revision silently renders in the WRONG FACE when Noto is
   absent.** `keycap_stem.scad` asks for `text_font = "Noto:style=Bold"`, and
