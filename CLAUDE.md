@@ -85,7 +85,9 @@ hand-built `--camera`/`--imgsize`/`--render` invocations, and five of those were
 wasted purely on camera geometry, while the wrapper sat one directory away in
 this repo (2026-08-17). Same lesson as the control-server deadlock in
 `PolyKybdHost/CLAUDE.md` — **the remedy was already in the tree and the failure
-was search, not design.** Grep `.claude/skills/*/` for a helper before writing one.
+was search, not design.** Search the skills for a helper before writing one —
+recursively, since each skill is its own directory:
+`grep -RIn '<what you need>' .claude/skills/`.
 
 Four traps, each of which has cost real time:
 
@@ -113,10 +115,12 @@ Four traps, each of which has cost real time:
     subject (a row of parts) comes out small in a sea of margin — ~60% dead space
     on a 5-stem lineup. Give an explicit `dist` instead and tune it; that is also
     the ortho scale in the 7-number form.
-  - **The translate axis must match `rotz`.** At `rotz=0` the model's X runs
-    horizontally, at `rotz=90` it is Y. Lay a row out along the wrong one and the
-    parts stack in DEPTH — they overlap into a single blob, which looks like a
-    geometry failure, not a viewpoint. Cost three renders before it was obvious.
+  - **The axis you `translate()` the row along must match the camera's `rotz`** —
+    the model's own layout, *not* the camera's `transx,y,z`. At `rotz=0` the
+    model's X runs horizontally on screen, at `rotz=90` it is Y. Lay a row out
+    along the wrong one and the parts stack in DEPTH — they overlap into a single
+    blob, which looks like a geometry failure, not a viewpoint. Cost three renders
+    before it was obvious.
   - Useful `rotx` values, gimbal form: `0` top, `90` pure side, `180` straight up
     at the underside (what "from the backside" usually means for a keycap),
     `70`–`80` a 3/4 that still shows the top face.
