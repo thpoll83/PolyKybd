@@ -73,9 +73,11 @@ parts/keycap_stem/build_stems.sh --list
 parts/build_parts.sh                   # the simple parts (top level IS the plate)
 parts/build_parts.sh led_caps          # opt-in: the superseded diffuser
 parts/build_parts.sh --list
+
+parts/keycap_stem/render_profiles.sh   # the README profile pictures (not meshes)
 ```
 
-All three re-export idempotently: OpenSCAD emits facets in an unstable order and
+All three exporters re-export idempotently: OpenSCAD emits facets in an unstable order and
 different builds of it disagree in the last float digits, so each script compares
 the result against the committed mesh and puts the committed bytes back when only
 that noise moved.  A clean re-run therefore prints `unchanged` and leaves the tree
@@ -89,8 +91,19 @@ plate means adding a file; `build_stems.sh` walks the directory and has no table
 of its own.  ⚠️ On a machine that did not export them, some plates will report
 `CHANGED` purely because the engraved revision tessellates differently under a
 different Noto (see below) — check the bounding box and volume before believing
-the geometry moved, and `git checkout` rather than committing the rewrite.  `keycap_stem/preview_stems.scad` holds the row-lineup arrangements
-used for photos — not print plates, so nothing there is exported.
+the geometry moved, and `git checkout` rather than committing the rewrite.
+
+`keycap_stem/preview_stems.scad` holds the row-lineup arrangements — one stem per
+row, front (row 1) nearest the viewer — behind a `view =` selector: `curved`
+(R1..R5), `stepped` (sculpted: S1 front, S5 back, S between), `stepped_uniform`
+(S everywhere), `flat` (R3 everywhere), plus the historic `r2_rows` set and a
+`cutaway` with the display and its cable in place.  These are **pictures, not
+plates**, so `build_stems.sh` ignores the file; `keycap_stem/render_profiles.sh`
+renders the four profile views into `images/` for the top-level README.  Render
+them with that script rather than framing them in the GUI: they only compare if
+they share one camera, and the previous set did not — a difference in elevation
+reads as a difference in profile.  (Rendering needs a display even though
+exporting does not, hence the `xvfb-run` inside it.)
 
 The diffuser frame is **generated from `poly_kybd/poly_kybd_split72_plate_*.kicad_pcb`**
 — read hole positions and rotations from the board, never from the SVG exports.
