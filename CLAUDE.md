@@ -200,6 +200,26 @@ table of its own, so **adding a plate is adding a file**.
   `--fetch-font` to acquire a Noto where there is none, not to "refresh" one.
 - **`R1` and `S1` are deliberately identical geometry** (angle 5, extra_len 0.5)
   and differ only in the engraving. That is what the source says — don't "fix" it.
+- ⚠️ **The README profile pictures draw the coordinate AXES on purpose — the
+  horizontal axis line is the REFERENCE the cap angle is read against, and
+  without it the images are five tilted caps with nothing to measure against.**
+  The originals were GUI screenshots with the axes visible; a first scripted
+  version dropped them as chrome and lost the one thing that made the pictures
+  informative (field, 2026-08-17). Two rules follow, and they pull in opposite
+  directions from the obvious instinct:
+  - **Never rotate the row to make the profile read better.** A view tilt adds
+    itself to every cap angle *without* moving the axes, so the picture reports
+    the wrong profile: a `rotate([8,0,0])` in `profile_row()` made **R3, which is
+    flat by definition, sit 8° nose-up on the axis**. Tilt the **camera** instead
+    (`CAM` in `render_profiles.sh`) — that moves the axes with it, so the reading
+    stays honest.
+  - **Render with `--view=axes`** (2021.01 supports `axes`, `scales`,
+    `crosshairs`, `edges`, `wireframe`). `scales` adds tick labels that render
+    rotated and unreadable at this camera, so `axes` alone is the useful one.
+  - The four views must share **one** camera or they cannot be compared —
+    a difference in elevation reads as a difference in profile. That is the
+    entire reason `render_profiles.sh` exists rather than a note about which
+    camera to use.
 - **Judge a regenerated plate by bbox + volume, not by facet count.** Text
   tessellation depends on the installed font *version*, so the triangle count
   moves between machines while the part is unchanged: regenerating the committed

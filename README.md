@@ -191,8 +191,10 @@ Independent of your choice, here are the parts you need before putting everythin
 * Key Stems - 72 pieces, can be 3D printed (I highly recommend using an SLA printer). There are 3 different profiles available here. You can also modify the source file an make your own profile. If you take the STLs, make sure to always grab the latest version.
 
   Every plate is in [parts/export/keycap_stem/](parts/export/keycap_stem), named
-  `keycap_stem_revAlpha_<width>_<profile>_10p.stl` — ten pieces per plate, so
-  divide the counts below by ten (rounding up) to know how many of each to print.
+  `keycap_stem_revAlpha_<width>_<profile>_10p.stl` — where *width* is `1U` or
+  **`1U25`** (not `1.25U`) and *profile* is one of `R1`–`R5`, `S1`, `S`, `S5`, e.g.
+  `keycap_stem_revAlpha_1U25_R1_10p.stl`. Ten pieces per plate, so divide the
+  counts below by ten (rounding up) to know how many of each to print.
 
   - Flat ![Flat Profile](images/profile_flat.png)
     One stem for every row: the `R3` plates (14 pieces 1.25U and 58 pieces 1U).

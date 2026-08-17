@@ -24,15 +24,21 @@ include <keycap_stem.scad>
 view = "curved";
 
 ROW = 19.25;
-TILT = 8;               // stand the row up a little so the profile reads
 
-// One stem per row, front (row 1) nearest the viewer.
+// One stem per row, front (row 1) nearest the viewer, centred on the middle row.
+//
+// ⚠️ Do NOT rotate the row to "stand it up so the profile reads better".  The
+// renders draw the coordinate axes, and the horizontal axis line is what a
+// reader measures each cap angle against -- so a view tilt silently adds itself
+// to every angle and the picture reports the wrong profile.  A tilt of 8 was
+// tried and had exactly that effect: R3, which is flat by definition, came out
+// sitting 8 degrees nose-up on the axis.  Tilt the CAMERA instead (the
+// elevation in render_profiles.sh), which moves the axes with it.
 module profile_row(angles, lens, labels) {
-    rotate([ TILT, 0, 0 ])
-        for (i = [0:4])
-            translate([ 0, (i - 2) * ROW, 0 ])
-                mx_stem(u_size = 1, angle = angles[i], extra_len = lens[i],
-                        txt = str(labels[i], revision));
+    for (i = [0:4])
+        translate([ 0, (i - 2) * ROW, 0 ])
+            mx_stem(u_size = 1, angle = angles[i], extra_len = lens[i],
+                    txt = str(labels[i], revision));
 }
 
 if (view == "curved")

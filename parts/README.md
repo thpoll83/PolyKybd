@@ -105,6 +105,14 @@ they share one camera, and the previous set did not — a difference in elevatio
 reads as a difference in profile.  (Rendering needs a display even though
 exporting does not, hence the `xvfb-run` inside it.)
 
+⚠️ **The renders draw the coordinate AXES on purpose, and `profile_row()` must
+not rotate the row.**  The horizontal axis line is the reference a reader
+measures each cap angle against, so it is the thing that makes the picture mean
+anything — and any tilt applied to the row itself adds to every angle silently.
+A row tilt of 8° was tried and made R3, which is flat by definition, sit 8°
+nose-up on the axis.  Tilt the camera (the elevation in `render_profiles.sh`),
+which moves the axes with it.
+
 The diffuser frame is **generated from `poly_kybd/poly_kybd_split72_plate_*.kicad_pcb`**
 — read hole positions and rotations from the board, never from the SVG exports.
 `parts/diffuser/check_frame.py` gates it on watertightness, minimum wall,
