@@ -190,12 +190,26 @@ Independent of your choice, here are the parts you need before putting everythin
 
 * Key Stems - 72 pieces, can be 3D printed (I highly recommend using an SLA printer). There are 3 different profiles available here. You can also modify the source file an make your own profile. If you take the STLs, make sure to always grab the latest version.
 
+  Every plate is in [parts/export/keycap_stem/](parts/export/keycap_stem), named
+  `keycap_stem_revAlpha_<width>_<profile>_10p.stl` — where *width* is `1U` or
+  **`1U25`** (not `1.25U`) and *profile* is one of `R1`–`R5`, `S1`, `S`, `S5`, e.g.
+  `keycap_stem_revAlpha_1U25_R1_10p.stl`. Ten pieces per plate, so divide the
+  counts below by ten (rounding up) to know how many of each to print.
+
   - Flat ![Flat Profile](images/profile_flat.png)
-    For that simply use the R3 stems from the [parts](parts) directory (14 pieces 1.25U and 58 pieces 1U).
+    One stem for every row: the `R3` plates (14 pieces 1.25U and 58 pieces 1U).
   - Stepped ![Stepped Profile](images/profile_stepped.png)
-    These are the R2 stems from the [parts](parts) directory (14 pieces 1.25U and 58 pieces 1U). This works best if keyboard is inclined by 5 degrees or more.
+    Rows tilted rather than curved. This works best if the keyboard is inclined by 5 degrees or more, and comes in two variations:
+    - *sculpted* (pictured) — `S1` on the front row, `S5` on the back row, `S` on the three rows between: 4x 1.25U S1, 10x 1U S1, 8x 1.25U S, 36x 1U S, 2x 1.25U S5, 12x 1U S5.
+    - *uniform* ![Uniform Stepped Profile](images/profile_stepped_uniform.png)
+      just the `S` plates everywhere (14 pieces 1.25U and 58 pieces 1U) — a flatter feel that is simpler to print, since it is a single plate design.
   - Curved ![Curved Profile](images/profile_curved.png)
-    Here you will need R1 to R5 from the [parts](parts) directory. (4x 1.25U R1, 10x 1U R1, 4x 1.25U R2, 12x 1U R2, 2x 1.25U R3, 12x 1U R3, 2x 1.25U R4, 12x 1U R4, 2x 1.25U R5, 12x 1U R5)
+    Here you will need `R1` to `R5`: 4x 1.25U R1, 10x 1U R1, 4x 1.25U R2, 12x 1U R2, 2x 1.25U R3, 12x 1U R3, 2x 1.25U R4, 12x 1U R4, 2x 1.25U R5, 12x 1U R5.
+
+  To change a profile or add your own, edit the shared
+  [parts/keycap_stem/keycap_stem.scad](parts/keycap_stem/keycap_stem.scad) or add a
+  file to [parts/keycap_stem/variants/](parts/keycap_stem/variants), then run
+  `parts/keycap_stem/build_stems.sh` — see [parts/README.md](parts/README.md).
 * Status display holder (or cover/dummy in case no status display is used), can be 3D printed.
   [parts/export/display_holder/display_holder_r1.stl](parts/export/display_holder/display_holder_r1.stl) / [parts/export/display_holder/display_holder_dummy_r1.stl](parts/export/display_holder/display_holder_dummy_r1.stl)
 * Transparent keycap covers - 72 pieces (from relegendable keycaps [like these](https://de.aliexpress.com/item/1005002996832179.html?spm=a2g0o.order_list.order_list_main.111.49985c5f1EyPsm&gatewayAdapt=glo2deu)), 58x 1U and 14x 1.25U. Various sources sell them on Alibaba, AliExpress, Amazon & Co.
