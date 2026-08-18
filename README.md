@@ -196,6 +196,11 @@ Independent of your choice, here are the parts you need before putting everythin
   `keycap_stem_revAlpha_1U25_R1_10p.stl`. Ten pieces per plate, so divide the
   counts below by ten (rounding up) to know how many of each to print.
 
+  Every piece carries its **profile and revision engraved on the top face**
+  (`R5 α`, `S1 α`, …), matching the profile token in the filename — so a printed
+  stem can always be traced back to the plate that made it, and a mixed handful
+  can be sorted back out.
+
   - Flat ![Flat Profile](images/profile_flat.png)
     One stem for every row: the `R3` plates (14 pieces 1.25U and 58 pieces 1U).
   - Stepped ![Stepped Profile](images/profile_stepped.png)
