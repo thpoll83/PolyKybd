@@ -12,16 +12,19 @@ kernel, so the mesh export lands as ~14,900 flat facets with ~0.15 mm stitching,
 flags it. A stem is worse in one respect — its critical feature is a **1.4 mm MX cross** whose fit
 decides whether the keyboard works, and a faceted cross is not a datum anyone can cut to.
 
-## Why the stem is the *easy* case
+## Why the stem is the *easier* case
 
-The case needed re-authoring because `hull()` and `minkowski()` cannot survive as clean geometry. **The
-stem uses neither.** Its whole shape is `linear_extrude(..., scale=)`, which is a **tapered extrude /
-two-rectangle loft** — a native, exact operation in build123d. So this port is close to line-for-line,
-with no approximation anywhere:
+The case needed re-authoring because `hull()` and `minkowski()` cannot survive as clean geometry.
+⚠️ **The stem does use `hull()`** — `keycap_stem.scad:83` hulls two tapered bodies (that is how the
+1.25U gets its width) plus three print tabs. But every member is a **polyhedron**, and the convex hull
+of polyhedra is a polyhedron, so it comes back exactly from a hull of the vertices (`step/hull3d.py`);
+there is no `minkowski()` anywhere. The rest is `linear_extrude(..., scale=)`, a tapered extrude that
+is a native exact operation. So the port is close to line-for-line, with no approximation anywhere:
 
 | `keycap_stem.scad` | build123d |
 |---|---|
-| `linear_extrude(h, scale=r)` | `extrude(..., taper=)` or `loft()` between two rects |
+| `hull(bodyA, bodyB, tabs…)` | convex hull of the vertices → planar faces (`hull3d.py`) |
+| `linear_extrude(h, scale=r)` | hull of the 8 corners — **not** `loft`, see below |
 | `offset(r=-mx_cross_fillet)` on the cross | `fillet()` on the cross edges — a *real* fillet |
 | `circle(d=…, $fn=64)` | `Circle(r)` — a true cylinder, not 64 facets |
 | `square([x,y], center=true)` | `Rectangle(x, y)` |
@@ -47,56 +50,80 @@ CABLE_STEM_X, CABLE_STEM_Y = 9.0, 2.12
 CABLE_THICKNESS         = 0.5
 ```
 
-**The two variants.** Both are the `S` profile, which is `mx_stem(angle=-7, extra_len=1.5)`
-(`keycap_stem.scad:325`). Only `u_size` differs:
+**The two variants.** Both are the `S` profile — `angle=-7, extra_len=1.5`, from
+`variants/keycap_stem_revAlpha_1U*_S_10p.scad`. Only `u_size` differs:
 
-| Variant | Call | Notes |
+| Variant | Call | Body width |
 |---|---|---|
-| **S 1U** | `mx_stem(u_size=1,    angle=-7, extra_len=1.5)` | 58 per keyboard |
-| **S 1.25U** | `mx_stem(u_size=1.25, angle=-7, extra_len=1.5)` | 14 per keyboard |
+| **S 1U** | `mx_stem(u_size=1,    angle=-7, extra_len=1.5)` | 15.50 |
+| **S 1.25U** | `mx_stem(u_size=1.22, angle=-7, extra_len=1.5)` | 19.90 |
+
+⚠️ **It is `u_size = 1.22`, not 1.25** — an earlier draft of this recipe read it as a keycap unit
+count. It is not: `u_size` feeds `(u_size - 1) * 2 * 5`, i.e. it is a **half-width-extension dial**,
+so 1.22 grows the body by 2 × 2.2 mm. The `.scad` is the authority.
+
+⚠️ **`MX_CROSS` 4.35 and `MX_CROSS_WIDTH` 1.4 are NOT the cross size** either. They describe the plus
+*before* `offset(r = -MX_CROSS_FILLET)`, so the opening the switch actually enters is **4.05 × 1.10**
+with r0.30 corner fillets. Quoting the constants to a moulder overstates it by 0.3 mm on both.
 
 ⚠️ The `txt=` argument stamps the revision into the part. **Decide before tooling whether the moulded
 part carries it** — an engraved character is a tool feature that cannot be changed later without a tool
 edit, and `revision = "α"` will not stay α.
 
-## Draft — already fine, with one exception
+## Draft — computed, not eyeballed
 
-Measured from the SCAD (2026-08-17), against the 0.5–1° moulding minimum:
+`stem_model.draft_angles()` derives these from the model, and the drawing quotes it, so the sheet
+cannot drift from the geometry. A `linear_extrude(scale=s)` over height `h` moves a wall that starts
+`w` from the axis inward by `w·(1−s)`, so the draft is `atan(w·(1−s)/h)` — it depends on **how far out
+the wall is**, which is why one number cannot describe a tapered profile:
 
-| Feature | Taper | Over | Draft |
-|---|---|---|---|
-| Outer body X / Y | `scale=0.85` | 5.65 mm | **11.6°** ✅ |
-| Inside pocket | `scale=0.85` | 3.0 mm | **21.2°** ✅ |
-| Shell (`keycap_stem.scad:163`) | `scale=0.97` | 11.3 mm | **1.18°** ✅ |
-| **Display pocket** (`:116`) | **`scale=1`** | 1.1 mm | **0° ⚠️** |
+| Feature | Wall at | Taper | Over | Draft |
+|---|---|---|---|---|
+| Outer body X / Y | 7.750 / 7.738 | `0.85` | 5.65 mm | **11.63° / 11.61°** ✅ |
+| Inside pocket | 6.650 | `0.85` | 3.0 mm | **18.39°** ✅ |
+| Centre pocket | 7.017 | `0.7225` | 3.0 mm | **32.99°** ✅ |
+| Cross arm flats (`:163`) | 0.550 | `0.97` | 11.3 mm | **0.084° ⚠️** |
+| Cross arm tips | 2.025 | `0.97` | 11.3 mm | **0.308° ⚠️** |
+| **Display seat** (`:116`) | 6.100 | **`1`** | 1.1 mm | **0° ⚠️** |
 
-⚠️ The **display seat is zero-draft** — `linear_extrude(height=disp_height, scale=1)` over
-`DISP_X × DISP_Y`. At 1.1 mm deep a moulder may accept it as-is (shallow pockets often release,
-especially textured), but **raise it explicitly in the quote** rather than letting them discover it.
-Lines 58, 61 and 121 are the same `scale=1` pattern on smaller features. Everything else clears the
-minimum by ~10×, so **draft is not a redesign item.**
+⚠️ The earlier hand-derived version of this table was wrong in two places (21.2° for the inside pocket,
+1.18° for the cross) — that is what "derived by inspection, not by running the toolchain" was worth.
+
+Two things to raise in the quote rather than let a moulder discover them:
+- The **display seat is zero-draft** (`linear_extrude(height=disp_height, scale=1)` over
+  `DISP_X × DISP_Y`), as is its cable relief. At 1.1 mm deep it often releases as-is; say so anyway.
+- The **cross has almost no draft** — 0.08° on the flats. It opens *downward*, so the core pin
+  withdraws in the correct direction, but with very little relief, and the stem wall at the arm tip
+  is only **0.67 mm**. Everything else clears the 0.5–1° minimum by 10× or more, so **draft is not a
+  redesign item.**
 
 ## Build it
 
 Mirror `case/step/` — same layout, same driver pattern:
 
+Built as **`parts/keycap_stem/step/`**, not the `parts/step/` this recipe first suggested — the repo
+rule is one folder per part group with its scripts beside its sources, and the case precedent is
+`parts/case/step/`. Output goes to `parts/export/keycap_stem/` like every other generated mesh.
+
 ```
-parts/step/
+parts/keycap_stem/step/
   stem_model.py      # build123d model, both variants from one parametric function
+  hull3d.py          # OpenSCAD hull() as an exact polyhedral convex hull
   build.py           # emits stem_S_1U.step, stem_S_1U25.step
-  validate_step.py   # reuse case/step/validate_step.py unchanged
-  render_compare.py  # reuse the case's approach: render SCAD vs STEP, diff
-  drawing.py         # NEW - the technical drawing, see below
+  validate_step.py   # delegates to case/step/validate_step.py rather than copying it
+  verify.py          # measures the cross + diffs against the .scad (with a self-test)
+  drawing.py         # the technical drawing
+  Makefile
 ```
 
 ```bash
-pip install build123d
-python parts/step/build.py            # -> parts/step/stem_S_1U.step, stem_S_1U25.step
-python parts/step/validate_step.py parts/step/stem_S_1U.step
+pip install build123d scipy
+make -C parts/keycap_stem/step            # step + drawing + validate
+make -C parts/keycap_stem/step verify     # needs openscad
 ```
 
-**Verify against the SCAD, do not assume.** `case/step/render_compare.py` exists precisely because a
-re-authored model can drift from its source. The same standing rule from
+**Verify against the SCAD, do not assume.** `verify.py` does this, and `case/step/render_compare.py`
+exists precisely because a re-authored model can drift from its source. The same standing rule from
 [`CLAUDE.md`](../CLAUDE.md) applies: *compare meshes as a sorted facet multiset, and pair any
 clearance test with a positive control.* For the stem the specific checks that matter:
 
@@ -131,9 +158,23 @@ cross geometry must then compensate for. PBT and nylon are both worse here (high
 hygroscopic). Whichever is chosen, **shrink compensation belongs in the moulded model, not the printed
 one** — so keep the printed stem and the moulded stem as separate parameter sets in `stem_model.py`.
 
-## ⚠️ Status
+## ✅ Status — DONE (2026-08-18)
 
-**None of the above has been executed.** Neither OpenSCAD nor build123d/FreeCAD is available in the
-session container where this was written, so every command and the draft-angle table were derived from
-the SCAD source by inspection, not by running the toolchain. Treat the parameter list as verified
-(read from the file) and the build steps as untested.
+Executed end to end; `parts/keycap_stem/step/` is the working toolchain and
+[its README](keycap_stem/step/README.md) carries the results and the traps. Both deliverables are in
+`parts/export/keycap_stem/`: `stem_S_1U.step` / `stem_S_1U25.step` and their `*_drawing.svg`.
+
+Both STEPs pass the acceptance test — one closed solid, 100 faces (82 planar, 16 B-spline, 1 conical,
+1 cylindrical), max edge tolerance **1.0e-07 mm**. Against an OpenSCAD export of the same call: bounding
+box identical to 5 dp, volume **+0.111 % / +0.081 %**, and a two-way boolean difference of 0.62 mm³
+one way and 0.011 mm³ the other — all of it the `.scad`'s faceted cylinders against true analytic
+surfaces, which is the difference this exercise exists to create.
+
+Three corrections this recipe needed once it was actually run, all now folded in above: the stem
+**does** use `hull()`; `u_size` is 1.22 and is not a unit count; and the cross opening is 4.05 × 1.10,
+not 4.35 × 1.4. The draft table was recomputed. Everything else held.
+
+Both build123d gotchas worth knowing before the next port are in the step README: `Shape.scale()`
+defaults to scaling about the shape's own location (a silent 0.5 % geometry error), and OCCT's text
+kernel **segfaults** when a drawing sheet gets big enough, which is why `drawing.py` writes its own
+SVG.

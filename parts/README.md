@@ -26,6 +26,7 @@ parts/
 | LED diffuser frame | `export/diffuser/diffuser_frame_{left,right}.stl` (`_4x` = four stacked per plate) | `diffuser/` — **generated from the plate PCB**, see below |
 | LED diffuser, old generation | `export/diffuser/diff_v2.stl` (4 rings × 19 caps, 97 × 97 × 6.2 mm) | `diffuser/led_caps.scad` |
 | Keycap stems | `export/keycap_stem/keycap_stem_revAlpha_{1U,1U25}_{R1..R5,S1,S,S5}_10p.stl` | one file per plate in `keycap_stem/variants/`, over the shared `keycap_stem/keycap_stem.scad` |
+| Keycap stems, **moulded** (not printed) | B-Rep STEP `export/keycap_stem/stem_S_{1U,1U25}.step` + the A4 drawing `stem_S_{1U,1U25}_drawing.svg` | the same `keycap_stem.scad`, re-authored by `keycap_stem/step/` |
 | Status display holder | `export/display_holder/display_holder_r1.stl`, or `display_holder_dummy_r1.stl` to blank the cut-out | `display_holder/display_holder.scad` |
 | Cirque trackpad insert | `export/cirque_insert/cirque23_slim_insert_r8.stl` (23 mm), `cirque23_insert_high_r1.stl` (raised); 35 mm is experimental | `cirque_insert/*.scad` |
 | Cover insert | `export/cover_insert/cover_insert_r3_10p.stl` | `cover_insert/cover_insert.scad` |
@@ -75,7 +76,17 @@ parts/build_parts.sh led_caps          # opt-in: the superseded diffuser
 parts/build_parts.sh --list
 
 parts/keycap_stem/render_profiles.sh   # the README profile pictures (not meshes)
+
+make -C parts/case/step                # metal case -> clean B-Rep STEP
+make -C parts/keycap_stem/step         # moulded stems -> STEP + A4 drawing
+make -C parts/keycap_stem/step verify  # ...and diff the solid against the .scad
 ```
+
+The two `step/` folders are a different pipeline from the exporters above: OpenSCAD has
+no B-Rep kernel, so anything a fabricator's validator has to accept — the CNC case, the
+injection-moulded stems — is **re-authored in build123d** rather than exported as a mesh.
+They emit `.step` (and, for the stems, a dimensioned drawing) into the same `export/`
+folders. See `case/openscad-to-step-recipe.md` and `openscad-to-step-recipe-stems.md`.
 
 All three exporters re-export idempotently: OpenSCAD emits facets in an unstable order and
 different builds of it disagree in the last float digits, so each script compares

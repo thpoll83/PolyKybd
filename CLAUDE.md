@@ -28,7 +28,8 @@ scripts sit together, and nothing generated is ever mixed in with a source.
 The groups are `case` (every case variant: the FDM split72 left/right, the
 metal/CNC one, POM, right2 and the right-side case, plus the spacer they
 share and the STEP pipeline under `case/step/`), `diffuser`,
-`keycap_stem`, `display_holder`, `cirque_insert`, `cover_insert`,
+`keycap_stem` (the printed plates, plus the moulded STEP + drawing pipeline
+under `keycap_stem/step/`), `display_holder`, `cirque_insert`, `cover_insert`,
 `rotary_enc_insert`, `legs`.
 
 ⚠️ **Keep every case variant in `case/` — they SHARE the imported KiCad SVG
@@ -138,6 +139,66 @@ how `parts/diffuser/diffuser.scad` can render a whole print plate on its own whi
 `diffuser_cluster()` and `torus()` under the SAME names — so a file that
 `use <>`s both silently gets one set of definitions.
 
+## build123d / OpenCASCADE (the `step/` folders)
+
+Anything a **fabricator's validator** has to accept — the CNC case, the injection-moulded
+keycap stems — is **re-authored in build123d** rather than exported from OpenSCAD, because
+OpenSCAD has no B-Rep kernel. `parts/case/step/` and `parts/keycap_stem/step/` are that
+pipeline; each carries its own README and a `make` that builds, validates and (stems)
+diffs the result back against the `.scad`. The traps that cost real time:
+
+- ⚠️ **`Shape.scale()` scales about the SHAPE'S OWN LOCATION, not the origin** — and
+  `linear_extrude(scale=)` scales the whole profile about the extrusion axis, so an
+  off-centre sub-shape has to move inward as well as shrink. Left at the default the model
+  still builds, still passes `BRepCheck_Analyzer`, and its tapered feature simply tapers at
+  a third of the intended rate (measured: the stems' MX cross came out 4.074 instead of
+  3.987 at the far end, +0.5 % volume). Nothing errors. Pass `about=(0, 0, 0)`, and check a
+  tapered prism against its closed form — `A0·h·(1 − t + t²/3)` for a `1−t` taper — which is
+  what caught it.
+- **`loft` between two rectangles gives B-SPLINE sides; a convex hull of the 8 corners gives
+  real planes.** Same solid, different surfaces: OCCT's ThruSections returns even a planar
+  trapezoid as a degree-1 B-spline patch. Hulling the corners took the stem from 36 planar /
+  62 free-form faces to 82 / 16. Worth doing wherever the flats are datums. ⚠️ **More
+  ANALYTIC faces is not automatically better, and can be the tell of a bug**: a tapered
+  off-centre arc is an *oblique* cone (its centre moves as its radius shrinks), so it must
+  come back as a B-spline — the same model built with the `Shape.scale()` centre bug above
+  reported 13 tidy `Geom_Cone` faces, because holding each centre fixed makes them right
+  circular.
+- **OpenSCAD `hull()` of polyhedra is exactly reproducible** — the convex hull of polyhedra
+  is a polyhedron, so hull the vertices and merge the coplanar simplices back into n-gons
+  (`parts/keycap_stem/step/hull3d.py`). Skipping the merge exports the ~60 triangles scipy
+  hands back, which is the facet noise the whole exercise exists to remove.
+- ⚠️ **`BRepBndLib.Add_s` on an un-meshed shape boxes the underlying SURFACES, not the
+  trimmed faces**, so a cut whose prism runs past the solid inflates the bounding box — it
+  reported z_max 11.30 for a stem that tops out at 7.91, and the metal case by up to 2.1 mm.
+  Use `AddOptimal_s`. The printed bbox is what the recipes say to compare against the old
+  mesh, so it has to be the real one.
+- ⚠️ **build123d's drafting module cannot carry a full drawing sheet: OCCT's
+  `Compound.make_text` SEGFAULTS.** Deterministically, on the 14th label, once the sheet
+  holds the frame plus projections plus a section plus dimensions — with ~500 MB resident
+  and 14 GB free, and with none of the ingredients crashing on its own. `drawing.py` takes
+  geometry from build123d and **writes the SVG itself with real `<text>`** (the same shape
+  as `parts/case/step/plate_svg.py`); the file is 200 KB instead of megabytes and the
+  dimensions stay selectable. Related: `ExtensionLine` has no fallback for a label wider
+  than its dimension line and dies with `Can't determine direction of empty Edge or Wire`
+  several frames away.
+- ⚠️ **Hatch a section with thin RECTANGLES, not lines.** A line lying exactly in the
+  section face's plane makes OCCT's edge-face common return **nothing at all**, silently —
+  so an empty hatch reads as "no solid here" rather than as an error. Below ~0.05 mm the
+  rectangle vanishes into the boolean tolerance too.
+- **Diff the re-authored solid against the `.scad` both ways, and prove the diff can fail.**
+  `parts/keycap_stem/step/verify.py` measures the critical feature off a section of the real
+  solid, compares volume + bbox against an OpenSCAD export of the same call, and runs
+  `A\B` and `B\A` through OpenSCAD; `--self-test` widens the MX cross by 0.10 mm and
+  asserts the checks reject it. That self-test also shows why the cheap check is not enough:
+  a 0.10 mm error on the one tolerance-critical feature is **+0.66 % volume**, i.e. it sails
+  through a 1 % volume gate while the boolean diff and the direct measurement both catch it.
+- **Read a constant's MEANING out of the `.scad`, not its name.** Two in `keycap_stem.scad`
+  read as one thing and are another: `u_size = 1.22` is a half-width-extension dial fed to
+  `(u_size − 1)·2·5`, not a keycap unit count; and `mx_cross` 4.35 / `mx_cross_width` 1.4
+  describe the plus *before* `offset(r = −0.3)`, so the MX opening is **4.05 × 1.10**.
+  Quoting either to a fabricator is a 0.3 mm error on the part's one critical fit.
+
 ## Verifying a printed part
 
 **`parts/diffuser/build_frame.sh` is the whole loop** — regenerate the `.scad` from
@@ -189,6 +250,16 @@ single call, so a variant renders on its own: what you open in the GUI is exactl
 what gets exported, and `variants/<x>.scad` → `export/keycap_stem/<x>.stl` with no
 name munging. `parts/keycap_stem/build_stems.sh` walks the directory and holds no
 table of its own, so **adding a plate is adding a file**.
+
+⚠️ **That is the PRINTED part. The MOULDED one is a different pipeline** —
+`parts/keycap_stem/step/` re-authors the same `mx_stem()` in build123d and emits
+`export/keycap_stem/stem_S_{1U,1U25}.step` plus an A4 drawing, for the injection
+moulder. Only the `S` profile is exported, and it deliberately differs from the
+printed plates in two ways: the revision engraving is OFF (a tool feature, and
+font-dependent) and the three print tabs are flagged for deletion rather than
+assumed. A change to `keycap_stem.scad` therefore has to be re-exported on BOTH
+sides — `build_stems.sh` and `make -C parts/keycap_stem/step`; `make verify`
+there is what tells you the two still agree.
 
 - **`include`, not `use`, in a variant.** `use` imports modules but *not*
   variables, and the engraved `revision` is a variable. That is also why the
