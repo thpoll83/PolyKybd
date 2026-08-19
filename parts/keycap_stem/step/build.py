@@ -1,7 +1,7 @@
 """Build the two moulded keycap stem variants and export clean STEP (+ STL for checks).
 
     python build.py                 # -> ../../export/keycap_stem/stem_S_1U.step, stem_S_1U25.step
-    python build.py --engrave       # include the revision stamp (see stem_model._engraving)
+    python build.py --no-engrave    # without the profile+revision stamp
 """
 import argparse, os, time
 from collections import Counter
@@ -20,8 +20,9 @@ OUT = os.path.join(HERE, "..", "..", "export", "keycap_stem")
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--engrave", action="store_true",
-                    help="engrave the revision (default off: a tool feature, and font-dependent)")
+    ap.add_argument("--no-engrave", action="store_true",
+                    help="drop the profile+revision stamp (it is a TOOL feature: changing it "
+                         "later is a tool edit -- see stem_model._engraving and font.py)")
     ap.add_argument("--no-print-tabs", action="store_true",
                     help="drop the three 0.3 mm sprue-plate tabs (see stem_model.outer_hull)")
     ap.add_argument("--only", help="build just this variant")
@@ -32,7 +33,8 @@ def main():
         if args.only and name != args.only:
             continue
         t = time.time()
-        part = sm.build(name, engrave=args.engrave, print_tabs=not args.no_print_tabs)
+        part = sm.build(name, engrave=not args.no_engrave,
+                        print_tabs=not args.no_print_tabs)
         bb = part.bounding_box()
         kinds = Counter(str(BRepAdaptor_Surface(f.wrapped).GetType())
                         .rsplit(".", 1)[-1].replace("GeomAbs_", "") for f in part.faces())

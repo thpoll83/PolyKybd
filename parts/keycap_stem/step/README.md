@@ -27,6 +27,7 @@ make selftest        # prove those checks can fail (see below)
 |---|---|
 | `stem_model.py` | the model. Every constant keeps its `keycap_stem.scad` name so the two stay diffable |
 | `hull3d.py` | OpenSCAD `hull()` as an exact polyhedral convex hull |
+| `font.py` | pins the engraving to one font FILE (`make font`) — see the font traps below |
 | `build.py` | exports `stem_S_1U.step` / `stem_S_1U25.step` (+ an STL the checks use) |
 | `drawing.py` | the A4 sheet: 3 ortho views, isometric, section, 10:1 cross detail, tolerances, notes |
 | `validate_step.py` | the case's acceptance test, reused (real solid, curved faces, tight tolerance) |
@@ -42,14 +43,29 @@ interface to the off-the-shelf transparent cap.
 ## Results
 
 ```
-faces 100   planar 82   B-spline 16   cone 1   cylinder 1   max edge tolerance 1.0e-07 mm
-volume vs the OpenSCAD mesh   +0.111 % (1U)   +0.081 % (1.25U)
+faces 250   planar 106   curved 144   max edge tolerance 1.0e-07 mm
+volume vs the OpenSCAD mesh   +0.110 % (1U)   +0.081 % (1.25U)
 bounding box                  identical to 5 decimal places
-STEP \ SCAD 0.62 mm3 (0.11 %)   SCAD \ STEP 0.011 mm3 (0.002 %)
+STEP \ SCAD 1.02 mm3 (0.18 %)   SCAD \ STEP 0.42 mm3 (0.08 %)
 ```
 
-The residual is entirely the `.scad`'s faceted cylinders (a 128-gon stem, `$fn=64` cross
-relief) against true analytic surfaces — the difference the exercise exists to remove.
+The residual is entirely the `.scad`'s tessellation — a 128-gon stem, `$fn=64` cross
+relief, `$fn=16` glyph outlines — against true analytic surfaces, which is the difference
+the exercise exists to remove. Without the engraving it is 100 faces (82 planar) and
+0.62 / 0.011 mm³ (`build.py --no-engrave`, `verify.py --no-engraving`).
+
+## Decisions taken
+
+- **Material is ABS**, stated in the title block. Its 0.4–0.7 % shrink is what keeps the
+  MX cross inside its ±0.03. ⚠️ **The model and the STEP are the FINISHED PART** — shrink
+  compensation goes on the cavity and is the toolmaker's, and note 9 asks them to state
+  the rate they used.
+- **The profile + revision stamp is engraved**, `S    α`, matching the printed plates
+  (`build.py --no-engrave` drops it). What speaks against it is real but not blocking, and
+  it is on the drawing as note 10: it is a **tool feature**, so changing `α` later is a
+  tool edit, and both stamps are 0.30 mm deep with **zero draft**. Nothing else about it
+  is load-bearing — it sits in the display-seat floor and the pocket ceiling, neither of
+  which is a fit surface.
 
 ## Things that are load-bearing
 
@@ -76,10 +92,24 @@ relief) against true analytic surfaces — the difference the exercise exists to
 - ⚠️ **The `.scad` says `u_size = 1.22` for the 1.25U plate, not 1.25.** `u_size` feeds
   `(u_size - 1) * 2 * 5`, i.e. it is a half-width-extension dial (→ 19.90 mm body), not a
   keycap unit count. The recipe had read it as a unit size.
-- **The engraved revision is OFF by default** (`build.py --engrave` turns it on): an engraved
-  character is a tool feature that cannot be changed later without a tool edit, and it makes
-  the model depend on which font fontconfig resolves — the trap `../build_stems.sh` already
-  documents for the printed plates.
+- ⚠️ **The engraving font is pinned to a FILE, and three plausible spellings give three
+  different glyphs.** OCCT does not read fontconfig, so `font="Noto"` — what the `.scad`
+  asks for — emits *"unable to find font 'Noto'; 'FreeSans' is used instead"* and carries
+  on; the real family name `"Noto Sans"` finds the file but renders the **variable font's
+  default instance**, not Bold. Measured areas for the same string: 4.068 (FreeSans) /
+  2.330 (variable default) / 3.563 (a real Bold). `font.py` instantiates `wght=700` once
+  and passes `font_path=`, so the tool is cut from the repo rather than from whatever the
+  build machine had.
+- ⚠️ **OpenSCAD's `text(size=)` is a POINT size at 100 DPI; build123d's `font_size` is the
+  em in millimetres** — the same nominal 3 comes out **100/72 = 1.389× larger** in
+  OpenSCAD (cap height 3.058 mm against 2.202 mm, measured both ways). Without
+  `TEXT_EM = TEXT_SIZE * 100 / 72` the moulded stamp is a third smaller than the printed
+  one, and it reads exactly like a font-weight problem. Same family of trap as
+  `fontconvert`'s `-s` being points at 141 DPI (firmware `fonts/README`).
+- ⚠️ **Do not run `../build_stems.sh --fetch-font` to get that font.** It fetches and then
+  goes on to **re-export all sixteen printed plates** against the newly-installed font,
+  rewriting committed meshes — it rewrote three here before it was killed. `make font`
+  fetches and stops; the two share one cache path.
 - **The three 0.4 × 3.0 × 0.3 print tabs are reproduced, not silently deleted.** They are in
   the source, so they are in the model (`--no-print-tabs` drops them) and note 10 of the
   drawing asks the moulder about them.
@@ -89,6 +119,13 @@ relief) against true analytic surfaces — the difference the exercise exists to
 `make verify` runs, per variant: the cross measured off a section of the real solid; the
 tapered cross prism against its closed form; volume + bounding box against an OpenSCAD
 export of the same call; and a **boolean difference both ways** through OpenSCAD.
+
+⚠️ **Find a feature by what it IS, not by "the smallest face".** `measure_cross` used to
+take the smallest face in the section; the cap is tilted −7°, which sweeps the seat
+engraving through global z 5.1–5.5, so once the stamp was switched on a **glyph fragment**
+became the smallest face and the check reported the inside of an `α` — 0.90 × 1.30,
+r0.60/0.84, entirely plausible numbers for a cross. It now selects the inner wire that is
+centred on the stem axis and smaller than the stem OD.
 
 `make selftest` widens the cross by 0.10 mm and asserts the checks reject it. That run also
 shows why the weakest check cannot stand alone:
@@ -124,11 +161,10 @@ volume delta +0.657 % (still inside the 1 % gate: True -- so volume ALONE would 
 
 ## Still open
 
-- **Material is not chosen.** ABS is assumed on the drawing (its 0.4–0.7 % shrink is what
-  protects the cross); POM only if the stem must snap-retain, at ~2 % shrink the cross
-  geometry then has to compensate for. **Shrink compensation belongs in the moulded model,
-  not this one** — keep a printed and a moulded parameter set apart when it is applied.
 - **The cap interface is a hard datum we do not own** (the transparent relegendable caps are
   off-the-shelf POS parts). Confirm it against a real cap before cutting steel.
+- **The revision character freezes at tooling.** `α` will not stay `α`, and it is cut into
+  steel. If that is unwelcome, engrave only the profile letter (`stem_model.PROFILE`) and
+  carry the revision elsewhere — a one-line change, but make it before the tool is cut.
 - Only the **S** profile is exported. `VARIANTS` in `stem_model.py` is where R1–R5/S1/S5
   would be added; they differ only in `angle` and `extra_len`.

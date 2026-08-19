@@ -18,14 +18,23 @@ from build123d import (Axis, BuildSketch, Circle, Cylinder, Cone, Face, Plane, P
                        Pos, Rectangle, Rot, Text, Wire, Align, FontStyle, extrude,
                        fillet, loft)
 
+import font
 from hull3d import hull_solid
 
 # --------------------------------------------------------------------------------
 # Parameters -- names and values from ../keycap_stem.scad (lines 2-28)
 # --------------------------------------------------------------------------------
 REVISION                = "α"          # keycap_stem.scad:2
-TEXT_FONT               = "Noto"
-TEXT_SIZE               = 3.0
+PROFILE                 = "S"          # the profile token the printed plates engrave
+TEXT_FONT               = "Noto"       # asked for by name in the .scad; see font.py
+TEXT_SIZE               = 3.0          # OpenSCAD points -- see TEXT_EM below
+# ⚠️ `text(size=)` in OpenSCAD is a POINT size rendered at 100 DPI (it calls
+# FT_Set_Char_Size(..., 100, 100)), while build123d's `font_size` is the em in
+# millimetres.  So the same nominal 3 comes out 100/72 = 1.389x larger in OpenSCAD --
+# cap height 3.058 mm against 2.202 mm, measured both ways.  Without the conversion the
+# moulded stamp is a third smaller than the one on the printed plates, which looks like
+# a font-weight problem and is not.
+TEXT_EM                 = TEXT_SIZE * 100 / 72
 TEXT_HEIGHT             = 0.3
 
 SURFACE_OFFSET          = 0.001             # SCAD's boolean-cleanliness nudge; kept
@@ -59,6 +68,16 @@ VARIANTS = {
     "S_1U":   dict(u_size=1.00, angle=-7.0, extra_len=1.5, label="S 1U"),
     "S_1U25": dict(u_size=1.22, angle=-7.0, extra_len=1.5, label="S 1.25U"),
 }
+
+
+def default_text():
+    """The stamp the printed plates carry: `str("S    ", revision)`.
+
+    Five characters wide, so the profile sits at one corner of the face and the
+    revision at the other -- see the keycap-stem section of ../../../CLAUDE.md.  Keep
+    the padding if a profile is added.
+    """
+    return f"{PROFILE:<5}{REVISION}"
 
 
 # --------------------------------------------------------------------------------
@@ -204,7 +223,7 @@ def outer_hull(u_size, print_tabs=True):
     return hull_solid(pts)
 
 
-def cap_body(u_size, print_tabs=True, engrave=False, txt=None):
+def cap_body(u_size, print_tabs=True, engrave=True, txt=None):
     """The hollow cap, in its own (untilted) frame -- keycap_stem.scad:80-152."""
     dx = (u_size - 1) * 2 * 5
     s = STEM_TOP_BOTTOM_RATIO
@@ -240,29 +259,36 @@ def cap_body(u_size, print_tabs=True, engrave=False, txt=None):
         CABLE_STEM_X, CABLE_STEM_X, INSIDE_HEIGHT, 1.0, -SURFACE_OFFSET)
 
     if engrave:
-        part -= _engraving(txt if txt is not None else REVISION)
+        part -= _engraving(txt if txt is not None else default_text())
     return part
 
 
 def _engraving(txt):
-    """The two revision stamps (:138-151).
+    """The two stamps (:138-151): one in the display-seat floor, one under the pocket.
 
-    Off by default: an engraved character is a TOOL feature that cannot be changed
-    afterwards without a tool edit, and `revision` will not stay alpha.  It also makes
-    the model depend on which font fontconfig resolves -- the same trap
-    ../build_stems.sh documents for the printed plates.
+    ⚠️ Both are 0.30 mm deep with **zero draft**, and on a moulded part they are steel:
+    the seat stamp stands proud of the core, the pocket stamp likewise.  At 0.30 mm that
+    normally releases, but it is called out on the drawing rather than left to be
+    discovered.
+
+    ⚠️ **The font is pinned to a file** (`font.bold_path()`), not named.  OCCT does not
+    read fontconfig, so `font="Noto"` -- what the .scad asks for -- falls back to
+    FreeSans with a warning nobody reads, and the family name finds the VARIABLE file's
+    default instance rather than Bold.  The three spellings give three different glyphs
+    (areas 4.068 / 2.330 / 3.563 mm² for this string), and the tool is cut from whichever
+    one the build happened to produce.  See font.py.
     """
     top = Pos(0, DISP_Y / 2 - TEXT_SIZE / 2,
               STEM_HEIGHT - DISP_HEIGHT - TEXT_HEIGHT + SURFACE_OFFSET * 2) * extrude(
-        Text(txt, TEXT_SIZE, font=TEXT_FONT, font_style=FontStyle.BOLD,
+        Text(txt, TEXT_EM, font_path=font.bold_path(), font_style=FontStyle.BOLD,
              align=(Align.CENTER, Align.CENTER)), amount=TEXT_HEIGHT)
     under = Pos(0, -DISP_Y / 3, INSIDE_HEIGHT + TEXT_HEIGHT - 0.01) * Rot(180, 0, 0) * extrude(
-        Text(txt, TEXT_SIZE, font=TEXT_FONT, font_style=FontStyle.BOLD,
+        Text(txt, TEXT_EM, font_path=font.bold_path(), font_style=FontStyle.BOLD,
              align=(Align.CENTER, Align.CENTER)), amount=TEXT_HEIGHT)
     return top + under
 
 
-def mx_stem(u_size, angle=0.0, extra_len=0.0, print_tabs=True, engrave=False, txt=None):
+def mx_stem(u_size, angle=0.0, extra_len=0.0, print_tabs=True, engrave=True, txt=None):
     """`mx_stem()` -- the whole part.  keycap_stem.scad:74-189."""
     cap = Pos(0, 0, extra_len) * Rot(angle, 0, 0) * cap_body(u_size, print_tabs, engrave, txt)
 

@@ -66,9 +66,18 @@ so 1.22 grows the body by 2 × 2.2 mm. The `.scad` is the authority.
 *before* `offset(r = -MX_CROSS_FILLET)`, so the opening the switch actually enters is **4.05 × 1.10**
 with r0.30 corner fillets. Quoting the constants to a moulder overstates it by 0.3 mm on both.
 
-⚠️ The `txt=` argument stamps the revision into the part. **Decide before tooling whether the moulded
-part carries it** — an engraved character is a tool feature that cannot be changed later without a tool
-edit, and `revision = "α"` will not stay α.
+**The `txt=` stamp IS carried** (decided 2026-08-19): `S    α`, matching the printed plates, engraved
+0.30 mm into the display-seat floor and the pocket ceiling. What speaks against it is real but not
+blocking, and is on the drawing as note 10 — it is a **tool feature**, so changing `α` later is a tool
+edit, and both stamps are zero-draft. Neither sits on a fit surface. `build.py --no-engrave` drops it,
+and engraving only `stem_model.PROFILE` is a one-line change if the revision character is unwelcome.
+
+⚠️ **Getting the glyph right is the hard part, not adding it.** OCCT does not read fontconfig, so
+`font="Noto"` — what the `.scad` asks for — falls back to FreeSans with a warning nobody reads, and the
+family name resolves the *variable* font's default instance rather than Bold; and OpenSCAD's
+`text(size=)` is a **point size at 100 DPI** while build123d's `font_size` is the em in mm, a 1.389×
+difference. All three are silent. `step/font.py` pins the file and `TEXT_EM` does the conversion; the
+step README has the measured numbers.
 
 ## Draft — computed, not eyeballed
 
@@ -149,14 +158,17 @@ precedent for SVG output. `drawing.py` should emit, per variant, an **A4 sheet**
 - Material and finish, once chosen — see the material note below.
 - Revision, date, part number, and whether the `txt` engraving is present.
 
-## Material (for the drawing's title block)
+## Material — **ABS** (decided 2026-08-19)
 
-Not yet decided. **ABS** is the default: it is the standard keycap material and its low shrink
-(0.4–0.7 %) is what protects the MX cross tolerance. **POM** is the alternative *if* the stem
-snap-retains the display or cover — better fatigue under repeated engagement, at ~2 % shrink that the
-cross geometry must then compensate for. PBT and nylon are both worse here (higher shrink; nylon is
-hygroscopic). Whichever is chosen, **shrink compensation belongs in the moulded model, not the printed
-one** — so keep the printed stem and the moulded stem as separate parameter sets in `stem_model.py`.
+It is the standard keycap material and its low shrink (0.4–0.7 %) is what protects the MX cross
+tolerance. POM was the alternative *if* the stem snap-retains the display or cover — better fatigue
+under repeated engagement, but ~2 % shrink the cross geometry would have to compensate for; PBT and
+nylon are both worse here (higher shrink, and nylon is hygroscopic).
+
+⚠️ **Shrink compensation is NOT in the model.** The STEP and the drawing are the **finished part**;
+the cavity is cut oversize by the toolmaker, who states the rate used (drawing note 9). That is the
+normal division of labour and it keeps one model serving both the printed and the moulded part — do
+not fold a shrink factor into `stem_model.py` without saying so on the drawing.
 
 ## ✅ Status — DONE (2026-08-18)
 
@@ -164,17 +176,17 @@ Executed end to end; `parts/keycap_stem/step/` is the working toolchain and
 [its README](keycap_stem/step/README.md) carries the results and the traps. Both deliverables are in
 `parts/export/keycap_stem/`: `stem_S_1U.step` / `stem_S_1U25.step` and their `*_drawing.svg`.
 
-Both STEPs pass the acceptance test — one closed solid, 100 faces (82 planar, 16 B-spline, 1 conical,
-1 cylindrical), max edge tolerance **1.0e-07 mm**. Against an OpenSCAD export of the same call: bounding
-box identical to 5 dp, volume **+0.111 % / +0.081 %**, and a two-way boolean difference of 0.62 mm³
-one way and 0.011 mm³ the other — all of it the `.scad`'s faceted cylinders against true analytic
-surfaces, which is the difference this exercise exists to create.
+Both STEPs pass the acceptance test — one closed solid, 250 faces, max edge tolerance **1.0e-07 mm**.
+Against an OpenSCAD export of the same call: bounding box identical to 5 dp, volume **+0.110 % /
++0.081 %**, and a two-way boolean difference of 1.02 mm³ one way and 0.42 mm³ the other — all of it
+the `.scad`'s tessellation (a 128-gon stem, `$fn=64` cross relief, `$fn=16` glyph outlines) against
+true analytic surfaces, which is the difference this exercise exists to create.
 
 Three corrections this recipe needed once it was actually run, all now folded in above: the stem
 **does** use `hull()`; `u_size` is 1.22 and is not a unit count; and the cross opening is 4.05 × 1.10,
 not 4.35 × 1.4. The draft table was recomputed. Everything else held.
 
-Both build123d gotchas worth knowing before the next port are in the step README: `Shape.scale()`
-defaults to scaling about the shape's own location (a silent 0.5 % geometry error), and OCCT's text
-kernel **segfaults** when a drawing sheet gets big enough, which is why `drawing.py` writes its own
-SVG.
+The build123d gotchas worth knowing before the next port are in the step README: `Shape.scale()`
+defaults to scaling about the shape's own location (a silent 0.5 % geometry error); OCCT's text kernel
+**segfaults** when a drawing sheet gets big enough, which is why `drawing.py` writes its own SVG; and
+the three font traps above, each of which silently changes the glyph a toolmaker would cut.

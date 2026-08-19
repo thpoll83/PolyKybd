@@ -193,6 +193,29 @@ diffs the result back against the `.scad`. The traps that cost real time:
   asserts the checks reject it. That self-test also shows why the cheap check is not enough:
   a 0.10 mm error on the one tolerance-critical feature is **+0.66 % volume**, i.e. it sails
   through a 1 % volume gate while the boolean diff and the direct measurement both catch it.
+- ⚠️ **Engraved text is where three SILENT font traps live, and each one changes the glyph
+  a toolmaker would cut.** (1) OCCT does **not** read fontconfig, so `font="Noto"` — what
+  `keycap_stem.scad` asks for — prints *"unable to find font 'Noto'; 'FreeSans' is used
+  instead"* and carries on; (2) the real family name `"Noto Sans"` finds the file but
+  renders the **variable font's default instance**, not Bold; (3) OpenSCAD's `text(size=)`
+  is a **point size at 100 DPI** while build123d's `font_size` is the em in mm, so the same
+  nominal 3 comes out **100/72 = 1.389× larger** in OpenSCAD. Measured on one string: areas
+  4.068 / 2.330 / 3.563 mm² for the three spellings, and cap height 3.058 vs 2.202 mm for
+  the size convention. Pin the font to a FILE (`parts/keycap_stem/step/font.py`
+  instantiates `wght=700` and passes `font_path=`) and convert the size. Trap (3) is the
+  same shape as `fontconvert`'s `-s` being points at 141 DPI.
+- ⚠️ **`build_stems.sh --fetch-font` FETCHES AND THEN RE-EXPORTS ALL SIXTEEN PLATES.** Its
+  name and its help line both read as "install a font", and CLAUDE.md already warns that it
+  changes which Noto resolves — but with no variant names it also runs the whole export
+  loop, so committed meshes get rewritten against the new font. It rewrote three before
+  being killed (2026-08-19). Use `make -C parts/keycap_stem/step font`, which shares the
+  same cache path and stops after the download.
+- ⚠️ **Find a feature by what it IS, not by "the smallest face".** A section-measuring check
+  that took the smallest face in the plane silently started reporting the inside of an
+  engraved `α` — 0.90 × 1.30 with r0.60/0.84, entirely plausible numbers for an MX cross —
+  once the stamp was switched on, because the cap is tilted −7° and that sweeps the
+  engraving through the section height. Select on identity (an inner wire centred on the
+  stem axis, smaller than the stem OD), not on an ordering that happens to work today.
 - **Read a constant's MEANING out of the `.scad`, not its name.** Two in `keycap_stem.scad`
   read as one thing and are another: `u_size = 1.22` is a half-width-extension dial fed to
   `(u_size − 1)·2·5`, not a keycap unit count; and `mx_cross` 4.35 / `mx_cross_width` 1.4

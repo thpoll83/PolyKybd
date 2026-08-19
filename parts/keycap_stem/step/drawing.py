@@ -37,6 +37,7 @@ OUT = os.path.join(HERE, "..", "..", "export", "keycap_stem")
 SCALE_MAIN, SCALE_DETAIL, SCALE_ISO = 2.0, 10.0, 1.6
 REVISION = "A"
 GENERAL_TOL = 0.10
+MATERIAL = "ABS"
 
 PAGE_W, PAGE_H = 297.0, 210.0        # A4 landscape
 FRAME_X, FRAME_Y = 133.5, 89.0       # drawing frame, centred on the origin
@@ -271,6 +272,7 @@ def frame_and_title(sh, cfg, name):
     sh.text(f"DRAWING  PK-STEM-{name.replace('_', '-')}-{REVISION}",
             (x0 + 65, y1 - 15.0), 2.4, "start")
     sh.text(f"DATE  {date.today().isoformat()}", (x0 + 65, y1 - 19.5), 2.2, "start")
+    sh.text(f"MATERIAL  {MATERIAL}", (x0 + 65, y1 - 5.5), 2.6, "start", bold=True)
     sh.text("SCALE  as noted", (x0 + 3, y0 + 5.5), 2.4, "start")
     sh.text("FIRST ANGLE (ISO 128)", (x0 + 40, y0 + 5.5), 2.4, "start")
     sh.text("UNITS  mm", (x0 + 90, y0 + 5.5), 2.4, "start")
@@ -398,7 +400,7 @@ def build_sheet(name):
     wall = sm.MX_CYLINDER / 2 - reach
     leader(sh, f"{wall:.2f} min wall, stem to cross", at_view(det_at, (-2.4, 0), D),
            (det_at[0] - 26, det_at[1] - 8), 2.1, True)
-    leader(sh, "print tab, 3x (note 10)", at_view(top_at, (hx, 0)),
+    leader(sh, "print tab, 3x (note 11)", at_view(top_at, (hx, 0)),
            (top_at[0] + 30, top_at[1] + 12), 2.1)
     leader(sh, f"display seat {sm.DISP_HEIGHT:.2f} deep, zero draft (note 7)",
            at_view(sec_at, (-hx + 1.2, sm.STEM_HEIGHT - sm.DISP_HEIGHT / 2 + 1.3)),
@@ -411,7 +413,7 @@ def build_sheet(name):
         (f" 1.  Dimensions in mm.  First-angle projection (ISO 128).  Scale as marked per view.", False),
         (f" 2.  General tolerance ±{GENERAL_TOL:.2f} unless stated otherwise.", False),
         (" 3.  Geometry re-authored from keycap_stem.scad in build123d.  The STEP is the shape reference;", False),
-        ("       THIS DRAWING governs tolerance, material and finish.  No revision character is moulded.", False),
+        ("       THIS DRAWING governs tolerance, material and finish.", False),
         (f" 4.  CRITICAL  MX cross {c_len:.2f} x {c_wid:.2f} ±0.03, R{sm.MX_CROSS_FILLET:.2f} corner fillets.  Gauge against a reference MX", False),
         ("       switch stem, not by CMM alone.  Polish the core pin to draw along the arms.", False),
         (" 5.  CRITICAL  The transparent relegendable cap is an off-the-shelf POS part, so that mating", False),
@@ -421,10 +423,13 @@ def build_sheet(name):
         ("       that it often releases as-is, but confirm it rather than discover it at first article.", False),
         (f" 8.  Cross draft {dr['cross arm flat']:.2f}° on the flats and {dr['cross arm tip']:.2f}° at the arm tips, opening downward -- the core pin", False),
         ("       withdraws in the correct direction, but with very little relief.", False),
-        (" 9.  MATERIAL NOT FIXED.  ABS assumed: its 0.4-0.7% shrink is what protects the cross.  POM only if", False),
-        ("       the stem must snap-retain, at ~2% shrink for the cross to compensate.  Shrink compensation", False),
-        ("       belongs in the moulded model, not this one -- ask before applying it.", False),
-        ("10.  Three 0.40 x 3.00 x 0.30 tabs stand 0.20 proud of the body (+Y and ±X).  They are a print-plate", False),
+        (f" 9.  MATERIAL  {MATERIAL}.  Chosen for shrink: 0.4-0.7% is what keeps the MX cross inside note 4.", False),
+        ("       Dimensions here are the FINISHED PART.  Apply shrink compensation to the cavity, and state the", False),
+        ("       rate used -- do not expect it in this model or the STEP.", False),
+        (f"10.  Stamp \"{sm.default_text()}\" (profile + revision), {sm.TEXT_HEIGHT:.2f} deep, zero draft, in TWO places: the display-seat", False),
+        ("       floor and the pocket ceiling.  It is a TOOL feature -- a revision change is a tool edit, so", False),
+        ("       confirm the character before cutting.  Font: Noto Sans Bold, outlines carried in the STEP.", False),
+        ("11.  Three 0.40 x 3.00 x 0.30 tabs stand 0.20 proud of the body (+Y and ±X).  They are a print-plate", False),
         ("       aid carried over from the 3D-printed part -- delete them for tooling unless you want them.", False),
     ]
     y = -19.0
