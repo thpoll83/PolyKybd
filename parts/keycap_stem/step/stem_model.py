@@ -24,7 +24,16 @@ from hull3d import hull_solid
 # --------------------------------------------------------------------------------
 # Parameters -- names and values from ../keycap_stem.scad (lines 2-28)
 # --------------------------------------------------------------------------------
-REVISION                = "α"          # keycap_stem.scad:2
+# ⚠️ DELIBERATELY NOT `keycap_stem.scad:2`, which stays "α".  The moulded part differs
+# from the 3D-printed prototypes -- different process, different tolerances, different
+# tooling -- so it carries its own revision letter and a part can be told apart by
+# looking at it.  This is the one constant here that is NOT a mirror of the .scad; every
+# other one keeps its .scad name and value so the two stay diffable.
+#
+# It also settles a legibility problem: Noto Sans draws U+03B1 single-storey and
+# TAILLESS, so the printed set's "α" reads as a Latin "a" at stamp size (DejaVu's has the
+# usual right-hand tail; Noto's does not).  "β" has no such twin.
+REVISION                = "β"
 PROFILE                 = "S"          # the profile token the printed plates engrave
 TEXT_FONT               = "Noto"       # asked for by name in the .scad; see font.py
 TEXT_SIZE               = 3.0          # OpenSCAD points -- see TEXT_EM below
@@ -68,6 +77,22 @@ VARIANTS = {
     "S_1U":   dict(u_size=1.00, angle=-7.0, extra_len=1.5, label="S 1U"),
     "S_1U25": dict(u_size=1.22, angle=-7.0, extra_len=1.5, label="S 1.25U"),
 }
+
+
+def revision_codepoint():
+    """Name the revision character explicitly, for the drawing.
+
+    A Greek letter cut into steel from a glyph outline alone is a chance to cut the wrong
+    character -- and the mark exists precisely to be read -- so the sheet spells the
+    codepoint out rather than relying on the shape.  That is not hypothetical: the
+    printed set's "α" is drawn single-storey and tailless by Noto and reads as a Latin
+    "a" (see REVISION above).
+    """
+    import unicodedata
+    c = REVISION
+    if len(c) != 1:
+        return f'"{c}"'
+    return f"U+{ord(c):04X} {unicodedata.name(c).title()}"
 
 
 def default_text():

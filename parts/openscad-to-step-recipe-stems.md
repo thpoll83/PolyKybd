@@ -66,11 +66,16 @@ so 1.22 grows the body by 2 × 2.2 mm. The `.scad` is the authority.
 *before* `offset(r = -MX_CROSS_FILLET)`, so the opening the switch actually enters is **4.05 × 1.10**
 with r0.30 corner fillets. Quoting the constants to a moulder overstates it by 0.3 mm on both.
 
-**The `txt=` stamp IS carried** (decided 2026-08-19): `S    α`, matching the printed plates, engraved
-0.30 mm into the display-seat floor and the pocket ceiling. What speaks against it is real but not
-blocking, and is on the drawing as note 10 — it is a **tool feature**, so changing `α` later is a tool
-edit, and both stamps are zero-draft. Neither sits on a fit surface. `build.py --no-engrave` drops it,
-and engraving only `stem_model.PROFILE` is a one-line change if the revision character is unwelcome.
+**The `txt=` stamp IS carried** (decided 2026-08-19): `S    β`, engraved 0.30 mm into the display-seat
+floor and the pocket ceiling. Marking the revision is the point of it, so drawing note 10 asks for the
+character on a **replaceable insert** in the cavity — the next revision is then a plug swap, not a tool
+edit. Both stamps are zero-draft; neither sits on a fit surface. `build.py --no-engrave` drops it.
+
+⚠️ **The moulded revision is `β` while `keycap_stem.scad` stays `α`** — the moulded part differs from
+the 3D-printed prototypes, so it says so. `stem_model.REVISION` is the one constant that deliberately
+does not mirror the `.scad`. It also sidesteps a legibility problem: **Noto Sans draws U+03B1
+single-storey and tailless, so `α` reads as a Latin `a` at stamp size** (DejaVu's has the usual tail);
+`β` has no twin. The sheet spells the codepoint out either way.
 
 ⚠️ **Getting the glyph right is the hard part, not adding it.** OCCT does not read fontconfig, so
 `font="Noto"` — what the `.scad` asks for — falls back to FreeSans with a warning nobody reads, and the
@@ -176,9 +181,9 @@ Executed end to end; `parts/keycap_stem/step/` is the working toolchain and
 [its README](keycap_stem/step/README.md) carries the results and the traps. Both deliverables are in
 `parts/export/keycap_stem/`: `stem_S_1U.step` / `stem_S_1U25.step` and their `*_drawing.svg`.
 
-Both STEPs pass the acceptance test — one closed solid, 250 faces, max edge tolerance **1.0e-07 mm**.
-Against an OpenSCAD export of the same call: bounding box identical to 5 dp, volume **+0.110 % /
-+0.081 %**, and a two-way boolean difference of 1.02 mm³ one way and 0.42 mm³ the other — all of it
+Both STEPs pass the acceptance test — one closed solid, 259 faces, max edge tolerance **2.1e-07 mm**.
+Against an OpenSCAD export of the same call: bounding box identical to 5 dp, volume **+0.108 % /
++0.079 %**, and a two-way boolean difference of 1.06 mm³ one way and 0.46 mm³ the other — all of it
 the `.scad`'s tessellation (a 128-gon stem, `$fn=64` cross relief, `$fn=16` glyph outlines) against
 true analytic surfaces, which is the difference this exercise exists to create.
 

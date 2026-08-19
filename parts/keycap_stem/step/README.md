@@ -43,10 +43,10 @@ interface to the off-the-shelf transparent cap.
 ## Results
 
 ```
-faces 250   planar 106   curved 144   max edge tolerance 1.0e-07 mm
-volume vs the OpenSCAD mesh   +0.110 % (1U)   +0.081 % (1.25U)
+faces 259   planar 108   curved 151   max edge tolerance 2.1e-07 mm
+volume vs the OpenSCAD mesh   +0.108 % (1U)   +0.079 % (1.25U)
 bounding box                  identical to 5 decimal places
-STEP \ SCAD 1.02 mm3 (0.18 %)   SCAD \ STEP 0.42 mm3 (0.08 %)
+STEP \ SCAD 1.06 mm3 (0.19 %)   SCAD \ STEP 0.46 mm3 (0.08 %)
 ```
 
 The residual is entirely the `.scad`'s tessellation — a 128-gon stem, `$fn=64` cross
@@ -60,12 +60,21 @@ the exercise exists to remove. Without the engraving it is 100 faces (82 planar)
   MX cross inside its ±0.03. ⚠️ **The model and the STEP are the FINISHED PART** — shrink
   compensation goes on the cavity and is the toolmaker's, and note 9 asks them to state
   the rate they used.
-- **The profile + revision stamp is engraved**, `S    α`, matching the printed plates
-  (`build.py --no-engrave` drops it). What speaks against it is real but not blocking, and
-  it is on the drawing as note 10: it is a **tool feature**, so changing `α` later is a
-  tool edit, and both stamps are 0.30 mm deep with **zero draft**. Nothing else about it
-  is load-bearing — it sits in the display-seat floor and the pocket ceiling, neither of
-  which is a fit surface.
+- **The profile + revision stamp is engraved**, `S    β` (`build.py --no-engrave` drops
+  it). Marking the revision on the part is the *point* — so drawing note 10 asks for it on
+  a **replaceable insert** in the cavity rather than cut into the block, which makes the
+  next revision a plug swap instead of a tool edit. Both stamps are 0.30 mm deep with zero
+  draft, in the display-seat floor and the pocket ceiling; neither is a fit surface.
+- ⚠️ **The moulded revision is `β` where `keycap_stem.scad` stays `α`** — different
+  process, different tolerances, different tooling, so the two are told apart by eye.
+  `stem_model.REVISION` is therefore **the one constant here that is deliberately NOT a
+  mirror of the `.scad`**; everything else keeps its `.scad` name *and* value.
+- ⚠️ **That change also fixed a legibility bug worth knowing about: Noto Sans draws
+  U+03B1 single-storey and TAILLESS, so `α` reads as a Latin `a` at stamp size.** DejaVu's
+  alpha has the usual right-hand tail; Noto's does not, and the printed plates have carried
+  the ambiguous one all along. `β` has no such twin. The drawing spells the codepoint out
+  (`revision_codepoint()`) regardless, because a Greek letter cut into steel from an
+  outline alone is a chance to cut the wrong character.
 
 ## Things that are load-bearing
 
@@ -163,8 +172,8 @@ volume delta +0.657 % (still inside the 1 % gate: True -- so volume ALONE would 
 
 - **The cap interface is a hard datum we do not own** (the transparent relegendable caps are
   off-the-shelf POS parts). Confirm it against a real cap before cutting steel.
-- **The revision character freezes at tooling.** `α` will not stay `α`, and it is cut into
-  steel. If that is unwelcome, engrave only the profile letter (`stem_model.PROFILE`) and
-  carry the revision elsewhere — a one-line change, but make it before the tool is cut.
+- **Whether the moulder will do the replaceable-revision insert** (note 10). If they cut
+  the character into the block instead, every revision is a tool edit — ask before the
+  quote is accepted, not after.
 - Only the **S** profile is exported. `VARIANTS` in `stem_model.py` is where R1–R5/S1/S5
   would be added; they differ only in `angle` and `extra_len`.

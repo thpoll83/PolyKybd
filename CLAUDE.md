@@ -204,6 +204,14 @@ diffs the result back against the `.scad`. The traps that cost real time:
   the size convention. Pin the font to a FILE (`parts/keycap_stem/step/font.py`
   instantiates `wght=700` and passes `font_path=`) and convert the size. Trap (3) is the
   same shape as `fontconvert`'s `-s` being points at 141 DPI.
+- ⚠️ **Noto Sans draws U+03B1 single-storey and TAILLESS, so the engraved `α` reads as a
+  Latin `a`** — the printed plates have carried the ambiguous glyph all along, and it is a
+  font-design fact, not a substitution bug (the cmap maps `alpha` and `a` to different
+  glyphs; DejaVu's alpha has the usual right-hand tail, Noto's does not). Check a revision
+  marker by RENDERING the glyph, not by confirming the codepoint. The **moulded** stems
+  moved to `β` for this reason and a better one: they differ from the 3D-printed
+  prototypes, so `parts/keycap_stem/step/stem_model.py` `REVISION` is deliberately **not**
+  a mirror of `keycap_stem.scad:2` — the one constant there that isn't.
 - ⚠️ **`build_stems.sh --fetch-font` FETCHES AND THEN RE-EXPORTS ALL SIXTEEN PLATES.** Its
   name and its help line both read as "install a font", and CLAUDE.md already warns that it
   changes which Noto resolves — but with no variant names it also runs the whole export

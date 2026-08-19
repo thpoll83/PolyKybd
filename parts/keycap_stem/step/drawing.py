@@ -35,7 +35,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "..", "export", "keycap_stem")
 
 SCALE_MAIN, SCALE_DETAIL, SCALE_ISO = 2.0, 10.0, 1.6
-REVISION = "A"
+DRAWING_REV = "A"          # revision of THIS SHEET; the part's stamp is
+                           # stem_model.REVISION, and they are not the same thing
 GENERAL_TOL = 0.10
 MATERIAL = "ABS"
 
@@ -269,7 +270,7 @@ def frame_and_title(sh, cfg, name):
     sh.text(f"Keycap stem  {cfg['label']}", (x0 + 3, y1 - 5.5), 4.4, "start", bold=True)
     sh.text("MX mount, injection moulded", (x0 + 3, y1 - 15.5), 2.6, "start")
     sh.text("PolyTasten / PolyKybd", (x0 + 3, y1 - 19.5), 2.2, "start")
-    sh.text(f"DRAWING  PK-STEM-{name.replace('_', '-')}-{REVISION}",
+    sh.text(f"DRAWING  PK-STEM-{name.replace('_', '-')}-{DRAWING_REV}",
             (x0 + 65, y1 - 15.0), 2.4, "start")
     sh.text(f"DATE  {date.today().isoformat()}", (x0 + 65, y1 - 19.5), 2.2, "start")
     sh.text(f"MATERIAL  {MATERIAL}", (x0 + 65, y1 - 5.5), 2.6, "start", bold=True)
@@ -423,16 +424,17 @@ def build_sheet(name):
         ("       that it often releases as-is, but confirm it rather than discover it at first article.", False),
         (f" 8.  Cross draft {dr['cross arm flat']:.2f}° on the flats and {dr['cross arm tip']:.2f}° at the arm tips, opening downward -- the core pin", False),
         ("       withdraws in the correct direction, but with very little relief.", False),
-        (f" 9.  MATERIAL  {MATERIAL}.  Chosen for shrink: 0.4-0.7% is what keeps the MX cross inside note 4.", False),
-        ("       Dimensions here are the FINISHED PART.  Apply shrink compensation to the cavity, and state the", False),
-        ("       rate used -- do not expect it in this model or the STEP.", False),
-        (f"10.  Stamp \"{sm.default_text()}\" (profile + revision), {sm.TEXT_HEIGHT:.2f} deep, zero draft, in TWO places: the display-seat", False),
-        ("       floor and the pocket ceiling.  It is a TOOL feature -- a revision change is a tool edit, so", False),
-        ("       confirm the character before cutting.  Font: Noto Sans Bold, outlines carried in the STEP.", False),
+        (f" 9.  MATERIAL  {MATERIAL}, chosen for shrink: 0.4-0.7% is what keeps the MX cross inside note 4.", False),
+        ("       Dimensions are the FINISHED PART -- apply shrink to the cavity and state the rate used.", False),
+        (f"10.  Stamp \"{sm.default_text()}\" = profile + revision, {sm.TEXT_HEIGHT:.2f} deep, zero draft, in the display-seat floor", False),
+        (f"       and the pocket ceiling.  Revision character is {sm.revision_codepoint().upper()} --", False),
+        ("       the MOULDED part is deliberately β where the 3D-printed prototypes are α, so the two are", False),
+        ("       told apart by eye.  Carry it on a REPLACEABLE INSERT in the cavity rather than cut into the", False),
+        ("       block: a revision change is then a plug swap, not a tool edit.  Font: Noto Sans Bold.", False),
         ("11.  Three 0.40 x 3.00 x 0.30 tabs stand 0.20 proud of the body (+Y and ±X).  They are a print-plate", False),
         ("       aid carried over from the 3D-printed part -- delete them for tooling unless you want them.", False),
     ]
-    y = -19.0
+    y = -17.5
     for i, (t, bold) in enumerate(notes):
         sh.text(t, (-131.0, y), 2.0, "start", bold=bold)
         y -= 2.0 * 1.55 if i else 3.4
