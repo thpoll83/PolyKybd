@@ -89,7 +89,10 @@ USB_CHAMFER = 3.0       # 45 deg lead-in depth/width on the inner face
 #   "border") is only ~4 mm wide, so a 3 mm chamfer consumes it and degenerates the
 #   boolean (verified: clean at <=2, broken at >=2.5).  2 mm is the clean maximum here.
 WITH_WALLFLOOR_CHAMFER = True
-WALLFLOOR_CHAMFER = 2.0
+WALLFLOOR_CHAMFER = 1.0   # ⚠️ the 2 mm above is the clean MAXIMUM the ~4 mm ledge allows,
+                          # not the target size.  On the first metal prototype a 2 mm gusset
+                          # read as far too heavy where the inner wall meets the top, so it
+                          # is halved.  Raising it back is safe up to 2.0 and breaks at 2.5.
 
 # ---- display/encoder pocket (the Box that covers both the display and the encoder) --
 DISPLAY_CORNER_R = 2.0    # round the 4 vertical corners of the display pocket
@@ -102,6 +105,22 @@ WITH_ENCODER_POCKET = True
 ENCODER_ANCHOR = (-55.0, -5.0)   # final-frame corner of the encoder cutout
 ENCODER_GROW   = 3.5             # offset (each side) to widen the blind body recess
 ENCODER_GROW_Y = 1.0             # extra Y-only extension of the recess (total, symmetric)
+
+# ---- fit corrections on two cut-outs.svg openings (POST-PROCESSING, not in the .scad)
+# The display window and the encoder opening both machined a shade tight on the first
+# metal prototype.  They are grown HERE rather than in cut-outs.svg, because that file is
+# a KiCad export shared with the FDM case, which fits as-is.
+# ⚠️ Each face is located by anchor and then ASSERTED against its known size: the anchors
+# pick one face out of 74 nearly-identical key openings, so a mis-pick would otherwise
+# silently enlarge a keycap hole instead.
+DISPLAY_ANCHOR = (-69.9, 39.5)   # final-frame centre of the 27.0 x 26.0 display window
+DISPLAY_SIZE   = (27.0, 26.0)    # asserted; X is left alone, only Y grows
+DISPLAY_GROW_Y = 0.25            # TOTAL extra Y (0.125 per edge), symmetric about centre
+ENCODER_SIZE   = (20.780, 19.070)  # asserted bbox of the ~20 deg rotated 16.97 x 14.13 hole
+ENCODER_FIT    = 0.10            # outward NORMAL offset on every edge of the encoder hole.
+                                 # ⚠️ Normal, not a bounding-box grow: the hole is rotated
+                                 # ~20 deg, so growing the bbox by 0.1 in ±X/±Y would leave
+                                 # only ~0.07 mm at each face and shear the corners off 90 deg.
 
 # ---- embossed branding on the convex-hull front-bezel flat top (not in .scad) --
 # The SCAD `branding()` engraves "PolyKybd" (Arial Bold Italic, size 12, 0.35 deep)
@@ -119,6 +138,20 @@ BRAND_STAG_X = 3.0      # (two-line only) 2nd line shifted +X (right) relative t
 BRAND_STAG_Y = 3.6      # (two-line only) half the vertical gap between the two lines
 BRAND_TOP_Z  = 18.5     # flat top plateau z in the bezel region
 BRAND_FONT   = "/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf"
+
+# ---- hardware revision mark, engraved INSIDE (not in the .scad) ---------------
+# A revision tell that is invisible from the outside: engraved up into the central
+# interior ceiling (z 14.95 -- the top of the SCAD "inner border" pocket), so it is read
+# with the bottom cover off.  REV_X/REV_Y is the largest clear patch on that face: 6.3 mm
+# of clearance to the nearest key opening, measured on the built STEP rather than guessed.
+WITH_REVISION = True
+REV_TEXT   = "II"
+REV_SIZE   = 6.0
+REV_DEPTH  = 0.35       # same engraving depth as the branding / the SCAD text_height
+REV_X      = 0.2
+REV_Y      = -36.4
+REV_CEIL_Z = 14.95      # the interior ceiling the mark is engraved UP into
+REV_FONT   = BRAND_FONT
 
 SVG = lambda n: "../" + n
 
@@ -196,6 +229,34 @@ def convex_hull_face(face, grow=0.0):
     poly = make_face(Polyline(*[(x, y, 0) for x, y in hull], close=True))
     return offset(poly, amount=grow, kind=Kind.ARC) if grow else poly
 
+def _grow_y(face, amount):
+    """Grow a face's Y extent by `amount` TOTAL, symmetric about its own centre, X untouched.
+
+    A single Y-scale of the whole face gives ONE clean outline; offsetting, or unioning a
+    shifted copy, gives a doubled/lumpy one.  ⚠️ build123d's scale() is NOT about the
+    origin, so the result is re-centred explicitly."""
+    if not amount:
+        return face
+    bb = face.bounding_box()
+    cy0 = (bb.min.Y + bb.max.Y) / 2
+    out = scale(face, by=(1, (bb.size.Y + amount) / bb.size.Y, 1))
+    b2 = out.bounding_box()
+    return out.moved(Location((0, cy0 - (b2.min.Y + b2.max.Y) / 2, 0)))
+
+
+def _assert_face_size(face, want, what, tol=0.05):
+    """Fail loudly if an anchor-picked cut-out face is not the one we meant.
+
+    The anchors below select one face out of 74, nearly all of which are key openings of
+    similar size, so a silent mis-pick would enlarge a keycap hole on a machined part."""
+    bb = face.bounding_box()
+    got = (bb.size.X, bb.size.Y)
+    if abs(got[0] - want[0]) > tol or abs(got[1] - want[1]) > tol:
+        raise ValueError(f"{what}: anchor picked a face of {got[0]:.3f} x {got[1]:.3f} mm, "
+                         f"expected {want[0]:.3f} x {want[1]:.3f} mm -- check the anchor "
+                         f"against cut-outs.svg before trusting this build")
+
+
 def _chamfered_pocket(face, height, amt):
     """Extruded pocket (negative volume) whose top `amt` is tapered inward by `amt`
     -- i.e. a 45 deg chamfer applied to the pocket's TOP edge.  Subtracting it leaves
@@ -233,7 +294,7 @@ def pcb_shape_convex(extra_radius=0.0):
     return offset(offset(hull, amount=-2.0, kind=Kind.ARC), amount=radius + 2.0, kind=Kind.ARC)
 
 # ==========================================================================
-def build_right(with_branding=True):
+def build_right(with_engraving=True):
     outline_c = centered_face("poly_kb_wave_right2-OUTLINE.svg")
 
     # ---- 1. outer shell : hull(camfer_top @ 17.5..18.5, bottom scaled 1.08 @ -5.94)
@@ -288,14 +349,32 @@ def build_right(with_branding=True):
     #  send it to z<0, below the case.)  So: X-mirror faces, extrude up, translate.
     cut_faces = [f.mirror(Plane.YZ) for f in centered_faces_all("cut-outs.svg")]
     T = Location((-4.215, 0.779, 0))
-    # Identify the rotary-encoder face (vertex nearest ENCODER_ANCHOR).  It is KEPT in
-    # cut_faces so the ACTUAL encoder cutout still cuts through (the through-hole in the
-    # top skin is needed); the enlarged BLIND body recess (step 6) is ADDED on top of it.
-    enc_src = None
-    if WITH_ENCODER_POCKET:
-        eax, eay = ENCODER_ANCHOR[0] - X_SHIFT, ENCODER_ANCHOR[1]
-        enc_src = min(cut_faces, key=lambda f: min((v.X - 4.215 - eax) ** 2 +
-                                                   (v.Y + 0.779 - eay) ** 2 for v in f.vertices()))
+    # ---- 5a. fit corrections: grow the display window in Y and the encoder hole all
+    # round (see the DISPLAY_*/ENCODER_FIT block up top for why this lives here and not
+    # in cut-outs.svg).  Both replace their face IN cut_faces, so the through-cut AND the
+    # r=1.2 clearance relief that follow both pick the corrected opening up.
+    def _pick_idx(anchor, by_vertex):
+        ax, ay = anchor[0] - X_SHIFT, anchor[1]
+        def d(i):
+            pts = [(v.X - 4.215, v.Y + 0.779) for v in cut_faces[i].vertices()]
+            if not by_vertex:                       # compare centroids instead of vertices
+                n = len(pts)
+                pts = [(sum(q[0] for q in pts) / n, sum(q[1] for q in pts) / n)]
+            return min((px - ax) ** 2 + (py - ay) ** 2 for px, py in pts)
+        return min(range(len(cut_faces)), key=d)
+
+    di = _pick_idx(DISPLAY_ANCHOR, by_vertex=False)
+    _assert_face_size(cut_faces[di], DISPLAY_SIZE, "display cut-out")
+    cut_faces[di] = _grow_y(cut_faces[di], DISPLAY_GROW_Y)
+
+    # The encoder face is KEPT in cut_faces so the ACTUAL encoder cutout still cuts through
+    # (the through-hole in the top skin is needed); the enlarged BLIND body recess (step 6)
+    # is ADDED on top of it, and inherits ENCODER_FIT because it is built from enc_src.
+    ei = _pick_idx(ENCODER_ANCHOR, by_vertex=True)
+    _assert_face_size(cut_faces[ei], ENCODER_SIZE, "encoder cut-out")
+    if ENCODER_FIT:
+        cut_faces[ei] = offset(cut_faces[ei], amount=ENCODER_FIT, kind=Kind.ARC)
+    enc_src = cut_faces[ei] if WITH_ENCODER_POCKET else None
     clr = [extrude(offset(f, amount=1.2, kind=Kind.ARC), amount=5) for f in cut_faces]
     part = _cut_batched(part, clr, T * Location((0, 0, CASE_H + 6.3 - 1.5 - 10)))
     # extrude tall enough to clear the top plate (top rim z<=18.5); start below 0 for safety
@@ -317,13 +396,7 @@ def build_right(with_branding=True):
     # still cut through above), so the real cutout + a widened body recess coexist.
     if WITH_ENCODER_POCKET and enc_src is not None:
         enc_face = offset(enc_src.moved(T), amount=ENCODER_GROW, kind=Kind.ARC)
-        if ENCODER_GROW_Y:   # grow the recess Y-extent by ENCODER_GROW_Y (X unchanged):
-            bb = enc_face.bounding_box()          # a single Y-scale of the face about its
-            cy0 = (bb.min.Y + bb.max.Y) / 2       # centre -> ONE clean pocket, not a
-            sy = (bb.size.Y + ENCODER_GROW_Y) / bb.size.Y   # doubled/lumpy body
-            enc_face = scale(enc_face, by=(1, sy, 1))
-            b2 = enc_face.bounding_box()           # build123d scale() is not about origin
-            enc_face = enc_face.moved(Location((0, cy0 - (b2.min.Y + b2.max.Y) / 2, 0)))
+        enc_face = _grow_y(enc_face, ENCODER_GROW_Y)   # Y-only, X unchanged
         enc = extrude(enc_face, amount=4.4)       # 4.4 (was 5): top 17.3, not 17.9, so the
         enc = enc.moved(Location((0, 0, 12.9)))   # skin over the encoder recess is 1.2mm too
         part = part - enc                          # (matches the display recess) z 12.9..17.3
@@ -367,8 +440,12 @@ def build_right(with_branding=True):
     #  geometrically equivalent.
     if WITH_BOTTOM_RABBET:
         part = add_bottom_rabbet(part)
-    if WITH_BRANDING and with_branding:
-        part = add_branding(part)
+    # `with_engraving` gates every mirror-sensitive engraving, so build.py can do the one
+    # heavy build without them and then engrave each half the right way round.
+    if with_engraving:
+        if WITH_BRANDING:
+            part = add_branding(part)
+        part = add_revision(part)
     return part
 
 
@@ -444,6 +521,30 @@ def add_branding(part, x=None, y=None):
         return part - Compound(prisms)
     except Exception as e:
         print("add_branding skipped:", e)
+        return part
+
+
+def add_revision(part, x=None, y=None):
+    """Engrave REV_TEXT REV_DEPTH deep up into the central interior ceiling (REV_CEIL_Z).
+
+    ⚠️ That face points DOWN, so the text is X-mirrored to read correctly for someone
+    looking up into the open case.  "II" happens to be symmetric, but "IV" would
+    otherwise read "VI".  `x` overrides the centre exactly the way add_branding does, so
+    a mirrored left half can be re-engraved un-mirrored."""
+    if not (WITH_REVISION and REV_TEXT):
+        return part
+    try:
+        cx = REV_X if x is None else x
+        cy = REV_Y if y is None else y
+        with contextlib.redirect_stderr(io.StringIO()):
+            txt = Text(REV_TEXT, font_size=REV_SIZE, font_path=REV_FONT,
+                       align=(Align.CENTER, Align.CENTER))
+        txt = txt.mirror(Plane.YZ)
+        # prism starting 0.15 below the ceiling (in open air) so the boolean is clean
+        return part - extrude(txt, amount=REV_DEPTH + 0.15).moved(
+            Location((cx, cy, REV_CEIL_Z - 0.15)))
+    except Exception as e:
+        print("add_revision skipped:", e)
         return part
 
 
@@ -546,8 +647,10 @@ def _safe_normal(f):
 def build_left():
     # mirror the UN-branded base, then engrave so the logo reads correctly (not
     # backwards) on the left half; -BRAND_X puts it on the mirrored bezel.
-    base = build_right(with_branding=False).mirror(Plane.YZ)
-    return add_branding(base, x=-BRAND_X, y=BRAND_Y) if WITH_BRANDING else base
+    base = build_right(with_engraving=False).mirror(Plane.YZ)
+    if WITH_BRANDING:
+        base = add_branding(base, x=-BRAND_X, y=BRAND_Y)
+    return add_revision(base, x=-REV_X, y=REV_Y)
 
 if __name__ == "__main__":
     import time

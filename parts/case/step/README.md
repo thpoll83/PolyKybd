@@ -158,8 +158,16 @@ pocket (floor z=14.95) — so the interior steps down through **two** chamfered 
 
 ```python
 WITH_WALLFLOOR_CHAMFER = True
-WALLFLOOR_CHAMFER = 2.0   # 2 mm is the clean maximum here — see note
+WALLFLOOR_CHAMFER = 1.0   # halved after the first metal prototype
 ```
+
+⚠️ **2 mm is the clean MAXIMUM this corner allows, not the target size** — a distinction the
+old value blurred, because it sat exactly on the ceiling the note below establishes. On the
+first machined part a 2 mm gusset read as far too heavy where the inner wall meets the top, so
+it is **halved to 1 mm**. That also made the two transitions *consistent*: at 2.0 the border
+pocket's chamfer was clipped by the hull pocket only 1.3 mm below it, so the part actually
+carried a 2.0 mm band **and** a 1.3 mm one (37 + 19 faces in the built STEP); at 1.0 both come
+out at a true 1.0 (59 faces). Raising it is safe up to 2.0 and breaks at 2.5.
 
 ⚠️ **3 mm is not achievable at this corner.** The interior ledge between the inner wall and
 the next pocket (the SCAD **"border"**, offset −3.35) is only ~4 mm wide, so a ≥2.5 mm chamfer
@@ -188,7 +196,7 @@ Text is built with build123d `Text` (**Liberation Sans Bold Italic** — the met
 Arial substitute present on Linux; there is no Arial), extruded and subtracted 0.35 mm into
 the z=18.5 plateau. ⚠️ **Branding is applied AFTER the YZ mirror, per side**, so the logo
 reads correctly (not mirror-backwards) on **both** halves: `build.py` does one heavy build
-(`build_right(with_branding=False)`, which includes the USB + wall-floor chamfers), engraves
+(`build_right(with_engraving=False)`, which includes the USB + wall-floor chamfers), engraves
 the right at `(BRAND_X, BRAND_Y)`, and engraves the mirrored left at `(−BRAND_X, BRAND_Y)`.
 Set `WITH_BRANDING = False` (+ `WITH_USB_CHAMFER`/`WITH_WALLFLOOR_CHAMFER = False`) for the
 pure SCAD reproduction.
@@ -225,6 +233,50 @@ ENCODER_ANCHOR = (-55.0, -5.0)   # final-frame corner of the encoder cutout
 ENCODER_GROW   = 3.5             # offset each side: widen the blind body recess
 ENCODER_GROW_Y = 1.0             # extra Y-only span (single Y-scale of the face)
 ```
+
+## Cut-out fit corrections — display + encoder (POST-PROCESSING — not in the .scad)
+
+Two openings that come from `cut-outs.svg` machined a shade tight on the first metal
+prototype, and are grown here:
+
+| opening | as drawn | corrected | how |
+|---|---|---|---|
+| status display | 27.000 × 26.000 (axis-aligned) | 27.000 × **26.250** | `DISPLAY_GROW_Y` 0.25 **total** in Y, symmetric about the centre; X untouched |
+| rotary encoder | 16.97 × 14.13, rotated ≈20° | +0.1 mm on every edge | `ENCODER_FIT` 0.10, an outward **normal** offset (`Kind.ARC`) |
+
+They are corrected **here and not in `cut-outs.svg`**, because that file is a KiCad export
+shared with the FDM case, which fits as-is. Each face is replaced **in `cut_faces`**, so the
+through-cut *and* the r=1.2 clearance relief that follow both pick up the corrected opening —
+and the encoder's blind body recess inherits it too, since that is built from the same face.
+
+⚠️ **The encoder offset is a normal offset, not a bounding-box grow.** The hole is rotated
+≈20°, so scaling its bbox by 0.1 in ±X/±Y would leave only ~0.07 mm at each face and shear the
+corners off 90°. Pleasantly, the two readings agree on the *bbox* anyway: with arc joints the
+offset's corner arcs touch the bounding box, so a 0.1 normal offset also measures exactly
+20.780 → 20.980 and 19.070 → 19.270. (Area 239.689 → 245.939 = perimeter·r + πr², to 3 dp.)
+
+⚠️ **Each face is located by anchor and then ASSERTED against its known size**
+(`_assert_face_size`). The anchors pick one face out of **74**, nearly all of which are key
+openings of a similar size, so a silent mis-pick would enlarge a keycap hole on a machined
+part instead. A wrong anchor now raises rather than building quietly.
+
+## Revision mark — "II" engraved on the interior ceiling (not in the .scad)
+
+A hardware-revision tell that is invisible from outside: `add_revision()` engraves `REV_TEXT`
+`REV_DEPTH` (0.35 mm) deep **up into the central interior ceiling** at z = `REV_CEIL_Z` 14.95
+— the top of the SCAD "inner border" pocket — so it is read with the bottom cover off.
+
+`REV_X`/`REV_Y` (0.2, −36.4) is the **largest clear patch on that face**, with 6.3 mm of
+clearance to the nearest key opening. That was measured by rasterising the face's wires from
+the built STEP and taking the maximum inscribed radius, not chosen by eye.
+
+⚠️ **That face points DOWN, so the text is X-mirrored** to read correctly for someone looking
+up into the open case. `"II"` happens to be symmetric, but `"IV"` would otherwise read `"VI"`.
+
+`add_revision()` takes an `x` override exactly the way `add_branding()` does, and is gated by
+the same `build_right(with_engraving=…)` flag — renamed from `with_branding`, since it now
+covers **both** engravings. `build.py` still does one heavy build with it off and then engraves
+each half the right way round.
 
 ## ⚠️ Two corrections vs. the recipe (learned from the geometry)
 
@@ -291,8 +343,9 @@ Both sides pass:
 - `valid B-Rep = True`
 - **curved faces > 0** (519 — real corner cylinders + rim tori)
 - **max edge tolerance ≈ 1e-5 mm** (vs 0.148 in the mesh export)
-- ~1359 faces (vs ~15 000 facets), bbox 200.1 × 142.9 × **25.7** mm (with the bottom
-  rabbet; ~24.7 mm without it, i.e. the pure SCAD reproduction)
+- ~1676 faces (vs ~15 000 facets), bbox 200.1 × 142.9 × **25.6** mm (with the bottom
+  rabbet; ~24.7 mm without it, i.e. the pure SCAD reproduction). The face count was ~1359
+  before the fit corrections, the 1 mm chamfer and the revision engraving.
 
 ## Memory note
 

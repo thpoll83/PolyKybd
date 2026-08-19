@@ -31,15 +31,17 @@ def _report(name, part, dt):
     print(f"[{name}] wrote {OUT}/metal-case-{name}.step and ./metal-case-{name}.stl")
 
 def main():
-    # one heavy build (geometry + USB chamfer, no branding), then engrave BOTH
+    # one heavy build (geometry + USB chamfer, no engraving), then engrave BOTH
     # halves from it so the logo reads correctly on each (left is not backwards).
     t = time.time()
-    base = cm.build_right(with_branding=False)
+    base = cm.build_right(with_engraving=False)
     right = cm.add_branding(base, x=cm.BRAND_X, y=cm.BRAND_Y) if cm.WITH_BRANDING else base
+    right = cm.add_revision(right, x=cm.REV_X, y=cm.REV_Y)
     _report("right", right, time.time() - t)
     t = time.time()
     left = base.mirror(Plane.YZ)
     left = cm.add_branding(left, x=-cm.BRAND_X, y=cm.BRAND_Y) if cm.WITH_BRANDING else left
+    left = cm.add_revision(left, x=-cm.REV_X, y=cm.REV_Y)
     _report("left", left, time.time() - t)
 
 if __name__ == "__main__":
