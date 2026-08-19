@@ -259,15 +259,30 @@ keeping the `raw_faces_all` + `offset` path.
 
 ## Bottom-plate screw holes (POST-PROCESSING — not in the .scad)
 
-4 pilot holes for **M2×4 self-tapping** screws that fix the bottom plate (aluminium → no
-thread; the screw cuts its own on first use, so `SCREW_HOLE_D = 1.6` is a tight thread-cutting
-pilot). Drilled in `add_bottom_rabbet` in the **wedge-flattened frame**, so they run
-perpendicular to the plate, each engaging ~`SCREW_HOLE_DEPTH` (4.5 mm) of body above the ledge.
+4 holes for the **M2×4 countersunk** screws that fix the bottom cover. `SCREW_HOLE_D = 1.6`
+reads two ways at once: a tight thread-cutting pilot for an M2 self-tapping screw, *and* exactly
+the **M2×0.4 tap drill** (2.0 − 0.4) — so the same hole takes a cut thread with nothing
+re-drilled, which is what the build instructions recommend. Drilled in `add_bottom_rabbet` in the
+**wedge-flattened frame**, so they run perpendicular to the plate.
 ⚠️ The case walls are thin, so the holes sit in the thicker **corner L-junctions** (outer shell
 solid, any opening faces the interior). The two **front** corners are useless — the wedge makes
 the front shallow, with no material at the ledge — so the front holes are **moved north to the
 side "knees"** (where the diagonal front wall meets the vertical side wall), the southern-most
 solid+clearance spots. Positions in `SCREW_HOLES` (flattened XY); `WITH_SCREW_HOLES` toggles them.
+
+⚠️ **Usable depth is 5.9 mm, not `SCREW_HOLE_DEPTH`.** The 6.5 is measured from the wedge plane,
+but the cover seats on the ledge `RABBET_UP` (0.6) *above* that plane, so only 6.5 − 0.6 = 5.9 mm
+of hole is above the seat — confirmed by measuring the r=0.8 cylindrical faces in
+`../../export/case/metal-case-right.step` (three read exactly 5.900; the fourth is the front-knee
+partial slot, whose cylindrical face runs on past the blind end, so its extent is **not** a depth).
+With the 1.6 mm cover that puts an M2×4 about 2.4 mm / 6 threads in and caps the fastener at
+**M2×6**; an **M2×8 bottoms out ~0.5 mm before the head touches the cover**, which feels like
+torque and leaves the cover loose.
+
+⚠️ **The countersink is NOT in `bottom_cover_kicad.py`** — it emits plain Ø`HOLE_CLEAR_D`
+(2.2 mm) non-plated holes, and aluminium-PCB fabs generally will not cut one. Countersinking to
+~Ø3.8–4.0 at **90°** (0.8–0.9 mm deep in the 1.6 mm board) is left as a hand op on the finished
+cover; see the parts list in the root `README.md`.
 
 ## Acceptance (validate_step.py)
 

@@ -228,6 +228,11 @@ Independent of your choice, here are the parts you need before putting everythin
 * USB-C to USB-A/USB-C to connect to your computer.
   ***Note:*** I had a USB-C to USB-A cable and was sitting in front of a laptop with only USB-C ports. Without a USB-C to USB-C cable at hand, I used an USB-A to USB-C adapter. It turned out this USB-C to USB-A cable + USB-A to USB-C adapter construction was only working then the adapter was connected to the laptop. - better use a USB-C to USB-C right away.
 * 8 M3x10 hex screws with rounded heads and for the current case version (r4 and later, e.g. r7), you also need 8 M3 hex nuts.
+* ***Metal case only:*** 8 M2x4 countersunk screws (4 per half) to fix the bottom cover - any 90 degree metric countersunk head, e.g. DIN 965 / ISO 7046. Two jobs are deliberately left to you, because neither is in the CAD:
+  * **Cut the threads.** The four holes in each case half are 1.6 mm and unthreaded. 1.6 mm is exactly the M2x0.4 tap drill (2.0 - 0.4), so there is nothing to re-drill - just run an M2 tap in. There is 5.9 mm of hole above the cover seat, so an M2x4 ends up about 2.4 mm / 6 threads deep, which is plenty for a cover. (If you would rather not tap, the same 1.6 mm hole also takes an M2 self-tapping screw, which is what the hole was originally sized for.)
+  * **Countersink the bottom cover.** It is made as a 1.6 mm aluminium PCB with plain 2.2 mm holes. Countersink them to about 3.8-4.0 mm at 90 degrees - that is only 0.8-0.9 mm deep, so it leaves most of the board - and the heads finish flush with the underside. Most aluminium PCB houses will not do this for you, but it is four holes in soft metal and a hand countersink bit does it in a minute.
+
+  ***Note:*** metric countersunk heads are **90 degrees**. The countersink bits lying around most benches are the inch-series **82 degree** ones, and an 82 degree bit under a 90 degree head touches only at the rim and leaves the screw standing proud.
 
 ### Put Everything Together
 
