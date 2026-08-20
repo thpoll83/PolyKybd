@@ -147,11 +147,17 @@ class Sheet:
     def rect(self, x0, y0, x1, y1, w=W_THIN):
         self.path([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], w, close=True)
 
-    def text(self, s, at, size=2.6, anchor="middle", baseline="middle", bold=False):
+    def text(self, s, at, size=2.6, anchor="middle", baseline="middle", bold=False,
+             chrome=False):
+        """`chrome=True` for sheet furniture that lives OUTSIDE the drawing frame -- the
+        zone letters and numerals.  They are exempt from `check_inside_frame` (being
+        outside is the point) and from the collision report (they sit in the margin
+        band, where nothing else is drawn)."""
         w = len(s) * size * CHAR_W
         x0 = {"start": at[0], "middle": at[0] - w / 2, "end": at[0] - w}[anchor]
-        self._note((x0, at[1] - size * 0.6), (x0 + w, at[1] + size * 0.6))
-        self.texts.append((x0, at[1] - size * 0.52, x0 + w, at[1] + size * 0.52, s))
+        if not chrome:
+            self._note((x0, at[1] - size * 0.6), (x0 + w, at[1] + size * 0.6))
+            self.texts.append((x0, at[1] - size * 0.52, x0 + w, at[1] + size * 0.52, s))
         s = (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
         weight = ' font-weight="bold"' if bold else ""
         self.out.append(
@@ -225,24 +231,15 @@ class Sheet:
         """Fail loudly on anything that runs off the drawing frame.
 
         A label that overshoots the border is invisible in the SVG source and obvious
-        only in a render, so it survives every review that reads the code.  Estimating
-        the text extent from CHAR_W is crude, but it is the same estimate `dim` already
-        trusts to decide inside-vs-outside placement, and it only has to be good enough
-        to catch a label that has left the sheet.
+        only in a render, so it survives every review that reads the code.  Reads the
+        recorded text extents rather than re-parsing the emitted SVG, so `chrome=True`
+        furniture (the zone letters, which live outside the frame by definition) is
+        exempt for free instead of needing a second rule.
         """
-        bad = []
-        for el in self.out:
-            m = re.match(r'<text x="([-\d.]+)" y="([-\d.]+)".*?font-size="([\d.]+)"'
-                         r'.*?text-anchor="(\w+)".*?>(.*)</text>', el)
-            if not m:
-                continue
-            x, y, size, anchor, txt = (float(m[1]), float(m[2]), float(m[3]), m[4], m[5])
-            w = len(txt) * size * CHAR_W
-            x0 = {"start": x, "middle": x - w / 2, "end": x - w}[anchor]
-            if (x0 < self._x(-FRAME_X) + 1 or x0 + w > self._x(FRAME_X) - 1
-                    or y > self._y(-FRAME_Y) - 1 or y < self._y(FRAME_Y) + 1):
-                bad.append(f"  {txt[:52]!r} at ({x0 - PAGE_W / 2:.1f}, "
-                           f"{PAGE_H / 2 - y:.1f}) w={w:.1f}")
+        bad = [f"  {t[4][:52]!r} at ({t[0]:.1f}, {t[3]:.1f}) w={t[2] - t[0]:.1f}"
+               for t in self.texts
+               if t[0] < -FRAME_X + 1 or t[2] > FRAME_X - 1
+               or t[1] < -FRAME_Y + 1 or t[3] > FRAME_Y - 1]
         if bad:
             raise ValueError("text outside the drawing frame:\n" + "\n".join(bad))
 
@@ -517,7 +514,39 @@ def axes_iso(sh, at, size=7.0):
                 2.4)
 
 
+ZONE_COLS, ZONE_ROWS = 8, 6          # ISO 5457 grid for A3: ~50 mm fields
+ZONE_BAND = 8.0                      # band inside the trimmed margin
+
+
+def zone_grid(sh):
+    """ISO 5457 grid reference: 1..8 across, A..F down, on all four edges.
+
+    Numerals run left to right and letters top to bottom, both starting at the
+    top-left corner, so a feature can be called out as "the boss, D3" in an email
+    without anyone counting views.  A3 takes 8 x 6 fields of ~50 x 46 mm.
+    """
+    x0, x1, y0, y1 = -FRAME_X, FRAME_X, -FRAME_Y, FRAME_Y
+    sh.rect(x0 - ZONE_BAND, y0 - ZONE_BAND, x1 + ZONE_BAND, y1 + ZONE_BAND, W_THIN)
+    for i in range(ZONE_COLS + 1):
+        x = x0 + (x1 - x0) * i / ZONE_COLS
+        for yy, dy in ((y1, ZONE_BAND), (y0, -ZONE_BAND)):
+            sh.line((x, yy), (x, yy + dy), W_THIN)
+    for j in range(ZONE_ROWS + 1):
+        y = y1 - (y1 - y0) * j / ZONE_ROWS
+        for xx, dx in ((x0, -ZONE_BAND), (x1, ZONE_BAND)):
+            sh.line((xx, y), (xx + dx, y), W_THIN)
+    for i in range(ZONE_COLS):
+        x = x0 + (x1 - x0) * (i + 0.5) / ZONE_COLS
+        for yy in (y1 + ZONE_BAND / 2, y0 - ZONE_BAND / 2):
+            sh.text(str(i + 1), (x, yy), 3.0, bold=True, chrome=True)
+    for j in range(ZONE_ROWS):
+        y = y1 - (y1 - y0) * (j + 0.5) / ZONE_ROWS
+        for xx in (x0 - ZONE_BAND / 2, x1 + ZONE_BAND / 2):
+            sh.text(chr(ord("A") + j), (xx, y), 3.0, bold=True, chrome=True)
+
+
 def frame_and_title(sh, cfg, name):
+    zone_grid(sh)
     sh.rect(-FRAME_X, -FRAME_Y, FRAME_X, FRAME_Y, W_THICK)
     x0, y0 = FRAME_X - TITLE_W, -FRAME_Y
     x1, y1 = FRAME_X, -FRAME_Y + TITLE_H
@@ -667,6 +696,14 @@ def build_sheet(name):
     S, D, D5 = SCALE_MAIN, SCALE_DETAIL, SCALE_STAMP
 
     plain = sm.build(name, engrave=False)
+    # The stamp details are drawn in the CAP's own frame, where the seat floor and the
+    # pocket ceiling are flat -- but `cap_body` has no MX slot in it, because `mx_stem`
+    # cuts the cross after tilting and raising the cap.  Cut the same cross here, pulled
+    # back through that placement, so the two detail views can show the one datum on
+    # those faces that a toolmaker can register the stamp against.
+    cap_cut = (sm.cap_body(cfg["u_size"], engrave=False)
+               - (Rot(-cfg["angle"], 0, 0) * Pos(0, 0, -cfg["extra_len"])
+                  * sm.cross_cut(sm.STEM_HEIGHT * 2, 0.97, -sm.SURFACE_OFFSET)))
     # `_engraving` works in the cap's OWN (untilted) frame, so it needs the same
     # placement `mx_stem` gives the cap before the two can be projected together.
     stamp_solid = (Pos(0, 0, cfg["extra_len"]) * Rot(cfg["angle"], 0, 0)
@@ -678,13 +715,13 @@ def build_sheet(name):
 
     # First angle: the view from ABOVE goes below the front view, the view from BELOW
     # above it, and the view from the RIGHT to its left.
-    right_at, front_at = (-178.0, 66.0), (-124.0, 66.0)
-    top_at, bot_at = (-124.0, -2.0), (-124.0, 112.0)
+    right_at, front_at = (-178.0, 60.0), (-124.0, 60.0)
+    top_at, bot_at = (-124.0, -10.0), (-124.0, 108.0)
     # The isometric goes in the gap the orthographic block leaves under the section,
     # not above it: at 1.25U the view-from-below leaders reach 4.4 mm further right
     # and ran straight over it there.
-    sec_at, secb_at, iso_at = (-40.0, 80.0), (-32.0, 18.0), (66.0, -22.0)
-    det_at, stamp_at, stamp2_at = (66.0, 76.0), (160.0, 96.0), (160.0, 8.0)
+    sec_at, secb_at, iso_at = (-40.0, 76.0), (-32.0, 10.0), (66.0, -30.0)
+    det_at, stamp_at, stamp2_at = (66.0, 70.0), (160.0, 90.0), (160.0, 2.0)
 
     def titled(n, text, at, dy, scale="2:1"):
         sh.text(f"{n}   {text}", (at[0], at[1] + dy), 3.2, bold=True)
@@ -708,7 +745,7 @@ def build_sheet(name):
     for n, look, up, at, title, ax, corner in (
             (1, (1, 0, 0), (0, 0, 1), right_at, "VIEW FROM RIGHT", ("-Y", "Z"), (2, -22)),
             (2, (0, -1, 0), (0, 0, 1), front_at, "VIEW FROM FRONT", ("X", "Z"), (-14, -6)),
-            (3, (0, 0, 1), (0, 1, 0), top_at, "VIEW FROM ABOVE", ("X", "Y"), (6, -14)),
+            (3, (0, 0, 1), (0, 1, 0), top_at, "VIEW FROM ABOVE", ("X", "Y"), (10, -26)),
             (4, (0, 0, -1), (0, 1, 0), bot_at, "VIEW FROM BELOW", ("-X", "Y"), (-14, -6))):
         box[n] = [1e9, 1e9, -1e9, -1e9]
         titles[n] = (title, at, _ratio(SCALE_TOP if n == 3 else S))
@@ -744,7 +781,7 @@ def build_sheet(name):
         vis, _, _, _ = view(part, (1, -1, 0.75), hidden=False, scale=SCALE_ISO, at=iso_at)
         for pl in vis:
             sh.path(pl, W_THIN)
-        axes_iso(sh, (iso_at[0] + 22, iso_at[1] - 4))
+        axes_iso(sh, (iso_at[0] + 30, iso_at[1] - 16))
 
     # --- V5 section A-A, cut on the XZ plane straight through the cross ----------
     box[5], titles[5] = [1e9, 1e9, -1e9, -1e9], ("SECTION A-A", sec_at, _ratio(SCALE_SEC))
@@ -790,7 +827,7 @@ def build_sheet(name):
         dim(sh, MS(sl), MS(sr), -14, f"{sr[0] - sl[0]:.2f} over the click tabs")
         dim(sh, MS((sr[0], 0.0)), MS(sr), 3,
             f"{sr[1]:.2f} skirt above z = 0", vertical=True)
-        axes_2d(sh, (obox5[2] + 5, (obox5[1] + obox5[3]) / 2 - 6), "X", "Z")
+        axes_2d(sh, (obox5[2] + 4, obox5[3] - 4), "X", "Z")
         sh.text("cut on the cross centre-line, so the slot reads full depth",
                 (sec_at[0], box[5][1] - 4.5), 2.2)
     with sh.group(box[3]):
@@ -830,7 +867,7 @@ def build_sheet(name):
         dim(sh, MB((bs[0], 0.0)), MB(bs), 32,
             f"{bs[1]:.2f} skirt above z = 0", vertical=True)
         w_top, w_bot = sm.CABLE_THICKNESS, sm.CABLE_THICKNESS * 7
-        axes_2d(sh, (obox9[2] + 5, (obox9[1] + obox9[3]) / 2 - 6), "Y", "Z")
+        axes_2d(sh, (obox9[0] - 13, obox9[1] - 9), "Y", "Z")
         leader(sh, f"{sm.ffc_flare_deg():.1f}° flare", MB(snap(vb, (-5.71, 5.22))),
                (secb_at[0] - 17, secb_at[1] - 15), 2.2, True)
         yb = box[6][1] - 4.5
@@ -894,30 +931,48 @@ def build_sheet(name):
     box[8] = [1e9, 1e9, -1e9, -1e9]
     titles[8] = ("DETAIL C    SEAT-FLOOR STAMP", stamp_at, _ratio(D5))
     g8 = sh.group(box[8]); g8.__enter__()
-    seat = sm.stamp_face(sm.cap_body(cfg["u_size"], engrave=False),
-                         sm.STEM_HEIGHT - sm.DISP_HEIGHT)
+    seat = sm.stamp_face(cap_cut, sm.STEM_HEIGHT - sm.DISP_HEIGHT)
     fb = seat.bounding_box()
-    stamp = sm.place_stamp(sm.stamp_sketch(), seat, sm.DISP_Y / 2 - sm.TEXT_SIZE / 2)
+    # ⚠️ The stamp is placed against the UNCUT face, as `_engraving` does -- placing it
+    # against the slotted one would centre it in a face with a hole in it and move it.
+    stamp = sm.place_stamp(sm.stamp_sketch(),
+                           sm.stamp_face(sm.cap_body(cfg["u_size"], engrave=False),
+                                         sm.STEM_HEIGHT - sm.DISP_HEIGHT),
+                           sm.DISP_Y / 2 - sm.TEXT_SIZE / 2)
     sb = stamp.bounding_box()
     sx, sy = (fb.min.X + fb.max.X) / 2, (fb.min.Y + fb.max.Y) / 2
 
     def sv(p):
         return (stamp_at[0] + (p[0] - sx) * D5, stamp_at[1] + (p[1] - sy) * D5)
 
+    # The MX slot breaks through this face too, and it is the only datum on it that a
+    # toolmaker can register the stamp against -- without it the view is a rectangle
+    # with two letters in it and nothing to locate them from.
+    for w in seat.inner_wires():
+        for pl in _flatten(Pos(*stamp_at) * (Pos(-sx, -sy) * w).scale(D5, about=(0, 0, 0))):
+            sh.path(pl, W_THICK)
     for shape, w in ((seat.outer_wire(), W_THIN), (stamp, W_THICK)):
         for pl in _flatten(Pos(*stamp_at) * (Pos(-sx, -sy) * shape).scale(D5, about=(0, 0, 0))):
             sh.path(pl, w)
+    # The stamp's own centre line, and where it sits relative to the stem axis (y = 0),
+    # which is the origin every other view is dimensioned from.
+    scy = (sb.min.Y + sb.max.Y) / 2
+    sh.line(sv((fb.min.X - 0.4, scy)), sv((fb.max.X + 0.4, scy)), W_HAIR,
+            dash="5,1.2,1.2,1.2")
+    sh.line(sv((0, fb.min.Y - 0.4)), sv((0, fb.max.Y + 0.4)), W_HAIR,
+            dash="5,1.2,1.2,1.2")
+    dim(sh, sv((0, 0)), sv((0, scy)), -26, f"{scy:.2f} to the stamp CL",
+        vertical=True)
     dim(sh, sv((fb.min.X, fb.max.Y)), sv((fb.max.X, fb.max.Y)), 8,
         f"{fb.size.X:.2f} seat floor")
     dim(sh, sv((fb.min.X, fb.min.Y)), sv((fb.min.X, fb.max.Y)), -8,
         f"{fb.size.Y:.2f}", vertical=True)
-    dim(sh, sv((sb.min.X, sb.min.Y)), sv((sb.max.X, sb.min.Y)), -7, f"{sb.size.X:.2f}")
+    dim(sh, sv((sb.min.X, sb.min.Y)), sv((sb.max.X, sb.min.Y)), -30, f"{sb.size.X:.2f}")
     dim(sh, sv((sb.max.X, sb.min.Y)), sv((sb.max.X, sb.max.Y)), 8, f"{sb.size.Y:.2f}")
     dim(sh, sv((sb.min.X, sb.max.Y)), sv((sb.min.X, fb.max.Y)), -20,
         f"{fb.max.Y - sb.max.Y:.2f} min to the edge", vertical=True)
     leader(sh, f"{sm.STAMP_GAP:.2f} gap, {sm.TEXT_HEIGHT:.2f} deep",
-           sv((0, (sb.min.Y + sb.max.Y) / 2)),
-           (stamp_at[0] - 24, stamp_at[1] - 26), 2.2, True)
+           sv((0, sb.min.Y + 0.3)), (stamp_at[0] - 24, stamp_at[1] - 8), 2.2, True)
 
     # ⚠️ Snapshot the box first: `sh.text` grows it, so reading box[8][1] again on the
     # second line puts that line 3.4 mm below where the first one just pushed the floor.
@@ -946,9 +1001,10 @@ def build_sheet(name):
     box[9] = [1e9, 1e9, -1e9, -1e9]
     titles[9] = ("DETAIL D    POCKET-CEILING STAMP", stamp2_at, _ratio(D5))
     with sh.group(box[9]):
-        body = sm.cap_body(cfg["u_size"], engrave=False)
-        ceil = sm.stamp_face(body, sm.INSIDE_HEIGHT)
-        under = sm.place_stamp(sm.stamp_sketch(), ceil, -sm.DISP_Y / 3)
+        ceil = sm.stamp_face(cap_cut, sm.INSIDE_HEIGHT)
+        under = sm.place_stamp(sm.stamp_sketch(),
+                               sm.stamp_face(sm.cap_body(cfg["u_size"], engrave=False),
+                                             sm.INSIDE_HEIGHT), -sm.DISP_Y / 3)
         cbb = ceil.bounding_box()
         ccx, ccy = (cbb.min.X + cbb.max.X) / 2, (cbb.min.Y + cbb.max.Y) / 2
 
@@ -956,19 +1012,28 @@ def build_sheet(name):
             return [(stamp2_at[0] + (sx * x - sx * ccx) * D5,
                      stamp2_at[1] + (sy * y - sy * ccy) * D5) for x, y in pl]
 
-        for shape, w, sy in ((ceil.outer_wire(), W_THIN, 1), (under, W_THICK, -1)):
-            for pl in _flatten(shape):
-                sh.path(pv(pl, -1, sy), w)
-        ub = under.bounding_box()
-
         def cv(x, y, sy=1):
             return pv([(x, y)], -1, sy)[0]
 
+        for shape, w, sy in ((ceil.outer_wire(), W_THIN, 1), (under, W_THICK, -1)):
+            for pl in _flatten(shape):
+                sh.path(pv(pl, -1, sy), w)
+        for w in ceil.inner_wires():                 # the MX slot, same reason as V8
+            for pl in _flatten(w):
+                sh.path(pv(pl, -1, 1), W_THICK)
+        ub = under.bounding_box()
+        ucy = (ub.min.Y + ub.max.Y) / 2              # in `under`; the drawn stamp is -y
+        sh.line(cv(cbb.min.X - 0.4, -ucy), cv(cbb.max.X + 0.4, -ucy), W_HAIR,
+                dash="5,1.2,1.2,1.2")
+        sh.line(cv(0, cbb.min.Y - 0.4), cv(0, cbb.max.Y + 0.4), W_HAIR,
+                dash="5,1.2,1.2,1.2")
+        dim(sh, cv(0, 0), cv(0, -ucy), -26, f"{abs(ucy):.2f} to the stamp CL",
+            vertical=True)
         dim(sh, cv(cbb.min.X, cbb.max.Y), cv(cbb.max.X, cbb.max.Y), 13,
             f"{cbb.size.X:.2f} pocket ceiling")
         dim(sh, cv(cbb.max.X, cbb.min.Y), cv(cbb.max.X, cbb.max.Y), -13,
             f"{cbb.size.Y:.2f}", vertical=True)
-        dim(sh, cv(ub.min.X, ub.max.Y, -1), cv(ub.max.X, ub.max.Y, -1), -6,
+        dim(sh, cv(ub.min.X, ub.max.Y, -1), cv(ub.max.X, ub.max.Y, -1), -30,
             f"{ub.size.X:.2f}")
         y10 = box[9][1] - 4.5
         for t in ("looking up -Z, as V4.  Same stamp, same depth,",
@@ -1110,26 +1175,24 @@ def notes_block(sh, c_len, c_wid, mouth, slot_top):
         "not flatten it to simplify the core.",
         f"6.  The three {sm.CLICK_TAB_W:.2f} x {sm.CLICK_TAB_L:.2f} x "
         f"{sm.CLICK_TAB_H:.2f} tabs standing {sm.CLICK_TAB_PROUD:.2f} proud (+Y and ±X, "
-        "V3) are a FUNCTIONAL feature: they are what makes the clear keycap click on "
-        "properly.  They are NOT a 3D-printing artefact and must NOT be removed.",
+        "V3) are FUNCTIONAL: they are what makes the clear keycap click on properly.  "
+        "They must NOT be removed.",
         f"7.  Stamp \"{sm.REVISION} {sm.PROFILE}\" = revision + profile, "
         f"{sm.TEXT_HEIGHT:.2f} deep, zero draft, in TWO places: the display-seat floor "
         "(V8) and the pocket ceiling (V9).  The second is TURNED 180°, not mirrored -- "
         "it reads normally when the part is flipped over front-to-back.  Drawn in V9; do "
-        f"not infer it.  Revision character is {sm.revision_codepoint().upper()} -- the "
-        "moulded part is deliberately β where the 3D-printed prototypes are α, so the two "
-        "are told apart by eye.  Carry it on a REPLACEABLE INSERT in the cavity rather "
-        "than cut into the block: a revision change is then a plug swap, not a tool edit.  "
-        "Font Noto Sans Bold, outlines in the STEP.",
+        f"not infer it.  Revision character is {sm.revision_codepoint().upper()}.  Carry "
+        "it on a REPLACEABLE INSERT in the cavity rather than cut into the block: a "
+        "revision change is then a plug swap, not a tool edit.  Font Noto Sans Bold, "
+        "outlines in the STEP.",
         f"8.  The slot lead-in opens to {mouth.size.X:.2f} x {mouth.size.Y:.2f} at z = 0 "
-        f"over {sm.MX_CROSS_FILLET:.2f} mm (~46°).  Cherry publishes no lead-in dimension, "
-        "so this one is ours; keep it, it is what lets the cap start on the stem.",
+        f"over {sm.MX_CROSS_FILLET:.2f} mm (~46°).  Keep it -- it is what lets the cap "
+        "start on the stem.",
         "9.  GATE AND EJECTORS are the moulder's choice, but they must NOT land on the MX "
         "slot or its lead-in, the display seat floor or cable relief, the three click "
         "tabs, or the moulding face (z = 0).  A side wall (±X) clear of the tabs is the "
-        "obvious place, feeding toward the stem boss -- the thickest section.  The "
-        "3D-printed prototypes were sprued from Ø1.5 runners on that same wall, so it "
-        "already tolerates a witness mark.  Mark the positions chosen on the tooling "
+        "obvious place, feeding toward the stem boss -- the thickest section, and a wall "
+        "that already tolerates a witness mark.  Mark the positions chosen on the tooling "
         "drawing and send it back.",
         "10.  Surface: tool polish on the slot and the stem bore; the outer faces may "
         "carry the standard texture.  No flash permitted on the slot, the tabs or the "

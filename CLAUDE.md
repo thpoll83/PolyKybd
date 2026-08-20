@@ -191,6 +191,12 @@ diffs the result back against the `.scad`. The traps that cost real time:
     nearer the view *below* it than the view it names — which on a first-angle sheet is
     the part's own projection, so the label read as belonging to the wrong view. Titles go
     **above** all views for the same reason. Anything added to a view now moves its title.
+  - ⚠️ **Sheet furniture that lives OUTSIDE the frame needs an exemption, and the
+    cheapest one is to record it separately.** The ISO 5457 zone letters (1–8 / A–F on
+    all four edges) sit in the margin by definition, so `check_inside_frame` failed
+    them all. It now reads the recorded text extents rather than re-parsing the emitted
+    SVG, which makes a `chrome=True` flag exempt from both the frame check and the
+    collision report for free instead of needing a second rule in each.
   - ⚠️ **A cutting-plane mark is a SHORT stroke at each end, not a line across the
     view** (ISO 128-30 shows the plane only at its ends and at changes of direction).
     Drawn full length, the B-B mark ran the height of the plan view and through every
@@ -219,6 +225,14 @@ diffs the result back against the `.scad`. The traps that cost real time:
     sitting on a dimension line or a thin isometric outline still passes — the 1.25U sheet
     (whose leaders reach 4.4 mm further out than 1U's) had exactly that, and only the
     render showed it. **Render both variants, not just the one you were editing.**
+- ⚠️ **A detail view of a face needs the face's own DATUM in it, and `cap_body` has
+  none.** The two stamp details drew a rectangle with two letters in it and nothing to
+  locate them from, because `stamp_face()` takes its face from `cap_body`, which has no
+  MX slot — `mx_stem` cuts the cross *after* tilting and raising the cap. Pull the same
+  cross back through that placement (`Rot(-angle) * Pos(0,0,-extra_len) * cross_cut(…)`)
+  and cut it into the cap body, and the slot appears in the detail. ⚠️ Keep placing the
+  stamp against the UNCUT face, as `_engraving` does — centring it in a face with a hole
+  in it moves it.
 - ⚠️ **A snap helper earns its keep by REFUSING.** The stem sheet's `snap` rejected a
   dimension anchor — *"no section vertex within 0.6 of (-5.65, 4.52)"*, and only on the
   wider variant — and the vertex pair confidently labelled "the flange" turned out to be

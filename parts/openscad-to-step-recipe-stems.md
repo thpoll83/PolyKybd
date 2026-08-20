@@ -260,6 +260,25 @@ Seven more items, of which three were substantive:
 - Axis triads are placed from each view's OUTLINE box, not a fixed offset, so a wider
   variant cannot push a dimension under one.
 
+### The fifth review round (2026-08-20)
+
+- **ISO 5457 grid reference** on all four edges — 1–8 across, A–F down, ~50 mm fields
+  for A3 — so a feature can be called out as "the boss, D3" without anyone counting
+  views. ⚠️ Those letters live OUTSIDE the drawing frame by definition, so
+  `check_inside_frame` now reads the recorded text extents rather than re-parsing the
+  SVG; a `chrome=True` flag is then exempt from both that check and the collision report
+  for free.
+- ⚠️ **A detail view of a face needs that face's own datum in it.** V8/V9 were a
+  rectangle with two letters and nothing to locate them from, because `stamp_face()`
+  takes its face from `cap_body` — which has no MX slot, since `mx_stem` cuts the cross
+  after tilting and raising the cap. Pulling the cross back through that placement and
+  cutting it into the cap body puts the slot in the detail. Both details also gained the
+  stamp's own centre line and its offset from the stem axis.
+- The notes lost the 3D-printing comparisons and the Cherry reference: reasoning for us,
+  noise on a moulder's sheet.
+- Views shifted down into the space the notes vacated; axis triads moved off the
+  dimensions they had drifted onto.
+
 ### The fourth review round (2026-08-20)
 
 Four items, all layout, and two general lessons fell out of them:

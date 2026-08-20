@@ -29,7 +29,7 @@ make selftest        # prove those checks can fail (see below)
 | `hull3d.py` | OpenSCAD `hull()` as an exact polyhedral convex hull |
 | `font.py` | pins the engraving to one font FILE (`make font`) — see the font traps below |
 | `build.py` | exports `stem_S_1U.step` / `stem_S_1U25.step` (+ an STL the checks use) |
-| `drawing.py` | the A3 sheet: V1-V4 ortho (V3 at 3:1), V5/V6 sections at 3:1, V7 cross 10:1, V8/V9 stamps, V10 isometric, notes |
+| `drawing.py` | the A3 sheet: ISO 5457 zone frame, V1-V4 ortho (V3 at 3:1), V5/V6 sections at 3:1, V7 cross 10:1, V8/V9 stamps, V10 isometric, notes |
 | `validate_step.py` | the case's acceptance test, reused (real solid, curved faces, tight tolerance) |
 | `verify.py` | measures the cross, diffs volume/bbox and booleans against OpenSCAD |
 
@@ -181,6 +181,16 @@ volume delta +0.657 % (still inside the 1 % gate: True -- so volume ALONE would 
   section face's plane makes OCCT's edge-face common return nothing at all — silently, so
   an empty hatch reads as "no solid here" rather than as an error. Below ~0.05 mm the
   rectangle disappears into the boolean tolerance too.
+- ⚠️ **The stamp details needed the MX slot in them, and `cap_body` has none.**
+  `stamp_face()` takes its face from the untilted cap body, but `mx_stem` cuts the cross
+  *after* tilting and raising the cap — so the detail was a rectangle with two letters
+  in it and no datum to locate them from. Pull the cross back through that placement
+  (`Rot(-angle) * Pos(0, 0, -extra_len) * cross_cut(...)`) and cut it into the cap body.
+  ⚠️ Keep placing the STAMP against the uncut face, as `_engraving` does: centring it in
+  a face that now has a hole in it moves it.
+- ⚠️ **Zone letters live outside the frame, so `check_inside_frame` has to know.** It
+  reads the recorded text extents now instead of re-parsing the emitted SVG, which makes
+  `chrome=True` exempt from both that check and the collision report for free.
 - ⚠️ **`snap` earns its keep by REFUSING.** It rejected the first attempt at V5's extra
   dimensions -- *"no section vertex within 0.6 of (-5.65, 4.52)"* on the 1.25U variant --
   and the pair I had confidently called "the flange" turned out to be the inside of the
