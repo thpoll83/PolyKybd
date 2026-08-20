@@ -191,6 +191,18 @@ diffs the result back against the `.scad`. The traps that cost real time:
     nearer the view *below* it than the view it names — which on a first-angle sheet is
     the part's own projection, so the label read as belonging to the wrong view. Titles go
     **above** all views for the same reason. Anything added to a view now moves its title.
+  - ⚠️ **A cutting-plane mark is a SHORT stroke at each end, not a line across the
+    view** (ISO 128-30 shows the plane only at its ends and at changes of direction).
+    Drawn full length, the B-B mark ran the height of the plan view and through every
+    horizontal dimension on it; the thin long-dash-short-dash centre line is what joins
+    the two ends.
+  - ⚠️ **Anything drawn outside a view's `group()` is invisible to its title.** The
+    cutting-plane marks were, so the title was placed as though they were not there and
+    landed exactly on the "B" tag — a collision the report found and the code reading
+    would not.
+  - ⚠️ **A box moves as you draw into it**, so a multi-line caption must snapshot
+    `box[..][1]` before the loop; reading it again on line 2 puts that line below the
+    floor line 1 just pushed down.
   - **`Sheet.report_collisions()`** lists every label overlapping another label or a
     visible outline, and **`check_inside_frame()`** raises on anything off the border. Run
     them on every build; six overlaps and three overflows were live when they were added.
@@ -207,6 +219,18 @@ diffs the result back against the `.scad`. The traps that cost real time:
     sitting on a dimension line or a thin isometric outline still passes — the 1.25U sheet
     (whose leaders reach 4.4 mm further out than 1U's) had exactly that, and only the
     render showed it. **Render both variants, not just the one you were editing.**
+- ⚠️ **Anchor every section dimension on a REAL VERTEX of the cut, and make the helper
+  raise when it cannot.** Dimensions computed from model constants are what "floating in
+  the air" looks like: the display seat is 1.10 below a top face tilted −7°, so the
+  height the arithmetic names is not a height anything on that cut actually has. `snap()`
+  takes the nearest section vertex and raises past a tolerance — a silent snap to the
+  wrong corner is a wrong number on a fabrication drawing, which is worse than a build
+  that stops.
+- ⚠️ **A dimension line is not automatically better than a leader — on a section it is
+  frequently worse.** A feature in the middle of a cut (the stem boss behind the outer
+  skirt) can only be dimensioned by dragging extension lines across hatched material to
+  reach the outside. A leader touches the vertex the number comes from and crosses
+  nothing.
 - ⚠️ **Get a cutting-plane arrow's direction from the section PLANE, not by eye.**
   build123d's `Plane.XZ` carries its normal on **-Y** and `Plane.YZ` on **+X**, so two
   sections of the same part are viewed from opposite senses and their arrows point
@@ -344,6 +368,28 @@ constant in that file that is *not* a mirror of `keycap_stem.scad`). A change to
 `make -C parts/keycap_stem/step`; `make verify` there is what tells you the two
 still agree.
 
+- **The MX slot is deliberately TIGHTER than Cherry's published keycap slot — this
+  table is the reasoning, and it lives here rather than on the drawing.** It was a
+  block on the sheet for two revisions; it is background for us, not an instruction to
+  a moulder, so the drawing now carries only the conclusion (note 1: gauge against a
+  real switch stem, and the relief bulges are what make the fit work).
+
+  | | this part | Cherry keycap spec | real switch stem |
+  |---|---|---|---|
+  | slot across | 4.05 (bulges 4.11) | 4.10 +0.05 | — |
+  | arm width | 1.10 (bulges 1.21) | 1.17 ±0.02 | N/S 1.05–1.10, E/W 1.25–1.30 |
+  | corner fillet | R0.30 | not published | — |
+  | lead-in | 4.61 sq × 0.30 | not published | — |
+
+  Cherry's keycap slot spec via deskthority / telcontar.net. The switch stem's own cross
+  is **asymmetric** and Cherry's uniform 1.17 slot already interferes ~0.07 on two sides;
+  ours is tighter still, so the fit rests on the four relief bulges. Verify on a moulded
+  first article, not by CMM.
+- **Provenance, also deliberately off the sheet:** the moulded geometry is re-authored
+  from `keycap_stem.scad` in build123d, and `verify.py` is what keeps the two agreeing.
+  The STEP is the shape reference and the drawing governs tolerance, material and
+  finish — that division is worth stating to a fabricator, and *is* on the sheet; where
+  the shape came from is ours.
 - ⚠️ **The three 0.4 × 3.0 × 0.3 tabs are a FUNCTIONAL click feature, not a print
   aid** — they stand 0.2 mm proud and are what makes the transparent relegendable
   cap click on. An earlier reading of `keycap_stem.scad` had them down as a

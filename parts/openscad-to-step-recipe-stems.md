@@ -260,6 +260,32 @@ Seven more items, of which three were substantive:
 - Axis triads are placed from each view's OUTLINE box, not a fixed offset, so a wider
   variant cannot push a dimension under one.
 
+### The third review round (2026-08-20)
+
+Eleven items.  The ones with a general lesson in them:
+
+- ⚠️ **Anchor every section dimension on a REAL VERTEX of the cut.** "Dimensions float in
+  the air" was exactly right: they had been computed from model constants, and on a
+  section that does not work — the display seat is 1.10 below a top face tilted −7°, so
+  the height the arithmetic names is not a height anything on that cut has. `section()`
+  now returns its vertices and `snap()` raises rather than taking the wrong corner.
+- ⚠️ **On a section, a leader often beats a dimension line.** A feature in the middle of
+  the cut (the stem boss, behind the outer skirt) can only be dimensioned by dragging
+  extension lines across hatched material to reach the outside.
+- ⚠️ **A cutting-plane mark is a SHORT stroke at each end** (ISO 128-30), not a line
+  across the view — drawn full length it ran the height of the plan view and through
+  every horizontal dimension on it.
+- ⚠️ **Overlaying a second shape on a laid-out view means undoing TWO re-centrings**
+  (`Drawing`'s own centre of mass, then the view's bounding-box shift), and correcting
+  only one is worse than correcting neither: the faint stamp landed plausibly in the
+  middle of the view rather than visibly nowhere.
+- **What the drawing is FOR decides what goes on it.** The axis convention (drawn on
+  every view anyway), the `.scad` provenance, and the whole Cherry fit table came off the
+  sheet and into CLAUDE.md. They are reasoning for us, not instructions to a moulder.
+  Notes went to three wrapped columns; V3 to 3:1 because it carries the most detail.
+- View numbers were reassigned so the sections read together: V5/V6 sections, V7–V9
+  details, V10 isometric.
+
 - ⚠️ **A dimension anchored through `Drawing` lands in mid-air** unless you keep the projection's
   own mapper: `Drawing` projects about the shape's centre of **mass**, and the view is then
   re-centred on its bounding box, so a hand-computed sheet point is off by the difference (7.9 mm

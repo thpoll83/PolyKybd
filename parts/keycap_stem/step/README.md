@@ -29,7 +29,7 @@ make selftest        # prove those checks can fail (see below)
 | `hull3d.py` | OpenSCAD `hull()` as an exact polyhedral convex hull |
 | `font.py` | pins the engraving to one font FILE (`make font`) — see the font traps below |
 | `build.py` | exports `stem_S_1U.step` / `stem_S_1U25.step` (+ an STL the checks use) |
-| `drawing.py` | the A3 sheet: V1-V4 ortho, V5/V9 sections, V6 isometric, V7 cross 10:1, V8/V10 stamps, notes, fit table |
+| `drawing.py` | the A3 sheet: V1-V4 ortho (V3 at 3:1), V5/V6 sections, V7 cross 10:1, V8/V9 stamps, V10 isometric, notes |
 | `validate_step.py` | the case's acceptance test, reused (real solid, curved faces, tight tolerance) |
 | `verify.py` | measures the cross, diffs volume/bbox and booleans against OpenSCAD |
 
@@ -181,6 +181,21 @@ volume delta +0.657 % (still inside the 1 % gate: True -- so volume ALONE would 
   section face's plane makes OCCT's edge-face common return nothing at all — silently, so
   an empty hatch reads as "no solid here" rather than as an error. Below ~0.05 mm the
   rectangle disappears into the boolean tolerance too.
+- ⚠️ **Anchor every section dimension on a REAL VERTEX of the cut.** `section()` returns
+  the vertices and `snap()` picks the nearest, raising past a tolerance rather than
+  quietly taking the wrong corner. Dimensions computed from model constants are exactly
+  what "floating in the air" looks like on a section: the display seat is 1.10 below a
+  top face tilted −7°, so the height the arithmetic names is not a height anything on
+  that cut has.
+- ⚠️ **On a section, a leader often beats a dimension line.** A feature in the middle of
+  the cut (the stem boss, behind the outer skirt) can only be dimensioned by dragging
+  extension lines across hatched material. A leader touches the vertex the number came
+  from and crosses nothing.
+- ⚠️ **Overlaying a second shape on a laid-out view means undoing TWO re-centrings, and
+  getting one of them is worse than getting neither.** `Drawing` projects about the
+  shape's own centre of mass, *and* `view()` then shifts by the projection's bounding-box
+  centre. Correcting only the second put the faint stamp overlay plausibly in the middle
+  of V3/V4 instead of visibly nowhere, which is far harder to notice.
 - ⚠️ **A dimension anchored by hand lands in mid-air.** `Drawing` projects about the
   shape's centre of **mass**, then `view()` re-centres the result on its bounding box — so
   a sheet point computed from the model's own coordinates is off by the difference between
