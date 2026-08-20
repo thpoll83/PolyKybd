@@ -29,7 +29,7 @@ make selftest        # prove those checks can fail (see below)
 | `hull3d.py` | OpenSCAD `hull()` as an exact polyhedral convex hull |
 | `font.py` | pins the engraving to one font FILE (`make font`) — see the font traps below |
 | `build.py` | exports `stem_S_1U.step` / `stem_S_1U25.step` (+ an STL the checks use) |
-| `drawing.py` | the A3 sheet: V1-V4 ortho, V5 section, V6 isometric, V7 cross 10:1, V8 stamp 5:1, notes, fit table |
+| `drawing.py` | the A3 sheet: V1-V4 ortho, V5/V9 sections, V6 isometric, V7 cross 10:1, V8/V10 stamps, notes, fit table |
 | `validate_step.py` | the case's acceptance test, reused (real solid, curved faces, tight tolerance) |
 | `verify.py` | measures the cross, diffs volume/bbox and booleans against OpenSCAD |
 
@@ -76,6 +76,13 @@ its clearance to the seat edge is measured on **both** faces (0.80 mm all round 
   process, different tolerances, different tooling, so the two are told apart by eye.
   `stem_model.REVISION` is therefore **the one constant here that is deliberately NOT a
   mirror of the `.scad`**; everything else keeps its `.scad` name *and* value.
+- ⚠️ **The pocket-ceiling stamp is TURNED 180°, not mirrored** -- and the sheet said
+  "mirrored ... reads correctly from below" until V10 was drawn and the picture
+  disagreed with the caption. The `.scad` applies `rotate([180, 0, 0])`, a flip about
+  X, so the stamp reads normally when the part is turned over front-to-back (how you
+  actually turn one over) and appears upside down in a projected view-from-below. An
+  `S` is 180°-symmetric, so only the `β` shows it at all. **Draw the thing a reader
+  could get backwards; do not describe it.**
 - ⚠️ **That change also fixed a legibility bug worth knowing about: Noto Sans draws
   U+03B1 single-storey and TAILLESS, so `α` reads as a Latin `a` at stamp size.** DejaVu's
   alpha has the usual right-hand tail; Noto's does not, and the printed plates have carried
@@ -190,6 +197,12 @@ volume delta +0.657 % (still inside the 1 % gate: True -- so volume ALONE would 
   lying on a dimension line or a thin isometric outline still passes — **render both
   variants**: the 1.25U leaders reach 4.4 mm further out and one collision existed only
   there.
+- ⚠️ **A STEP re-export rewrites the file even when the solid is identical** -- the
+  header carries a timestamp, so `make step` always shows both files as modified. Before
+  committing one, check whether anything below the header actually moved:
+  `diff <(git show HEAD:<path> | tail -n +12) <(tail -n +12 <path>)`. If it is empty,
+  `git checkout` the file rather than committing 1.3 MB of timestamp. Same reasoning as
+  the STL facet-order note in the repo CLAUDE.md.
 - ⚠️ **`BRepBndLib.Add_s` on an un-meshed shape boxes the underlying SURFACES**, not the
   trimmed faces, so a cut whose prism runs past the solid inflates the answer: it reported
   z_max 11.30 for a part that tops out at 7.91. `validate_step.py` (shared with the case)

@@ -231,6 +231,35 @@ in the code. What the review changed, and the two guards that now stop it recurr
   overlaps, and `check_inside_frame()` raises on anything past the border. Between them they found
   six collisions and three overflows that had shipped in the first sheet. ⚠️ **Render both variants**:
   the 1.25U leaders reach 4.4 mm further out, and one collision existed only there.
+### The second review round (2026-08-20)
+
+Seven more items, of which three were substantive:
+
+- **Sections both ways.** A-A along X shows the slot; nothing in it said how the flex cable
+  gets out, so **V9 section B-B** cuts the perpendicular plane and carries the cable route
+  (2.12 relief, 1.10 deep, the FFC exit's 14.9° flare), with the 9.00 relief width on V3.
+  ⚠️ Get the cutting-plane arrows from the section PLANE, not by eye: build123d's `Plane.XZ`
+  has its normal on -Y and `Plane.YZ` on +X, so the two sections are viewed from opposite
+  senses and their arrows point opposite ways on the same plan view.
+- ⚠️ **The pocket stamp is TURNED 180°, not mirrored — and the sheet said "mirrored" until
+  V10 was drawn.** The `.scad`'s `rotate([180, 0, 0])` is a flip about X: the stamp reads
+  normally when the part is turned over front-to-back, and appears upside down in a
+  projected view-from-below. The prose had been carried forward unchecked through three
+  revisions because an `S` is 180°-symmetric and only the `β` shows the difference. **Draw
+  anything a reader could get backwards.**
+- ⚠️ **"5.05 slot depth" in A-A was wrong twice**: the number is the height of the stem
+  BOSS, and the slot is not bounded by it at all — the cross is cut clean through into the
+  cap floor. The real bound (z = 5.83) has no closed form, because the cap floor is tilted;
+  `slot_top_z()` bisects for it. A dimension whose label was written from the variable name
+  rather than from the geometry.
+- Line weights dropped a full ISO 128 group (0.5/0.25 → 0.35/0.18): the heavier group is
+  correct for a sparse sheet and reads as ink on a dense one.
+- Notes that repeat a title-block cell were deleted, the rest are **wrapped in code** and
+  flowed into two balanced columns — hand-wrapped lines silently overrun the moment an
+  interpolated value gains a digit, which is how the block reached 2 mm off the frame.
+- Axis triads are placed from each view's OUTLINE box, not a fixed offset, so a wider
+  variant cannot push a dimension under one.
+
 - ⚠️ **A dimension anchored through `Drawing` lands in mid-air** unless you keep the projection's
   own mapper: `Drawing` projects about the shape's centre of **mass**, and the view is then
   re-centred on its bounding box, so a hand-computed sheet point is off by the difference (7.9 mm

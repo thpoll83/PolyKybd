@@ -13,6 +13,7 @@ loose stitching -- and the feature that decides whether the keyboard works is a
 Frame: origin at the bottom of the MX stem, stem axis +Z, so the part sits on the
 plane it is moulded against.  Same frame as the SCAD module.
 """
+import math
 import numpy as np
 from build123d import (Axis, BuildSketch, Circle, Cylinder, Cone, Face, Plane, Polyline,
                        Pos, Rectangle, Rot, Text, Wire, Align, FontStyle, extrude,
@@ -461,6 +462,17 @@ def build(name, **overrides):
 # --------------------------------------------------------------------------------
 # Draft angles -- computed, because the numbers get guessed wrong by hand
 # --------------------------------------------------------------------------------
+def ffc_flare_deg():
+    """Half-angle of the FFC exit's flare, per side.
+
+    The exit is a `taper_box` 7 x CABLE_THICKNESS wide at the moulding face scaling to
+    1/7 of that at the top of the boss, so it opens downward -- that is the chamfer the
+    flex cable runs out through, and it has no number anywhere in the .scad.
+    """
+    wide, narrow = CABLE_THICKNESS * 7, CABLE_THICKNESS
+    return math.degrees(math.atan((wide - narrow) / 2 / STEM_HEIGHT))
+
+
 def draft_angles():
     """Per-feature draft, as (feature, half-width mm, taper scale, depth mm, degrees).
 

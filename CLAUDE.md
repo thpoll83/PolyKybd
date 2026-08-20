@@ -194,10 +194,44 @@ diffs the result back against the `.scad`. The traps that cost real time:
   - **`Sheet.report_collisions()`** lists every label overlapping another label or a
     visible outline, and **`check_inside_frame()`** raises on anything off the border. Run
     them on every build; six overlaps and three overflows were live when they were added.
+  - **Wrap the notes in CODE, and flow them into two columns.** Every note interpolates a
+    measured value, so a hand-wrapped line overruns silently the moment a number gains a
+    digit — the block had reached 2 mm off the frame. ⚠️ Two traps in the wrapper itself:
+    the wrap width must allow for the hanging indent or a continuation line runs into the
+    next column, and `text.split(" ")` eats the second space of a sentence gap, quietly
+    reflowing the whole sheet's spacing.
+  - **Line weight is an ISO 128 GROUP (0.35/0.18 or 0.5/0.25, thick : thin = 2 : 1), not a
+    free choice per line.** 0.5/0.25 is right for a sparse sheet and reads as ink on a
+    dense one; pick the group for the sheet and do not mix.
     ⚠️ The collision report only tracks **thick** (visible-outline) paths, so a label
     sitting on a dimension line or a thin isometric outline still passes — the 1.25U sheet
     (whose leaders reach 4.4 mm further out than 1U's) had exactly that, and only the
     render showed it. **Render both variants, not just the one you were editing.**
+- ⚠️ **Get a cutting-plane arrow's direction from the section PLANE, not by eye.**
+  build123d's `Plane.XZ` carries its normal on **-Y** and `Plane.YZ` on **+X**, so two
+  sections of the same part are viewed from opposite senses and their arrows point
+  opposite ways on the same plan view. Reason it out of the plane's `z_dir`; a guess is
+  right half the time and a reversed arrow tells a fabricator to keep the wrong half.
+- ⚠️ **A dimension's LABEL will outlive the geometry it was written from — check it
+  against the model, not against the variable name.** The stem sheet carried "5.05 slot
+  depth" through three revisions; the number is the height of the stem *boss*, and the
+  slot is not bounded by it at all (the cross is cut clean through into the cap floor).
+  The real bound has no closed form — the cap floor is tilted — so it is now bisected
+  for. Same shape as the ink-measurement rule above: the source said `h_cyl` and the
+  label said what someone assumed `h_cyl` meant.
+- ⚠️ **Draw anything a reader could get backwards; do not describe it.** The stem sheet
+  said the second stamp was "mirrored … reads correctly from below" for three revisions.
+  It is `rotate([180, 0, 0])` — TURNED, not mirrored: it reads normally when the part is
+  flipped front-to-back, and appears upside down in a projected view-from-below. Nobody
+  caught it because an `S` is 180°-symmetric and only the `β` shows the difference. It
+  was caught the moment the view was actually drawn and the picture disagreed with the
+  caption.
+- ⚠️ **A STEP re-export rewrites the file even when the solid is byte-identical** (the
+  header carries a timestamp), so `make` always leaves both files "modified". Check
+  below the header before committing —
+  `diff <(git show HEAD:<path> | tail -n +12) <(tail -n +12 <path>)` — and `git checkout`
+  when it is empty, or you commit 1.3 MB of clock. Same rule as the STL facet-order note
+  above, different mechanism.
 - ⚠️ **Hatch a section with thin RECTANGLES, not lines.** A line lying exactly in the
   section face's plane makes OCCT's edge-face common return **nothing at all**, silently —
   so an empty hatch reads as "no solid here" rather than as an error. Below ~0.05 mm the
