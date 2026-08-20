@@ -34,9 +34,10 @@ import stem_model as sm
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "..", "export", "keycap_stem")
 
-SCALE_MAIN, SCALE_DETAIL, SCALE_ISO = 2.0, 10.0, 1.6
+SCALE_MAIN, SCALE_DETAIL, SCALE_ISO = 2.0, 10.0, 2.4
 SCALE_TOP = 3.0      # V3 alone: it carries the seat, the tabs, the cable
                      # relief, both cutting planes and the stamp
+SCALE_SEC = 3.0      # V5 / V6 -- the sections carry the height dimensions
 SCALE_STAMP = 3.0    # V8 / V9
 DRAWING_REV = "A"          # revision of THIS SHEET; the part's stamp is
                            # stem_model.REVISION, and they are not the same thing
@@ -57,7 +58,7 @@ LOGO = os.path.join(HERE, "..", "..", "..", "poly_kybd", "logo.svg")
 FONT = "DejaVu Sans, Arial, Helvetica, sans-serif"
 CHAR_W = 0.58                        # advance / em, ample for placement decisions
 NOTE_COLS = 3
-NOTE_Y0 = -50.0                      # V3 at 3:1 reaches down to about -43
+NOTE_Y0 = -72.0                      # clear of V3, which at 3:1 reaches -52
 NOTE_COL_W = 80.0                    # notes run in three columns this far apart
 NOTE_INDENT = "     "                # continuation lines hang under the note number
 # ⚠️ The wrap width has to leave room for that indent as well, or a continuation line
@@ -647,6 +648,16 @@ def slot_top_z(part, lo=5.0, hi=6.5, steps=9):
     return lo
 
 
+def _ratio(scale):
+    """"3:1" for 3.0, "1.6:1" for 1.6.
+
+    Derived, not typed: the scale caption used to be a literal beside each view, and
+    when SCALE_ISO went 1.6 -> 2.4 the isometric went on claiming 1.6:1.  A scale a
+    reader might measure against must come from the number that drew the view.
+    """
+    return f"{scale:g}:1"
+
+
 def build_sheet(name):
     cfg = sm.VARIANTS[name]
     part = sm.build(name)
@@ -672,8 +683,8 @@ def build_sheet(name):
     # The isometric goes in the gap the orthographic block leaves under the section,
     # not above it: at 1.25U the view-from-below leaders reach 4.4 mm further right
     # and ran straight over it there.
-    sec_at, secb_at, iso_at = (-38.0, 62.0), (-38.0, 6.0), (40.0, 8.0)
-    det_at, stamp_at, stamp2_at = (54.0, 78.0), (160.0, 96.0), (160.0, 6.0)
+    sec_at, secb_at, iso_at = (-40.0, 80.0), (-32.0, 18.0), (66.0, -22.0)
+    det_at, stamp_at, stamp2_at = (66.0, 76.0), (160.0, 96.0), (160.0, 8.0)
 
     def titled(n, text, at, dy, scale="2:1"):
         sh.text(f"{n}   {text}", (at[0], at[1] + dy), 3.2, bold=True)
@@ -697,10 +708,10 @@ def build_sheet(name):
     for n, look, up, at, title, ax, corner in (
             (1, (1, 0, 0), (0, 0, 1), right_at, "VIEW FROM RIGHT", ("-Y", "Z"), (2, -22)),
             (2, (0, -1, 0), (0, 0, 1), front_at, "VIEW FROM FRONT", ("X", "Z"), (-14, -6)),
-            (3, (0, 0, 1), (0, 1, 0), top_at, "VIEW FROM ABOVE", ("X", "Y"), (6, 8)),
+            (3, (0, 0, 1), (0, 1, 0), top_at, "VIEW FROM ABOVE", ("X", "Y"), (6, -14)),
             (4, (0, 0, -1), (0, 1, 0), bot_at, "VIEW FROM BELOW", ("-X", "Y"), (-14, -6))):
         box[n] = [1e9, 1e9, -1e9, -1e9]
-        titles[n] = (title, at, "3:1" if n == 3 else "2:1")
+        titles[n] = (title, at, _ratio(SCALE_TOP if n == 3 else S))
         with sh.group(box[n]):
             obox = [1e9, 1e9, -1e9, -1e9]
             with sh.group(obox):
@@ -728,7 +739,7 @@ def build_sheet(name):
             axes_2d(sh, (obox[2] + ox if ox > 0 else obox[0] + ox,
                          (obox[1] + obox[3]) / 2 + oy), *ax)
 
-    box[10], titles[10] = [1e9, 1e9, -1e9, -1e9], ("ISOMETRIC", iso_at, "1.6:1")
+    box[10], titles[10] = [1e9, 1e9, -1e9, -1e9], ("ISOMETRIC", iso_at, _ratio(SCALE_ISO))
     with sh.group(box[10]):
         vis, _, _, _ = view(part, (1, -1, 0.75), hidden=False, scale=SCALE_ISO, at=iso_at)
         for pl in vis:
@@ -736,11 +747,11 @@ def build_sheet(name):
         axes_iso(sh, (iso_at[0] + 22, iso_at[1] - 4))
 
     # --- V5 section A-A, cut on the XZ plane straight through the cross ----------
-    box[5], titles[5] = [1e9, 1e9, -1e9, -1e9], ("SECTION A-A", sec_at, "2:1")
+    box[5], titles[5] = [1e9, 1e9, -1e9, -1e9], ("SECTION A-A", sec_at, _ratio(SCALE_SEC))
     with sh.group(box[5]):
         obox5 = [1e9, 1e9, -1e9, -1e9]
         with sh.group(obox5):
-            out_p, hats, MS, va = section(part, Plane.XZ, S, sec_at)
+            out_p, hats, MS, va = section(part, Plane.XZ, SCALE_SEC, sec_at)
             for pl in hats:
                 sh.path(pl, W_HAIR)
             for pl in out_p:
@@ -758,12 +769,27 @@ def build_sheet(name):
         # number comes from and cross nothing.  A dimension line is not automatically
         # better than a leader -- on a section it is frequently worse.
         bot, top = snap(va, (2.32, 0.0)), snap(va, (2.02, 6.09))
-        leader(sh, f"slot {top[1] - bot[1]:.2f} deep from the moulding face",
-               MS(top), (sec_at[0] - 16, sec_at[1] + 15), 2.2, True)
+        leader(sh, f"slot {top[1] - bot[1]:.2f} deep from z = 0",
+               MS(top), (sec_at[0] - 20, sec_at[1] + 19), 2.2, True)
         b0, b1 = snap(va, (2.75, 0.0)), snap(va, (2.75, 4.0))
         leader(sh, f"Ø{sm.MX_CYLINDER:.2f} boss, {b1[1] - b0[1]:.2f} straight",
                MS(((b0[0] + b1[0]) / 2, (b0[1] + b1[1]) / 2)),
-               (sec_at[0] - 16, sec_at[1] - 14), 2.2, True)
+               (sec_at[0] - 26, sec_at[1] - 20), 2.2, True)
+        # The height dimensions live here rather than on V2: the front view sees the boss
+        # and the skirt only as hidden lines, and this is the cut that makes them
+        # outlines.  Both ends of each are section vertices, or the z = 0 moulding face
+        # -- which is the section's own bottom edge and the sheet's stated datum.
+        #
+        # ⚠️ These are named by what they MEASURE, not by which feature I think they
+        # are.  `snap` refused the first attempt at this block ("no section vertex within
+        # 0.6 of ..."), which is how the pair I had called the flange turned out to be
+        # the inside of the pocket -- and to move with u_size, so the label would have
+        # been wrong on one variant and the anchor wrong on the other.
+        tab = sm.CLICK_TAB_PROUD
+        sl, sr = snap(va, (-hx - tab, 1.5)), snap(va, (hx + tab, 1.5))
+        dim(sh, MS(sl), MS(sr), -14, f"{sr[0] - sl[0]:.2f} over the click tabs")
+        dim(sh, MS((sr[0], 0.0)), MS(sr), 3,
+            f"{sr[1]:.2f} skirt above z = 0", vertical=True)
         axes_2d(sh, (obox5[2] + 5, (obox5[1] + obox5[3]) / 2 - 6), "X", "Z")
         sh.text("cut on the cross centre-line, so the slot reads full depth",
                 (sec_at[0], box[5][1] - 4.5), 2.2)
@@ -775,11 +801,11 @@ def build_sheet(name):
     # gets out.  B-B is the plane at right angles to it, so it carries the whole cable
     # route: the seat, its 2.12 forward relief, and the flared FFC exit below.
     box[6] = [1e9, 1e9, -1e9, -1e9]
-    titles[6] = ("SECTION B-B", secb_at, "2:1")
+    titles[6] = ("SECTION B-B", secb_at, _ratio(SCALE_SEC))
     with sh.group(box[6]):
         obox9 = [1e9, 1e9, -1e9, -1e9]
         with sh.group(obox9):
-            out_b, hats_b, MB, vb = section(part, Plane.YZ, S, secb_at)
+            out_b, hats_b, MB, vb = section(part, Plane.YZ, SCALE_SEC, secb_at)
             for pl in hats_b:
                 sh.path(pl, W_HAIR)
             for pl in out_b:
@@ -788,21 +814,36 @@ def build_sheet(name):
         # the arithmetic was demonstrably wrong: the seat floor is 1.10 below a top face
         # tilted -7°, so "z_seat" is not a height anything on this cut actually has.
         c0, c1 = snap(vb, (-3.57, 4.96)), snap(vb, (-5.71, 5.22))
-        dim(sh, MB(c1), MB(c0), 13, f"{c0[0] - c1[0]:.2f} cable relief")
+        dim(sh, MB(c1), MB(c0), 14, f"{c0[0] - c1[0]:.2f} cable relief")
+        # ⚠️ The POCKET CEILING IS NOT PARALLEL to the moulding face.  The cap is tilted
+        # -7°, so the ceiling sits 0.79 higher at the front than at the back, and this is
+        # the only view that shows it.  Both ends are section vertices, and the two cuts
+        # agree: the plane through them meets x = 0 at 4.52, which is what A-A measures
+        # there.  It decides which end of the core is thinnest, so it is dimensioned
+        # rather than left to be worked out from "cap tilt 7°" on V1.
+        sf = snap(vb, (2.89, 4.17))
+        dim(sh, MB((c0[0], 0.0)), MB(c0), -16,
+            f"{c0[1]:.2f} ceiling, front", vertical=True)
+        dim(sh, MB((sf[0], 0.0)), MB(sf), 18,
+            f"{sf[1]:.2f} ceiling, back", vertical=True)
+        bs = snap(vb, (7.88, 0.53))
+        dim(sh, MB((bs[0], 0.0)), MB(bs), 32,
+            f"{bs[1]:.2f} skirt above z = 0", vertical=True)
         w_top, w_bot = sm.CABLE_THICKNESS, sm.CABLE_THICKNESS * 7
         axes_2d(sh, (obox9[2] + 5, (obox9[1] + obox9[3]) / 2 - 6), "Y", "Z")
         leader(sh, f"{sm.ffc_flare_deg():.1f}° flare", MB(snap(vb, (-5.71, 5.22))),
-               (secb_at[0] - 17, secb_at[1] - 4), 2.2, True)
+               (secb_at[0] - 17, secb_at[1] - 15), 2.2, True)
         yb = box[6][1] - 4.5
-        for t in ("cut on the cable centre-line -- the FFC exit is",
-                  f"{w_top:.2f} wide at the seat floor and {w_bot:.2f} at z = 0"):
+        for t in ("cut on the cable centre-line.  The FFC exit is",
+                  f"{w_top:.2f} wide at the seat floor and {w_bot:.2f} at z = 0;",
+                  "the pocket ceiling is tilted 7° with the cap."):
             sh.text(t, (secb_at[0], yb), 2.2)
             yb -= 3.4
     with sh.group(box[3]):
         cutting_plane(sh, top_at, "B", (-1, 0), hy * SCALE_TOP + 17, 26)
 
     # --- V7 detail B: the cross opening, 10:1 -----------------------------------
-    box[7], titles[7] = [1e9, 1e9, -1e9, -1e9], ("DETAIL B    MX CROSS", det_at, "10:1")
+    box[7], titles[7] = [1e9, 1e9, -1e9, -1e9], ("DETAIL B    MX CROSS", det_at, _ratio(D))
     g7 = sh.group(box[7]); g7.__enter__()
     z_det = sm.MX_CROSS_FILLET
     cross_sec = part & Plane.XY.offset(z_det)
@@ -851,7 +892,7 @@ def build_sheet(name):
 
     # --- V8 detail C: the stamp, as a proposal ----------------------------------
     box[8] = [1e9, 1e9, -1e9, -1e9]
-    titles[8] = ("DETAIL C    SEAT-FLOOR STAMP", stamp_at, "3:1")
+    titles[8] = ("DETAIL C    SEAT-FLOOR STAMP", stamp_at, _ratio(D5))
     g8 = sh.group(box[8]); g8.__enter__()
     seat = sm.stamp_face(sm.cap_body(cfg["u_size"], engrave=False),
                          sm.STEM_HEIGHT - sm.DISP_HEIGHT)
@@ -872,10 +913,11 @@ def build_sheet(name):
         f"{fb.size.Y:.2f}", vertical=True)
     dim(sh, sv((sb.min.X, sb.min.Y)), sv((sb.max.X, sb.min.Y)), -7, f"{sb.size.X:.2f}")
     dim(sh, sv((sb.max.X, sb.min.Y)), sv((sb.max.X, sb.max.Y)), 8, f"{sb.size.Y:.2f}")
-    leader(sh, f"{sm.STAMP_GAP:.2f} gap, {sm.TEXT_HEIGHT:.2f} deep, "
-               f"{fb.max.Y - sb.max.Y:.2f} min to the edge",
+    dim(sh, sv((sb.min.X, sb.max.Y)), sv((sb.min.X, fb.max.Y)), -20,
+        f"{fb.max.Y - sb.max.Y:.2f} min to the edge", vertical=True)
+    leader(sh, f"{sm.STAMP_GAP:.2f} gap, {sm.TEXT_HEIGHT:.2f} deep",
            sv((0, (sb.min.Y + sb.max.Y) / 2)),
-           (stamp_at[0] - 22, stamp_at[1] - 26), 2.2, True)
+           (stamp_at[0] - 24, stamp_at[1] - 26), 2.2, True)
 
     # ⚠️ Snapshot the box first: `sh.text` grows it, so reading box[8][1] again on the
     # second line puts that line 3.4 mm below where the first one just pushed the floor.
@@ -902,7 +944,7 @@ def build_sheet(name):
     # the stamp ROTATES -- do both the same way and V10 becomes a drawing of a part we
     # are not making.
     box[9] = [1e9, 1e9, -1e9, -1e9]
-    titles[9] = ("DETAIL D    POCKET-CEILING STAMP", stamp2_at, "3:1")
+    titles[9] = ("DETAIL D    POCKET-CEILING STAMP", stamp2_at, _ratio(D5))
     with sh.group(box[9]):
         body = sm.cap_body(cfg["u_size"], engrave=False)
         ceil = sm.stamp_face(body, sm.INSIDE_HEIGHT)
@@ -956,8 +998,8 @@ def build_sheet(name):
         dim(sh, M[3]((-sm.CABLE_STEM_X / 2, y_cab, 0)),
             M[3]((sm.CABLE_STEM_X / 2, y_cab, 0)), -13,
             f"{sm.CABLE_STEM_X:.2f} cable relief (V6)")
-        leader(sh, "click tab 3x (note 6)", M[3]((hx + tp, tl / 4, 0)),
-               (top_at[0] + 32 + dxo * SCALE_TOP, top_at[1] + 18), 2.2)
+        leader(sh, "click tab 3x (note 6)", M[3]((-hx - tp, tl / 4, 0)),
+               (top_at[0] - 32 - dxo * SCALE_TOP, top_at[1] + 18), 2.2, True)
 
     # V2 from front: overall height and the top face, both on the real outline
     with sh.group(box[2]):

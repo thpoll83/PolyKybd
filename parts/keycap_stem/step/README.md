@@ -29,7 +29,7 @@ make selftest        # prove those checks can fail (see below)
 | `hull3d.py` | OpenSCAD `hull()` as an exact polyhedral convex hull |
 | `font.py` | pins the engraving to one font FILE (`make font`) — see the font traps below |
 | `build.py` | exports `stem_S_1U.step` / `stem_S_1U25.step` (+ an STL the checks use) |
-| `drawing.py` | the A3 sheet: V1-V4 ortho (V3 at 3:1), V5/V6 sections, V7 cross 10:1, V8/V9 stamps, V10 isometric, notes |
+| `drawing.py` | the A3 sheet: V1-V4 ortho (V3 at 3:1), V5/V6 sections at 3:1, V7 cross 10:1, V8/V9 stamps, V10 isometric, notes |
 | `validate_step.py` | the case's acceptance test, reused (real solid, curved faces, tight tolerance) |
 | `verify.py` | measures the cross, diffs volume/bbox and booleans against OpenSCAD |
 
@@ -181,6 +181,15 @@ volume delta +0.657 % (still inside the 1 % gate: True -- so volume ALONE would 
   section face's plane makes OCCT's edge-face common return nothing at all — silently, so
   an empty hatch reads as "no solid here" rather than as an error. Below ~0.05 mm the
   rectangle disappears into the boolean tolerance too.
+- ⚠️ **`snap` earns its keep by REFUSING.** It rejected the first attempt at V5's extra
+  dimensions -- *"no section vertex within 0.6 of (-5.65, 4.52)"* on the 1.25U variant --
+  and the pair I had confidently called "the flange" turned out to be the inside of the
+  pocket, which moves with `u_size`. Silently snapping to the nearest corner would have
+  shipped a wrong label on one variant and a wrong anchor on the other. **Name a
+  dimension by what it MEASURES when you have not verified which feature it is.**
+- ⚠️ **Derive the scale caption from the number that drew the view.** It was a literal
+  beside each `titles[..]` entry; `SCALE_ISO` went 1.6 -> 2.4 and the isometric went on
+  claiming 1.6:1 -- a caption a reader might measure against. `_ratio()` formats it.
 - ⚠️ **Anchor every section dimension on a REAL VERTEX of the cut.** `section()` returns
   the vertices and `snap()` picks the nearest, raising past a tolerance rather than
   quietly taking the wrong corner. Dimensions computed from model constants are exactly

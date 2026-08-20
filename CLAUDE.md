@@ -219,6 +219,16 @@ diffs the result back against the `.scad`. The traps that cost real time:
     sitting on a dimension line or a thin isometric outline still passes — the 1.25U sheet
     (whose leaders reach 4.4 mm further out than 1U's) had exactly that, and only the
     render showed it. **Render both variants, not just the one you were editing.**
+- ⚠️ **A snap helper earns its keep by REFUSING.** The stem sheet's `snap` rejected a
+  dimension anchor — *"no section vertex within 0.6 of (-5.65, 4.52)"*, and only on the
+  wider variant — and the vertex pair confidently labelled "the flange" turned out to be
+  the inside of the pocket, which moves with `u_size`. Taking the nearest corner quietly
+  would have shipped a wrong label on one variant and a wrong anchor on the other.
+  Corollary: **name a dimension by what it MEASURES when you have not verified which
+  feature it is.**
+- ⚠️ **Derive a scale caption from the number that drew the view.** It was a literal
+  beside each view's title; the isometric's scale went 1.6 → 2.4 and the caption went on
+  saying 1.6:1 — on the one label a reader might actually measure against.
 - ⚠️ **Anchor every section dimension on a REAL VERTEX of the cut, and make the helper
   raise when it cannot.** Dimensions computed from model constants are what "floating in
   the air" looks like: the display seat is 1.10 below a top face tilted −7°, so the

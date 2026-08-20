@@ -260,6 +260,25 @@ Seven more items, of which three were substantive:
 - Axis triads are placed from each view's OUTLINE box, not a fixed offset, so a wider
   variant cannot push a dimension under one.
 
+### The fourth review round (2026-08-20)
+
+Four items, all layout, and two general lessons fell out of them:
+
+- ⚠️ **A snap helper earns its keep by REFUSING.** Adding dimensions to V5 tripped
+  `snap` — *"no section vertex within 0.6 of (-5.65, 4.52)"*, and only on the 1.25U
+  variant — and the vertex pair confidently labelled "the flange" turned out to be the
+  inside of the pocket, which moves with `u_size`. Name a dimension by what it MEASURES
+  when you have not verified which feature it is.
+- ⚠️ **Derive the scale caption from the number that drew the view.** `SCALE_ISO` went
+  1.6 → 2.4 and the isometric's caption went on saying 1.6:1 — the one label a reader
+  might measure against.
+- V5 and V6 to 3:1 and V10 to 2.4:1, with the height dimensions on the sections (the
+  front view sees the boss and the skirt only as hidden lines). V6 now shows that the
+  **pocket ceiling is not parallel to the moulding face** — 4.96 at the front, 4.17 at
+  the back, which is the −7° cap tilt and decides which end of the core is thinnest.
+- The notes moved to the bottom of the sheet, and V8's stamp-clearance callout became a
+  real dimension instead of a leader long enough to run across the 10:1 detail.
+
 ### The third review round (2026-08-20)
 
 Eleven items.  The ones with a general lesson in them:

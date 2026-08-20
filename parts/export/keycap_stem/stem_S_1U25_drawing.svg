@@ -2640,12 +2640,12 @@
 <path d="M 78.487,139.419 L 78.487,139.446 L 78.487,139.474 L 78.487,139.501 L 78.487,139.529" fill="none" stroke="#000" stroke-width="0.13"/>
 <path d="M 99.900,139.245 L 99.900,139.273 L 99.900,139.300 L 99.900,139.328 L 99.900,139.355" fill="none" stroke="#000" stroke-width="0.13"/>
 <path d="M 94.188,143.253 L 94.188,143.280 L 94.188,143.308 L 94.188,143.335 L 94.188,143.362" fill="none" stroke="#000" stroke-width="0.13"/>
-<line x1="122.450" y1="142.500" x2="127.450" y2="142.500" stroke="#000" stroke-width="0.13"/>
-<polygon points="129.450,142.500 127.450,143.200 127.450,141.800" fill="#000"/>
-<text x="131.650" y="142.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">X</text>
-<line x1="122.450" y1="142.500" x2="122.450" y2="137.500" stroke="#000" stroke-width="0.13"/>
-<polygon points="122.450,135.500 123.150,137.500 121.750,137.500" fill="#000"/>
-<text x="122.450" y="132.900" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Y</text>
+<line x1="122.450" y1="164.500" x2="127.450" y2="164.500" stroke="#000" stroke-width="0.13"/>
+<polygon points="129.450,164.500 127.450,165.200 127.450,163.800" fill="#000"/>
+<text x="131.650" y="164.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">X</text>
+<line x1="122.450" y1="164.500" x2="122.450" y2="159.500" stroke="#000" stroke-width="0.13"/>
+<polygon points="122.450,157.500 123.150,159.500 121.750,159.500" fill="#000"/>
+<text x="122.450" y="154.900" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Y</text>
 <path d="M 66.100,21.375 L 68.425,22.302" fill="none" stroke="#000" stroke-width="0.13" stroke-dasharray="2.2,1.4"/>
 <path d="M 68.425,22.302 L 65.700,33.684" fill="none" stroke="#000" stroke-width="0.13" stroke-dasharray="2.2,1.4"/>
 <path d="M 83.000,20.905 L 68.425,22.302" fill="none" stroke="#000" stroke-width="0.13" stroke-dasharray="2.2,1.4"/>
@@ -3017,252 +3017,264 @@
 <line x1="51.700" y1="42.500" x2="51.700" y2="37.500" stroke="#000" stroke-width="0.13"/>
 <polygon points="51.700,35.500 52.400,37.500 51.000,37.500" fill="#000"/>
 <text x="51.700" y="32.900" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Y</text>
-<path d="M 263.209,148.542 L 269.946,146.669" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 269.946,146.669 L 268.106,138.171" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 268.106,138.171 L 263.209,148.542" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 263.168,148.982 L 269.946,146.669" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 263.209,148.542 L 263.168,148.982" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 263.209,148.542 L 259.840,149.603" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 253.336,142.826 L 268.106,138.171" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 259.840,149.603 L 253.336,142.826" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 230.054,141.596 L 236.220,144.485" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 236.220,144.485 L 236.831,144.292" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 238.826,139.808 L 238.980,139.759" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 246.402,149.256 L 252.568,152.145" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.568,152.145 L 259.799,150.043" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 259.799,150.043 L 263.168,148.982" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 259.799,150.043 L 259.840,149.603" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 268.106,138.171 L 265.066,136.747" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 263.231,137.325 L 251.425,131.794" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.425,131.794 L 251.263,130.280" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.263,130.280 L 248.223,128.855" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.485,140.553 L 250.587,139.891" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 250.587,139.891 L 252.397,140.739" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.397,140.739 L 265.066,136.747" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.485,140.553 L 253.336,142.826" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 259.840,149.603 L 252.568,152.145" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 253.336,142.826 L 252.568,152.145" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 230.054,141.596 L 233.452,133.510" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 236.220,144.485 L 238.302,135.783" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 233.452,133.510 L 238.302,135.783" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 240.404,135.120 L 238.302,135.783" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 240.404,135.120 L 240.253,136.733" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 238.938,137.147 L 240.253,136.733" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 238.938,137.147 L 238.292,138.151" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 238.292,138.151 L 238.451,139.511" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 238.276,141.513 L 238.860,139.703" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 238.276,141.513 L 236.831,144.292" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 246.402,149.256 L 248.485,140.553" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 238.938,137.147 L 248.255,141.513" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 240.390,135.271 L 251.425,131.794" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.055,137.219 L 247.903,137.180 L 247.755,137.126 L 247.615,137.055 L 247.494,136.957" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.442,137.401 L 248.055,137.219" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.442,137.663 L 248.488,137.645 L 248.530,137.622 L 248.565,137.588 L 248.580,137.543" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.580,137.543 L 248.565,137.494 L 248.530,137.455 L 248.488,137.425 L 248.442,137.401" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.055,137.785 L 248.442,137.663" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.495,137.961 L 247.619,137.880 L 247.760,137.831 L 247.907,137.801 L 248.055,137.785" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.136,138.074 L 247.495,137.961" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.538,138.263 L 247.136,138.074" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.957,138.459 L 247.846,138.425 L 247.737,138.382 L 247.634,138.329 L 247.538,138.263" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.359,138.648 L 247.957,138.459" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.718,138.535 L 248.359,138.648" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 249.279,138.358 L 249.154,138.439 L 249.013,138.488 L 248.867,138.518 L 248.718,138.535" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 249.666,138.236 L 249.279,138.358" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 250.334,138.287 L 250.172,138.234 L 250.004,138.208 L 249.834,138.207 L 249.666,138.236" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 250.721,138.469 L 250.334,138.287" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.282,138.732 L 251.130,138.692 L 250.983,138.638 L 250.843,138.567 L 250.721,138.469" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.642,138.900 L 251.282,138.732" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.044,138.773 L 251.642,138.900" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.464,138.641 L 252.366,138.694 L 252.262,138.731 L 252.154,138.756 L 252.044,138.773" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.867,138.515 L 252.464,138.641" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.507,138.346 L 252.867,138.515" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.946,138.083 L 252.098,138.123 L 252.246,138.176 L 252.385,138.248 L 252.507,138.346" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.559,137.902 L 251.946,138.083" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.559,137.640 L 251.513,137.657 L 251.471,137.681 L 251.436,137.715 L 251.420,137.760" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.420,137.760 L 251.436,137.809 L 251.471,137.847 L 251.513,137.877 L 251.559,137.902" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.946,137.518 L 251.559,137.640" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.508,137.341 L 252.383,137.422 L 252.242,137.472 L 252.095,137.502 L 251.946,137.518" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.868,137.228 L 252.508,137.341" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.465,137.039 L 252.868,137.228" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.046,136.842 L 252.157,136.877 L 252.266,136.919 L 252.370,136.972 L 252.465,137.039" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.643,136.653 L 252.046,136.842" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.283,136.767 L 251.643,136.653" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 250.722,136.944 L 250.846,136.863 L 250.988,136.813 L 251.134,136.783 L 251.283,136.767" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 250.334,137.066 L 250.722,136.944" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 249.666,137.015 L 249.828,137.069 L 249.996,137.094 L 250.166,137.096 L 250.334,137.066" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 249.279,136.833 L 249.666,137.015" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.717,136.570 L 248.869,136.610 L 249.017,136.664 L 249.157,136.735 L 249.279,136.833" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.358,136.402 L 248.717,136.570" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.955,136.529 L 248.358,136.402" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.537,136.661 L 247.634,136.609 L 247.738,136.572 L 247.846,136.546 L 247.955,136.529" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.134,136.788 L 247.537,136.661" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.494,136.957 L 247.134,136.788" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 260.199,137.903 L 260.258,137.975 L 260.313,138.051 L 260.360,138.132 L 260.397,138.218" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 258.960,138.671 L 258.661,138.620 L 258.367,138.544 L 258.080,138.446 L 257.801,138.327 L 257.532,138.187 L 257.277,138.023 L 257.053,137.819" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 261.391,137.905 L 261.145,137.695 L 260.866,137.533 L 260.561,137.429 L 260.240,137.408 L 259.966,137.541" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 259.966,137.541 L 259.998,137.643 L 260.062,137.732 L 260.129,137.818 L 260.199,137.903" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 259.179,137.806 L 259.111,137.720 L 259.049,137.631 L 259.003,137.532 L 258.988,137.424" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 258.988,137.424 L 259.199,137.184 L 259.515,137.078 L 259.845,137.028 L 260.179,137.024 L 260.511,137.058 L 260.837,137.126 L 261.156,137.224 L 261.465,137.352 L 261.759,137.508 L 262.030,137.704" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 257.713,137.611 L 257.949,137.840 L 258.207,138.041 L 258.498,138.194 L 258.809,138.295 L 259.136,138.316 L 259.415,138.182" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 259.415,138.182 L 259.386,138.075 L 259.322,137.981 L 259.252,137.893 L 259.179,137.806" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 257.053,137.819 L 257.713,137.611" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.196,134.670 L 247.484,134.336" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 249.417,134.285 L 248.196,134.670" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.053,134.123 L 252.169,134.197 L 252.276,134.282 L 252.366,134.384 L 252.404,134.513" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.404,134.513 L 252.183,134.733 L 251.873,134.836 L 251.551,134.893 L 251.225,134.910 L 250.898,134.892 L 250.575,134.843 L 250.259,134.762 L 249.952,134.648 L 249.661,134.500 L 249.417,134.285" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.072,134.117 L 252.053,134.123" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.073,133.205 L 251.408,133.121 L 251.750,133.079 L 252.095,133.080 L 252.438,133.117 L 252.776,133.191 L 253.104,133.296 L 253.421,133.434 L 253.715,133.613 L 253.895,133.892" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 253.895,133.892 L 253.676,134.115 L 253.364,134.216 L 253.040,134.257 L 252.712,134.249 L 252.388,134.201 L 252.072,134.117" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.484,134.336 L 251.073,133.205" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.263,130.280 L 238.594,134.272" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 238.594,134.272 L 240.404,135.120" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.223,128.855 L 233.452,133.510" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.974,142.688 L 238.292,138.151" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 238.451,139.511 L 247.697,143.843" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.439,138.622 L 248.440,138.382 L 248.441,138.143 L 248.441,137.903 L 248.442,137.663" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.052,138.504 L 248.053,138.324 L 248.054,138.144 L 248.054,137.964 L 248.055,137.785" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.493,138.242 L 247.494,138.172 L 247.494,138.102 L 247.494,138.031 L 247.495,137.961" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.509,138.627 L 252.508,138.557 L 252.508,138.487 L 252.508,138.416 L 252.507,138.346" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.949,138.803 L 251.948,138.623 L 251.947,138.443 L 251.947,138.263 L 251.946,138.083" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.561,138.862 L 251.561,138.622 L 251.560,138.382 L 251.559,138.142 L 251.559,137.902" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.467,137.375 L 252.466,137.291 L 252.466,137.207 L 252.465,137.123 L 252.465,137.039" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.049,137.508 L 252.048,137.342 L 252.047,137.175 L 252.047,137.009 L 252.046,136.842" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.643,136.653 L 251.646,137.612" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.288,138.734 L 251.287,138.406 L 251.286,138.078 L 251.285,137.751 L 251.285,137.423 L 251.284,137.095 L 251.283,136.767" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 250.724,138.472 L 250.723,138.166 L 250.723,137.861 L 250.722,137.555 L 250.722,137.249 L 250.722,136.944" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 250.335,138.288 L 250.335,137.982 L 250.334,137.677 L 250.334,137.372 L 250.334,137.066" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 249.665,138.236 L 249.665,137.931 L 249.666,137.626 L 249.666,137.320 L 249.666,137.015" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 249.277,138.360 L 249.277,138.055 L 249.277,137.750 L 249.278,137.444 L 249.278,137.139 L 249.279,136.833" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.713,138.536 L 248.713,138.209 L 248.714,137.881 L 248.715,137.553 L 248.716,137.226 L 248.717,136.898 L 248.717,136.570" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.358,136.402 L 248.355,137.360" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.953,137.194 L 247.953,137.028 L 247.954,136.862 L 247.955,136.695 L 247.955,136.529" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 247.535,136.997 L 247.536,136.913 L 247.536,136.829 L 247.536,136.745 L 247.537,136.661" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 260.162,138.292 L 260.199,137.903" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 260.126,138.303 L 260.065,138.228 L 260.005,138.151 L 259.950,138.072 L 259.925,137.979" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 261.552,137.854 L 261.436,137.797 L 261.319,137.744 L 261.199,137.695 L 261.078,137.650" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 260.037,137.460 L 259.788,137.468 L 259.541,137.502 L 259.301,137.566 L 259.075,137.671" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 258.161,138.476 L 258.028,138.382 L 257.905,138.276 L 257.786,138.165 L 257.672,138.050" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 257.672,138.050 L 257.713,137.611" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 257.429,138.126 L 257.672,138.050" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.226,134.712 L 252.175,134.671 L 252.122,134.632 L 252.068,134.596 L 252.012,134.562" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.012,134.562 L 252.053,134.123" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 253.722,134.092 L 253.544,133.963 L 253.351,133.859 L 253.151,133.769 L 252.945,133.693" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.866,133.513 L 251.655,133.521 L 251.444,133.546 L 251.236,133.588 L 251.032,133.644" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.027,134.591 L 251.032,133.644" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.552,134.703 L 251.497,134.792 L 251.403,134.845 L 251.302,134.881 L 251.198,134.909" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 250.067,134.696 L 250.031,134.662 L 249.997,134.626 L 249.966,134.587 L 249.937,134.547" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.583,134.209 L 251.623,134.196" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.623,134.196 L 251.812,134.285" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.905,134.154 L 252.892,134.188 L 252.868,134.215 L 252.838,134.237 L 252.806,134.256" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.031,134.355 L 251.975,134.342 L 251.919,134.327 L 251.865,134.307 L 251.812,134.285" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 245.600,146.253 L 245.652,146.569 L 245.794,146.858 L 245.996,147.108 L 246.237,147.321 L 246.503,147.504 L 246.784,147.660" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 249.937,134.547 L 249.979,134.108" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 249.979,134.108 L 250.194,134.316 L 250.470,134.439 L 250.766,134.498 L 251.068,134.499 L 251.363,134.436 L 251.593,134.264" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.593,134.264 L 251.568,134.184 L 251.509,134.123 L 251.438,134.074 L 251.362,134.034" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.362,134.034 L 251.131,133.926" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.623,134.196 L 251.665,133.758" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.131,133.926 L 251.665,133.758" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.665,133.758 L 251.853,133.846" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.853,133.846 L 252.134,133.926 L 252.426,133.929 L 252.713,133.871 L 252.946,133.715" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.946,133.715 L 252.725,133.530 L 252.431,133.456 L 252.128,133.458 L 251.831,133.524" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.831,133.524 L 249.979,134.108" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.032,133.644 L 251.073,133.205" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.812,134.285 L 251.853,133.846" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 248.577,138.579 L 248.578,138.320 L 248.579,138.061 L 248.580,137.802 L 248.580,137.543" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.423,138.798 L 251.422,138.538 L 251.422,138.279 L 251.421,138.020 L 251.420,137.760" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 259.925,137.979 L 259.935,137.870 L 259.946,137.760 L 259.956,137.650 L 259.966,137.541" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 259.381,138.538 L 259.390,138.449 L 259.398,138.360 L 259.406,138.271 L 259.415,138.182" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 245.600,146.253 L 245.600,142.861" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 251.552,134.703 L 251.562,134.593 L 251.572,134.484 L 251.583,134.374 L 251.593,134.264" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 252.905,134.154 L 252.915,134.044 L 252.926,133.934 L 252.936,133.825 L 252.946,133.715" fill="none" stroke="#000" stroke-width="0.18"/>
-<line x1="272.000" y1="144.500" x2="278.062" y2="148.000" stroke="#000" stroke-width="0.13"/>
-<polygon points="279.794,149.000 277.712,148.606 278.412,147.394" fill="#000"/>
-<text x="282.392" y="150.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">X</text>
-<line x1="272.000" y1="144.500" x2="265.938" y2="148.000" stroke="#000" stroke-width="0.13"/>
-<polygon points="264.206,149.000 265.588,147.394 266.288,148.606" fill="#000"/>
-<text x="261.608" y="150.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Y</text>
-<line x1="272.000" y1="144.500" x2="272.000" y2="137.500" stroke="#000" stroke-width="0.13"/>
-<polygon points="272.000,135.500 272.700,137.500 271.300,137.500" fill="#000"/>
-<text x="272.000" y="132.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Z</text>
-<path d="M 176.214,92.261 L 177.388,93.150" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 177.500,91.850 L 177.500,91.565" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 176.196,88.850 L 177.387,89.755" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 176.074,87.030 L 176.072,86.743" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 177.385,86.644 L 176.178,85.151" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 177.640,85.202 L 176.191,83.468" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 176.290,82.155 L 178.853,84.432" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 180.231,84.399 L 177.890,81.772" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 181.928,84.399 L 179.587,81.772" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 180.748,81.522 L 181.033,81.522" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 189.855,90.629 L 189.474,89.962" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 188.755,87.832 L 188.615,87.406" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 185.323,84.399 L 182.981,81.772" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 186.999,84.379 L 184.443,81.538" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 188.263,85.642 L 191.726,88.821" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 184.783,80.465 L 190.900,86.297" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 191.014,84.999 L 190.917,84.618" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 187.019,79.308 L 187.304,79.308" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 189.807,80.398 L 189.096,79.402" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 151.950,90.644 L 151.723,90.132" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 153.696,90.692 L 153.981,90.692" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 154.572,89.871 L 154.642,89.657" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 152.666,86.268 L 152.723,86.041" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 153.202,85.107 L 155.292,86.913" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 153.550,83.759 L 155.707,85.630" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 153.693,82.204 L 153.750,81.977" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 166.823,93.637 L 166.528,93.057" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 154.035,80.850 L 154.093,80.622" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 166.500,91.617 L 166.500,91.332" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 154.810,79.927 L 159.407,84.239" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 160.802,84.222 L 156.600,79.735" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 167.791,91.211 L 166.612,89.747" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 166.500,88.223 L 166.500,87.938" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 158.012,79.735 L 162.784,84.222" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 166.500,86.526 L 166.500,86.241" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 164.373,84.399 L 162.031,81.772" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 159.783,79.810 L 159.610,79.351" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 167.931,86.260 L 167.932,85.976" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 167.721,84.353 L 165.421,81.768" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 167.949,82.884 L 167.951,82.600" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 177.500,93.692 L 177.500,85.692" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 176.648,93.692 L 177.500,93.692" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 176.107,93.165 L 176.648,93.692" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 176.044,81.522 L 176.045,81.865 L 176.047,82.207 L 176.049,82.549 L 176.051,82.892 L 176.053,83.234 L 176.055,83.577 L 176.057,83.919 L 176.059,84.261 L 176.060,84.604 L 176.062,84.946 L 176.064,85.289 L 176.066,85.631 L 176.068,85.974 L 176.070,86.316 L 176.072,86.658 L 176.073,87.001 L 176.075,87.343 L 176.077,87.686 L 176.079,88.028 L 176.081,88.371 L 176.083,88.713 L 176.085,89.055 L 176.087,89.398 L 176.088,89.740 L 176.090,90.083 L 176.092,90.425 L 176.094,90.768 L 176.096,91.110 L 176.098,91.452 L 176.100,91.795 L 176.102,92.137 L 176.103,92.480 L 176.105,92.822 L 176.107,93.165" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 184.200,81.522 L 176.044,81.522" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 184.200,79.308 L 184.200,81.522" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 189.575,79.308 L 184.200,79.308" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 192.300,90.088 L 189.575,79.308" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 192.300,90.692 L 192.300,90.088" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 189.699,90.692 L 192.300,90.692" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 187.705,84.649 L 189.699,90.692" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 178.394,84.649 L 187.705,84.649" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 177.500,85.692 L 178.394,84.649" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 151.700,90.692 L 154.301,90.692" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 151.700,90.088 L 151.700,90.692" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 154.425,79.308 L 151.700,90.088" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 159.800,79.308 L 154.425,79.308" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 159.800,81.522 L 159.800,79.308" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 167.956,81.522 L 159.800,81.522" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 167.893,93.165 L 167.895,92.822 L 167.897,92.480 L 167.898,92.137 L 167.900,91.795 L 167.902,91.452 L 167.904,91.110 L 167.906,90.768 L 167.908,90.425 L 167.910,90.083 L 167.912,89.740 L 167.913,89.398 L 167.915,89.055 L 167.917,88.713 L 167.919,88.371 L 167.921,88.028 L 167.923,87.686 L 167.925,87.343 L 167.927,87.001 L 167.928,86.658 L 167.930,86.316 L 167.932,85.974 L 167.934,85.631 L 167.936,85.289 L 167.938,84.946 L 167.940,84.604 L 167.941,84.261 L 167.943,83.919 L 167.945,83.577 L 167.947,83.234 L 167.949,82.892 L 167.951,82.549 L 167.953,82.207 L 167.955,81.865 L 167.956,81.522" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 167.352,93.692 L 167.893,93.165" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 166.500,93.692 L 167.352,93.692" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 166.500,85.692 L 166.500,93.692" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 165.606,84.649 L 166.500,85.692" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 156.295,84.649 L 165.606,84.649" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 154.301,90.692 L 156.295,84.649" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 176.044,81.522 L 156.000,71.500 L 152.500,71.500" fill="none" stroke="#000" stroke-width="0.13"/>
-<polygon points="175.644,81.522 176.044,81.122 176.444,81.522 176.044,81.922" fill="#000"/>
-<text x="151.700" y="71.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">slot 6.09 deep from the moulding face</text>
-<path d="M 177.500,89.692 L 156.000,100.500 L 152.500,100.500" fill="none" stroke="#000" stroke-width="0.13"/>
-<polygon points="177.100,89.692 177.500,89.292 177.900,89.692 177.500,90.092" fill="#000"/>
-<text x="151.700" y="100.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">Ø5.50 boss, 4.00 straight</text>
-<line x1="197.300" y1="92.500" x2="202.300" y2="92.500" stroke="#000" stroke-width="0.13"/>
-<polygon points="204.300,92.500 202.300,93.200 202.300,91.800" fill="#000"/>
-<text x="206.500" y="92.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">X</text>
-<line x1="197.300" y1="92.500" x2="197.300" y2="87.500" stroke="#000" stroke-width="0.13"/>
-<polygon points="197.300,85.500 198.000,87.500 196.600,87.500" fill="#000"/>
-<text x="197.300" y="82.900" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Z</text>
-<text x="172.000" y="106.320" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">cut on the cross centre-line, so the slot reads full depth</text>
+<path d="M 295.814,182.562 L 305.919,179.753" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 305.919,179.753 L 303.160,167.007" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 303.160,167.007 L 295.814,182.562" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 295.752,183.223 L 305.919,179.753" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 295.814,182.562 L 295.752,183.223" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 295.814,182.562 L 290.761,184.155" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 281.003,173.989 L 303.160,167.007" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 290.761,184.155 L 281.003,173.989" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 246.081,172.144 L 255.330,176.478" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 255.330,176.478 L 256.247,176.189" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 259.239,169.461 L 259.470,169.389" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 270.604,183.634 L 279.853,187.967" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.853,187.967 L 290.699,184.815" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 290.699,184.815 L 295.752,183.223" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 290.699,184.815 L 290.761,184.155" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 303.160,167.007 L 298.599,164.870" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 295.846,165.738 L 278.138,157.441" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.138,157.441 L 277.895,155.170" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.895,155.170 L 273.334,153.033" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.727,170.580 L 276.880,169.586" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 276.880,169.586 L 279.595,170.858" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.595,170.858 L 298.599,164.870" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.727,170.580 L 281.003,173.989" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 290.761,184.155 L 279.853,187.967" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 281.003,173.989 L 279.853,187.967" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 246.081,172.144 L 251.178,160.015" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 255.330,176.478 L 258.454,163.424" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 251.178,160.015 L 258.454,163.424" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 261.607,162.430 L 258.454,163.424" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 261.607,162.430 L 261.379,164.850" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 259.407,165.471 L 261.379,164.850" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 259.407,165.471 L 258.439,166.977" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 258.439,166.977 L 258.676,169.017" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 258.414,172.019 L 259.290,169.304" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 258.414,172.019 L 256.247,176.189" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 270.604,183.634 L 273.727,170.580" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 259.407,165.471 L 273.383,172.019" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 261.585,162.657 L 278.138,157.441" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.082,165.579 L 272.854,165.519 L 272.633,165.439 L 272.423,165.333 L 272.241,165.185" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.663,165.851 L 273.082,165.579" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.663,166.244 L 273.731,166.218 L 273.795,166.182 L 273.847,166.132 L 273.870,166.064" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.870,166.064 L 273.847,165.991 L 273.795,165.933 L 273.732,165.888 L 273.663,165.851" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.083,166.427 L 273.663,166.244" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.242,166.692 L 272.429,166.570 L 272.640,166.496 L 272.860,166.451 L 273.083,166.427" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 271.704,166.862 L 272.242,166.692" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.307,167.144 L 271.704,166.862" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.935,167.439 L 272.768,167.387 L 272.606,167.323 L 272.450,167.244 L 272.307,167.144" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.539,167.722 L 272.935,167.439" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 274.078,167.552 L 273.539,167.722" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 274.919,167.287 L 274.731,167.409 L 274.520,167.483 L 274.300,167.528 L 274.078,167.552" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 275.499,167.104 L 274.919,167.287" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 276.501,167.181 L 276.259,167.100 L 276.006,167.062 L 275.751,167.060 L 275.499,167.104" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.082,167.453 L 276.501,167.181" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.923,167.847 L 277.695,167.787 L 277.474,167.707 L 277.264,167.601 L 277.082,167.453" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.462,168.100 L 277.923,167.847" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.067,167.910 L 278.462,168.100" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.695,167.712 L 279.549,167.791 L 279.393,167.846 L 279.231,167.884 L 279.067,167.910" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 280.300,167.522 L 279.695,167.712" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.761,167.269 L 280.300,167.522" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.919,166.875 L 279.147,166.935 L 279.368,167.015 L 279.578,167.121 L 279.761,167.269" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.338,166.602 L 278.919,166.875" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.338,166.210 L 278.270,166.236 L 278.206,166.272 L 278.153,166.322 L 278.130,166.391" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.130,166.391 L 278.154,166.463 L 278.206,166.521 L 278.269,166.566 L 278.338,166.602" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.920,166.027 L 278.338,166.210" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.762,165.761 L 279.575,165.883 L 279.363,165.957 L 279.143,166.002 L 278.920,166.027" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 280.302,165.591 L 279.762,165.761" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.698,165.308 L 280.302,165.591" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.069,165.013 L 279.236,165.065 L 279.399,165.129 L 279.554,165.208 L 279.698,165.308" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.464,164.730 L 279.069,165.013" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.925,164.900 L 278.464,164.730" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.082,165.166 L 277.270,165.044 L 277.481,164.970 L 277.701,164.925 L 277.925,164.900" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 276.501,165.349 L 277.082,165.166" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 275.499,165.272 L 275.741,165.353 L 275.994,165.392 L 276.250,165.393 L 276.501,165.349" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 274.918,165.000 L 275.499,165.272" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 274.076,164.606 L 274.304,164.666 L 274.526,164.746 L 274.735,164.852 L 274.918,165.000" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.537,164.353 L 274.076,164.606" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.933,164.544 L 273.537,164.353" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.305,164.742 L 272.451,164.663 L 272.607,164.608 L 272.769,164.569 L 272.933,164.544" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 271.701,164.932 L 272.305,164.742" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.241,165.185 L 271.701,164.932" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 291.298,166.604 L 291.387,166.713 L 291.469,166.827 L 291.541,166.948 L 291.595,167.077" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 289.440,167.756 L 289.125,167.707 L 288.814,167.639 L 288.507,167.553 L 288.205,167.451 L 287.909,167.333 L 287.620,167.201 L 287.337,167.053 L 287.065,166.888 L 286.808,166.700 L 286.580,166.478" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 293.087,166.607 L 292.828,166.378 L 292.544,166.180 L 292.236,166.021 L 291.909,165.909 L 291.567,165.857 L 291.223,165.883 L 290.949,166.061" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 290.949,166.061 L 290.996,166.215 L 291.092,166.348 L 291.194,166.477 L 291.298,166.604" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 289.769,166.460 L 289.667,166.331 L 289.573,166.196 L 289.504,166.047 L 289.482,165.886" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 289.482,165.886 L 289.656,165.611 L 289.953,165.462 L 290.273,165.367 L 290.601,165.309 L 290.934,165.283 L 291.268,165.286 L 291.601,165.314 L 291.930,165.365 L 292.256,165.438 L 292.576,165.532 L 292.890,165.645 L 293.197,165.778 L 293.495,165.929 L 293.779,166.103 L 294.044,166.305" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 287.570,166.166 L 287.802,166.398 L 288.046,166.618 L 288.311,166.811 L 288.598,166.971 L 288.899,167.102 L 289.214,167.192 L 289.540,167.230 L 289.865,167.197 L 290.122,167.023" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 290.122,167.023 L 290.079,166.862 L 289.983,166.722 L 289.878,166.589 L 289.769,166.460" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 286.580,166.478 L 287.570,166.166" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.294,161.755 L 272.226,161.254" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 275.126,161.177 L 273.294,161.755" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.080,160.934 L 279.253,161.045 L 279.414,161.173 L 279.550,161.326 L 279.607,161.520" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.607,161.520 L 279.418,161.773 L 279.122,161.910 L 278.809,162.004 L 278.489,162.069 L 278.164,162.104 L 277.837,162.115 L 277.511,162.103 L 277.185,162.069 L 276.863,162.015 L 276.545,161.939 L 276.233,161.842 L 275.929,161.723 L 275.634,161.580 L 275.358,161.406 L 275.126,161.177" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.108,160.925 L 279.080,160.934" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.609,159.558 L 277.930,159.470 L 278.257,159.407 L 278.588,159.371 L 278.921,159.362 L 279.254,159.377 L 279.584,159.414 L 279.912,159.474 L 280.235,159.555 L 280.552,159.656 L 280.863,159.777 L 281.164,159.918 L 281.452,160.084 L 281.711,160.293 L 281.842,160.588" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 281.842,160.588 L 281.657,160.844 L 281.361,160.983 L 281.047,161.074 L 280.723,161.125 L 280.396,161.139 L 280.068,161.124 L 279.743,161.082 L 279.423,161.016 L 279.108,160.925" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.226,161.254 L 277.609,159.558" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.895,155.170 L 258.891,161.158" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 258.891,161.158 L 261.607,162.430" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.334,153.033 L 251.178,160.015" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.961,173.781 L 258.439,166.977" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 258.676,169.017 L 272.546,175.515" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.659,167.684 L 273.660,167.396 L 273.661,167.108 L 273.661,166.820 L 273.662,166.532 L 273.663,166.244" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.079,167.506 L 273.080,167.236 L 273.081,166.966 L 273.082,166.697 L 273.083,166.427" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.240,167.113 L 272.240,167.008 L 272.241,166.902 L 272.241,166.797 L 272.242,166.692" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.763,167.691 L 279.762,167.585 L 279.762,167.480 L 279.761,167.375 L 279.761,167.269" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.923,167.955 L 278.922,167.685 L 278.921,167.415 L 278.920,167.145 L 278.919,166.875" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.342,168.044 L 278.341,167.755 L 278.340,167.467 L 278.340,167.179 L 278.339,166.891 L 278.338,166.602" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.700,165.813 L 279.699,165.686 L 279.699,165.560 L 279.698,165.434 L 279.698,165.308" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.073,166.012 L 279.072,165.762 L 279.071,165.513 L 279.070,165.263 L 279.069,165.013" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.464,164.730 L 278.469,166.169" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.932,167.851 L 277.931,167.524 L 277.930,167.196 L 277.929,166.868 L 277.929,166.540 L 277.928,166.212 L 277.927,165.884 L 277.926,165.556 L 277.925,165.228 L 277.925,164.900" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.085,167.457 L 277.085,167.130 L 277.085,166.803 L 277.084,166.475 L 277.084,166.148 L 277.083,165.821 L 277.083,165.493 L 277.082,165.166" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 276.502,167.182 L 276.502,166.876 L 276.502,166.571 L 276.502,166.265 L 276.501,165.960 L 276.501,165.655 L 276.501,165.349" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 275.498,167.104 L 275.498,166.799 L 275.498,166.494 L 275.498,166.188 L 275.499,165.883 L 275.499,165.578 L 275.499,165.272" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 274.915,167.291 L 274.915,166.963 L 274.916,166.636 L 274.916,166.309 L 274.917,165.982 L 274.917,165.655 L 274.918,165.327 L 274.918,165.000" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 274.069,167.555 L 274.070,167.227 L 274.071,166.899 L 274.071,166.572 L 274.072,166.244 L 274.073,165.916 L 274.074,165.589 L 274.075,165.261 L 274.075,164.933 L 274.076,164.606" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.537,164.353 L 273.532,165.790" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.929,165.541 L 272.930,165.292 L 272.931,165.042 L 272.932,164.793 L 272.933,164.544" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 272.303,165.246 L 272.303,165.120 L 272.304,164.994 L 272.304,164.868 L 272.305,164.742" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 291.243,167.188 L 291.298,166.604" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 291.189,167.205 L 291.098,167.092 L 291.008,166.977 L 290.925,166.857 L 290.887,166.719" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 293.328,166.531 L 293.155,166.445 L 292.978,166.365 L 292.799,166.292 L 292.617,166.225" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 291.055,165.939 L 290.756,165.946 L 290.459,165.978 L 290.166,166.036 L 289.881,166.124 L 289.613,166.256" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 288.241,167.464 L 288.042,167.323 L 287.857,167.164 L 287.679,166.998 L 287.508,166.824" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 287.508,166.824 L 287.570,166.166" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 287.144,166.939 L 287.508,166.824" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.338,161.818 L 279.263,161.756 L 279.183,161.698 L 279.102,161.644 L 279.018,161.593" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.018,161.593 L 279.080,160.934" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 281.583,160.888 L 281.316,160.695 L 281.027,160.538 L 280.726,160.404 L 280.417,160.289" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.800,160.020 L 278.482,160.032 L 278.166,160.070 L 277.854,160.131 L 277.547,160.216" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.041,161.636 L 277.547,160.216" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.328,161.805 L 278.246,161.938 L 278.105,162.017 L 277.953,162.072 L 277.798,162.114" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 276.101,161.794 L 276.046,161.743 L 275.996,161.689 L 275.948,161.631 L 275.906,161.570" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.374,161.064 L 278.435,161.045" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.435,161.045 L 278.718,161.177" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 280.357,160.981 L 280.339,161.032 L 280.302,161.073 L 280.258,161.106 L 280.210,161.134" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 279.047,161.282 L 278.962,161.264 L 278.879,161.240 L 278.798,161.211 L 278.718,161.177" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 269.400,179.129 L 269.435,179.449 L 269.536,179.754 L 269.691,180.037 L 269.885,180.293 L 270.110,180.524 L 270.356,180.732 L 270.618,180.919 L 270.892,181.088 L 271.176,181.240" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 275.906,161.570 L 275.968,160.912" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 275.968,160.912 L 276.196,161.162 L 276.493,161.328 L 276.814,161.439 L 277.149,161.498 L 277.488,161.507 L 277.826,161.464 L 278.151,161.365 L 278.389,161.147" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.389,161.147 L 278.352,161.026 L 278.263,160.934 L 278.157,160.861 L 278.043,160.801" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.043,160.801 L 277.697,160.639" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.435,161.045 L 278.497,160.386" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.697,160.639 L 278.497,160.386" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.497,160.386 L 278.780,160.519" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.780,160.519 L 279.057,160.613 L 279.347,160.652 L 279.639,160.644 L 279.928,160.595 L 280.206,160.506 L 280.419,160.323" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 280.419,160.323 L 280.225,160.109 L 279.944,159.996 L 279.646,159.935 L 279.343,159.925 L 279.041,159.961 L 278.747,160.036" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.747,160.036 L 275.968,160.912" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 277.547,160.216 L 277.609,159.558" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.718,161.177 L 278.780,160.519" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 273.866,167.618 L 273.867,167.307 L 273.868,166.997 L 273.869,166.686 L 273.870,166.375 L 273.870,166.064" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.135,167.946 L 278.134,167.635 L 278.133,167.324 L 278.132,167.013 L 278.131,166.702 L 278.130,166.391" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 290.887,166.719 L 290.903,166.554 L 290.918,166.390 L 290.934,166.225 L 290.949,166.061" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 290.072,167.557 L 290.085,167.424 L 290.097,167.290 L 290.110,167.157 L 290.122,167.023" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 269.400,179.129 L 269.400,174.041" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 278.328,161.805 L 278.343,161.640 L 278.358,161.476 L 278.374,161.311 L 278.389,161.147" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 280.357,160.981 L 280.373,160.816 L 280.388,160.652 L 280.404,160.487 L 280.419,160.323" fill="none" stroke="#000" stroke-width="0.18"/>
+<line x1="298.000" y1="174.500" x2="304.062" y2="178.000" stroke="#000" stroke-width="0.13"/>
+<polygon points="305.794,179.000 303.712,178.606 304.412,177.394" fill="#000"/>
+<text x="308.392" y="180.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">X</text>
+<line x1="298.000" y1="174.500" x2="291.938" y2="178.000" stroke="#000" stroke-width="0.13"/>
+<polygon points="290.206,179.000 291.588,177.394 292.288,178.606" fill="#000"/>
+<text x="287.608" y="180.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Y</text>
+<line x1="298.000" y1="174.500" x2="298.000" y2="167.500" stroke="#000" stroke-width="0.13"/>
+<polygon points="298.000,165.500 298.700,167.500 297.300,167.500" fill="#000"/>
+<text x="298.000" y="162.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Z</text>
+<path d="M 139.925,74.715 L 139.584,73.947" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 142.544,74.789 L 142.971,74.789" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 143.857,73.557 L 143.964,73.235" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 140.998,68.152 L 141.085,67.811" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 141.802,66.411 L 144.938,69.119" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 142.325,64.388 L 145.561,67.196" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 142.539,62.056 L 142.625,61.715" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 162.234,79.206 L 161.792,78.336" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 143.053,60.024 L 143.139,59.683" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 161.750,76.176 L 161.750,75.748" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 144.215,58.641 L 151.110,65.108" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 163.686,75.566 L 161.918,73.371" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 153.203,65.083 L 146.900,58.352" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 149.018,58.352 L 156.176,65.083" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 161.750,71.085 L 161.750,70.657" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 158.560,65.349 L 155.047,61.408" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 161.750,68.539 L 161.750,68.112" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 151.675,58.464 L 151.415,57.777" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 163.896,68.139 L 163.898,67.714" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 163.581,65.279 L 160.132,61.402" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 163.923,63.076 L 163.926,62.651" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 176.320,77.141 L 178.082,78.475" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 178.250,76.525 L 178.250,76.098" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 176.295,72.024 L 178.080,73.382" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 176.110,69.295 L 176.108,68.865" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 178.078,68.716 L 176.266,66.477" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 178.461,66.554 L 176.287,63.952" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 176.435,61.982 L 180.279,65.399" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 182.347,65.349 L 178.834,61.408" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 184.893,65.349 L 181.380,61.408" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 183.123,61.033 L 183.550,61.033" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 196.783,74.693 L 196.211,73.694" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 195.133,70.498 L 194.922,69.860" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 189.984,65.349 L 186.471,61.408" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 194.394,67.213 L 199.590,71.981" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 192.499,65.318 L 188.665,61.057" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 189.174,59.448 L 198.349,68.196" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 198.521,66.249 L 198.376,65.676" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 192.529,57.711 L 192.956,57.711" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 196.711,59.348 L 195.644,57.854" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 139.550,74.789 L 143.451,74.789" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 139.550,73.882 L 139.550,74.789" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 143.637,57.711 L 139.550,73.882" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 151.700,57.711 L 143.637,57.711" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 151.700,61.033 L 151.700,57.711" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 163.935,61.033 L 151.700,61.033" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 163.839,78.497 L 163.841,78.148 L 163.843,77.798 L 163.845,77.449 L 163.847,77.100 L 163.849,76.751 L 163.851,76.401 L 163.853,76.052 L 163.855,75.703 L 163.856,75.353 L 163.858,75.004 L 163.860,74.655 L 163.862,74.306 L 163.864,73.956 L 163.866,73.607 L 163.868,73.258 L 163.870,72.908 L 163.872,72.559 L 163.874,72.210 L 163.876,71.861 L 163.877,71.511 L 163.879,71.162 L 163.881,70.813 L 163.883,70.464 L 163.885,70.114 L 163.887,69.765 L 163.889,69.416 L 163.891,69.066 L 163.893,68.717 L 163.895,68.368 L 163.897,68.019 L 163.898,67.669 L 163.900,67.320 L 163.902,66.971 L 163.904,66.622 L 163.906,66.272 L 163.908,65.923 L 163.910,65.574 L 163.912,65.224 L 163.914,64.875 L 163.916,64.526 L 163.917,64.177 L 163.919,63.827 L 163.921,63.478 L 163.923,63.129 L 163.925,62.779 L 163.927,62.430 L 163.929,62.081 L 163.931,61.732 L 163.933,61.382 L 163.935,61.033" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 163.028,79.289 L 163.839,78.497" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 161.750,79.289 L 163.028,79.289" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 161.750,67.289 L 161.750,79.289" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 160.409,65.724 L 161.750,67.289" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 146.442,65.724 L 160.409,65.724" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 143.451,74.789 L 146.442,65.724" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 178.250,79.289 L 178.250,67.289" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 176.972,79.289 L 178.250,79.289" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 176.161,78.497 L 176.972,79.289" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 176.065,61.033 L 176.067,61.382 L 176.069,61.732 L 176.071,62.081 L 176.073,62.430 L 176.075,62.779 L 176.077,63.129 L 176.079,63.478 L 176.081,63.827 L 176.083,64.177 L 176.084,64.526 L 176.086,64.875 L 176.088,65.224 L 176.090,65.574 L 176.092,65.923 L 176.094,66.272 L 176.096,66.622 L 176.098,66.971 L 176.100,67.320 L 176.102,67.669 L 176.103,68.019 L 176.105,68.368 L 176.107,68.717 L 176.109,69.066 L 176.111,69.416 L 176.113,69.765 L 176.115,70.114 L 176.117,70.464 L 176.119,70.813 L 176.121,71.162 L 176.123,71.511 L 176.124,71.861 L 176.126,72.210 L 176.128,72.559 L 176.130,72.908 L 176.132,73.258 L 176.134,73.607 L 176.136,73.956 L 176.138,74.306 L 176.140,74.655 L 176.142,75.004 L 176.144,75.353 L 176.145,75.703 L 176.147,76.052 L 176.149,76.401 L 176.151,76.751 L 176.153,77.100 L 176.155,77.449 L 176.157,77.798 L 176.159,78.148 L 176.161,78.497" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 188.300,61.033 L 176.065,61.033" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 188.300,57.711 L 188.300,61.033" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 196.363,57.711 L 188.300,57.711" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 200.450,73.882 L 196.363,57.711" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 200.450,74.789 L 200.450,73.882" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 196.549,74.789 L 200.450,74.789" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 193.558,65.724 L 196.549,74.789" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 179.591,65.724 L 193.558,65.724" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 178.250,67.289 L 179.591,65.724" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 176.065,61.033 L 150.000,49.500 L 146.500,49.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<polygon points="175.665,61.033 176.065,60.633 176.465,61.033 176.065,61.433" fill="#000"/>
+<text x="145.700" y="49.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">slot 6.09 deep from z = 0</text>
+<path d="M 178.250,73.289 L 144.000,88.500 L 140.500,88.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<polygon points="177.850,73.289 178.250,72.889 178.650,73.289 178.250,73.689" fill="#000"/>
+<text x="139.700" y="88.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">Ø5.50 boss, 4.00 straight</text>
+<line x1="139.550" y1="75.789" x2="139.550" y2="90.289" stroke="#000" stroke-width="0.13"/>
+<line x1="200.450" y1="75.789" x2="200.450" y2="90.289" stroke="#000" stroke-width="0.13"/>
+<line x1="139.550" y1="88.789" x2="200.450" y2="88.789" stroke="#000" stroke-width="0.18"/>
+<polygon points="139.550,88.789 141.550,88.089 141.550,89.489" fill="#000"/>
+<polygon points="200.450,88.789 198.450,89.489 198.450,88.089" fill="#000"/>
+<text x="170.000" y="87.049" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">20.30 over the click tabs</text>
+<line x1="201.450" y1="79.289" x2="204.950" y2="79.289" stroke="#000" stroke-width="0.13"/>
+<line x1="201.450" y1="74.789" x2="204.950" y2="74.789" stroke="#000" stroke-width="0.13"/>
+<line x1="203.450" y1="82.289" x2="203.450" y2="71.789" stroke="#000" stroke-width="0.18"/>
+<polygon points="203.450,79.289 204.150,81.289 202.750,81.289" fill="#000"/>
+<polygon points="203.450,74.789 202.750,72.789 204.150,72.789" fill="#000"/>
+<text x="204.450" y="77.039" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">1.50 skirt above z = 0</text>
+<line x1="205.450" y1="74.500" x2="210.450" y2="74.500" stroke="#000" stroke-width="0.13"/>
+<polygon points="212.450,74.500 210.450,75.200 210.450,73.800" fill="#000"/>
+<text x="214.650" y="74.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">X</text>
+<line x1="205.450" y1="74.500" x2="205.450" y2="69.500" stroke="#000" stroke-width="0.13"/>
+<polygon points="205.450,67.500 206.150,69.500 204.750,69.500" fill="#000"/>
+<text x="205.450" y="64.900" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Z</text>
+<text x="170.000" y="94.789" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">cut on the cross centre-line, so the slot reads full depth</text>
 <line x1="122.850" y1="150.500" x2="128.850" y2="150.500" stroke="#000" stroke-width="0.5"/>
 <line x1="128.850" y1="150.500" x2="128.850" y2="155.500" stroke="#000" stroke-width="0.5"/>
 <polygon points="128.850,159.000 128.150,157.000 129.550,157.000" fill="#000"/>
@@ -3272,70 +3284,89 @@
 <polygon points="43.150,159.000 42.450,157.000 43.850,157.000" fill="#000"/>
 <text x="38.650" y="158.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.4" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">A</text>
 <line x1="112.000" y1="150.500" x2="60.000" y2="150.500" stroke="#000" stroke-width="0.13" stroke-dasharray="5,1.2,1.2,1.2"/>
-<path d="M 165.250,149.222 L 165.415,149.102" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 164.433,146.708 L 164.433,146.423" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 158.517,138.788 L 158.516,138.782" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 164.546,145.124 L 165.728,146.021" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 164.547,143.427 L 165.736,144.332" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 160.102,138.983 L 160.427,139.023" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 158.953,136.137 L 159.105,136.004" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 165.743,142.927 L 164.547,141.446" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 160.815,136.302 L 165.429,140.630" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 162.341,136.131 L 162.666,136.170" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 165.784,137.877 L 164.732,136.539" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 174.148,147.998 L 175.322,148.886" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 175.321,147.474 L 174.138,146.005" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 174.131,144.587 L 175.320,145.491" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 175.433,144.192 L 175.433,143.907" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 173.999,141.060 L 173.997,140.774" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 173.989,139.354 L 173.988,139.067" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 184.334,148.001 L 184.659,148.041" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 177.160,140.827 L 174.490,137.872" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 179.379,141.350 L 179.704,141.390" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 185.742,147.713 L 185.741,147.427" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 182.011,142.285 L 181.939,141.928" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 181.029,141.302 L 178.359,138.348" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 179.684,138.260 L 180.009,138.300" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 181.860,138.739 L 184.724,141.318" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 184.794,139.977 L 184.753,139.650" fill="none" stroke="#000" stroke-width="0.13"/>
-<path d="M 165.826,148.705 L 165.828,148.359 L 165.830,148.012 L 165.832,147.665 L 165.834,147.318 L 165.836,146.971 L 165.838,146.624 L 165.839,146.278 L 165.841,145.931 L 165.843,145.584 L 165.845,145.237 L 165.847,144.890 L 165.849,144.544 L 165.851,144.197 L 165.853,143.850 L 165.855,143.503 L 165.856,143.156 L 165.858,142.809 L 165.860,142.463 L 165.862,142.116 L 165.864,141.769 L 165.866,141.422 L 165.868,141.075 L 165.870,140.728 L 165.872,140.382 L 165.873,140.035 L 165.875,139.688 L 165.877,139.341 L 165.879,138.994 L 165.881,138.648 L 165.883,138.301 L 165.885,137.954 L 165.887,137.607 L 165.889,137.260 L 165.891,136.913 L 165.892,136.567" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 165.285,149.233 L 165.826,148.705" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 164.433,149.233 L 165.285,149.233" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 164.433,141.233 L 164.433,149.233" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 162.787,139.313 L 164.433,141.233" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 158.517,138.788 L 162.787,139.313" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 158.237,136.759 L 158.517,138.788" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 159.378,135.767 L 158.237,136.759" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 165.892,136.567 L 159.378,135.767" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 184.212,147.986 L 185.690,148.168" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 182.454,144.481 L 184.212,147.986" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 181.885,141.658 L 182.454,144.481" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 175.718,140.900 L 181.885,141.658" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 175.433,141.233 L 175.718,140.900" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 175.433,149.233 L 175.433,141.233" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 174.581,149.233 L 175.433,149.233" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 174.040,148.705 L 174.581,149.233" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 173.980,137.560 L 173.981,137.908 L 173.983,138.256 L 173.985,138.605 L 173.987,138.953 L 173.989,139.301 L 173.991,139.649 L 173.993,139.998 L 173.995,140.346 L 173.997,140.694 L 173.999,141.043 L 174.000,141.391 L 174.002,141.739 L 174.004,142.088 L 174.006,142.436 L 174.008,142.784 L 174.010,143.132 L 174.012,143.481 L 174.014,143.829 L 174.016,144.177 L 174.018,144.526 L 174.019,144.874 L 174.021,145.222 L 174.023,145.571 L 174.025,145.919 L 174.027,146.267 L 174.029,146.616 L 174.031,146.964 L 174.033,147.312 L 174.035,147.660 L 174.037,148.009 L 174.038,148.357 L 174.040,148.705" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 184.653,138.870 L 173.980,137.560" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 185.763,147.572 L 184.653,138.870" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 185.690,148.168 L 185.763,147.572" fill="none" stroke="#000" stroke-width="0.35"/>
-<line x1="158.517" y1="137.788" x2="158.517" y2="124.551" stroke="#000" stroke-width="0.13"/>
-<line x1="162.787" y1="138.313" x2="162.787" y2="124.551" stroke="#000" stroke-width="0.13"/>
-<line x1="155.517" y1="126.051" x2="165.787" y2="126.051" stroke="#000" stroke-width="0.18"/>
-<polygon points="158.517,126.051 156.517,126.751 156.517,125.351" fill="#000"/>
-<polygon points="162.787,126.051 164.787,125.351 164.787,126.751" fill="#000"/>
-<text x="160.652" y="124.311" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">2.13 cable relief</text>
-<line x1="190.763" y1="148.500" x2="195.763" y2="148.500" stroke="#000" stroke-width="0.13"/>
-<polygon points="197.763,148.500 195.763,149.200 195.763,147.800" fill="#000"/>
-<text x="199.963" y="148.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">Y</text>
-<line x1="190.763" y1="148.500" x2="190.763" y2="143.500" stroke="#000" stroke-width="0.13"/>
-<polygon points="190.763,141.500 191.463,143.500 190.063,143.500" fill="#000"/>
-<text x="190.763" y="138.900" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Z</text>
-<path d="M 158.517,138.788 L 155.000,146.500 L 151.500,146.500" fill="none" stroke="#000" stroke-width="0.13"/>
-<polygon points="158.117,138.788 158.517,138.388 158.917,138.788 158.517,139.188" fill="#000"/>
-<text x="150.700" y="146.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">14.9° flare</text>
-<text x="172.000" y="154.440" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">cut on the cable centre-line -- the FFC exit is</text>
-<text x="172.000" y="157.840" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">0.50 wide at the seat floor and 3.50 at z = 0</text>
+<path d="M 181.222,138.747 L 182.982,140.080" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 182.981,137.960 L 181.206,135.758" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 181.196,133.630 L 182.980,134.986" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 183.150,133.038 L 183.150,132.610" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 180.998,128.341 L 180.996,127.911" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 180.984,125.781 L 180.982,125.351" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 196.501,138.752 L 196.988,138.812" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 185.739,127.991 L 181.735,123.559" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 189.069,128.775 L 189.557,128.835" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 198.614,138.319 L 198.612,137.890" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 191.543,128.703 L 187.539,124.271" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 193.017,130.177 L 192.909,129.642" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 189.525,124.140 L 190.013,124.200" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 192.790,124.859 L 197.086,128.727" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 197.191,126.715 L 197.129,126.225" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 167.875,140.583 L 168.123,140.403" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 166.650,136.812 L 166.650,136.385" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 166.819,134.436 L 168.592,135.781" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 157.776,124.932 L 157.774,124.924" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 160.153,125.225 L 160.641,125.284" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 166.820,131.891 L 168.604,133.248" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 168.615,131.140 L 166.821,128.919" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 158.429,120.955 L 158.658,120.756" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 161.222,121.202 L 168.143,127.695" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 163.511,120.946 L 163.999,121.006" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 168.676,123.565 L 167.098,121.559" fill="none" stroke="#000" stroke-width="0.13"/>
+<path d="M 196.318,138.730 L 198.535,139.002" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 193.681,133.472 L 196.318,138.730" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 192.827,129.236 L 193.681,133.472" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 183.578,128.101 L 192.827,129.236" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 183.150,128.600 L 183.578,128.101" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 183.150,140.600 L 183.150,128.600" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 181.872,140.600 L 183.150,140.600" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 181.061,139.808 L 181.872,140.600" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 180.969,123.089 L 180.971,123.438 L 180.973,123.786 L 180.975,124.134 L 180.977,124.483 L 180.979,124.831 L 180.981,125.179 L 180.983,125.528 L 180.985,125.876 L 180.986,126.224 L 180.988,126.572 L 180.990,126.921 L 180.992,127.269 L 180.994,127.617 L 180.996,127.966 L 180.998,128.314 L 181.000,128.662 L 181.002,129.011 L 181.004,129.359 L 181.005,129.707 L 181.007,130.056 L 181.009,130.404 L 181.011,130.752 L 181.013,131.100 L 181.015,131.449 L 181.017,131.797 L 181.019,132.145 L 181.021,132.494 L 181.023,132.842 L 181.024,133.190 L 181.026,133.539 L 181.028,133.887 L 181.030,134.235 L 181.032,134.583 L 181.034,134.932 L 181.036,135.280 L 181.038,135.628 L 181.040,135.977 L 181.042,136.325 L 181.043,136.673 L 181.045,137.022 L 181.047,137.370 L 181.049,137.718 L 181.051,138.066 L 181.053,138.415 L 181.055,138.763 L 181.057,139.111 L 181.059,139.460 L 181.061,139.808" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 196.980,125.055 L 180.969,123.089" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 198.645,138.108 L 196.980,125.055" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 198.535,139.002 L 198.645,138.108" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 168.739,139.808 L 168.741,139.464 L 168.743,139.121 L 168.745,138.777 L 168.747,138.434 L 168.749,138.090 L 168.751,137.747 L 168.752,137.403 L 168.754,137.060 L 168.756,136.716 L 168.758,136.373 L 168.760,136.029 L 168.762,135.685 L 168.764,135.342 L 168.766,134.998 L 168.767,134.655 L 168.769,134.311 L 168.771,133.968 L 168.773,133.624 L 168.775,133.281 L 168.777,132.937 L 168.779,132.594 L 168.781,132.250 L 168.782,131.906 L 168.784,131.563 L 168.786,131.219 L 168.788,130.876 L 168.790,130.532 L 168.792,130.189 L 168.794,129.845 L 168.795,129.502 L 168.797,129.158 L 168.799,128.814 L 168.801,128.471 L 168.803,128.127 L 168.805,127.784 L 168.807,127.440 L 168.809,127.097 L 168.810,126.753 L 168.812,126.410 L 168.814,126.066 L 168.816,125.723 L 168.818,125.379 L 168.820,125.035 L 168.822,124.692 L 168.824,124.348 L 168.825,124.005 L 168.827,123.661 L 168.829,123.318 L 168.831,122.974 L 168.833,122.631 L 168.835,122.287 L 168.837,121.944 L 168.839,121.600" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 167.928,140.600 L 168.739,139.808" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 166.650,140.600 L 167.928,140.600" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 166.650,128.600 L 166.650,140.600" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 164.181,125.719 L 166.650,128.600" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 157.776,124.933 L 164.181,125.719" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 157.355,121.889 L 157.776,124.933" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 159.068,120.400 L 157.355,121.889" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 168.839,121.600 L 159.068,120.400" fill="none" stroke="#000" stroke-width="0.35"/>
+<line x1="157.776" y1="123.933" x2="157.776" y2="109.826" stroke="#000" stroke-width="0.13"/>
+<line x1="164.181" y1="124.719" x2="164.181" y2="109.826" stroke="#000" stroke-width="0.13"/>
+<line x1="154.776" y1="111.326" x2="167.181" y2="111.326" stroke="#000" stroke-width="0.18"/>
+<polygon points="157.776,111.326 155.776,112.026 155.776,110.626" fill="#000"/>
+<polygon points="164.181,111.326 166.181,110.626 166.181,112.026" fill="#000"/>
+<text x="160.978" y="109.586" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">2.13 cable relief</text>
+<line x1="163.181" y1="140.600" x2="146.681" y2="140.600" stroke="#000" stroke-width="0.13"/>
+<line x1="163.181" y1="125.719" x2="146.681" y2="125.719" stroke="#000" stroke-width="0.13"/>
+<line x1="148.181" y1="143.600" x2="148.181" y2="122.719" stroke="#000" stroke-width="0.18"/>
+<polygon points="148.181,140.600 148.881,142.600 147.481,142.600" fill="#000"/>
+<polygon points="148.181,125.719 147.481,123.719 148.881,123.719" fill="#000"/>
+<text x="147.181" y="133.159" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">4.96 ceiling, front</text>
+<line x1="184.578" y1="140.600" x2="203.078" y2="140.600" stroke="#000" stroke-width="0.13"/>
+<line x1="184.578" y1="128.101" x2="203.078" y2="128.101" stroke="#000" stroke-width="0.13"/>
+<line x1="201.578" y1="143.600" x2="201.578" y2="125.101" stroke="#000" stroke-width="0.18"/>
+<polygon points="201.578,140.600 202.278,142.600 200.878,142.600" fill="#000"/>
+<polygon points="201.578,128.101 200.878,126.101 202.278,126.101" fill="#000"/>
+<text x="202.578" y="134.350" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">4.17 ceiling, back</text>
+<line x1="199.535" y1="140.600" x2="232.035" y2="140.600" stroke="#000" stroke-width="0.13"/>
+<line x1="199.535" y1="139.002" x2="232.035" y2="139.002" stroke="#000" stroke-width="0.13"/>
+<line x1="230.535" y1="143.600" x2="230.535" y2="136.002" stroke="#000" stroke-width="0.18"/>
+<polygon points="230.535,140.600 231.235,142.600 229.835,142.600" fill="#000"/>
+<polygon points="230.535,139.002 229.835,137.002 231.235,137.002" fill="#000"/>
+<text x="231.535" y="139.801" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">0.53 skirt above z = 0</text>
+<line x1="203.645" y1="136.500" x2="208.645" y2="136.500" stroke="#000" stroke-width="0.13"/>
+<polygon points="210.645,136.500 208.645,137.200 208.645,135.800" fill="#000"/>
+<text x="212.845" y="136.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">Y</text>
+<line x1="203.645" y1="136.500" x2="203.645" y2="131.500" stroke="#000" stroke-width="0.13"/>
+<polygon points="203.645,129.500 204.345,131.500 202.945,131.500" fill="#000"/>
+<text x="203.645" y="126.900" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">Z</text>
+<path d="M 157.776,124.933 L 161.000,145.500 L 157.500,145.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<polygon points="157.376,124.933 157.776,124.533 158.176,124.933 157.776,125.333" fill="#000"/>
+<text x="156.700" y="145.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">14.9° flare</text>
+<text x="178.000" y="151.320" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">cut on the cable centre-line.  The FFC exit is</text>
+<text x="178.000" y="154.720" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">0.50 wide at the seat floor and 3.50 at z = 0;</text>
+<text x="178.000" y="158.120" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">the pocket ceiling is tilted 7° with the cap.</text>
 <line x1="86.000" y1="116.287" x2="86.000" y2="110.287" stroke="#000" stroke-width="0.5"/>
 <line x1="86.000" y1="110.287" x2="91.000" y2="110.287" stroke="#000" stroke-width="0.5"/>
 <polygon points="94.500,110.287 92.500,110.988 92.500,109.588" fill="#000"/>
@@ -3345,80 +3376,80 @@
 <polygon points="94.500,190.713 92.500,191.412 92.500,190.012" fill="#000"/>
 <text x="94.000" y="195.213" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.4" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">B</text>
 <line x1="86.000" y1="124.500" x2="86.000" y2="176.500" stroke="#000" stroke-width="0.13" stroke-dasharray="5,1.2,1.2,1.2"/>
-<path d="M 255.507,75.996 L 252.030,75.996" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 252.030,75.996 L 251.711,76.131 L 251.385,76.248 L 251.053,76.345 L 250.716,76.424 L 250.375,76.483 L 250.030,76.523 L 249.685,76.543 L 249.338,76.543 L 248.993,76.523 L 248.649,76.483 L 248.307,76.424 L 247.970,76.345 L 247.638,76.248 L 247.312,76.131 L 246.993,75.996" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 246.993,75.996 L 243.766,75.996" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 243.766,75.996 L 243.766,72.380" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 243.766,72.380 L 243.668,72.047 L 243.588,71.708 L 243.529,71.366 L 243.489,71.021 L 243.469,70.674 L 243.469,70.326 L 243.489,69.979 L 243.529,69.634 L 243.588,69.292 L 243.668,68.953 L 243.766,68.620" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 243.766,68.620 L 243.766,65.004" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 243.766,65.004 L 246.993,65.004" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 246.993,65.004 L 247.312,64.869 L 247.638,64.752 L 247.970,64.655 L 248.307,64.576 L 248.649,64.517 L 248.993,64.477 L 249.338,64.457 L 249.685,64.457 L 250.030,64.477 L 250.375,64.517 L 250.716,64.576 L 251.053,64.655 L 251.385,64.752 L 251.711,64.869 L 252.030,65.004" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 252.030,65.004 L 255.507,65.004" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 255.507,65.004 L 255.842,64.986 L 256.174,64.929 L 256.497,64.836 L 256.807,64.708 L 257.102,64.545 L 257.376,64.350 L 257.626,64.126 L 257.850,63.876 L 258.045,63.602 L 258.208,63.307 L 258.336,62.997 L 258.429,62.674 L 258.486,62.342 L 258.504,62.007" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 258.504,62.007 L 258.504,58.530" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 258.504,58.530 L 258.369,58.211 L 258.252,57.885 L 258.155,57.553 L 258.076,57.216 L 258.017,56.874 L 257.977,56.530 L 257.957,56.185 L 257.957,55.838 L 257.977,55.493 L 258.017,55.149 L 258.076,54.807 L 258.155,54.470 L 258.252,54.138 L 258.369,53.812 L 258.504,53.493" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 258.504,53.493 L 258.504,50.266" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 258.504,50.266 L 262.120,50.266" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 262.120,50.266 L 262.453,50.168 L 262.792,50.088 L 263.134,50.029 L 263.479,49.989 L 263.826,49.969 L 264.174,49.969 L 264.521,49.989 L 264.866,50.029 L 265.208,50.088 L 265.547,50.168 L 265.880,50.266" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 265.880,50.266 L 269.496,50.266" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 269.496,50.266 L 269.496,53.493" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 269.496,53.493 L 269.631,53.812 L 269.748,54.138 L 269.845,54.470 L 269.924,54.807 L 269.983,55.149 L 270.023,55.493 L 270.043,55.838 L 270.043,56.185 L 270.023,56.530 L 269.983,56.874 L 269.924,57.216 L 269.845,57.553 L 269.748,57.885 L 269.631,58.211 L 269.496,58.530" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 269.496,58.530 L 269.496,62.007" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 269.496,62.007 L 269.514,62.342 L 269.571,62.674 L 269.664,62.997 L 269.792,63.307 L 269.955,63.602 L 270.150,63.876 L 270.374,64.126 L 270.624,64.350 L 270.898,64.545 L 271.193,64.708 L 271.503,64.836 L 271.826,64.929 L 272.158,64.986 L 272.493,65.004" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 272.493,65.004 L 275.970,65.004" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 275.970,65.004 L 276.289,64.869 L 276.615,64.752 L 276.947,64.655 L 277.284,64.576 L 277.626,64.517 L 277.970,64.477 L 278.315,64.457 L 278.662,64.457 L 279.007,64.477 L 279.351,64.517 L 279.693,64.576 L 280.030,64.655 L 280.362,64.752 L 280.688,64.869 L 281.007,65.004" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 281.007,65.004 L 284.234,65.004" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 284.234,65.004 L 284.234,68.620" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 284.234,68.620 L 284.332,68.953 L 284.412,69.292 L 284.471,69.634 L 284.511,69.979 L 284.531,70.326 L 284.531,70.674 L 284.511,71.021 L 284.471,71.366 L 284.412,71.708 L 284.332,72.047 L 284.234,72.380" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 284.234,72.380 L 284.234,75.996" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 284.234,75.996 L 281.007,75.996" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 281.007,75.996 L 280.688,76.131 L 280.362,76.248 L 280.030,76.345 L 279.693,76.424 L 279.351,76.483 L 279.007,76.523 L 278.662,76.543 L 278.315,76.543 L 277.970,76.523 L 277.626,76.483 L 277.284,76.424 L 276.947,76.345 L 276.615,76.248 L 276.289,76.131 L 275.970,75.996" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 275.970,75.996 L 272.493,75.996" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 272.493,75.996 L 272.158,76.014 L 271.826,76.071 L 271.503,76.164 L 271.193,76.292 L 270.898,76.455 L 270.624,76.650 L 270.374,76.874 L 270.150,77.124 L 269.955,77.398 L 269.792,77.693 L 269.664,78.003 L 269.571,78.326 L 269.514,78.658 L 269.496,78.993" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 269.496,78.993 L 269.496,82.470" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 269.496,82.470 L 269.631,82.789 L 269.748,83.115 L 269.845,83.447 L 269.924,83.784 L 269.983,84.126 L 270.023,84.470 L 270.043,84.815 L 270.043,85.162 L 270.023,85.507 L 269.983,85.851 L 269.924,86.193 L 269.845,86.530 L 269.748,86.862 L 269.631,87.188 L 269.496,87.507" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 269.496,87.507 L 269.496,90.734" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 269.496,90.734 L 265.880,90.734" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 265.880,90.734 L 265.547,90.832 L 265.208,90.912 L 264.866,90.971 L 264.521,91.011 L 264.174,91.031 L 263.826,91.031 L 263.479,91.011 L 263.134,90.971 L 262.792,90.912 L 262.453,90.832 L 262.120,90.734" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 262.120,90.734 L 258.504,90.734" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 258.504,90.734 L 258.504,87.507" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 258.504,87.507 L 258.369,87.188 L 258.252,86.862 L 258.155,86.530 L 258.076,86.193 L 258.017,85.851 L 257.977,85.507 L 257.957,85.162 L 257.957,84.815 L 257.977,84.470 L 258.017,84.126 L 258.076,83.784 L 258.155,83.447 L 258.252,83.115 L 258.369,82.789 L 258.504,82.470" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 258.504,82.470 L 258.504,78.993" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 258.504,78.993 L 258.486,78.658 L 258.429,78.326 L 258.336,78.003 L 258.208,77.693 L 258.045,77.398 L 257.850,77.124 L 257.626,76.874 L 257.376,76.650 L 257.102,76.455 L 256.807,76.292 L 256.497,76.164 L 256.174,76.071 L 255.842,76.014 L 255.507,75.996" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 291.500,70.500 L 291.498,70.150 L 291.491,69.801 L 291.480,69.451 L 291.464,69.102 L 291.444,68.752 L 291.420,68.403 L 291.391,68.055 L 291.358,67.707 L 291.320,67.359 L 291.278,67.012 L 291.231,66.665 L 291.180,66.319 L 291.125,65.974 L 291.065,65.629 L 291.001,65.285 L 290.933,64.942 L 290.860,64.600 L 290.782,64.259 L 290.701,63.919 L 290.615,63.580 L 290.525,63.242 L 290.430,62.905 L 290.332,62.569 L 290.229,62.235 L 290.121,61.902 L 290.010,61.571 L 289.894,61.241 L 289.774,60.912 L 289.650,60.585 L 289.522,60.260 L 289.390,59.936 L 289.254,59.614 L 289.113,59.293 L 288.968,58.975 L 288.820,58.658 L 288.667,58.344 L 288.511,58.031 L 288.350,57.720 L 288.186,57.411 L 288.017,57.105 L 287.845,56.801 L 287.669,56.498 L 287.489,56.198 L 287.305,55.901 L 287.117,55.606 L 286.926,55.313 L 286.731,55.022 L 286.532,54.735 L 286.330,54.449 L 286.124,54.167 L 285.914,53.887 L 285.701,53.609 L 285.485,53.335 L 285.265,53.063 L 285.041,52.794 L 284.814,52.527 L 284.584,52.264 L 284.350,52.004 L 284.114,51.746 L 283.873,51.492 L 283.630,51.241 L 283.384,50.993 L 283.134,50.748 L 282.881,50.506 L 282.625,50.268 L 282.366,50.032 L 282.105,49.800 L 281.840,49.572 L 281.572,49.347 L 281.302,49.125 L 281.029,48.906 L 280.752,48.692 L 280.474,48.480 L 280.192,48.273 L 279.908,48.068 L 279.622,47.868 L 279.333,47.671 L 279.041,47.478 L 278.747,47.288 L 278.451,47.103 L 278.152,46.921 L 277.851,46.743 L 277.548,46.569 L 277.242,46.398 L 276.934,46.232 L 276.625,46.069 L 276.313,45.911 L 275.999,45.756 L 275.684,45.605 L 275.366,45.459 L 275.047,45.316 L 274.725,45.178 L 274.402,45.043 L 274.078,44.913 L 273.752,44.787 L 273.424,44.665 L 273.094,44.547 L 272.764,44.434 L 272.431,44.324 L 272.098,44.219 L 271.763,44.118 L 271.427,44.022 L 271.089,43.930 L 270.751,43.841 L 270.411,43.758 L 270.071,43.678 L 269.729,43.603 L 269.386,43.533 L 269.043,43.466 L 268.699,43.404 L 268.354,43.347 L 268.008,43.294 L 267.662,43.245 L 267.315,43.201 L 266.967,43.161 L 266.619,43.125 L 266.271,43.094 L 265.922,43.067 L 265.573,43.045 L 265.224,43.027 L 264.874,43.014 L 264.525,43.005 L 264.175,43.001 L 263.825,43.001 L 263.475,43.005 L 263.126,43.014 L 262.776,43.027 L 262.427,43.045 L 262.078,43.067 L 261.729,43.094 L 261.381,43.125 L 261.033,43.161 L 260.685,43.201 L 260.338,43.245 L 259.992,43.294 L 259.646,43.347 L 259.301,43.404 L 258.957,43.466 L 258.614,43.533 L 258.271,43.603 L 257.929,43.678 L 257.589,43.758 L 257.249,43.841 L 256.911,43.930 L 256.573,44.022 L 256.237,44.118 L 255.902,44.219 L 255.569,44.324 L 255.236,44.434 L 254.906,44.547 L 254.576,44.665 L 254.248,44.787 L 253.922,44.913 L 253.598,45.043 L 253.275,45.178 L 252.953,45.316 L 252.634,45.459 L 252.316,45.605 L 252.001,45.756 L 251.687,45.911 L 251.375,46.069 L 251.066,46.232 L 250.758,46.398 L 250.452,46.569 L 250.149,46.743 L 249.848,46.921 L 249.549,47.103 L 249.253,47.288 L 248.959,47.478 L 248.667,47.671 L 248.378,47.868 L 248.092,48.068 L 247.808,48.273 L 247.526,48.480 L 247.248,48.692 L 246.971,48.906 L 246.698,49.125 L 246.428,49.347 L 246.160,49.572 L 245.895,49.800 L 245.634,50.032 L 245.375,50.268 L 245.119,50.506 L 244.866,50.748 L 244.616,50.993 L 244.370,51.241 L 244.127,51.492 L 243.886,51.746 L 243.650,52.004 L 243.416,52.264 L 243.186,52.527 L 242.959,52.794 L 242.735,53.063 L 242.515,53.335 L 242.299,53.609 L 242.086,53.887 L 241.876,54.167 L 241.670,54.449 L 241.468,54.735 L 241.269,55.022 L 241.074,55.313 L 240.883,55.606 L 240.695,55.901 L 240.511,56.198 L 240.331,56.498 L 240.155,56.801 L 239.983,57.105 L 239.814,57.411 L 239.650,57.720 L 239.489,58.031 L 239.333,58.344 L 239.180,58.658 L 239.032,58.975 L 238.887,59.293 L 238.746,59.614 L 238.610,59.936 L 238.478,60.260 L 238.350,60.585 L 238.226,60.912 L 238.106,61.241 L 237.990,61.571 L 237.879,61.902 L 237.771,62.235 L 237.668,62.569 L 237.570,62.905 L 237.475,63.242 L 237.385,63.580 L 237.299,63.919 L 237.218,64.259 L 237.140,64.600 L 237.067,64.942 L 236.999,65.285 L 236.935,65.629 L 236.875,65.974 L 236.820,66.319 L 236.769,66.665 L 236.722,67.012 L 236.680,67.359 L 236.642,67.707 L 236.609,68.055 L 236.580,68.403 L 236.556,68.752 L 236.536,69.102 L 236.520,69.451 L 236.509,69.801 L 236.502,70.150 L 236.500,70.500 L 236.502,70.850 L 236.509,71.199 L 236.520,71.549 L 236.536,71.898 L 236.556,72.248 L 236.580,72.597 L 236.609,72.945 L 236.642,73.293 L 236.680,73.641 L 236.722,73.988 L 236.769,74.335 L 236.820,74.681 L 236.875,75.026 L 236.935,75.371 L 236.999,75.715 L 237.067,76.058 L 237.140,76.400 L 237.218,76.741 L 237.299,77.081 L 237.385,77.420 L 237.475,77.758 L 237.570,78.095 L 237.668,78.431 L 237.771,78.765 L 237.879,79.098 L 237.990,79.429 L 238.106,79.759 L 238.226,80.088 L 238.350,80.415 L 238.478,80.740 L 238.610,81.064 L 238.746,81.386 L 238.887,81.707 L 239.032,82.025 L 239.180,82.342 L 239.333,82.656 L 239.489,82.969 L 239.650,83.280 L 239.814,83.589 L 239.983,83.895 L 240.155,84.199 L 240.331,84.502 L 240.511,84.802 L 240.695,85.099 L 240.883,85.394 L 241.074,85.687 L 241.269,85.978 L 241.468,86.265 L 241.670,86.551 L 241.876,86.833 L 242.086,87.113 L 242.299,87.391 L 242.515,87.665 L 242.735,87.937 L 242.959,88.206 L 243.186,88.473 L 243.416,88.736 L 243.650,88.996 L 243.886,89.254 L 244.127,89.508 L 244.370,89.759 L 244.616,90.007 L 244.866,90.252 L 245.119,90.494 L 245.375,90.732 L 245.634,90.968 L 245.895,91.200 L 246.160,91.428 L 246.428,91.653 L 246.698,91.875 L 246.971,92.094 L 247.248,92.308 L 247.526,92.520 L 247.808,92.727 L 248.092,92.932 L 248.378,93.132 L 248.667,93.329 L 248.959,93.522 L 249.253,93.712 L 249.549,93.897 L 249.848,94.079 L 250.149,94.257 L 250.452,94.431 L 250.758,94.602 L 251.066,94.768 L 251.375,94.931 L 251.687,95.089 L 252.001,95.244 L 252.316,95.395 L 252.634,95.541 L 252.953,95.684 L 253.275,95.822 L 253.598,95.957 L 253.922,96.087 L 254.248,96.213 L 254.576,96.335 L 254.906,96.453 L 255.236,96.566 L 255.569,96.676 L 255.902,96.781 L 256.237,96.882 L 256.573,96.978 L 256.911,97.070 L 257.249,97.159 L 257.589,97.242 L 257.929,97.322 L 258.271,97.397 L 258.614,97.467 L 258.957,97.534 L 259.301,97.596 L 259.646,97.653 L 259.992,97.706 L 260.338,97.755 L 260.685,97.799 L 261.033,97.839 L 261.381,97.875 L 261.729,97.906 L 262.078,97.933 L 262.427,97.955 L 262.776,97.973 L 263.126,97.986 L 263.475,97.995 L 263.825,97.999 L 264.175,97.999 L 264.525,97.995 L 264.874,97.986 L 265.224,97.973 L 265.573,97.955 L 265.922,97.933 L 266.271,97.906 L 266.619,97.875 L 266.967,97.839 L 267.315,97.799 L 267.662,97.755 L 268.008,97.706 L 268.354,97.653 L 268.699,97.596 L 269.043,97.534 L 269.386,97.467 L 269.729,97.397 L 270.071,97.322 L 270.411,97.242 L 270.751,97.159 L 271.089,97.070 L 271.427,96.978 L 271.763,96.882 L 272.098,96.781 L 272.431,96.676 L 272.764,96.566 L 273.094,96.453 L 273.424,96.335 L 273.752,96.213 L 274.078,96.087 L 274.402,95.957 L 274.725,95.822 L 275.047,95.684 L 275.366,95.541 L 275.684,95.395 L 275.999,95.244 L 276.313,95.089 L 276.625,94.931 L 276.934,94.768 L 277.242,94.602 L 277.548,94.431 L 277.851,94.257 L 278.152,94.079 L 278.451,93.897 L 278.747,93.712 L 279.041,93.522 L 279.333,93.329 L 279.622,93.132 L 279.908,92.932 L 280.192,92.727 L 280.474,92.520 L 280.752,92.308 L 281.029,92.094 L 281.302,91.875 L 281.572,91.653 L 281.840,91.428 L 282.105,91.200 L 282.366,90.968 L 282.625,90.732 L 282.881,90.494 L 283.134,90.252 L 283.384,90.007 L 283.630,89.759 L 283.873,89.508 L 284.114,89.254 L 284.350,88.996 L 284.584,88.736 L 284.814,88.473 L 285.041,88.206 L 285.265,87.937 L 285.485,87.665 L 285.701,87.391 L 285.914,87.113 L 286.124,86.833 L 286.330,86.551 L 286.532,86.265 L 286.731,85.978 L 286.926,85.687 L 287.117,85.394 L 287.305,85.099 L 287.489,84.802 L 287.669,84.502 L 287.845,84.199 L 288.017,83.895 L 288.186,83.589 L 288.350,83.280 L 288.511,82.969 L 288.667,82.656 L 288.820,82.342 L 288.968,82.025 L 289.113,81.707 L 289.254,81.386 L 289.390,81.064 L 289.522,80.740 L 289.650,80.415 L 289.774,80.088 L 289.894,79.759 L 290.010,79.429 L 290.121,79.098 L 290.229,78.765 L 290.332,78.431 L 290.430,78.095 L 290.525,77.758 L 290.615,77.420 L 290.701,77.081 L 290.782,76.741 L 290.860,76.400 L 290.933,76.058 L 291.001,75.715 L 291.065,75.371 L 291.125,75.026 L 291.180,74.681 L 291.231,74.335 L 291.278,73.988 L 291.320,73.641 L 291.358,73.293 L 291.391,72.945 L 291.420,72.597 L 291.444,72.248 L 291.464,71.898 L 291.480,71.549 L 291.491,71.199 L 291.498,70.850 L 291.500,70.500" fill="none" stroke="#000" stroke-width="0.35"/>
-<line x1="231.000" y1="70.500" x2="297.000" y2="70.500" stroke="#000" stroke-width="0.13" stroke-dasharray="5,1.2,1.2,1.2"/>
-<line x1="264.000" y1="103.500" x2="264.000" y2="37.500" stroke="#000" stroke-width="0.13" stroke-dasharray="5,1.2,1.2,1.2"/>
-<line x1="243.766" y1="64.004" x2="243.766" y2="30.504" stroke="#000" stroke-width="0.13"/>
-<line x1="284.234" y1="64.004" x2="284.234" y2="30.504" stroke="#000" stroke-width="0.13"/>
-<line x1="243.766" y1="32.004" x2="284.234" y2="32.004" stroke="#000" stroke-width="0.18"/>
-<polygon points="243.766,32.004 245.766,31.304 245.766,32.704" fill="#000"/>
-<polygon points="284.234,32.004 282.234,32.704 282.234,31.304" fill="#000"/>
-<text x="264.000" y="30.264" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">4.05 ±0.03</text>
-<line x1="270.496" y1="90.734" x2="305.996" y2="90.734" stroke="#000" stroke-width="0.13"/>
-<line x1="270.496" y1="50.266" x2="305.996" y2="50.266" stroke="#000" stroke-width="0.13"/>
-<line x1="304.496" y1="90.734" x2="304.496" y2="50.266" stroke="#000" stroke-width="0.18"/>
-<polygon points="304.496,90.734 303.796,88.734 305.196,88.734" fill="#000"/>
-<polygon points="304.496,50.266 305.196,52.266 303.796,52.266" fill="#000"/>
-<text x="305.496" y="70.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">4.05 ±0.03</text>
-<path d="M 247.766,65.004 L 240.000,42.500 L 236.500,42.500" fill="none" stroke="#000" stroke-width="0.13"/>
-<polygon points="247.366,65.004 247.766,64.604 248.166,65.004 247.766,65.404" fill="#000"/>
-<text x="235.700" y="42.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">1.10 ±0.03 arm width</text>
-<path d="M 270.696,63.804 L 290.000,42.500 L 293.500,42.500" fill="none" stroke="#000" stroke-width="0.13"/>
-<polygon points="270.296,63.804 270.696,63.404 271.096,63.804 270.696,64.204" fill="#000"/>
-<text x="294.300" y="42.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">R0.30, 4x</text>
-<path d="M 278.500,77.596 L 291.000,96.500 L 294.500,96.500" fill="none" stroke="#000" stroke-width="0.13"/>
-<polygon points="278.100,77.596 278.500,77.196 278.900,77.596 278.500,77.996" fill="#000"/>
-<text x="295.300" y="96.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">relief bulge 4x</text>
-<path d="M 244.558,89.942 L 232.000,96.500 L 228.500,96.500" fill="none" stroke="#000" stroke-width="0.13"/>
-<polygon points="244.157,89.942 244.558,89.542 244.958,89.942 244.558,90.343" fill="#000"/>
-<text x="227.700" y="96.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">Ø5.50 stem</text>
-<path d="M 240.000,70.500 L 230.000,78.500 L 226.500,78.500" fill="none" stroke="#000" stroke-width="0.13"/>
-<polygon points="239.600,70.500 240.000,70.100 240.400,70.500 240.000,70.900" fill="#000"/>
-<text x="225.700" y="78.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">0.65 min wall, stem to slot</text>
-<path d="M 281.234,75.996 L 290.000,104.500 L 293.500,104.500" fill="none" stroke="#000" stroke-width="0.13"/>
-<polygon points="280.834,75.996 281.234,75.596 281.634,75.996 281.234,76.396" fill="#000"/>
-<text x="294.300" y="104.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">lead-in 4.61 sq (note 8)</text>
-<text x="264.000" y="110.320" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">section at z = 0.30, just above the lead-in chamfer</text>
+<path d="M 267.507,77.996 L 264.030,77.996" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 264.030,77.996 L 263.711,78.131 L 263.385,78.248 L 263.053,78.345 L 262.716,78.424 L 262.375,78.483 L 262.030,78.523 L 261.685,78.543 L 261.338,78.543 L 260.993,78.523 L 260.649,78.483 L 260.307,78.424 L 259.970,78.345 L 259.638,78.248 L 259.312,78.131 L 258.993,77.996" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 258.993,77.996 L 255.766,77.996" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 255.766,77.996 L 255.766,74.380" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 255.766,74.380 L 255.668,74.047 L 255.588,73.708 L 255.529,73.366 L 255.489,73.021 L 255.469,72.674 L 255.469,72.326 L 255.489,71.979 L 255.529,71.634 L 255.588,71.292 L 255.668,70.953 L 255.766,70.620" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 255.766,70.620 L 255.766,67.004" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 255.766,67.004 L 258.993,67.004" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 258.993,67.004 L 259.312,66.869 L 259.638,66.752 L 259.970,66.655 L 260.307,66.576 L 260.649,66.517 L 260.993,66.477 L 261.338,66.457 L 261.685,66.457 L 262.030,66.477 L 262.375,66.517 L 262.716,66.576 L 263.053,66.655 L 263.385,66.752 L 263.711,66.869 L 264.030,67.004" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 264.030,67.004 L 267.507,67.004" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 267.507,67.004 L 267.842,66.986 L 268.174,66.929 L 268.497,66.836 L 268.807,66.708 L 269.102,66.545 L 269.376,66.350 L 269.626,66.126 L 269.850,65.876 L 270.045,65.602 L 270.208,65.307 L 270.336,64.997 L 270.429,64.674 L 270.486,64.342 L 270.504,64.007" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 270.504,64.007 L 270.504,60.530" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 270.504,60.530 L 270.369,60.211 L 270.252,59.885 L 270.155,59.553 L 270.076,59.216 L 270.017,58.874 L 269.977,58.530 L 269.957,58.185 L 269.957,57.838 L 269.977,57.493 L 270.017,57.149 L 270.076,56.807 L 270.155,56.470 L 270.252,56.138 L 270.369,55.812 L 270.504,55.493" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 270.504,55.493 L 270.504,52.266" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 270.504,52.266 L 274.120,52.266" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 274.120,52.266 L 274.453,52.168 L 274.792,52.088 L 275.134,52.029 L 275.479,51.989 L 275.826,51.969 L 276.174,51.969 L 276.521,51.989 L 276.866,52.029 L 277.208,52.088 L 277.547,52.168 L 277.880,52.266" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 277.880,52.266 L 281.496,52.266" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 281.496,52.266 L 281.496,55.493" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 281.496,55.493 L 281.631,55.812 L 281.748,56.138 L 281.845,56.470 L 281.924,56.807 L 281.983,57.149 L 282.023,57.493 L 282.043,57.838 L 282.043,58.185 L 282.023,58.530 L 281.983,58.874 L 281.924,59.216 L 281.845,59.553 L 281.748,59.885 L 281.631,60.211 L 281.496,60.530" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 281.496,60.530 L 281.496,64.007" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 281.496,64.007 L 281.514,64.342 L 281.571,64.674 L 281.664,64.997 L 281.792,65.307 L 281.955,65.602 L 282.150,65.876 L 282.374,66.126 L 282.624,66.350 L 282.898,66.545 L 283.193,66.708 L 283.503,66.836 L 283.826,66.929 L 284.158,66.986 L 284.493,67.004" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 284.493,67.004 L 287.970,67.004" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 287.970,67.004 L 288.289,66.869 L 288.615,66.752 L 288.947,66.655 L 289.284,66.576 L 289.626,66.517 L 289.970,66.477 L 290.315,66.457 L 290.662,66.457 L 291.007,66.477 L 291.351,66.517 L 291.693,66.576 L 292.030,66.655 L 292.362,66.752 L 292.688,66.869 L 293.007,67.004" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 293.007,67.004 L 296.234,67.004" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 296.234,67.004 L 296.234,70.620" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 296.234,70.620 L 296.332,70.953 L 296.412,71.292 L 296.471,71.634 L 296.511,71.979 L 296.531,72.326 L 296.531,72.674 L 296.511,73.021 L 296.471,73.366 L 296.412,73.708 L 296.332,74.047 L 296.234,74.380" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 296.234,74.380 L 296.234,77.996" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 296.234,77.996 L 293.007,77.996" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 293.007,77.996 L 292.688,78.131 L 292.362,78.248 L 292.030,78.345 L 291.693,78.424 L 291.351,78.483 L 291.007,78.523 L 290.662,78.543 L 290.315,78.543 L 289.970,78.523 L 289.626,78.483 L 289.284,78.424 L 288.947,78.345 L 288.615,78.248 L 288.289,78.131 L 287.970,77.996" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 287.970,77.996 L 284.493,77.996" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 284.493,77.996 L 284.158,78.014 L 283.826,78.071 L 283.503,78.164 L 283.193,78.292 L 282.898,78.455 L 282.624,78.650 L 282.374,78.874 L 282.150,79.124 L 281.955,79.398 L 281.792,79.693 L 281.664,80.003 L 281.571,80.326 L 281.514,80.658 L 281.496,80.993" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 281.496,80.993 L 281.496,84.470" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 281.496,84.470 L 281.631,84.789 L 281.748,85.115 L 281.845,85.447 L 281.924,85.784 L 281.983,86.126 L 282.023,86.470 L 282.043,86.815 L 282.043,87.162 L 282.023,87.507 L 281.983,87.851 L 281.924,88.193 L 281.845,88.530 L 281.748,88.862 L 281.631,89.188 L 281.496,89.507" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 281.496,89.507 L 281.496,92.734" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 281.496,92.734 L 277.880,92.734" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 277.880,92.734 L 277.547,92.832 L 277.208,92.912 L 276.866,92.971 L 276.521,93.011 L 276.174,93.031 L 275.826,93.031 L 275.479,93.011 L 275.134,92.971 L 274.792,92.912 L 274.453,92.832 L 274.120,92.734" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 274.120,92.734 L 270.504,92.734" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 270.504,92.734 L 270.504,89.507" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 270.504,89.507 L 270.369,89.188 L 270.252,88.862 L 270.155,88.530 L 270.076,88.193 L 270.017,87.851 L 269.977,87.507 L 269.957,87.162 L 269.957,86.815 L 269.977,86.470 L 270.017,86.126 L 270.076,85.784 L 270.155,85.447 L 270.252,85.115 L 270.369,84.789 L 270.504,84.470" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 270.504,84.470 L 270.504,80.993" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 270.504,80.993 L 270.486,80.658 L 270.429,80.326 L 270.336,80.003 L 270.208,79.693 L 270.045,79.398 L 269.850,79.124 L 269.626,78.874 L 269.376,78.650 L 269.102,78.455 L 268.807,78.292 L 268.497,78.164 L 268.174,78.071 L 267.842,78.014 L 267.507,77.996" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 303.500,72.500 L 303.498,72.150 L 303.491,71.801 L 303.480,71.451 L 303.464,71.102 L 303.444,70.752 L 303.420,70.403 L 303.391,70.055 L 303.358,69.707 L 303.320,69.359 L 303.278,69.012 L 303.231,68.665 L 303.180,68.319 L 303.125,67.974 L 303.065,67.629 L 303.001,67.285 L 302.933,66.942 L 302.860,66.600 L 302.782,66.259 L 302.701,65.919 L 302.615,65.580 L 302.525,65.242 L 302.430,64.905 L 302.332,64.569 L 302.229,64.235 L 302.121,63.902 L 302.010,63.571 L 301.894,63.241 L 301.774,62.912 L 301.650,62.585 L 301.522,62.260 L 301.390,61.936 L 301.254,61.614 L 301.113,61.293 L 300.968,60.975 L 300.820,60.658 L 300.667,60.344 L 300.511,60.031 L 300.350,59.720 L 300.186,59.411 L 300.017,59.105 L 299.845,58.801 L 299.669,58.498 L 299.489,58.198 L 299.305,57.901 L 299.117,57.606 L 298.926,57.313 L 298.731,57.022 L 298.532,56.735 L 298.330,56.449 L 298.124,56.167 L 297.914,55.887 L 297.701,55.609 L 297.485,55.335 L 297.265,55.063 L 297.041,54.794 L 296.814,54.527 L 296.584,54.264 L 296.350,54.004 L 296.114,53.746 L 295.873,53.492 L 295.630,53.241 L 295.384,52.993 L 295.134,52.748 L 294.881,52.506 L 294.625,52.268 L 294.366,52.032 L 294.105,51.800 L 293.840,51.572 L 293.572,51.347 L 293.302,51.125 L 293.029,50.906 L 292.752,50.692 L 292.474,50.480 L 292.192,50.273 L 291.908,50.068 L 291.622,49.868 L 291.333,49.671 L 291.041,49.478 L 290.747,49.288 L 290.451,49.103 L 290.152,48.921 L 289.851,48.743 L 289.548,48.569 L 289.242,48.398 L 288.934,48.232 L 288.625,48.069 L 288.313,47.911 L 287.999,47.756 L 287.684,47.605 L 287.366,47.459 L 287.047,47.316 L 286.725,47.178 L 286.402,47.043 L 286.078,46.913 L 285.752,46.787 L 285.424,46.665 L 285.094,46.547 L 284.764,46.434 L 284.431,46.324 L 284.098,46.219 L 283.763,46.118 L 283.427,46.022 L 283.089,45.930 L 282.751,45.841 L 282.411,45.758 L 282.071,45.678 L 281.729,45.603 L 281.386,45.533 L 281.043,45.466 L 280.699,45.404 L 280.354,45.347 L 280.008,45.294 L 279.662,45.245 L 279.315,45.201 L 278.967,45.161 L 278.619,45.125 L 278.271,45.094 L 277.922,45.067 L 277.573,45.045 L 277.224,45.027 L 276.874,45.014 L 276.525,45.005 L 276.175,45.001 L 275.825,45.001 L 275.475,45.005 L 275.126,45.014 L 274.776,45.027 L 274.427,45.045 L 274.078,45.067 L 273.729,45.094 L 273.381,45.125 L 273.033,45.161 L 272.685,45.201 L 272.338,45.245 L 271.992,45.294 L 271.646,45.347 L 271.301,45.404 L 270.957,45.466 L 270.614,45.533 L 270.271,45.603 L 269.929,45.678 L 269.589,45.758 L 269.249,45.841 L 268.911,45.930 L 268.573,46.022 L 268.237,46.118 L 267.902,46.219 L 267.569,46.324 L 267.236,46.434 L 266.906,46.547 L 266.576,46.665 L 266.248,46.787 L 265.922,46.913 L 265.598,47.043 L 265.275,47.178 L 264.953,47.316 L 264.634,47.459 L 264.316,47.605 L 264.001,47.756 L 263.687,47.911 L 263.375,48.069 L 263.066,48.232 L 262.758,48.398 L 262.452,48.569 L 262.149,48.743 L 261.848,48.921 L 261.549,49.103 L 261.253,49.288 L 260.959,49.478 L 260.667,49.671 L 260.378,49.868 L 260.092,50.068 L 259.808,50.273 L 259.526,50.480 L 259.248,50.692 L 258.971,50.906 L 258.698,51.125 L 258.428,51.347 L 258.160,51.572 L 257.895,51.800 L 257.634,52.032 L 257.375,52.268 L 257.119,52.506 L 256.866,52.748 L 256.616,52.993 L 256.370,53.241 L 256.127,53.492 L 255.886,53.746 L 255.650,54.004 L 255.416,54.264 L 255.186,54.527 L 254.959,54.794 L 254.735,55.063 L 254.515,55.335 L 254.299,55.609 L 254.086,55.887 L 253.876,56.167 L 253.670,56.449 L 253.468,56.735 L 253.269,57.022 L 253.074,57.313 L 252.883,57.606 L 252.695,57.901 L 252.511,58.198 L 252.331,58.498 L 252.155,58.801 L 251.983,59.105 L 251.814,59.411 L 251.650,59.720 L 251.489,60.031 L 251.333,60.344 L 251.180,60.658 L 251.032,60.975 L 250.887,61.293 L 250.746,61.614 L 250.610,61.936 L 250.478,62.260 L 250.350,62.585 L 250.226,62.912 L 250.106,63.241 L 249.990,63.571 L 249.879,63.902 L 249.771,64.235 L 249.668,64.569 L 249.570,64.905 L 249.475,65.242 L 249.385,65.580 L 249.299,65.919 L 249.218,66.259 L 249.140,66.600 L 249.067,66.942 L 248.999,67.285 L 248.935,67.629 L 248.875,67.974 L 248.820,68.319 L 248.769,68.665 L 248.722,69.012 L 248.680,69.359 L 248.642,69.707 L 248.609,70.055 L 248.580,70.403 L 248.556,70.752 L 248.536,71.102 L 248.520,71.451 L 248.509,71.801 L 248.502,72.150 L 248.500,72.500 L 248.502,72.850 L 248.509,73.199 L 248.520,73.549 L 248.536,73.898 L 248.556,74.248 L 248.580,74.597 L 248.609,74.945 L 248.642,75.293 L 248.680,75.641 L 248.722,75.988 L 248.769,76.335 L 248.820,76.681 L 248.875,77.026 L 248.935,77.371 L 248.999,77.715 L 249.067,78.058 L 249.140,78.400 L 249.218,78.741 L 249.299,79.081 L 249.385,79.420 L 249.475,79.758 L 249.570,80.095 L 249.668,80.431 L 249.771,80.765 L 249.879,81.098 L 249.990,81.429 L 250.106,81.759 L 250.226,82.088 L 250.350,82.415 L 250.478,82.740 L 250.610,83.064 L 250.746,83.386 L 250.887,83.707 L 251.032,84.025 L 251.180,84.342 L 251.333,84.656 L 251.489,84.969 L 251.650,85.280 L 251.814,85.589 L 251.983,85.895 L 252.155,86.199 L 252.331,86.502 L 252.511,86.802 L 252.695,87.099 L 252.883,87.394 L 253.074,87.687 L 253.269,87.978 L 253.468,88.265 L 253.670,88.551 L 253.876,88.833 L 254.086,89.113 L 254.299,89.391 L 254.515,89.665 L 254.735,89.937 L 254.959,90.206 L 255.186,90.473 L 255.416,90.736 L 255.650,90.996 L 255.886,91.254 L 256.127,91.508 L 256.370,91.759 L 256.616,92.007 L 256.866,92.252 L 257.119,92.494 L 257.375,92.732 L 257.634,92.968 L 257.895,93.200 L 258.160,93.428 L 258.428,93.653 L 258.698,93.875 L 258.971,94.094 L 259.248,94.308 L 259.526,94.520 L 259.808,94.727 L 260.092,94.932 L 260.378,95.132 L 260.667,95.329 L 260.959,95.522 L 261.253,95.712 L 261.549,95.897 L 261.848,96.079 L 262.149,96.257 L 262.452,96.431 L 262.758,96.602 L 263.066,96.768 L 263.375,96.931 L 263.687,97.089 L 264.001,97.244 L 264.316,97.395 L 264.634,97.541 L 264.953,97.684 L 265.275,97.822 L 265.598,97.957 L 265.922,98.087 L 266.248,98.213 L 266.576,98.335 L 266.906,98.453 L 267.236,98.566 L 267.569,98.676 L 267.902,98.781 L 268.237,98.882 L 268.573,98.978 L 268.911,99.070 L 269.249,99.159 L 269.589,99.242 L 269.929,99.322 L 270.271,99.397 L 270.614,99.467 L 270.957,99.534 L 271.301,99.596 L 271.646,99.653 L 271.992,99.706 L 272.338,99.755 L 272.685,99.799 L 273.033,99.839 L 273.381,99.875 L 273.729,99.906 L 274.078,99.933 L 274.427,99.955 L 274.776,99.973 L 275.126,99.986 L 275.475,99.995 L 275.825,99.999 L 276.175,99.999 L 276.525,99.995 L 276.874,99.986 L 277.224,99.973 L 277.573,99.955 L 277.922,99.933 L 278.271,99.906 L 278.619,99.875 L 278.967,99.839 L 279.315,99.799 L 279.662,99.755 L 280.008,99.706 L 280.354,99.653 L 280.699,99.596 L 281.043,99.534 L 281.386,99.467 L 281.729,99.397 L 282.071,99.322 L 282.411,99.242 L 282.751,99.159 L 283.089,99.070 L 283.427,98.978 L 283.763,98.882 L 284.098,98.781 L 284.431,98.676 L 284.764,98.566 L 285.094,98.453 L 285.424,98.335 L 285.752,98.213 L 286.078,98.087 L 286.402,97.957 L 286.725,97.822 L 287.047,97.684 L 287.366,97.541 L 287.684,97.395 L 287.999,97.244 L 288.313,97.089 L 288.625,96.931 L 288.934,96.768 L 289.242,96.602 L 289.548,96.431 L 289.851,96.257 L 290.152,96.079 L 290.451,95.897 L 290.747,95.712 L 291.041,95.522 L 291.333,95.329 L 291.622,95.132 L 291.908,94.932 L 292.192,94.727 L 292.474,94.520 L 292.752,94.308 L 293.029,94.094 L 293.302,93.875 L 293.572,93.653 L 293.840,93.428 L 294.105,93.200 L 294.366,92.968 L 294.625,92.732 L 294.881,92.494 L 295.134,92.252 L 295.384,92.007 L 295.630,91.759 L 295.873,91.508 L 296.114,91.254 L 296.350,90.996 L 296.584,90.736 L 296.814,90.473 L 297.041,90.206 L 297.265,89.937 L 297.485,89.665 L 297.701,89.391 L 297.914,89.113 L 298.124,88.833 L 298.330,88.551 L 298.532,88.265 L 298.731,87.978 L 298.926,87.687 L 299.117,87.394 L 299.305,87.099 L 299.489,86.802 L 299.669,86.502 L 299.845,86.199 L 300.017,85.895 L 300.186,85.589 L 300.350,85.280 L 300.511,84.969 L 300.667,84.656 L 300.820,84.342 L 300.968,84.025 L 301.113,83.707 L 301.254,83.386 L 301.390,83.064 L 301.522,82.740 L 301.650,82.415 L 301.774,82.088 L 301.894,81.759 L 302.010,81.429 L 302.121,81.098 L 302.229,80.765 L 302.332,80.431 L 302.430,80.095 L 302.525,79.758 L 302.615,79.420 L 302.701,79.081 L 302.782,78.741 L 302.860,78.400 L 302.933,78.058 L 303.001,77.715 L 303.065,77.371 L 303.125,77.026 L 303.180,76.681 L 303.231,76.335 L 303.278,75.988 L 303.320,75.641 L 303.358,75.293 L 303.391,74.945 L 303.420,74.597 L 303.444,74.248 L 303.464,73.898 L 303.480,73.549 L 303.491,73.199 L 303.498,72.850 L 303.500,72.500" fill="none" stroke="#000" stroke-width="0.35"/>
+<line x1="243.000" y1="72.500" x2="309.000" y2="72.500" stroke="#000" stroke-width="0.13" stroke-dasharray="5,1.2,1.2,1.2"/>
+<line x1="276.000" y1="105.500" x2="276.000" y2="39.500" stroke="#000" stroke-width="0.13" stroke-dasharray="5,1.2,1.2,1.2"/>
+<line x1="255.766" y1="66.004" x2="255.766" y2="32.504" stroke="#000" stroke-width="0.13"/>
+<line x1="296.234" y1="66.004" x2="296.234" y2="32.504" stroke="#000" stroke-width="0.13"/>
+<line x1="255.766" y1="34.004" x2="296.234" y2="34.004" stroke="#000" stroke-width="0.18"/>
+<polygon points="255.766,34.004 257.766,33.304 257.766,34.704" fill="#000"/>
+<polygon points="296.234,34.004 294.234,34.704 294.234,33.304" fill="#000"/>
+<text x="276.000" y="32.264" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">4.05 ±0.03</text>
+<line x1="282.496" y1="92.734" x2="317.996" y2="92.734" stroke="#000" stroke-width="0.13"/>
+<line x1="282.496" y1="52.266" x2="317.996" y2="52.266" stroke="#000" stroke-width="0.13"/>
+<line x1="316.496" y1="92.734" x2="316.496" y2="52.266" stroke="#000" stroke-width="0.18"/>
+<polygon points="316.496,92.734 315.796,90.734 317.196,90.734" fill="#000"/>
+<polygon points="316.496,52.266 317.196,54.266 315.796,54.266" fill="#000"/>
+<text x="317.496" y="72.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">4.05 ±0.03</text>
+<path d="M 259.766,67.004 L 252.000,44.500 L 248.500,44.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<polygon points="259.366,67.004 259.766,66.604 260.166,67.004 259.766,67.404" fill="#000"/>
+<text x="247.700" y="44.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">1.10 ±0.03 arm width</text>
+<path d="M 282.696,65.804 L 302.000,44.500 L 305.500,44.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<polygon points="282.296,65.804 282.696,65.404 283.096,65.804 282.696,66.204" fill="#000"/>
+<text x="306.300" y="44.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">R0.30, 4x</text>
+<path d="M 290.500,79.596 L 303.000,98.500 L 306.500,98.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<polygon points="290.100,79.596 290.500,79.196 290.900,79.596 290.500,79.996" fill="#000"/>
+<text x="307.300" y="98.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">relief bulge 4x</text>
+<path d="M 256.558,91.942 L 244.000,98.500 L 240.500,98.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<polygon points="256.158,91.942 256.558,91.542 256.957,91.942 256.558,92.343" fill="#000"/>
+<text x="239.700" y="98.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">Ø5.50 stem</text>
+<path d="M 252.000,72.500 L 242.000,80.500 L 238.500,80.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<polygon points="251.600,72.500 252.000,72.100 252.400,72.500 252.000,72.900" fill="#000"/>
+<text x="237.700" y="80.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">0.65 min wall, stem to slot</text>
+<path d="M 293.234,77.996 L 302.000,106.500 L 305.500,106.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<polygon points="292.834,77.996 293.234,77.596 293.634,77.996 293.234,78.396" fill="#000"/>
+<text x="306.300" y="106.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">lead-in 4.61 sq (note 8)</text>
+<text x="276.000" y="112.320" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">section at z = 0.30, just above the lead-in chamfer</text>
 <path d="M 356.500,71.598 L 383.500,71.598" fill="none" stroke="#000" stroke-width="0.18"/>
 <path d="M 383.500,71.598 L 383.500,68.086" fill="none" stroke="#000" stroke-width="0.18"/>
 <path d="M 383.500,68.086 L 388.300,68.086" fill="none" stroke="#000" stroke-width="0.18"/>
@@ -3469,58 +3500,64 @@
 <polygon points="391.900,48.364 391.200,46.364 392.600,46.364" fill="#000"/>
 <polygon points="391.900,35.802 392.600,37.802 391.200,37.802" fill="#000"/>
 <text x="392.900" y="42.083" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">4.19</text>
-<path d="M 370.000,42.083 L 348.000,78.500 L 344.500,78.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<line x1="355.100" y1="35.802" x2="334.600" y2="35.802" stroke="#000" stroke-width="0.13"/>
+<line x1="355.100" y1="33.402" x2="334.600" y2="33.402" stroke="#000" stroke-width="0.13"/>
+<line x1="336.100" y1="38.802" x2="336.100" y2="30.402" stroke="#000" stroke-width="0.18"/>
+<polygon points="336.100,35.802 336.800,37.802 335.400,37.802" fill="#000"/>
+<polygon points="336.100,33.402 335.400,31.402 336.800,31.402" fill="#000"/>
+<text x="335.100" y="34.602" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">0.80 min to the edge</text>
+<path d="M 370.000,42.083 L 346.000,78.500 L 342.500,78.500" fill="none" stroke="#000" stroke-width="0.13"/>
 <polygon points="369.600,42.083 370.000,41.683 370.400,42.083 370.000,42.483" fill="#000"/>
-<text x="343.700" y="78.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">5.20 gap, 0.30 deep, 0.80 min to the edge</text>
+<text x="341.700" y="78.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">5.20 gap, 0.30 deep</text>
 <text x="370.000" y="84.320" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">looking down +Z, as V3.  Thin outline</text>
 <text x="370.000" y="87.720" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">= the face the stamp is cut into.</text>
-<path d="M 346.442,124.842 L 346.442,158.757" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 346.442,158.757 L 356.500,158.757" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 356.500,158.757 L 356.500,160.158" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 356.500,160.158 L 383.500,160.158" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 383.500,160.158 L 383.500,158.757" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 383.500,158.757 L 393.558,158.757" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 393.558,158.757 L 393.558,124.842" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 393.558,124.842 L 346.442,124.842" fill="none" stroke="#000" stroke-width="0.18"/>
-<path d="M 383.900,127.242 L 382.013,127.242" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 383.900,136.830 L 383.900,127.242" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 379.750,135.317 L 378.835,135.712 L 378.200,136.473 L 378.013,137.450 L 378.197,138.429 L 378.802,139.216 L 379.695,139.657 L 380.685,139.803 L 381.682,139.723 L 382.623,139.385 L 383.369,138.727 L 383.791,137.824 L 383.900,136.830" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 379.750,135.267 L 379.750,135.317" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 382.013,130.505 L 381.090,130.174 L 380.110,130.126 L 379.152,130.333 L 378.322,130.849 L 377.756,131.645 L 377.524,132.596 L 377.580,133.574 L 378.009,134.448 L 378.803,135.013 L 379.750,135.267" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 382.013,127.242 L 382.013,130.505" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 380.788,134.467 L 379.891,134.171 L 379.444,133.348 L 379.531,132.399 L 380.180,131.725 L 381.126,131.646 L 382.013,132.005" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 381.400,134.467 L 380.788,134.467" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 381.400,135.892 L 381.400,134.467" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 380.900,135.892 L 381.400,135.892" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 382.013,136.955 L 381.826,137.869 L 381.065,138.359 L 380.192,138.099 L 379.901,137.225 L 380.107,136.318 L 380.900,135.892" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 382.013,132.005 L 382.013,136.955" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 361.913,130.655 L 360.972,130.314 L 359.985,130.144 L 358.984,130.130 L 357.998,130.295 L 357.095,130.721 L 356.420,131.451 L 356.117,132.398 L 356.173,133.394 L 356.627,134.276 L 357.395,134.914 L 358.275,135.392" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 361.913,132.417 L 361.913,130.655" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 359.687,134.092 L 358.793,133.645 L 358.038,133.009 L 358.137,132.065 L 359.032,131.687 L 360.027,131.759 L 360.983,132.048 L 361.913,132.417" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 356.137,138.667 L 357.059,139.016 L 358.018,139.241 L 359.001,139.288 L 359.974,139.142 L 360.863,138.728 L 361.518,138.001 L 361.798,137.063 L 361.736,136.084 L 361.291,135.213 L 360.552,134.565 L 359.687,134.092" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 356.750,137.192 L 356.137,138.667" fill="none" stroke="#000" stroke-width="0.35"/>
-<path d="M 358.275,135.392 L 359.186,135.853 L 359.917,136.532 L 359.678,137.464 L 358.713,137.715 L 357.710,137.539 L 356.750,137.192" fill="none" stroke="#000" stroke-width="0.35"/>
-<line x1="393.558" y1="123.842" x2="393.558" y2="110.342" stroke="#000" stroke-width="0.13"/>
-<line x1="346.442" y1="123.842" x2="346.442" y2="110.342" stroke="#000" stroke-width="0.13"/>
-<line x1="393.558" y1="111.842" x2="346.442" y2="111.842" stroke="#000" stroke-width="0.18"/>
-<polygon points="393.558,111.842 391.558,112.542 391.558,111.142" fill="#000"/>
-<polygon points="346.442,111.842 348.442,111.142 348.442,112.542" fill="#000"/>
-<text x="370.000" y="110.102" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">15.70 pocket ceiling</text>
-<line x1="345.442" y1="160.158" x2="331.942" y2="160.158" stroke="#000" stroke-width="0.13"/>
-<line x1="345.442" y1="124.842" x2="331.942" y2="124.842" stroke="#000" stroke-width="0.13"/>
-<line x1="333.442" y1="160.158" x2="333.442" y2="124.842" stroke="#000" stroke-width="0.18"/>
-<polygon points="333.442,160.158 332.743,158.158 334.142,158.158" fill="#000"/>
-<polygon points="333.442,124.842 334.142,126.842 332.743,126.842" fill="#000"/>
-<text x="332.442" y="142.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">11.77</text>
-<line x1="383.900" y1="140.805" x2="383.900" y2="147.305" stroke="#000" stroke-width="0.13"/>
-<line x1="356.100" y1="140.805" x2="356.100" y2="147.305" stroke="#000" stroke-width="0.13"/>
-<line x1="383.900" y1="145.805" x2="356.100" y2="145.805" stroke="#000" stroke-width="0.18"/>
-<polygon points="383.900,145.805 381.900,146.505 381.900,145.105" fill="#000"/>
-<polygon points="356.100,145.805 358.100,145.105 358.100,146.505" fill="#000"/>
-<text x="370.000" y="144.065" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">9.27</text>
-<text x="370.000" y="164.658" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">looking up -Z, as V4.  Same stamp, same depth,</text>
-<text x="370.000" y="168.058" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">TURNED 180° -- not mirrored.  It reads normally</text>
-<text x="370.000" y="171.458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">when the part is flipped over front-to-back.</text>
+<path d="M 346.442,122.842 L 346.442,156.757" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 346.442,156.757 L 356.500,156.757" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 356.500,156.757 L 356.500,158.158" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 356.500,158.158 L 383.500,158.158" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 383.500,158.158 L 383.500,156.757" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 383.500,156.757 L 393.558,156.757" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 393.558,156.757 L 393.558,122.842" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 393.558,122.842 L 346.442,122.842" fill="none" stroke="#000" stroke-width="0.18"/>
+<path d="M 383.900,125.242 L 382.013,125.242" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 383.900,134.830 L 383.900,125.242" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 379.750,133.317 L 378.835,133.712 L 378.200,134.473 L 378.013,135.450 L 378.197,136.429 L 378.802,137.216 L 379.695,137.657 L 380.685,137.803 L 381.682,137.723 L 382.623,137.385 L 383.369,136.727 L 383.791,135.824 L 383.900,134.830" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 379.750,133.267 L 379.750,133.317" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 382.013,128.505 L 381.090,128.174 L 380.110,128.126 L 379.152,128.333 L 378.322,128.849 L 377.756,129.645 L 377.524,130.596 L 377.580,131.574 L 378.009,132.448 L 378.803,133.013 L 379.750,133.267" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 382.013,125.242 L 382.013,128.505" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 380.788,132.467 L 379.891,132.171 L 379.444,131.348 L 379.531,130.399 L 380.180,129.725 L 381.126,129.646 L 382.013,130.005" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 381.400,132.467 L 380.788,132.467" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 381.400,133.892 L 381.400,132.467" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 380.900,133.892 L 381.400,133.892" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 382.013,134.955 L 381.826,135.869 L 381.065,136.359 L 380.192,136.099 L 379.901,135.225 L 380.107,134.318 L 380.900,133.892" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 382.013,130.005 L 382.013,134.955" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 361.913,128.655 L 360.972,128.314 L 359.985,128.144 L 358.984,128.130 L 357.998,128.295 L 357.095,128.721 L 356.420,129.451 L 356.117,130.398 L 356.173,131.394 L 356.627,132.276 L 357.395,132.914 L 358.275,133.392" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 361.913,130.417 L 361.913,128.655" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 359.687,132.092 L 358.793,131.645 L 358.038,131.009 L 358.137,130.065 L 359.032,129.687 L 360.027,129.759 L 360.983,130.048 L 361.913,130.417" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 356.137,136.667 L 357.059,137.016 L 358.018,137.241 L 359.001,137.288 L 359.974,137.142 L 360.863,136.728 L 361.518,136.001 L 361.798,135.063 L 361.736,134.084 L 361.291,133.213 L 360.552,132.565 L 359.687,132.092" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 356.750,135.192 L 356.137,136.667" fill="none" stroke="#000" stroke-width="0.35"/>
+<path d="M 358.275,133.392 L 359.186,133.853 L 359.917,134.532 L 359.678,135.464 L 358.713,135.715 L 357.710,135.539 L 356.750,135.192" fill="none" stroke="#000" stroke-width="0.35"/>
+<line x1="393.558" y1="121.842" x2="393.558" y2="108.342" stroke="#000" stroke-width="0.13"/>
+<line x1="346.442" y1="121.842" x2="346.442" y2="108.342" stroke="#000" stroke-width="0.13"/>
+<line x1="393.558" y1="109.842" x2="346.442" y2="109.842" stroke="#000" stroke-width="0.18"/>
+<polygon points="393.558,109.842 391.558,110.542 391.558,109.142" fill="#000"/>
+<polygon points="346.442,109.842 348.442,109.142 348.442,110.542" fill="#000"/>
+<text x="370.000" y="108.102" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">15.70 pocket ceiling</text>
+<line x1="345.442" y1="158.158" x2="331.942" y2="158.158" stroke="#000" stroke-width="0.13"/>
+<line x1="345.442" y1="122.842" x2="331.942" y2="122.842" stroke="#000" stroke-width="0.13"/>
+<line x1="333.442" y1="158.158" x2="333.442" y2="122.842" stroke="#000" stroke-width="0.18"/>
+<polygon points="333.442,158.158 332.743,156.158 334.142,156.158" fill="#000"/>
+<polygon points="333.442,122.842 334.142,124.842 332.743,124.842" fill="#000"/>
+<text x="332.442" y="140.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">11.77</text>
+<line x1="383.900" y1="138.805" x2="383.900" y2="145.305" stroke="#000" stroke-width="0.13"/>
+<line x1="356.100" y1="138.805" x2="356.100" y2="145.305" stroke="#000" stroke-width="0.13"/>
+<line x1="383.900" y1="143.805" x2="356.100" y2="143.805" stroke="#000" stroke-width="0.18"/>
+<polygon points="383.900,143.805 381.900,144.505 381.900,143.105" fill="#000"/>
+<polygon points="356.100,143.805 358.100,143.105 358.100,144.505" fill="#000"/>
+<text x="370.000" y="142.065" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">9.27</text>
+<text x="370.000" y="162.658" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">looking up -Z, as V4.  Same stamp, same depth,</text>
+<text x="370.000" y="166.058" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">TURNED 180° -- not mirrored.  It reads normally</text>
+<text x="370.000" y="169.458" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">when the part is flipped over front-to-back.</text>
 <line x1="56.150" y1="126.640" x2="56.150" y2="114.140" stroke="#000" stroke-width="0.13"/>
 <line x1="115.850" y1="126.640" x2="115.850" y2="114.140" stroke="#000" stroke-width="0.13"/>
 <line x1="56.150" y1="115.640" x2="115.850" y2="115.640" stroke="#000" stroke-width="0.18"/>
@@ -3557,9 +3594,9 @@
 <polygon points="72.500,184.328 70.500,185.028 70.500,183.628" fill="#000"/>
 <polygon points="99.500,184.328 101.500,183.628 101.500,185.028" fill="#000"/>
 <text x="86.000" y="182.588" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">9.00 cable relief (V6)</text>
-<path d="M 116.450,148.603 L 124.600,132.500 L 128.100,132.500" fill="none" stroke="#000" stroke-width="0.13"/>
-<polygon points="116.050,148.603 116.450,148.203 116.850,148.603 116.450,149.003" fill="#000"/>
-<text x="128.900" y="132.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">click tab 3x (note 6)</text>
+<path d="M 55.550,148.603 L 47.400,132.500 L 43.900,132.500" fill="none" stroke="#000" stroke-width="0.13"/>
+<polygon points="55.150,148.603 55.550,148.203 55.950,148.603 55.550,149.003" fill="#000"/>
+<text x="43.100" y="132.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.2" xml:space="preserve" text-anchor="end" dominant-baseline="middle" fill="#000">click tab 3x (note 6)</text>
 <line x1="106.900" y1="90.409" x2="119.400" y2="90.409" stroke="#000" stroke-width="0.13"/>
 <line x1="106.900" y1="74.591" x2="119.400" y2="74.591" stroke="#000" stroke-width="0.13"/>
 <line x1="117.900" y1="93.409" x2="117.900" y2="71.591" stroke="#000" stroke-width="0.18"/>
@@ -3590,72 +3627,72 @@
 <text x="86.000" y="100.148" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">3:1</text>
 <text x="86.000" y="12.705" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V4   VIEW FROM BELOW</text>
 <text x="86.000" y="17.305" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">2:1</text>
-<text x="172.000" y="61.980" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V5   SECTION A-A</text>
-<text x="172.000" y="66.580" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">2:1</text>
-<text x="172.000" y="114.671" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V6   SECTION B-B</text>
-<text x="172.000" y="119.271" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">2:1</text>
-<text x="264.000" y="20.624" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V7   DETAIL B    MX CROSS</text>
-<text x="264.000" y="25.224" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">10:1</text>
+<text x="170.000" y="39.980" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V5   SECTION A-A</text>
+<text x="170.000" y="44.580" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">3:1</text>
+<text x="178.000" y="99.946" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V6   SECTION B-B</text>
+<text x="178.000" y="104.546" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">3:1</text>
+<text x="276.000" y="22.624" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V7   DETAIL B    MX CROSS</text>
+<text x="276.000" y="27.224" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">10:1</text>
 <text x="370.000" y="14.022" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V8   DETAIL C    SEAT-FLOOR STAMP</text>
 <text x="370.000" y="18.622" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">3:1</text>
-<text x="370.000" y="100.462" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V9   DETAIL D    POCKET-CEILING STAMP</text>
-<text x="370.000" y="105.062" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">3:1</text>
-<text x="250.000" y="120.655" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V10   ISOMETRIC</text>
-<text x="250.000" y="125.255" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">1.6:1</text>
-<text x="12.000" y="198.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" font-weight="bold" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">NOTES</text>
-<text x="12.000" y="201.900" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">1. CRITICAL MX slot 4.05 x 1.10 ±0.03, R0.30 corner</text>
-<text x="12.000" y="204.882" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     fillets (V7). Gauge against a real MX switch stem, not by</text>
-<text x="12.000" y="207.864" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     CMM alone. Our slot is deliberately TIGHTER than Cherry's</text>
-<text x="12.000" y="210.846" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     published keycap slot; the four relief bulges are what</text>
-<text x="12.000" y="213.828" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     make that work. Verify on a moulded first article.</text>
-<text x="12.000" y="216.810" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">2. CRITICAL The transparent relegendable cap is an</text>
-<text x="12.000" y="219.792" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     off-the-shelf POS part, so that mating dimension is a</text>
-<text x="12.000" y="222.774" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     hard datum set by a supplier we do not control. Confirm</text>
-<text x="12.000" y="225.756" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     before cutting steel.</text>
-<text x="12.000" y="228.738" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">3. Draft, measured off the model: outer body 11.6°,</text>
-<text x="12.000" y="231.720" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     inside pocket 18.4°. ZERO DRAFT on the display seat (12.2</text>
-<text x="12.000" y="234.702" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     x 12.1 x 1.1 deep) and on its cable relief (V6) --</text>
-<text x="12.000" y="237.684" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     confirm release at first article rather than meeting it</text>
-<text x="12.000" y="240.666" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     there.</text>
-<text x="12.000" y="243.648" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">4. Slot draft 0.08° on the flats, 0.31° at the arm tips,</text>
-<text x="12.000" y="246.630" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     opening downward: the core pin withdraws the right way,</text>
-<text x="12.000" y="249.612" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     but with very little relief. Polish along the arms. The</text>
-<text x="12.000" y="252.594" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     slot runs from the moulding face to z = 5.83 -- through</text>
-<text x="12.000" y="255.576" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     the boss and on into the cap floor (V5).</text>
-<text x="92.000" y="198.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">5. The inner chamfer in V4 (33.0°) is switch-body</text>
-<text x="92.000" y="201.482" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     clearance, not cosmetic -- it is what stops the cap</text>
-<text x="92.000" y="204.464" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     fouling a bulky switch. Do not flatten it to simplify the</text>
-<text x="92.000" y="207.446" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     core.</text>
-<text x="92.000" y="210.428" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">6. The three 0.40 x 3.00 x 0.30 tabs standing 0.20 proud</text>
-<text x="92.000" y="213.410" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     (+Y and ±X, V3) are a FUNCTIONAL feature: they are what</text>
-<text x="92.000" y="216.392" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     makes the clear keycap click on properly. They are NOT a</text>
-<text x="92.000" y="219.374" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     3D-printing artefact and must NOT be removed.</text>
-<text x="92.000" y="222.356" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">7. Stamp "β S" = revision + profile, 0.30 deep, zero</text>
-<text x="92.000" y="225.338" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     draft, in TWO places: the display-seat floor (V8) and the</text>
-<text x="92.000" y="228.320" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     pocket ceiling (V9). The second is TURNED 180°, not</text>
-<text x="92.000" y="231.302" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     mirrored -- it reads normally when the part is flipped</text>
-<text x="92.000" y="234.284" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     over front-to-back. Drawn in V9; do not infer it.</text>
-<text x="92.000" y="237.266" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     Revision character is U+03B2 GREEK SMALL LETTER BETA --</text>
-<text x="92.000" y="240.248" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     the moulded part is deliberately β where the 3D-printed</text>
-<text x="92.000" y="243.230" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     prototypes are α, so the two are told apart by eye. Carry</text>
-<text x="92.000" y="246.212" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     it on a REPLACEABLE INSERT in the cavity rather than cut</text>
-<text x="92.000" y="249.194" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     into the block: a revision change is then a plug swap,</text>
-<text x="92.000" y="252.176" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     not a tool edit. Font Noto Sans Bold, outlines in the</text>
-<text x="92.000" y="255.158" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     STEP.</text>
-<text x="172.000" y="198.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">8. The slot lead-in opens to 4.61 x 4.61 at z = 0 over</text>
-<text x="172.000" y="201.482" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     0.30 mm (~46°). Cherry publishes no lead-in dimension, so</text>
-<text x="172.000" y="204.464" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     this one is ours; keep it, it is what lets the cap start</text>
-<text x="172.000" y="207.446" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     on the stem.</text>
-<text x="172.000" y="210.428" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">9. GATE AND EJECTORS are the moulder's choice, but they</text>
-<text x="172.000" y="213.410" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     must NOT land on the MX slot or its lead-in, the display</text>
-<text x="172.000" y="216.392" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     seat floor or cable relief, the three click tabs, or the</text>
-<text x="172.000" y="219.374" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     moulding face (z = 0). A side wall (±X) clear of the tabs</text>
-<text x="172.000" y="222.356" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     is the obvious place, feeding toward the stem boss -- the</text>
-<text x="172.000" y="225.338" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     thickest section. The 3D-printed prototypes were sprued</text>
-<text x="172.000" y="228.320" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     from Ø1.5 runners on that same wall, so it already</text>
-<text x="172.000" y="231.302" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     tolerates a witness mark. Mark the positions chosen on</text>
-<text x="172.000" y="234.284" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     the tooling drawing and send it back.</text>
-<text x="172.000" y="237.266" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">10. Surface: tool polish on the slot and the stem bore;</text>
-<text x="172.000" y="240.248" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     the outer faces may carry the standard texture. No flash</text>
-<text x="172.000" y="243.230" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     permitted on the slot, the tabs or the seat floor.</text>
+<text x="370.000" y="98.462" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V9   DETAIL D    POCKET-CEILING STAMP</text>
+<text x="370.000" y="103.062" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">3:1</text>
+<text x="276.000" y="144.833" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="3.2" font-weight="bold" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">V10   ISOMETRIC</text>
+<text x="276.000" y="149.433" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.4" xml:space="preserve" text-anchor="middle" dominant-baseline="middle" fill="#000">2.4:1</text>
+<text x="12.000" y="220.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" font-weight="bold" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">NOTES</text>
+<text x="12.000" y="223.900" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">1. CRITICAL MX slot 4.05 x 1.10 ±0.03, R0.30 corner</text>
+<text x="12.000" y="226.882" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     fillets (V7). Gauge against a real MX switch stem, not by</text>
+<text x="12.000" y="229.864" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     CMM alone. Our slot is deliberately TIGHTER than Cherry's</text>
+<text x="12.000" y="232.846" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     published keycap slot; the four relief bulges are what</text>
+<text x="12.000" y="235.828" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     make that work. Verify on a moulded first article.</text>
+<text x="12.000" y="238.810" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">2. CRITICAL The transparent relegendable cap is an</text>
+<text x="12.000" y="241.792" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     off-the-shelf POS part, so that mating dimension is a</text>
+<text x="12.000" y="244.774" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     hard datum set by a supplier we do not control. Confirm</text>
+<text x="12.000" y="247.756" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     before cutting steel.</text>
+<text x="12.000" y="250.738" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">3. Draft, measured off the model: outer body 11.6°,</text>
+<text x="12.000" y="253.720" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     inside pocket 18.4°. ZERO DRAFT on the display seat (12.2</text>
+<text x="12.000" y="256.702" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     x 12.1 x 1.1 deep) and on its cable relief (V6) --</text>
+<text x="12.000" y="259.684" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     confirm release at first article rather than meeting it</text>
+<text x="12.000" y="262.666" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     there.</text>
+<text x="12.000" y="265.648" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">4. Slot draft 0.08° on the flats, 0.31° at the arm tips,</text>
+<text x="12.000" y="268.630" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     opening downward: the core pin withdraws the right way,</text>
+<text x="12.000" y="271.612" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     but with very little relief. Polish along the arms. The</text>
+<text x="12.000" y="274.594" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     slot runs from the moulding face to z = 5.83 -- through</text>
+<text x="12.000" y="277.576" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     the boss and on into the cap floor (V5).</text>
+<text x="92.000" y="220.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">5. The inner chamfer in V4 (33.0°) is switch-body</text>
+<text x="92.000" y="223.482" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     clearance, not cosmetic -- it is what stops the cap</text>
+<text x="92.000" y="226.464" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     fouling a bulky switch. Do not flatten it to simplify the</text>
+<text x="92.000" y="229.446" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     core.</text>
+<text x="92.000" y="232.428" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">6. The three 0.40 x 3.00 x 0.30 tabs standing 0.20 proud</text>
+<text x="92.000" y="235.410" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     (+Y and ±X, V3) are a FUNCTIONAL feature: they are what</text>
+<text x="92.000" y="238.392" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     makes the clear keycap click on properly. They are NOT a</text>
+<text x="92.000" y="241.374" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     3D-printing artefact and must NOT be removed.</text>
+<text x="92.000" y="244.356" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">7. Stamp "β S" = revision + profile, 0.30 deep, zero</text>
+<text x="92.000" y="247.338" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     draft, in TWO places: the display-seat floor (V8) and the</text>
+<text x="92.000" y="250.320" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     pocket ceiling (V9). The second is TURNED 180°, not</text>
+<text x="92.000" y="253.302" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     mirrored -- it reads normally when the part is flipped</text>
+<text x="92.000" y="256.284" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     over front-to-back. Drawn in V9; do not infer it.</text>
+<text x="92.000" y="259.266" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     Revision character is U+03B2 GREEK SMALL LETTER BETA --</text>
+<text x="92.000" y="262.248" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     the moulded part is deliberately β where the 3D-printed</text>
+<text x="92.000" y="265.230" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     prototypes are α, so the two are told apart by eye. Carry</text>
+<text x="92.000" y="268.212" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     it on a REPLACEABLE INSERT in the cavity rather than cut</text>
+<text x="92.000" y="271.194" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     into the block: a revision change is then a plug swap,</text>
+<text x="92.000" y="274.176" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     not a tool edit. Font Noto Sans Bold, outlines in the</text>
+<text x="92.000" y="277.158" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     STEP.</text>
+<text x="172.000" y="220.500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">8. The slot lead-in opens to 4.61 x 4.61 at z = 0 over</text>
+<text x="172.000" y="223.482" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     0.30 mm (~46°). Cherry publishes no lead-in dimension, so</text>
+<text x="172.000" y="226.464" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     this one is ours; keep it, it is what lets the cap start</text>
+<text x="172.000" y="229.446" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     on the stem.</text>
+<text x="172.000" y="232.428" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">9. GATE AND EJECTORS are the moulder's choice, but they</text>
+<text x="172.000" y="235.410" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     must NOT land on the MX slot or its lead-in, the display</text>
+<text x="172.000" y="238.392" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     seat floor or cable relief, the three click tabs, or the</text>
+<text x="172.000" y="241.374" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     moulding face (z = 0). A side wall (±X) clear of the tabs</text>
+<text x="172.000" y="244.356" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     is the obvious place, feeding toward the stem boss -- the</text>
+<text x="172.000" y="247.338" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     thickest section. The 3D-printed prototypes were sprued</text>
+<text x="172.000" y="250.320" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     from Ø1.5 runners on that same wall, so it already</text>
+<text x="172.000" y="253.302" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     tolerates a witness mark. Mark the positions chosen on</text>
+<text x="172.000" y="256.284" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     the tooling drawing and send it back.</text>
+<text x="172.000" y="259.266" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">10. Surface: tool polish on the slot and the stem bore;</text>
+<text x="172.000" y="262.248" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     the outer faces may carry the standard texture. No flash</text>
+<text x="172.000" y="265.230" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-size="2.1" xml:space="preserve" text-anchor="start" dominant-baseline="middle" fill="#000">     permitted on the slot, the tabs or the seat floor.</text>
 </svg>
