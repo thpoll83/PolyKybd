@@ -16,7 +16,7 @@ decides whether the keyboard works, and a faceted cross is not a datum anyone ca
 
 The case needed re-authoring because `hull()` and `minkowski()` cannot survive as clean geometry.
 ⚠️ **The stem does use `hull()`** — `keycap_stem.scad:83` hulls two tapered bodies (that is how the
-1.25U gets its width) plus three print tabs. But every member is a **polyhedron**, and the convex hull
+1.25U gets its width) plus the three click tabs. But every member is a **polyhedron**, and the convex hull
 of polyhedra is a polyhedron, so it comes back exactly from a hull of the vertices (`step/hull3d.py`);
 there is no `minkowski()` anywhere. The rest is `linear_extrude(..., scale=)`, a tapered extrude that
 is a native exact operation. So the port is close to line-for-line, with no approximation anywhere:
@@ -150,10 +150,16 @@ clearance test with a positive control.* For the stem the specific checks that m
 ## The technical drawing
 
 build123d exports 2D projections through OCP; `case/step/plate_svg.py` is the closest existing
-precedent for SVG output. `drawing.py` should emit, per variant, an **A4 sheet** carrying:
+precedent for SVG output. `drawing.py` should emit, per variant, an **A3 sheet** carrying:
 
-- **Three orthographic views** (top / front / side) + one isometric, projected from the STEP solid.
+- **Four orthographic views** (right / front / above / **below**) + one isometric, projected from
+  the STEP solid. ⚠️ A4 was the first target and it does not work: five views, three details, a
+  section, the notes and a fit table all had to shrink until the 10:1 detail stopped being a
+  detail. A3 prints down to A4 at 71 % if a reader wants it that way. The view from **below** is
+  not optional either — the inner switch-clearance chamfer appears in no other view.
 - **A section through the MX cross** — the feature that decides fit, so it needs its own view.
+- **Number every view** (V1…V8) and say the scale under each: a sheet with eight framings and
+  three different scales is unreferenceable in an email otherwise.
 - **Dimensioned**: cross arm 4.35 and width **1.4 ±?**, `MX_CYLINDER` 5.5, overall 15.5 × 15.475,
   height 5.65, display seat 12.2 × 12.1 × 1.1, draft angles called out.
 - **A tolerance block.** ⚠️ This is the point of the whole exercise: **the drawing governs, the STEP
@@ -161,7 +167,11 @@ precedent for SVG output. `drawing.py` should emit, per variant, an **A4 sheet**
   interface. Without it a toolmaker will cut to the model and the tolerance question resurfaces at
   first article.
 - Material and finish, once chosen — see the material note below.
-- Revision, date, part number, and whether the `txt` engraving is present.
+- Revision, date, part number, and the engraving — see below; it is present, and it is **β**.
+- **The three click tabs, dimensioned.** ⚠️ They read like a 3D-printing sprue artefact and they
+  are not: they are what makes the transparent cap click on. Say so on the sheet. A fabrication
+  drawing is the one document a shop acts on without asking back, so "optional" written there is
+  a decision, not a question.
 
 ## Material — **ABS** (decided 2026-08-19)
 
@@ -175,17 +185,24 @@ the cavity is cut oversize by the toolmaker, who states the rate used (drawing n
 normal division of labour and it keeps one model serving both the printed and the moulded part — do
 not fold a shrink factor into `stem_model.py` without saying so on the drawing.
 
-## ✅ Status — DONE (2026-08-18)
+## ✅ Status — DONE (2026-08-18, reviewed and reworked 2026-08-20)
 
 Executed end to end; `parts/keycap_stem/step/` is the working toolchain and
 [its README](keycap_stem/step/README.md) carries the results and the traps. Both deliverables are in
 `parts/export/keycap_stem/`: `stem_S_1U.step` / `stem_S_1U25.step` and their `*_drawing.svg`.
 
-Both STEPs pass the acceptance test — one closed solid, 259 faces, max edge tolerance **2.1e-07 mm**.
-Against an OpenSCAD export of the same call: bounding box identical to 5 dp, volume **+0.108 % /
-+0.079 %**, and a two-way boolean difference of 1.06 mm³ one way and 0.46 mm³ the other — all of it
-the `.scad`'s tessellation (a 128-gon stem, `$fn=64` cross relief, `$fn=16` glyph outlines) against
-true analytic surfaces, which is the difference this exercise exists to create.
+Both STEPs pass the acceptance test — one closed solid, **142 faces** (108 planar, 34 curved), max
+edge tolerance **2.1e-07 mm**. Against an OpenSCAD export of the same call: bounding box identical
+to 5 dp, volume **+0.111 % / +0.081 %**, and a two-way boolean difference of 0.62 mm³ one way and
+0.011 mm³ the other — all of it the `.scad`'s tessellation (a 128-gon stem, `$fn=64` cross relief)
+against true analytic surfaces, which is the difference this exercise exists to create.
+
+⚠️ **That comparison runs with the stamp OFF, deliberately** (`verify.py` `engrave = False`): the
+moulded stamp is **β** and the `.scad`'s is α, so an engraved diff would report the intended
+difference as an error every run. The stamp is checked separately, and more usefully — `verify.py`
+measures its clearance to the seat edge on both faces (0.80 mm all round, against the 0.80 mm
+requirement) rather than folding it into a volume number where 5 mm³ of glyph would drown the
+0.6 mm³ of tessellation the diff exists to see.
 
 Three corrections this recipe needed once it was actually run, all now folded in above: the stem
 **does** use `hull()`; `u_size` is 1.22 and is not a unit count; and the cross opening is 4.05 × 1.10,
@@ -195,3 +212,27 @@ The build123d gotchas worth knowing before the next port are in the step README:
 defaults to scaling about the shape's own location (a silent 0.5 % geometry error); OCCT's text kernel
 **segfaults** when a drawing sheet gets big enough, which is why `drawing.py` writes its own SVG; and
 the three font traps above, each of which silently changes the glyph a toolmaker would cut.
+
+### The 2026-08-20 review round
+
+The first sheet was geometrically correct and typographically a mess, and none of it was visible
+in the code. What the review changed, and the two guards that now stop it recurring:
+
+- **A4 → A3**, four ortho views (the view from **below** was missing, and the switch-clearance
+  chamfer shows in no other view), numbered views V1–V8, a **stamp proposal** view at 5:1, an axis
+  triad on every view, a **fit table** against Cherry's published keycap slot, a fuller title block
+  with the PolyTasten logo, and first-angle-projection marking.
+- **The tabs were mis-documented as a print aid and the sheet invited their deletion** — corrected
+  everywhere; they are a click feature and are now dimensioned.
+- **The stamp** moved to β, `S` and `β` swapped so β's descender has room, gap widened from a
+  measured 0.21 mm clearance to ≥ 0.80 mm all round.
+- **Layout is now measured, not guessed** — `Sheet.group()` places each title from the extent of
+  what the view actually drew, `report_collisions()` lists label-on-label and label-on-outline
+  overlaps, and `check_inside_frame()` raises on anything past the border. Between them they found
+  six collisions and three overflows that had shipped in the first sheet. ⚠️ **Render both variants**:
+  the 1.25U leaders reach 4.4 mm further out, and one collision existed only there.
+- ⚠️ **A dimension anchored through `Drawing` lands in mid-air** unless you keep the projection's
+  own mapper: `Drawing` projects about the shape's centre of **mass**, and the view is then
+  re-centred on its bounding box, so a hand-computed sheet point is off by the difference (7.9 mm
+  on the front view — the "7.91 dimension starts from somewhere outside" report). `view()` returns
+  a model→sheet mapper for exactly this.

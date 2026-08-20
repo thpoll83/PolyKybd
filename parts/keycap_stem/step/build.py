@@ -23,8 +23,9 @@ def main():
     ap.add_argument("--no-engrave", action="store_true",
                     help="drop the profile+revision stamp (it is a TOOL feature: changing it "
                          "later is a tool edit -- see stem_model._engraving and font.py)")
-    ap.add_argument("--no-print-tabs", action="store_true",
-                    help="drop the three 0.3 mm sprue-plate tabs (see stem_model.outer_hull)")
+    ap.add_argument("--no-click-tabs", action="store_true",
+                    help="drop the three cap-click tabs -- for ISOLATING them in a "
+                         "comparison only, NOT a shipping option (see outer_hull)")
     ap.add_argument("--only", help="build just this variant")
     args = ap.parse_args()
 
@@ -34,7 +35,7 @@ def main():
             continue
         t = time.time()
         part = sm.build(name, engrave=not args.no_engrave,
-                        print_tabs=not args.no_print_tabs)
+                        click_tabs=not args.no_click_tabs)
         bb = part.bounding_box()
         kinds = Counter(str(BRepAdaptor_Surface(f.wrapped).GetType())
                         .rsplit(".", 1)[-1].replace("GeomAbs_", "") for f in part.faces())

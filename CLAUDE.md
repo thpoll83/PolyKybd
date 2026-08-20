@@ -182,6 +182,22 @@ diffs the result back against the `.scad`. The traps that cost real time:
   dimensions stay selectable. Related: `ExtensionLine` has no fallback for a label wider
   than its dimension line and dies with `Can't determine direction of empty Edge or Wire`
   several frames away.
+- ⚠️ **A drawing sheet laid out by hand-tuned offsets WILL collide, and the SVG source
+  never shows it — measure the sheet instead.** Two guards in `drawing.py`, both of which
+  found real defects that had survived every code reading:
+  - **`Sheet.group()`** collects the extent of everything drawn inside it, and view titles
+    are placed from that rather than at a guessed `dy`. The guesses were wrong in both
+    directions: V1's height dimension ran back across the part, and V2's title landed
+    nearer the view *below* it than the view it names — which on a first-angle sheet is
+    the part's own projection, so the label read as belonging to the wrong view. Titles go
+    **above** all views for the same reason. Anything added to a view now moves its title.
+  - **`Sheet.report_collisions()`** lists every label overlapping another label or a
+    visible outline, and **`check_inside_frame()`** raises on anything off the border. Run
+    them on every build; six overlaps and three overflows were live when they were added.
+    ⚠️ The collision report only tracks **thick** (visible-outline) paths, so a label
+    sitting on a dimension line or a thin isometric outline still passes — the 1.25U sheet
+    (whose leaders reach 4.4 mm further out than 1U's) had exactly that, and only the
+    render showed it. **Render both variants, not just the one you were editing.**
 - ⚠️ **Hatch a section with thin RECTANGLES, not lines.** A line lying exactly in the
   section face's plane makes OCCT's edge-face common return **nothing at all**, silently —
   so an empty hatch reads as "no solid here" rather than as an error. Below ~0.05 mm the
@@ -284,13 +300,25 @@ table of its own, so **adding a plate is adding a file**.
 
 ⚠️ **That is the PRINTED part. The MOULDED one is a different pipeline** —
 `parts/keycap_stem/step/` re-authors the same `mx_stem()` in build123d and emits
-`export/keycap_stem/stem_S_{1U,1U25}.step` plus an A4 drawing, for the injection
-moulder. Only the `S` profile is exported, and it deliberately differs from the
-printed plates in two ways: the revision engraving is OFF (a tool feature, and
-font-dependent) and the three print tabs are flagged for deletion rather than
-assumed. A change to `keycap_stem.scad` therefore has to be re-exported on BOTH
-sides — `build_stems.sh` and `make -C parts/keycap_stem/step`; `make verify`
-there is what tells you the two still agree.
+`export/keycap_stem/stem_S_{1U,1U25}.step` plus an A3 drawing, for the injection
+moulder. Only the `S` profile is exported, and it carries the **same** geometry as
+the printed plates with one deliberate difference: the revision stamp reads **β**,
+not the plates' α, because a moulded part differs from the printed prototypes and
+the two have to be tellable apart by eye (`stem_model.REVISION` is therefore the one
+constant in that file that is *not* a mirror of `keycap_stem.scad`). A change to
+`keycap_stem.scad` has to be re-exported on BOTH sides — `build_stems.sh` and
+`make -C parts/keycap_stem/step`; `make verify` there is what tells you the two
+still agree.
+
+- ⚠️ **The three 0.4 × 3.0 × 0.3 tabs are a FUNCTIONAL click feature, not a print
+  aid** — they stand 0.2 mm proud and are what makes the transparent relegendable
+  cap click on. An earlier reading of `keycap_stem.scad` had them down as a
+  sprued-plate artefact, and the first draft of the drawing invited the moulder to
+  delete them; both were wrong. They are named (`CLICK_TAB_*`), dimensioned on the
+  sheet, and note 10 says explicitly that they must not be removed. The general
+  lesson: a small feature with no comment is not thereby decoration — ask before
+  writing "optional" onto a fabrication drawing, because that is the one document
+  the shop will act on without asking back.
 
 - **`include`, not `use`, in a variant.** `use` imports modules but *not*
   variables, and the engraved `revision` is a variable. That is also why the

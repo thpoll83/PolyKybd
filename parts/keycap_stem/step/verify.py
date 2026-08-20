@@ -12,11 +12,13 @@ Three checks, in increasing strength:
 
     python verify.py            # both variants; needs `openscad` for check 3
 
-⚠️ The reference is exported WITH the same engraving, which only became a fair
-comparison once the font was pinned (`font.py`).  Before that the two ends resolved
-"Noto" differently -- OpenSCAD through fontconfig to a real Bold, OCCT to FreeSans --
-and the stamp alone accounted for several mm3.  `--no-engraving` compares the plain
-bodies if you want the geometry isolated from the typeface.
+⚠️ **The .scad comparison runs UN-ENGRAVED, and that is deliberate.**  The moulded stamp
+is now a different character (β, not α), a different gap, and -- since `place_stamp`
+solves the position from the real face -- a different position.  Comparing it against the
+.scad's stamp would be comparing two things that are meant to differ.  So the shape
+comparison isolates the body, and the stamp gets its own check: check 0 asserts each
+stamp sits inside the face it is cut into with `STAMP_MARGIN` to spare, which is what
+actually went wrong when the revision moved to β.
 """
 import os, re, shutil, subprocess, struct, sys, tempfile
 
@@ -72,7 +74,7 @@ def run_openscad(src, out, cwd):
     return out
 
 
-def scad_reference(name, tmp, engrave=True):
+def scad_reference(name, tmp, engrave=False):
     """Export `mx_stem(...)` straight from the .scad, one piece."""
     cfg = sm.VARIANTS[name]
     txt = sm.default_text() if engrave else ""
@@ -195,11 +197,20 @@ def main():
     if not have_scad:
         print("!! openscad not on PATH -- skipping the boolean difference (check 3)")
     ok = True
-    engrave = "--no-engraving" not in sys.argv
+    engrave = False          # see the module docstring
     tmp = tempfile.mkdtemp(prefix="stem_verify_")
     for name, cfg in sm.VARIANTS.items():
-        print(f"=== {name}  ({cfg['label']})"
-              f"{'' if engrave else '  [engraving off on both sides]'} ===")
+        print(f"=== {name}  ({cfg['label']}) ===")
+
+        # 0 -- the stamp sits inside the face it is cut into
+        for r in sm.stamp_report(cfg["u_size"]):
+            worst = min(r["clear"].values())
+            good = worst >= sm.STAMP_MARGIN - 1e-6
+            ok &= good
+            print(f"  stamp on the {r['where']:<19} {r['size'][0]:.2f} x {r['size'][1]:.2f} mm, "
+                  f"worst clearance {worst:.2f} mm (need {sm.STAMP_MARGIN})  "
+                  f"{'OK' if good else 'MISMATCH'}")
+
         part = sm.build(name, engrave=engrave)
         mine = os.path.join(tmp, f"mine_{name}.stl")
         export_stl(part, mine, tolerance=0.001, angular_tolerance=0.05)

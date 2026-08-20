@@ -23,10 +23,10 @@ entirely, and pays twice over: the file is far smaller, and the dimensions are
 selectable and searchable in the fabricator's viewer instead of being outlines.
 `../../case/step/plate_svg.py` writes its SVG the same way.
 """
-import argparse, math, os
+import argparse, contextlib, math, os, re
 from datetime import date
 
-from build123d import Compound, GeomType, Plane, Pos, Rectangle, Rot
+from build123d import Compound, GeomType, Plane, Pos, Rectangle, Rot, Vector
 from build123d.exporters import Drawing
 
 import stem_model as sm
@@ -40,14 +40,22 @@ DRAWING_REV = "A"          # revision of THIS SHEET; the part's stamp is
 GENERAL_TOL = 0.10
 MATERIAL = "ABS"
 
-PAGE_W, PAGE_H = 297.0, 210.0        # A4 landscape
-FRAME_X, FRAME_Y = 133.5, 89.0       # drawing frame, centred on the origin
-TITLE_W, TITLE_H = 110.0, 32.0
+# A3 landscape.  A4 could not carry five views, three details, a section and the notes
+# at a readable scale -- everything had to shrink until the 10:1 detail stopped being a
+# detail.  A3 prints down to A4 at 71 % if a reader wants it that way.
+PAGE_W, PAGE_H = 420.0, 297.0
+FRAME_X, FRAME_Y = 200.0, 138.5      # drawing frame, centred on the origin
+TITLE_W, TITLE_H = 150.0, 45.0
+
+# ISO 128-20 line groups: thick : thin = 2 : 1.  Visible outlines thick, everything
+# else (hidden, dimension, extension, leader, hatching, centre) thin or finer.
+LOGO = os.path.join(HERE, "..", "..", "..", "poly_kybd", "logo.svg")
 
 FONT = "DejaVu Sans, Arial, Helvetica, sans-serif"
 CHAR_W = 0.58                        # advance / em, ample for placement decisions
 
-W_THICK, W_THIN, W_HAIR = 0.4, 0.18, 0.13
+W_THICK, W_THIN, W_HAIR = 0.5, 0.25, 0.18
+W_CUT = 0.7          # cutting-plane line, ISO 128-30: thicker than the outline
 ARROW_L, ARROW_W = 2.0, 0.7
 
 
@@ -57,6 +65,37 @@ class Sheet:
 
     def __init__(self):
         self.out = []
+        self._groups = []
+        self.texts = []          # (x0, y0, x1, y1, string) for the collision report
+        self.thick = []          # visible outlines, ditto
+
+    # -- extents ---------------------------------------------------------------
+    # Every title used to sit at a hand-tuned offset from its view's centre, which is
+    # a guess about how far the dimensions and leaders would reach.  The guesses were
+    # wrong in both directions: V1's height dimension ran back over the part, and V2's
+    # title ended up nearer the view below it than the view it names.  So the sheet
+    # measures instead -- `group()` collects the extent of everything drawn inside it,
+    # and the title is placed from that.  Anything added to a view later moves its
+    # title automatically.
+    @contextlib.contextmanager
+    def group(self, box=None):
+        box = [1e9, 1e9, -1e9, -1e9] if box is None else box
+        self._groups.append(box)
+        try:
+            yield box
+        finally:
+            self._groups.pop()
+            for g in self._groups:
+                g[0], g[1] = min(g[0], box[0]), min(g[1], box[1])
+                g[2], g[3] = max(g[2], box[2]), max(g[3], box[3])
+
+    def _note(self, *pts):
+        if not self._groups:
+            return
+        for x, y in pts:
+            for g in self._groups:
+                g[0], g[1] = min(g[0], x), min(g[1], y)
+                g[2], g[3] = max(g[2], x), max(g[3], y)
 
     def _x(self, x):
         return x + PAGE_W / 2
@@ -65,6 +104,7 @@ class Sheet:
         return PAGE_H / 2 - y
 
     def line(self, a, b, w=W_THIN, dash=None):
+        self._note(a, b)
         d = f' stroke-dasharray="{dash}"' if dash else ""
         self.out.append(
             f'<line x1="{self._x(a[0]):.3f}" y1="{self._y(a[1]):.3f}" '
@@ -74,6 +114,9 @@ class Sheet:
     def path(self, pts, w=W_THIN, dash=None, close=False):
         if len(pts) < 2:
             return
+        self._note(*pts)
+        if w >= W_THICK:
+            self.thick.append(list(pts))
         d = "M " + " L ".join(f"{self._x(x):.3f},{self._y(y):.3f}" for x, y in pts)
         if close:
             d += " Z"
@@ -82,6 +125,7 @@ class Sheet:
                         f'stroke-width="{w}"{da}/>')
 
     def poly(self, pts, fill="#000"):
+        self._note(*pts)
         d = " ".join(f"{self._x(x):.3f},{self._y(y):.3f}" for x, y in pts)
         self.out.append(f'<polygon points="{d}" fill="{fill}"/>')
 
@@ -89,6 +133,10 @@ class Sheet:
         self.path([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], w, close=True)
 
     def text(self, s, at, size=2.6, anchor="middle", baseline="middle", bold=False):
+        w = len(s) * size * CHAR_W
+        x0 = {"start": at[0], "middle": at[0] - w / 2, "end": at[0] - w}[anchor]
+        self._note((x0, at[1] - size * 0.6), (x0 + w, at[1] + size * 0.6))
+        self.texts.append((x0, at[1] - size * 0.52, x0 + w, at[1] + size * 0.52, s))
         s = (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
         weight = ' font-weight="bold"' if bold else ""
         self.out.append(
@@ -97,7 +145,94 @@ class Sheet:
             f'text-anchor="{anchor}" dominant-baseline="{baseline}" '
             f'fill="#000">{s}</text>')
 
+    def embed(self, svg_path, x, y, w, h):
+        """Inline another SVG file, scaled into a w x h box with its top-left at (x, y).
+
+        Nested `<svg>` with an overriding width/height/x/y, rather than parsing the
+        file's own paths: the logo's squares carry a parent `<g transform=...>`, so
+        lifting the `<path>` elements out of it would silently drop the transform and
+        scatter them.  Keeping the root element keeps the transform and the namespaces.
+        """
+        try:
+            src = open(svg_path, encoding="utf-8").read()
+        except OSError:
+            return
+        self._note((x, y - h), (x + w, y))
+        src = re.sub(r"<\?xml[^>]*\?>", "", src)
+        src = re.sub(r"<!DOCTYPE[^>]*>", "", src)
+        i = src.index("<svg")
+        j = src.index(">", i)
+        head = re.sub(r'\s(?:width|height|x|y)="[^"]*"', "", src[i:j])
+        self.out.append(
+            f'{head} x="{self._x(x):.3f}" y="{self._y(y):.3f}" '
+            f'width="{w}" height="{h}" preserveAspectRatio="xMidYMid meet"'
+            f'{src[j:]}')
+
+    def centre_lines(self, at, half_x, half_y, w=W_HAIR):
+        """ISO 128-24 centre line: long dash - short dash, crossing at the feature."""
+        d = "5,1.2,1.2,1.2"
+        self.line((at[0] - half_x, at[1]), (at[0] + half_x, at[1]), w, dash=d)
+        self.line((at[0], at[1] - half_y), (at[0], at[1] + half_y), w, dash=d)
+
+    def report_collisions(self, skip=()):
+        """List labels that overlap another label or a visible outline.
+
+        Same reasoning as `check_inside_frame`: a collision is invisible in the SVG
+        source and obvious only in a render, so nothing in a code review catches it.
+        This is a report rather than an exception -- a few overlaps are deliberate
+        (a leader crossing a hidden line, the frame's own rules) -- but every one it
+        prints was looked at.
+        """
+        def hit(a, b):
+            return (a[0] < b[2] - 0.4 and b[0] < a[2] - 0.4
+                    and a[1] < b[3] - 0.4 and b[1] < a[3] - 0.4)
+
+        bad = []
+        for i, a in enumerate(self.texts):
+            if a[4] in skip:
+                continue
+            for b in self.texts[i + 1:]:
+                if b[4] not in skip and hit(a, b):
+                    bad.append(f"  text/text   {a[4][:34]!r} x {b[4][:34]!r}")
+            for pl in self.thick:
+                for (x1, y1), (x2, y2) in zip(pl, pl[1:]):
+                    seg = (min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2))
+                    if hit(a, seg):
+                        bad.append(f"  text/solid  {a[4][:44]!r} at "
+                                   f"({a[0]:.0f}, {a[1]:.0f})")
+                        break
+                else:
+                    continue
+                break
+        return bad
+
+    def check_inside_frame(self):
+        """Fail loudly on anything that runs off the drawing frame.
+
+        A label that overshoots the border is invisible in the SVG source and obvious
+        only in a render, so it survives every review that reads the code.  Estimating
+        the text extent from CHAR_W is crude, but it is the same estimate `dim` already
+        trusts to decide inside-vs-outside placement, and it only has to be good enough
+        to catch a label that has left the sheet.
+        """
+        bad = []
+        for el in self.out:
+            m = re.match(r'<text x="([-\d.]+)" y="([-\d.]+)".*?font-size="([\d.]+)"'
+                         r'.*?text-anchor="(\w+)".*?>(.*)</text>', el)
+            if not m:
+                continue
+            x, y, size, anchor, txt = (float(m[1]), float(m[2]), float(m[3]), m[4], m[5])
+            w = len(txt) * size * CHAR_W
+            x0 = {"start": x, "middle": x - w / 2, "end": x - w}[anchor]
+            if (x0 < self._x(-FRAME_X) + 1 or x0 + w > self._x(FRAME_X) - 1
+                    or y > self._y(-FRAME_Y) - 1 or y < self._y(FRAME_Y) + 1):
+                bad.append(f"  {txt[:52]!r} at ({x0 - PAGE_W / 2:.1f}, "
+                           f"{PAGE_H / 2 - y:.1f}) w={w:.1f}")
+        if bad:
+            raise ValueError("text outside the drawing frame:\n" + "\n".join(bad))
+
     def write(self, path):
+        self.check_inside_frame()
         body = "\n".join(self.out)
         open(path, "w").write(
             '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -138,20 +273,39 @@ def _bbox(shapes):
 
 
 def view(part, look_from, look_up=(0, 0, 1), hidden=True, scale=SCALE_MAIN, at=(0, 0)):
-    """Hidden-line-removed projection, centred on its own bbox and placed at `at`.
+    """Hidden-line-removed projection, plus a MAPPER from model coords onto the sheet.
 
-    Visible and hidden sets are centred TOGETHER; centring them separately shifts one
-    against the other and the hidden lines stop lining up with the part.
+    The mapper is what makes every dimension anchor on real geometry.  Without it a
+    dimension has to be placed by guessing where the view's origin ended up, and the
+    guess is wrong by a different amount in every view: `Drawing` projects about
+    `shape.center()` -- the centre of MASS -- and the view is then re-centred on the
+    projection's bounding box, so the model origin is nowhere near the middle of the
+    view.  In the front view that error was 7.9 mm on the sheet, which is how the
+    overall-height dimension came to start in mid-air.
+
+    Frame, from build123d's own projector: screen-x = normalize(look_up) x
+    normalize(look_from), screen-y = look_from x screen-x.
     """
     d = Drawing(part, look_from=look_from, look_up=look_up, with_hidden=hidden)
+    zhat = Vector(*look_from).normalized()
+    xhat = Vector(*look_up).normalized().cross(zhat)
+    yhat = zhat.cross(xhat)
+    origin = part.center()
+
     layers = [d.visible_lines, d.hidden_lines if hidden else None]
     lo, hi = _bbox(layers)
     cx, cy = (lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2
+
+    def to_sheet(p):
+        v = Vector(*p) - origin
+        return (at[0] + (v.dot(xhat) - cx) * scale,
+                at[1] + (v.dot(yhat) - cy) * scale)
+
     out = []
-    for s in layers:
-        out.append(None if s is None else
-                   _flatten(Pos(*at) * (Pos(-cx, -cy) * s).scale(scale, about=(0, 0, 0))))
-    return out
+    for sp in layers:
+        out.append(None if sp is None else
+                   _flatten(Pos(*at) * (Pos(-cx, -cy) * sp).scale(scale, about=(0, 0, 0))))
+    return out[0], out[1], to_sheet
 
 
 def section(part, plane, scale, at, spacing=0.6, angle=45.0):
@@ -170,6 +324,10 @@ def section(part, plane, scale, at, spacing=0.6, angle=45.0):
     def put(s):
         return Pos(*at) * (Pos(-cx, -cy) * s).scale(scale, about=(0, 0, 0))
 
+    def put_pt(q):
+        return (at[0] + (q[0] - cx) * scale, at[1] + (q[1] - cy) * scale)
+
+    ux, uy = math.cos(math.radians(angle)), math.sin(math.radians(angle))
     hatches = []
     for f in faces:
         b = f.bounding_box()
@@ -182,13 +340,23 @@ def section(part, plane, scale, at, spacing=0.6, angle=45.0):
                 hit = f & ruling
             except Exception:
                 continue
-            if hit is not None and hit.faces():
-                for hf in hit.faces():
-                    hb = put(hf).bounding_box()
-                    hatches.append([(hb.min.X, hb.min.Y), (hb.max.X, hb.max.Y)]
-                                   if angle > 0 else
-                                   [(hb.min.X, hb.max.Y), (hb.max.X, hb.min.Y)])
-    return _flatten(put(outline)), hatches
+            if hit is None or not hit.faces():
+                continue
+            for hf in hit.faces():
+                # The sliver's OWN extreme vertices along the hatch direction, trimmed
+                # 8 % at each end.  The bounding-box diagonal used before is bigger than
+                # the sliver wherever the ruling is clipped at an angle, so the hatching
+                # visibly ran outside the section outline.
+                pts = [(v.X, v.Y) for v in hf.vertices()]
+                if len(pts) < 2:
+                    continue
+                lo_p = min(pts, key=lambda q: q[0] * ux + q[1] * uy)
+                hi_p = max(pts, key=lambda q: q[0] * ux + q[1] * uy)
+                dx, dy = hi_p[0] - lo_p[0], hi_p[1] - lo_p[1]
+                hatches.append([(lo_p[0] + dx * 0.08, lo_p[1] + dy * 0.08),
+                                (lo_p[0] + dx * 0.92, lo_p[1] + dy * 0.92)])
+    hatches = [[(put_pt(a)), (put_pt(b))] for a, b in hatches]
+    return _flatten(put(outline)), hatches, put_pt
 
 
 # --------------------------------------------------------------------- annotation
@@ -258,25 +426,130 @@ def leader(sh, text, tip, elbow, size=2.2, left=False):
             "end" if left else "start")
 
 
+def projection_symbol(sh, at, d=7.0):
+    """ISO 128 FIRST-ANGLE symbol: the end view (concentric circles) to the LEFT.
+
+    Drawn from two independent sources that agree on the handedness, because getting it
+    backwards is a serious drawing error.  The title block also says "FIRST ANGLE (ISO
+    128)" in words and every view carries its own name, so the words remain the
+    authority and the symbol is corroboration.
+    """
+    x, y = at
+    r = d / 2
+    for rr in (r, r * 0.55):
+        sh.out.append(f'<circle cx="{sh._x(x - d * 0.75):.3f}" cy="{sh._y(y):.3f}" '
+                      f'r="{rr:.3f}" fill="none" stroke="#000" stroke-width="{W_THIN}"/>')
+    # the trapezoid, small end toward the circles
+    sh.path([(x, y - r * 0.55), (x + d, y - r), (x + d, y + r), (x, y + r * 0.55)],
+            W_THIN, close=True)
+
+
+def axes_2d(sh, at, right, up, size=5.0):
+    """A two-arrow indicator naming the MODEL axes in the plane of an orthographic view.
+
+    OpenSCAD's frame, the one the .scad and this conversation use: +X right, +Y back,
+    +Z up, origin at the bottom of the MX stem on the moulding face.  Without this the
+    reader has to infer the handedness of each view from the part, which for a nearly
+    symmetric stem is guesswork.
+    """
+    sh.line(at, (at[0] + size, at[1]), W_HAIR)
+    arrow(sh, (at[0] + size + ARROW_L, at[1]), (-1, 0), W_HAIR)
+    sh.text(right, (at[0] + size + ARROW_L + 2.2, at[1]), 2.4, "start")
+    sh.line(at, (at[0], at[1] + size), W_HAIR)
+    arrow(sh, (at[0], at[1] + size + ARROW_L), (0, -1), W_HAIR)
+    sh.text(up, (at[0], at[1] + size + ARROW_L + 2.6), 2.4)
+
+
+def axes_iso(sh, at, size=7.0):
+    """An isometric XYZ triad, matching the isometric view's orientation."""
+    dirs = {"X": (0.866, -0.5), "Y": (-0.866, -0.5), "Z": (0.0, 1.0)}
+    for name, (dx, dy) in dirs.items():
+        tip = (at[0] + dx * size, at[1] + dy * size)
+        sh.line(at, tip, W_HAIR)
+        arrow(sh, (at[0] + dx * (size + ARROW_L), at[1] + dy * (size + ARROW_L)),
+              (-dx, -dy), W_HAIR)
+        sh.text(name, (at[0] + dx * (size + ARROW_L + 3), at[1] + dy * (size + ARROW_L + 3)),
+                2.4)
+
+
 def frame_and_title(sh, cfg, name):
     sh.rect(-FRAME_X, -FRAME_Y, FRAME_X, FRAME_Y, W_THICK)
     x0, y0 = FRAME_X - TITLE_W, -FRAME_Y
     x1, y1 = FRAME_X, -FRAME_Y + TITLE_H
     sh.rect(x0, y0, x1, y1, W_THICK)
-    sh.line((x0, y1 - 11), (x1, y1 - 11), W_THIN)
-    sh.line((x0, y0 + 10), (x1, y0 + 10), W_THIN)
-    sh.line((x0 + 62, y0 + 10), (x0 + 62, y1 - 11), W_THIN)
+    for yy in (y1 - 13, y1 - 23, y0 + 11):
+        sh.line((x0, yy), (x1, yy), W_THIN)
+    # 32, not 22: "PK-STEM-S-1U25" at 2.8 bold is 24 mm wide and a narrower cell
+    # draws the rule straight through the part number.
+    sh.line((x0 + 32, y1 - 23), (x0 + 32, y0 + 11), W_THIN)
+    sh.line((x0 + 86, y1 - 23), (x0 + 86, y0), W_THIN)
+    sh.line((x0 + 22, y0 + 11), (x0 + 22, y0), W_THIN)
 
-    sh.text(f"Keycap stem  {cfg['label']}", (x0 + 3, y1 - 5.5), 4.4, "start", bold=True)
-    sh.text("MX mount, injection moulded", (x0 + 3, y1 - 15.5), 2.6, "start")
-    sh.text("PolyTasten / PolyKybd", (x0 + 3, y1 - 19.5), 2.2, "start")
-    sh.text(f"DRAWING  PK-STEM-{name.replace('_', '-')}-{DRAWING_REV}",
-            (x0 + 65, y1 - 15.0), 2.4, "start")
-    sh.text(f"DATE  {date.today().isoformat()}", (x0 + 65, y1 - 19.5), 2.2, "start")
-    sh.text(f"MATERIAL  {MATERIAL}", (x0 + 65, y1 - 5.5), 2.6, "start", bold=True)
-    sh.text("SCALE  as noted", (x0 + 3, y0 + 5.5), 2.4, "start")
-    sh.text("FIRST ANGLE (ISO 128)", (x0 + 40, y0 + 5.5), 2.4, "start")
-    sh.text("UNITS  mm", (x0 + 90, y0 + 5.5), 2.4, "start")
+    sh.embed(LOGO, x0 + 2.5, y1 - 2.0, 9.0, 9.0)
+    sh.text("PolyTasten", (x0 + 14, y1 - 4.4), 3.4, "start", bold=True)
+    sh.text("polykybd.org", (x0 + 14, y1 - 9.4), 2.2, "start")
+    sh.text(f"Keycap stem  {cfg['label']}", (x0 + 46, y1 - 6.5), 5.0, "start", bold=True)
+
+    sh.text("MX mount, injection moulded", (x0 + 2.5, y1 - 18), 2.8, "start")
+    sh.text(f"MATERIAL   {MATERIAL}", (x0 + 60, y1 - 18), 2.8, "start", bold=True)
+
+    rows = [(2.5, "DRAWING No.", f"PK-STEM-{name.replace('_', '-')}"),
+            (2.5, "", ""),
+            (60, "SHEET", "1 / 1"),
+            (60, "", "")]
+    sh.text("DRAWING No.", (x0 + 2.5, y1 - 26.5), 2.0, "start")
+    sh.text(f"PK-STEM-{name.replace('_', '-')}", (x0 + 2.5, y1 - 31), 2.8, "start", bold=True)
+    sh.text("SHEET REV.", (x0 + 35, y1 - 26.5), 2.0, "start")
+    sh.text(DRAWING_REV, (x0 + 35, y1 - 31), 2.8, "start", bold=True)
+    sh.text("PART REV.", (x0 + 51, y1 - 26.5), 2.0, "start")
+    sh.text(sm.REVISION, (x0 + 51, y1 - 31), 2.8, "start", bold=True)
+    sh.text("DATE", (x0 + 66, y1 - 26.5), 2.0, "start")
+    sh.text(date.today().isoformat(), (x0 + 66, y1 - 31), 2.4, "start")
+    sh.text("DRAWN", (x0 + 92, y1 - 26.5), 2.0, "start")
+    sh.text("PolyTasten / PolyKybd", (x0 + 92, y1 - 31), 2.4, "start")
+    sh.text(f"QTY / KEYBOARD   {cfg['qty']}", (x0 + 92, y1 - 36.5), 2.2, "start")
+
+    sh.text("UNITS  mm", (x0 + 2.5, y0 + 5.5), 2.4, "start")
+    sh.text(f"GENERAL TOL.  ISO 2768-m  (±{GENERAL_TOL:.2f} here)",
+            (x0 + 25, y0 + 5.5), 2.4, "start")
+    sh.text("SCALE  as noted", (x0 + 90, y0 + 5.5), 2.4, "start")
+    sh.text("FIRST ANGLE", (x0 + 140, y0 + 8.8), 2.0, "middle")
+    projection_symbol(sh, (x0 + 137, y0 + 3.8), 4.6)
+
+
+# --------------------------------------------------------------------- geometry aids
+def silhouette_extreme(paths, axis, want_max):
+    """The point of a flattened projection that is furthest along `axis` (0=x, 1=y).
+
+    Used to anchor an overall dimension on the real outline.  The overall height used
+    to be measured from (-half_width, 0) to (-half_width, z_max), and at z_max the part
+    is 2 mm narrower than that, so the upper extension line started in mid-air.
+    """
+    best = None
+    for pl in paths:
+        for pt in pl:
+            if best is None or ((pt[axis] > best[axis]) == want_max and pt[axis] != best[axis]):
+                best = pt
+    return best
+
+
+def cross_mouth(part):
+    """The MX slot where it breaks the moulding face -- the lead-in the moulder cuts.
+
+    Measured on the solid at z = 0 rather than derived: the two chamfer extrudes in the
+    .scad use scale factors with hand-tuned fudge terms (-0.011, -0.07), so the closed
+    form is not the number on the part.
+    """
+    sec = part & Plane.XY.offset(0.02)
+    faces = [f for f in sec.faces() if f.bounding_box().size.X < sm.MX_CYLINDER * 1.2]
+    best, wire = None, None
+    for f in sec.faces():
+        for w in f.inner_wires():
+            b = w.bounding_box()
+            if b.size.X < sm.MX_CYLINDER and abs(b.center().X) < 0.05:
+                if best is None or b.size.X > best.size.X:
+                    best, wire = b, w
+    return best
 
 
 # ---------------------------------------------------------------------- the sheet
@@ -286,159 +559,298 @@ def build_sheet(name):
     bb = part.bounding_box()
     dxo = (cfg["u_size"] - 1) * 2 * 5
     hx, hy = sm.STEM_X / 2 + dxo, sm.STEM_Y / 2
-    S, D = SCALE_MAIN, SCALE_DETAIL
+    S, D, D5 = SCALE_MAIN, SCALE_DETAIL, 5.0
 
     sh = Sheet()
     frame_and_title(sh, cfg, name)
 
-    right_at, front_at, top_at = (-110.0, 62.0), (-56.0, 62.0), (-56.0, 16.0)
-    sec_at, iso_at, det_at = (14.0, 62.0), (66.0, 60.0), (90.0, 12.0)
+    # First angle: the view from ABOVE goes below the front view, the view from BELOW
+    # above it, and the view from the RIGHT to its left.
+    right_at, front_at = (-176.0, 60.0), (-128.0, 60.0)
+    top_at, bot_at = (-128.0, 10.0), (-128.0, 110.0)
+    # The isometric goes in the gap the orthographic block leaves under the section,
+    # not above it: at 1.25U the view-from-below leaders reach 4.4 mm further right
+    # and ran straight over it there.
+    sec_at, iso_at = (-42.0, 60.0), (14.0, -4.0)
+    det_at, stamp_at = (58.0, 74.0), (149.0, 90.0)
 
-    for look, up, at, title in (
-            ((1, 0, 0), (0, 0, 1), right_at, "VIEW FROM RIGHT  2:1"),
-            ((0, -1, 0), (0, 0, 1), front_at, "VIEW FROM FRONT  2:1"),
-            ((0, 0, 1), (0, 1, 0), top_at, "VIEW FROM ABOVE  2:1")):
-        vis, hid = view(part, look, up, True, S, at)
-        for p in hid:
-            sh.path(p, W_HAIR, dash="1.1,0.9")
-        for p in vis:
-            sh.path(p, W_THICK)
-        sh.text(title, (at[0], at[1] + (16 if at is not top_at else -21)), 2.8,
-                bold=True)
+    def titled(n, text, at, dy, scale="2:1"):
+        sh.text(f"{n}   {text}", (at[0], at[1] + dy), 3.2, bold=True)
+        sh.text(scale, (at[0], at[1] + dy - 4.6), 2.4)
 
-    vis, _ = view(part, (1, -1, 0.75), hidden=False, scale=SCALE_ISO, at=iso_at)
-    for p in vis:
-        sh.path(p, W_THIN)
-    sh.text("ISOMETRIC  1.6:1", (iso_at[0], iso_at[1] + 17), 2.8, bold=True)
+    def title_above(n, text, at, box, scale="2:1"):
+        """Title above the view, clear of whatever the view actually drew.
 
-    # --- section A-A, cut on the XZ plane straight through the cross --------------
-    out_p, hats = section(part, Plane.XZ, S, sec_at)
-    for p in hats:
-        sh.path(p, W_HAIR)
-    for p in out_p:
-        sh.path(p, W_THICK)
-    sh.text("SECTION A-A  2:1", (sec_at[0], sec_at[1] + 19), 2.8, bold=True)
-    sh.text("on the cross centre-line", (sec_at[0], sec_at[1] + 15), 2.1)
-    # the cutting plane, marked on the view from above
-    sh.line((top_at[0] - 34, top_at[1]), (top_at[0] + 34, top_at[1]), W_THIN,
-            dash="6,1.5,1.5,1.5")
-    for lbl, x in (("A", -36.5), ("A", 36.5)):
-        sh.text(lbl, (top_at[0] + x, top_at[1] + 4.0), 3.2, bold=True)
+        Above rather than below, for all four: a title under a view sits between it and
+        the next one down, and on a first-angle sheet the view below is its own
+        projection -- V2's label read as if it named V3.
+        """
+        sh.text(f"V{n}   {text}", (at[0], box[3] + 8.2), 3.2, bold=True)
+        sh.text(scale, (at[0], box[3] + 3.6), 2.4)
 
-    # --- detail B: the cross opening at the moulding face, 10:1 ------------------
+    M, box, titles = {}, {}, {}
+    for n, look, up, at, title, ax, axat in (
+            (1, (1, 0, 0), (0, 0, 1), right_at, "VIEW FROM RIGHT", ("-Y", "Z"), (-20, -19)),
+            (2, (0, -1, 0), (0, 0, 1), front_at, "VIEW FROM FRONT", ("X", "Z"), (26, -12)),
+            (3, (0, 0, 1), (0, 1, 0), top_at, "VIEW FROM ABOVE", ("X", "Y"), (28, -26)),
+            (4, (0, 0, -1), (0, 1, 0), bot_at, "VIEW FROM BELOW", ("-X", "Y"), (28, -20))):
+        box[n], titles[n] = [1e9, 1e9, -1e9, -1e9], (title, at, "2:1")
+        with sh.group(box[n]):
+            vis, hid, M[n] = view(part, look, up, True, S, at)
+            for pl in hid:
+                sh.path(pl, W_HAIR, dash="2.2,1.4")
+            for pl in vis:
+                sh.path(pl, W_THICK)
+            axes_2d(sh, (at[0] + axat[0] + dxo * S, at[1] + axat[1]), *ax)
+
+    box[6], titles[6] = [1e9, 1e9, -1e9, -1e9], ("ISOMETRIC", iso_at, "1.6:1")
+    with sh.group(box[6]):
+        vis, _, _ = view(part, (1, -1, 0.75), hidden=False, scale=SCALE_ISO, at=iso_at)
+        for pl in vis:
+            sh.path(pl, W_THIN)
+        axes_iso(sh, (iso_at[0] + 32, iso_at[1] - 4))
+
+    # --- V5 section A-A, cut on the XZ plane straight through the cross ----------
+    box[5], titles[5] = [1e9, 1e9, -1e9, -1e9], ("SECTION A-A", sec_at, "2:1")
+    with sh.group(box[5]):
+        out_p, hats, MS = section(part, Plane.XZ, S, sec_at)
+        for pl in hats:
+            sh.path(pl, W_HAIR)
+        for pl in out_p:
+            sh.path(pl, W_THICK)
+        h_cyl = sm.STEM_HEIGHT - sm.DISP_HEIGHT - 1 + cfg["extra_len"]
+        # Plane.XZ local coords are (model X, model Z): the mapper takes them directly.
+        dim(sh, MS((hx, 0)), MS((hx, h_cyl)), 12, f"{h_cyl:.2f} slot depth",
+            vertical=True)
+        sh.text("cut on the cross centre-line, so the slot reads full depth",
+                (sec_at[0], box[5][1] - 4.5), 2.2)
+    cy = top_at[1]
+    for xs in (-1, 1):                       # cutting plane, ISO 128-30
+        x = top_at[0] + xs * (24 + dxo * S)
+        sh.line((top_at[0] + xs * 15, cy), (x, cy), W_CUT)
+        sh.line((x, cy), (x, cy - 5), W_CUT)
+        arrow(sh, (x, cy - 8.5), (0, 1), W_CUT)
+        sh.text("A", (x + xs * 4.5, cy - 8), 3.4, bold=True)
+    sh.line((top_at[0] - 15, cy), (top_at[0] + 15, cy), W_HAIR, dash="5,1.2,1.2,1.2")
+
+    # --- V7 detail B: the cross opening, 10:1 -----------------------------------
+    box[7], titles[7] = [1e9, 1e9, -1e9, -1e9], ("DETAIL B    MX CROSS", det_at, "10:1")
+    g7 = sh.group(box[7]); g7.__enter__()
     z_det = sm.MX_CROSS_FILLET
     cross_sec = part & Plane.XY.offset(z_det)
     stem_face = min(cross_sec.faces(), key=lambda f: f.bounding_box().size.X)
-    inner = [w for w in stem_face.wires()
-             if w.bounding_box().size.X < sm.MX_CYLINDER]
-    det = Compound(children=list(inner[0].edges())
-                   + list(stem_face.outer_wire().edges()))
+    inner = [w for w in stem_face.wires() if w.bounding_box().size.X < sm.MX_CYLINDER]
+    det = Compound(children=list(inner[0].edges()) + list(stem_face.outer_wire().edges()))
     lo, hi = _bbox([det])
-    cx, cy = (lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2
-    for p in _flatten(Pos(*det_at) * (Pos(-cx, -cy) * det).scale(D, about=(0, 0, 0))):
-        sh.path(p, W_THICK)
-    sh.text("DETAIL B  10:1", (det_at[0], det_at[1] + 34), 2.8, bold=True)
-    sh.text(f"cross opening at z = {z_det:.2f}, above the lead-in chamfer",
-            (det_at[0], det_at[1] - 34), 2.1)
-    sh.text("B", (det_at[0] - 30, det_at[1] + 34), 3.2, bold=True)
-    # detail marker on the view that contains the feature
-    sh.out.append(f'<circle cx="{sh._x(top_at[0])}" cy="{sh._y(top_at[1])}" '
-                  f'r="7.5" fill="none" stroke="#000" stroke-width="{W_HAIR}" '
-                  f'stroke-dasharray="1.5,1.2"/>')
-    sh.text("B", (top_at[0] + 13.0, top_at[1] - 12.5), 3.0, bold=True)
+    cx0, cy0 = (lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2
+    for pl in _flatten(Pos(*det_at) * (Pos(-cx0, -cy0) * det).scale(D, about=(0, 0, 0))):
+        sh.path(pl, W_THICK)
+    sh.centre_lines(det_at, 33, 33)
 
-    # --- dimensions ---------------------------------------------------------------
-    def at_view(at, p, scale=S):
+    def dv(p, scale=D, at=None):
+        at = at or det_at
         return (at[0] + p[0] * scale, at[1] + p[1] * scale)
-
-    dim(sh, at_view(top_at, (-hx, -hy)), at_view(top_at, (hx, -hy)), -13,
-        f"{2 * hx:.2f}")
-    dim(sh, at_view(top_at, (hx, -hy)), at_view(top_at, (hx, hy)), 12, f"{2 * hy:.3f}")
-    y_seat = sm.DISP_Y_CENTER_OFFSET - sm.DISP_Y / 2
-    dim(sh, at_view(top_at, (-sm.DISP_X / 2, hy)),
-        at_view(top_at, (sm.DISP_X / 2, hy)), 8.0, f"{sm.DISP_X:.2f} display seat")
-    dim(sh, at_view(top_at, (-sm.DISP_X / 2, y_seat)),
-        at_view(top_at, (-sm.DISP_X / 2, y_seat + sm.DISP_Y)), -12, f"{sm.DISP_Y:.2f}")
-
-    dim(sh, at_view(front_at, (-hx, 0)), at_view(front_at, (-hx, bb.max.Z)), -9,
-        f"{bb.max.Z:.2f}")
-    dim(sh, at_view(front_at, (-hx, 0)), at_view(front_at, (hx, 0)), -18,
-        f"{2 * hx:.2f}")
-
-    h_cyl = sm.STEM_HEIGHT - sm.DISP_HEIGHT - 1 + cfg["extra_len"]
-    dim(sh, at_view(sec_at, (hx, 0)), at_view(sec_at, (hx, sm.STEM_HEIGHT)), 8,
-        f"{sm.STEM_HEIGHT:.2f} cap")
-    dim(sh, at_view(sec_at, (-hx, 0)), at_view(sec_at, (-hx, h_cyl)), -8,
-        f"{h_cyl:.2f} stem")
 
     taper = 1 - 0.03 * z_det / (2 * sm.STEM_HEIGHT)
     c_len = (sm.MX_CROSS - sm.MX_CROSS_FILLET) * taper
     c_wid = (sm.MX_CROSS_WIDTH - sm.MX_CROSS_FILLET) * taper
-    dim(sh, at_view(det_at, (-c_len / 2, c_wid / 2), D),
-        at_view(det_at, (c_len / 2, c_wid / 2), D), 16, f"{c_len:.2f} ±0.03")
-    dim(sh, at_view(det_at, (c_wid / 2, -c_len / 2), D),
-        at_view(det_at, (c_wid / 2, c_len / 2), D), 18, f"{c_len:.2f} ±0.03")
-
-    leader(sh, f"{c_wid:.2f} ±0.03 arm width",
-           at_view(det_at, (-c_len / 2 + 0.4, c_wid / 2), D),
-           (det_at[0] - 26, det_at[1] + 24), 2.1, True)
-    leader(sh, f"R{sm.MX_CROSS_FILLET:.2f}, 4x",
-           at_view(det_at, (c_wid / 2 + 0.12, c_wid / 2 + 0.12), D),
-           (det_at[0] + 20, det_at[1] + 24), 2.1)
-    leader(sh, "relief bulge 4x",
-           at_view(det_at, (sm.MX_CROSS / 3, -c_wid / 2 - 0.16), D),
-           (det_at[0] + 21, det_at[1] - 22), 2.1)
-    leader(sh, f"Ø{sm.MX_CYLINDER:.2f} stem",
-           at_view(det_at, (-sm.MX_CYLINDER / 2 * 0.707, -sm.MX_CYLINDER / 2 * 0.707), D),
-           (det_at[0] - 24, det_at[1] - 26), 2.1, True)
-    # The thinnest stem wall -- MEASURED off the section, not derived.  Two derivations
-    # were tried and both were wrong, in opposite directions: the widest point of the
-    # opening is neither the arm tip (2.025) nor the relief bulge (1.45 + 0.605 = 2.055)
-    # but the arm tip's CORNER, hypot(2.025, 0.55) = 2.098 -- so the wall is 0.65, not
-    # the 0.67 or 0.70 the two closed forms give.  Sample the wire.
+    dim(sh, dv((-c_len / 2, c_wid / 2)), dv((c_len / 2, c_wid / 2)), 33, f"{c_len:.2f} ±0.03")
+    dim(sh, dv((c_wid / 2, -c_len / 2)), dv((c_wid / 2, c_len / 2)), 35, f"{c_len:.2f} ±0.03")
+    mouth = cross_mouth(part)
     reach = max(math.hypot(v.X, v.Y)
                 for e in inner[0].edges() for v in (e @ (i / 8) for i in range(9)))
-    wall = sm.MX_CYLINDER / 2 - reach
-    leader(sh, f"{wall:.2f} min wall, stem to cross", at_view(det_at, (-2.4, 0), D),
-           (det_at[0] - 26, det_at[1] - 8), 2.1, True)
-    leader(sh, "print tab, 3x (note 11)", at_view(top_at, (hx, 0)),
-           (top_at[0] + 30, top_at[1] + 12), 2.1)
-    leader(sh, f"display seat {sm.DISP_HEIGHT:.2f} deep, zero draft (note 7)",
-           at_view(sec_at, (-hx + 1.2, sm.STEM_HEIGHT - sm.DISP_HEIGHT / 2 + 1.3)),
-           (sec_at[0] - 24, sec_at[1] + 20), 2.1, True)
+    for txt, tip, elbow, left in (
+            (f"{c_wid:.2f} ±0.03 arm width", dv((-c_len / 2 + 0.4, c_wid / 2)),
+             (det_at[0] - 24, det_at[1] + 28), True),
+            (f"R{sm.MX_CROSS_FILLET:.2f}, 4x", dv((c_wid / 2 + 0.12, c_wid / 2 + 0.12)),
+             (det_at[0] + 26, det_at[1] + 28), False),
+            ("relief bulge 4x", dv((sm.MX_CROSS / 3, -c_wid / 2 - 0.16)),
+             (det_at[0] + 27, det_at[1] - 26), False),
+            (f"Ø{sm.MX_CYLINDER:.2f} stem",
+             dv((-sm.MX_CYLINDER / 2 * 0.707, -sm.MX_CYLINDER / 2 * 0.707)),
+             (det_at[0] - 32, det_at[1] - 26), True),
+            (f"{sm.MX_CYLINDER / 2 - reach:.2f} min wall, stem to slot", dv((-2.4, 0)),
+             (det_at[0] - 34, det_at[1] - 8), True),
+                (f"lead-in {mouth.size.X:.2f} sq (note 12)",
+             dv((c_len / 2 - 0.3, -c_wid / 2)),
+             (det_at[0] + 26, det_at[1] - 34), False)):
+        ln, dot, tx = leader_parts(txt, tip, elbow, 2.2, left)
+        sh.path(ln, W_HAIR); sh.poly(dot); sh.text(*tx)
 
-    # --- notes ---------------------------------------------------------------------
+    sh.text(f"section at z = {z_det:.2f}, just above the lead-in chamfer",
+            (det_at[0], box[7][1] - 4.5), 2.2)
+    g7.__exit__(None, None, None)
+
+    # --- V8 detail C: the stamp, as a proposal ----------------------------------
+    box[8] = [1e9, 1e9, -1e9, -1e9]
+    titles[8] = ("DETAIL C    STAMP  (PROPOSAL)", stamp_at, "5:1")
+    g8 = sh.group(box[8]); g8.__enter__()
+    seat = sm.stamp_face(sm.cap_body(cfg["u_size"], engrave=False),
+                         sm.STEM_HEIGHT - sm.DISP_HEIGHT)
+    fb = seat.bounding_box()
+    stamp = sm.place_stamp(sm.stamp_sketch(), seat, sm.DISP_Y / 2 - sm.TEXT_SIZE / 2)
+    sb = stamp.bounding_box()
+    sx, sy = (fb.min.X + fb.max.X) / 2, (fb.min.Y + fb.max.Y) / 2
+
+    def sv(p):
+        return (stamp_at[0] + (p[0] - sx) * D5, stamp_at[1] + (p[1] - sy) * D5)
+
+    for shape, w in ((seat.outer_wire(), W_THIN), (stamp, W_THICK)):
+        for pl in _flatten(Pos(*stamp_at) * (Pos(-sx, -sy) * shape).scale(D5, about=(0, 0, 0))):
+            sh.path(pl, w)
+    dim(sh, sv((sb.min.X, sb.max.Y)), sv((sb.max.X, sb.max.Y)), 6, f"{sb.size.X:.2f}")
+    dim(sh, sv((sb.max.X, sb.min.Y)), sv((sb.max.X, sb.max.Y)), 12, f"{sb.size.Y:.2f}")
+    dim(sh, sv((sb.max.X, sb.max.Y)), sv((sb.max.X, fb.max.Y)), 14,
+        f"{fb.max.Y - sb.max.Y:.2f} min")
+    leader(sh, f"{sm.STAMP_GAP:.2f} gap", sv((0, sb.min.Y + 1.0)),
+           (stamp_at[0] - 6, stamp_at[1] - 26), 2.2, True)
+    leader(sh, f"{sm.TEXT_HEIGHT:.2f} deep", sv((sb.max.X - 1.0, sb.min.Y + 0.6)),
+           (stamp_at[0] + 26, stamp_at[1] - 20), 2.2)
+
+    y8 = box[8][1] - 4.5
+    for t in ("The display-seat floor, looking down +Z.  The second",
+              "stamp is the same, mirrored, in the pocket ceiling, and",
+              "reads correctly from below (V4).  Thin outline = the",
+              "seat floor, i.e. the face the stamp is cut into."):
+        sh.text(t, (stamp_at[0], y8), 2.2)
+        y8 -= 3.4
+    g8.__exit__(None, None, None)
+
+    # --- dimensions --------------------------------------------------------------
+    # Each block goes into its view's own extent box, so the title placed afterwards
+    # clears the dimensions as well as the outline.
+    # V3 from above: plan envelope, display seat, click tabs
+    with sh.group(box[3]):
+        dim(sh, M[3]((-hx, -hy, 0)), M[3]((hx, -hy, 0)), -13, f"{2 * hx:.2f}")
+        dim(sh, M[3]((hx, -hy, 0)), M[3]((hx, hy, 0)), 13, f"{2 * hy:.3f}")
+        y_seat = sm.DISP_Y_CENTER_OFFSET - sm.DISP_Y / 2
+        dim(sh, M[3]((-sm.DISP_X / 2, -hy, 0)), M[3]((sm.DISP_X / 2, -hy, 0)), -7,
+            f"{sm.DISP_X:.2f} display seat")
+        dim(sh, M[3]((-sm.DISP_X / 2, y_seat, 0)),
+            M[3]((-sm.DISP_X / 2, y_seat + sm.DISP_Y, 0)), -7, f"{sm.DISP_Y:.2f}")
+        # The click tabs are a functional feature (note 10), so V3 dimensions the one
+        # length that is legible at 2:1 and the leader carries the three that are not.
+        tl, tp = sm.CLICK_TAB_L, sm.CLICK_TAB_PROUD
+        dim(sh, M[3]((-tl / 2, hy + tp, 0)), M[3]((tl / 2, hy + tp, 0)), 6,
+            f"{tl:.2f} click tab")
+        leader(sh, f"click tab 3x, centred on the edge -- {sm.CLICK_TAB_W:.2f} wide, "
+                   f"{sm.CLICK_TAB_H:.2f} tall, {tp:.2f} proud (note 10)",
+               M[3]((hx + tp, tl / 4, 0)),
+               (top_at[0] + 34 + dxo * S, top_at[1] + 12), 2.2)
+
+    # V2 from front: overall height and the top face, both on the real outline
+    with sh.group(box[2]):
+        dim(sh, M[2]((hx, 0, 0)), M[2]((hx, 0, bb.max.Z)), 12,
+            f"{bb.max.Z:.2f} overall", vertical=True)
+        w_top = sm.STEM_X * sm.STEM_TOP_BOTTOM_RATIO + 2 * dxo
+        z_top = cfg["extra_len"] + sm.STEM_HEIGHT * math.cos(math.radians(cfg["angle"]))
+        dim(sh, M[2]((-w_top / 2, 0, z_top)), M[2]((w_top / 2, 0, z_top)), 8,
+            f"{w_top:.2f} top face")
+
+    # V1 from right: the cap tilt, which is the whole point of the profile.  A note
+    # under the view, not a leader: a leader long enough to carry this sentence runs
+    # straight into the front view beside it.
+    with sh.group(box[1]):
+        sh.text(f"cap tilt {abs(cfg['angle']):.0f}° about X (the S profile)",
+                (right_at[0], box[1][1] - 4.5), 2.2)
+
+    # V4 from below: the switch-clearance chamfer, which only this view shows
+    px, py = (sm.INSIDE_X + sm.INSIDE_X + sm.STEM_X) / 6, (sm.INSIDE_Y + sm.STEM_Y) / 4
+    with sh.group(box[4]):
+        leader(sh, f"switch clearance {2 * px:.2f} x {2 * py:.2f} at z = 0",
+               M[4]((-px * 0.97, py * 0.55, 0)),
+               (bot_at[0] + 24 + dxo * S, bot_at[1] + 11), 2.2)
+        leader(sh, f"{sm.draft_angles()[3][4]:.1f}° inner chamfer (note 8)",
+               M[4]((-px * 0.86, py * 0.05, 0)),
+               (bot_at[0] + 24 + dxo * S, bot_at[1] + 4), 2.2)
+        leader(sh, f"pocket {sm.INSIDE_HEIGHT:.2f} deep from z = 0",
+               M[4]((-px * 0.55, -py * 0.75, 0)),
+               (bot_at[0] + 24 + dxo * S, bot_at[1] - 8), 2.2)
+
+    for n, (title, at, *sc) in sorted(titles.items()):
+        title_above(n, title, at, box[n], *sc)
+
+    notes_and_table(sh, cfg, c_len, c_wid, mouth, dxo)
+    for line in sh.report_collisions():
+        print("  ! overlap:", line.strip())
+    return sh
+
+
+def leader_parts(text, tip, elbow, size=2.2, left=False):
+    """`leader` split into its pieces, so a caller can batch them onto layers."""
+    tail = (elbow[0] + (-3.5 if left else 3.5), elbow[1])
+    dot = [(tip[0] - 0.4, tip[1]), (tip[0], tip[1] + 0.4),
+           (tip[0] + 0.4, tip[1]), (tip[0], tip[1] - 0.4)]
+    txt = (text, (tail[0] + (-0.8 if left else 0.8), tail[1]), size,
+           "end" if left else "start")
+    return [tip, elbow, tail], dot, txt
+
+
+def notes_and_table(sh, cfg, c_len, c_wid, mouth, dxo):
     dr = {n: a for n, *_, a in sm.draft_angles()}
     notes = [
         ("NOTES", True),
-        (f" 1.  Dimensions in mm.  First-angle projection (ISO 128).  Scale as marked per view.", False),
-        (f" 2.  General tolerance ±{GENERAL_TOL:.2f} unless stated otherwise.", False),
+        (" 1.  Dimensions in mm.  First-angle projection (ISO 128).  Scale as marked per view.", False),
+        ("       Axes are the model's own (OpenSCAD): +X right, +Y back, +Z up, origin at the centre of", False),
+        ("       the MX stem on the moulding face (z = 0).  Each view carries the pair it shows.", False),
+        (f" 2.  General tolerance ISO 2768-m; ±{GENERAL_TOL:.2f} applies to the dimensions shown here.", False),
+        ("       Dimensions and tolerances apply at 20 °C.", False),
         (" 3.  Geometry re-authored from keycap_stem.scad in build123d.  The STEP is the shape reference;", False),
         ("       THIS DRAWING governs tolerance, material and finish.", False),
-        (f" 4.  CRITICAL  MX cross {c_len:.2f} x {c_wid:.2f} ±0.03, R{sm.MX_CROSS_FILLET:.2f} corner fillets.  Gauge against a reference MX", False),
-        ("       switch stem, not by CMM alone.  Polish the core pin to draw along the arms.", False),
+        (f" 4.  CRITICAL  MX slot {c_len:.2f} x {c_wid:.2f} ±0.03, R{sm.MX_CROSS_FILLET:.2f} corner fillets (V7).  Gauge against a real MX", False),
+        ("       switch stem, not by CMM alone.  See the fit table -- our slot is deliberately tighter than", False),
+        ("       Cherry's published keycap slot, and the four relief bulges are what make that work.", False),
         (" 5.  CRITICAL  The transparent relegendable cap is an off-the-shelf POS part, so that mating", False),
         ("       dimension is a hard datum set by a supplier we do not control.  Confirm before cutting steel.", False),
-        (f" 6.  Draft, measured off the model: outer body {dr['outer body X']:.1f}°, inside pocket {dr['inside pocket']:.1f}°, centre pocket {dr['centre pocket']:.1f}°.", False),
-        (f" 7.  ZERO DRAFT on the display seat ({sm.DISP_X} x {sm.DISP_Y} x {sm.DISP_HEIGHT} deep) and on its cable relief.  Shallow enough", False),
-        ("       that it often releases as-is, but confirm it rather than discover it at first article.", False),
-        (f" 8.  Cross draft {dr['cross arm flat']:.2f}° on the flats and {dr['cross arm tip']:.2f}° at the arm tips, opening downward -- the core pin", False),
-        ("       withdraws in the correct direction, but with very little relief.", False),
-        (f" 9.  MATERIAL  {MATERIAL}, chosen for shrink: 0.4-0.7% is what keeps the MX cross inside note 4.", False),
+        (f" 6.  Draft, measured off the model: outer body {dr['outer body X']:.1f}°, inside pocket {dr['inside pocket']:.1f}°.", False),
+        (f" 7.  ZERO DRAFT on the display seat ({sm.DISP_X} x {sm.DISP_Y} x {sm.DISP_HEIGHT} deep) and its cable relief.  Shallow", False),
+        ("       enough that it usually releases, but confirm it rather than meet it at first article.", False),
+        (f" 8.  The inner chamfer in V4 ({dr['centre pocket']:.1f}°) is switch-body clearance, not cosmetic -- it is what stops", False),
+        ("       the cap fouling a bulky switch.  Do not flatten it to simplify the core.", False),
+        (f" 9.  Slot draft {dr['cross arm flat']:.2f}° on the flats, {dr['cross arm tip']:.2f}° at the arm tips, opening downward: the core pin", False),
+        ("       withdraws in the correct direction, but with very little relief.  Polish along the arms.", False),
+        ("10.  The three 0.40 x 3.00 x 0.30 tabs standing 0.20 proud (+Y and ±X, V3) are a FUNCTIONAL", False),
+        ("       feature: they are what makes the clear keycap click on properly.  They are NOT a", False),
+        ("       3D-printing artefact and must NOT be removed.", False),
+        (f"11.  Stamp \"{sm.REVISION} {sm.PROFILE}\" = revision + profile, {sm.TEXT_HEIGHT:.2f} deep, zero draft, in two places (V8).", False),
+        (f"       Revision character is {sm.revision_codepoint().upper()} -- the moulded part is", False),
+        ("       deliberately β where the 3D-printed prototypes are α, so the two are told apart by eye.", False),
+        ("       Carry it on a REPLACEABLE INSERT in the cavity rather than cut into the block: a revision", False),
+        ("       change is then a plug swap, not a tool edit.  Font Noto Sans Bold, outlines in the STEP.", False),
+        (f"12.  The slot lead-in opens to {mouth.size.X:.2f} x {mouth.size.Y:.2f} at z = 0 over {sm.MX_CROSS_FILLET:.2f} mm (~46°).  Cherry publishes no", False),
+        ("       lead-in dimension, so this one is ours; keep it, it is what lets the cap start on the stem.", False),
+        (f"13.  MATERIAL {MATERIAL}, chosen for shrink: 0.4-0.7 % is what keeps the slot inside note 4.", False),
         ("       Dimensions are the FINISHED PART -- apply shrink to the cavity and state the rate used.", False),
-        (f"10.  Stamp \"{sm.default_text()}\" = profile + revision, {sm.TEXT_HEIGHT:.2f} deep, zero draft, in the display-seat floor", False),
-        (f"       and the pocket ceiling.  Revision character is {sm.revision_codepoint().upper()} --", False),
-        ("       the MOULDED part is deliberately β where the 3D-printed prototypes are α, so the two are", False),
-        ("       told apart by eye.  Carry it on a REPLACEABLE INSERT in the cavity rather than cut into the", False),
-        ("       block: a revision change is then a plug swap, not a tool edit.  Font: Noto Sans Bold.", False),
-        ("11.  Three 0.40 x 3.00 x 0.30 tabs stand 0.20 proud of the body (+Y and ±X).  They are a print-plate", False),
-        ("       aid carried over from the 3D-printed part -- delete them for tooling unless you want them.", False),
+        ("14.  Surface: tool polish on the slot and the stem bore; the outer faces may carry the standard", False),
+        ("       texture.  No flash permitted on the slot, the tabs or the seat floor.", False),
     ]
-    y = -17.5
+    y = -30.0
     for i, (t, bold) in enumerate(notes):
-        sh.text(t, (-131.0, y), 2.0, "start", bold=bold)
-        y -= 2.0 * 1.55 if i else 3.4
-    return sh
+        sh.text(t, (-198.0, y), 2.1, "start", bold=bold)
+        y -= 2.1 * 1.45 if i else 3.4
+
+    # --- the fit table: our slot against Cherry's published keycap spec ----------
+    tx, ty = 52.0, -30.0
+    sh.text("MX SLOT vs CHERRY'S PUBLISHED KEYCAP SPEC", (tx, ty), 2.8, "start", bold=True)
+    rows = [("", "this part", "Cherry keycap spec", "real switch stem"),
+            ("slot across", f"{c_len:.2f} (bulges {c_len + 0.06:.2f})", "4.10 +0.05", "--"),
+            ("arm width", f"{c_wid:.2f} (bulges {c_wid + 0.11:.2f})", "1.17 ±0.02",
+             "N/S 1.05-1.10, E/W 1.25-1.30"),
+            ("corner fillet", f"R{sm.MX_CROSS_FILLET:.2f}", "not published", "--"),
+            ("lead-in", f"{mouth.size.X:.2f} sq x {sm.MX_CROSS_FILLET:.2f}", "not published", "--")]
+    cols = [0, 26, 60, 96]
+    for r, row in enumerate(rows):
+        yy = ty - 5.5 - r * 4.4
+        for c, cell in enumerate(row):
+            sh.text(cell, (tx + cols[c], yy), 2.2, "start", bold=(r == 0))
+        if r == 0:
+            sh.line((tx - 1, yy - 2.4), (tx + 140, yy - 2.4), W_HAIR)
+    sh.text("Sources: Cherry's keycap slot spec via deskthority / telcontar.net.  The stem's own cross is",
+            (tx, ty - 30), 2.1, "start")
+    sh.text("ASYMMETRIC and Cherry's uniform 1.17 slot already interferes ~0.07 on two sides; ours is",
+            (tx, ty - 33.4), 2.1, "start")
+    sh.text("tighter still, so the fit rests on the relief bulges.  Verify on a moulded first article.",
+            (tx, ty - 36.8), 2.1, "start")
 
 
 def main():

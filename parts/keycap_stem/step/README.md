@@ -2,7 +2,7 @@
 
 Re-authors the **S-profile keycap stems** (`../keycap_stem.scad`, `mx_stem()`) as real
 B-Rep solids with [build123d](https://build123d.readthedocs.io/) (OpenCASCADE), and
-draws each one on an A4 sheet, so an injection moulder can quote and cut without
+draws each one on an A3 sheet, so an injection moulder can quote and cut without
 guessing at facet noise. Follows
 [`../../openscad-to-step-recipe-stems.md`](../../openscad-to-step-recipe-stems.md),
 which follows the case's [`../../case/openscad-to-step-recipe.md`](../../case/openscad-to-step-recipe.md).
@@ -29,7 +29,7 @@ make selftest        # prove those checks can fail (see below)
 | `hull3d.py` | OpenSCAD `hull()` as an exact polyhedral convex hull |
 | `font.py` | pins the engraving to one font FILE (`make font`) — see the font traps below |
 | `build.py` | exports `stem_S_1U.step` / `stem_S_1U25.step` (+ an STL the checks use) |
-| `drawing.py` | the A4 sheet: 3 ortho views, isometric, section, 10:1 cross detail, tolerances, notes |
+| `drawing.py` | the A3 sheet: V1-V4 ortho, V5 section, V6 isometric, V7 cross 10:1, V8 stamp 5:1, notes, fit table |
 | `validate_step.py` | the case's acceptance test, reused (real solid, curved faces, tight tolerance) |
 | `verify.py` | measures the cross, diffs volume/bbox and booleans against OpenSCAD |
 
@@ -43,16 +43,23 @@ interface to the off-the-shelf transparent cap.
 ## Results
 
 ```
-faces 259   planar 108   curved 151   max edge tolerance 2.1e-07 mm
-volume vs the OpenSCAD mesh   +0.108 % (1U)   +0.079 % (1.25U)
+faces 142   planar 108   curved 34   max edge tolerance 2.1e-07 mm
+volume vs the OpenSCAD mesh   +0.111 % (1U)   +0.081 % (1.25U)
 bounding box                  identical to 5 decimal places
-STEP \ SCAD 1.06 mm3 (0.19 %)   SCAD \ STEP 0.46 mm3 (0.08 %)
+STEP \ SCAD 0.62 mm3 (0.11 %)   SCAD \ STEP 0.011 mm3 (0.002 %)
 ```
 
-The residual is entirely the `.scad`'s tessellation — a 128-gon stem, `$fn=64` cross
-relief, `$fn=16` glyph outlines — against true analytic surfaces, which is the difference
-the exercise exists to remove. Without the engraving it is 100 faces (82 planar) and
-0.62 / 0.011 mm³ (`build.py --no-engrave`, `verify.py --no-engraving`).
+The residual is entirely the `.scad`'s tessellation — a 128-gon stem and `$fn=64` cross
+relief — against true analytic surfaces, which is the difference the exercise exists to
+remove. The exported solid carries the stamp (142 faces, 556.98 mm³ at 1U); without it,
+100 faces and 562.00 mm³.
+
+⚠️ **The `.scad` diff runs with the stamp OFF, on purpose** (`verify.py` `engrave = False`).
+The moulded stamp is β and the `.scad`'s is α, so an engraved diff would report the
+*intended* difference as an error on every run — and the ~5 mm³ of glyph would drown the
+0.6 mm³ of tessellation the diff exists to see. The stamp is checked separately and better:
+its clearance to the seat edge is measured on **both** faces (0.80 mm all round against the
+0.80 mm requirement), which a volume comparison could never tell you.
 
 ## Decisions taken
 
@@ -119,9 +126,13 @@ the exercise exists to remove. Without the engraving it is 100 faces (82 planar)
   goes on to **re-export all sixteen printed plates** against the newly-installed font,
   rewriting committed meshes — it rewrote three here before it was killed. `make font`
   fetches and stops; the two share one cache path.
-- **The three 0.4 × 3.0 × 0.3 print tabs are reproduced, not silently deleted.** They are in
-  the source, so they are in the model (`--no-print-tabs` drops them) and note 10 of the
-  drawing asks the moulder about them.
+- ⚠️ **The three 0.4 × 3.0 × 0.3 tabs are a FUNCTIONAL click feature, not a print aid.**
+  They stand 0.2 mm proud on +Y and ±X and are what makes the transparent relegendable
+  cap click on. The first draft of this pipeline read them as a sprued-plate artefact,
+  called them `print_tabs`, and had the drawing invite the moulder to delete them — on
+  the one document a shop acts on without asking back. They are now `CLICK_TAB_*`,
+  dimensioned in V3, and note 10 says they must not be removed. `--no-click-tabs` exists
+  only to isolate them in a comparison; it is **not** a shipping option.
 
 ## Verification, and why there are three checks
 
@@ -163,6 +174,22 @@ volume delta +0.657 % (still inside the 1 % gate: True -- so volume ALONE would 
   section face's plane makes OCCT's edge-face common return nothing at all — silently, so
   an empty hatch reads as "no solid here" rather than as an error. Below ~0.05 mm the
   rectangle disappears into the boolean tolerance too.
+- ⚠️ **A dimension anchored by hand lands in mid-air.** `Drawing` projects about the
+  shape's centre of **mass**, then `view()` re-centres the result on its bounding box — so
+  a sheet point computed from the model's own coordinates is off by the difference between
+  those two centres (7.9 mm on the front view: the "the 7.91 dimension starts from
+  somewhere outside" report). `view()` returns a model→sheet mapper built from the same
+  two transforms, and every dimension goes through it.
+- ⚠️ **A sheet laid out by hand-tuned offsets WILL collide, and the SVG source never shows
+  it.** Three guards, all of which found live defects on the first sheet:
+  `Sheet.group()` measures what a view actually drew and the title is placed from that
+  (a guessed `dy` put V2's title nearer the view *below* it — which on a first-angle sheet
+  is another projection, so it read as labelling the wrong view); `report_collisions()`
+  lists label-on-label and label-on-outline overlaps; `check_inside_frame()` raises on
+  anything past the border. ⚠️ The collision report only tracks **thick** paths, so a label
+  lying on a dimension line or a thin isometric outline still passes — **render both
+  variants**: the 1.25U leaders reach 4.4 mm further out and one collision existed only
+  there.
 - ⚠️ **`BRepBndLib.Add_s` on an un-meshed shape boxes the underlying SURFACES**, not the
   trimmed faces, so a cut whose prism runs past the solid inflates the answer: it reported
   z_max 11.30 for a part that tops out at 7.91. `validate_step.py` (shared with the case)

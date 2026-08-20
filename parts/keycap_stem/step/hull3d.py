@@ -2,7 +2,7 @@
 
 OpenSCAD's `hull()` is the one operation in `keycap_stem.scad` that has no direct
 build123d equivalent (the case recipe says the same about the case shell).  Here it
-is applied only to POLYHEDRA -- two tapered boxes plus three 0.3 mm print tabs -- and
+is applied only to POLYHEDRA -- two tapered boxes plus three 0.3 mm click tabs -- and
 the convex hull of polyhedra is itself a polyhedron with PLANAR faces.  So this is an
 exact reproduction, not an approximation: hull the vertices, merge the coplanar
 simplices scipy hands back into single n-gons, and sew the faces into a solid.

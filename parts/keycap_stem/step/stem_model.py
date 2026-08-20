@@ -35,6 +35,12 @@ from hull3d import hull_solid
 # usual right-hand tail; Noto's does not).  "β" has no such twin.
 REVISION                = "β"
 PROFILE                 = "S"          # the profile token the printed plates engrave
+# Gap between the two glyphs.  Wide on purpose -- the printed plates pad the profile
+# token to 5 characters so the profile sits at one corner of the face and the revision at
+# the other, and this keeps that.  ⚠️ Ceiling is 5.63 mm: the pocket ceiling is only
+# 11.30 mm wide, so gap + 4.07 mm of glyph + 2 x STAMP_MARGIN has to fit inside it.
+STAMP_GAP               = 5.2
+STAMP_MARGIN            = 0.8          # min clear from the stamp to the edge of its face
 TEXT_FONT               = "Noto"       # asked for by name in the .scad; see font.py
 TEXT_SIZE               = 3.0          # OpenSCAD points -- see TEXT_EM below
 # ⚠️ `text(size=)` in OpenSCAD is a POINT size rendered at 100 DPI (it calls
@@ -50,6 +56,13 @@ SURFACE_OFFSET          = 0.001             # SCAD's boolean-cleanliness nudge; 
 STEM_X, STEM_Y          = 15.5, 15.475
 STEM_HEIGHT             = 5.65
 STEM_TOP_BOTTOM_RATIO   = 0.85
+
+# The three click tabs (keycap_stem.scad:88-100).  Named here because the drawing
+# dimensions them: they are what makes the transparent cap click on, not a print aid.
+CLICK_TAB_L             = 3.0               # along the edge it sits on
+CLICK_TAB_W             = 0.4               # across it, so 0.20 stands proud
+CLICK_TAB_H             = 0.3               # up from the moulding face, z = 0
+CLICK_TAB_PROUD         = CLICK_TAB_W / 2
 
 INSIDE_X, INSIDE_Y      = 13.3, 13.3
 INSIDE_HEIGHT           = 3.0
@@ -74,8 +87,8 @@ CABLE_THICKNESS         = 0.5
 # grows 2 x 2.2 mm to 19.9 mm), not the keycap unit count.  The .scad is the
 # authority; the recipe's 1.25 was read as a unit size.
 VARIANTS = {
-    "S_1U":   dict(u_size=1.00, angle=-7.0, extra_len=1.5, label="S 1U"),
-    "S_1U25": dict(u_size=1.22, angle=-7.0, extra_len=1.5, label="S 1.25U"),
+    "S_1U":   dict(u_size=1.00, angle=-7.0, extra_len=1.5, label="S 1U", qty=58),
+    "S_1U25": dict(u_size=1.22, angle=-7.0, extra_len=1.5, label="S 1.25U", qty=14),
 }
 
 
@@ -217,16 +230,18 @@ def _taper_profile(face, h, taper, z0):
                  Pos(0, 0, z0 + h) * face.scale(taper, about=(0, 0, 0))])
 
 
-def outer_hull(u_size, print_tabs=True):
-    """`hull()` of the two tapered bodies and the three print tabs (:83-100).
+def outer_hull(u_size, click_tabs=True):
+    """`hull()` of the two tapered bodies and the three click tabs (:83-100).
 
     OpenSCAD's hull is CONVEX, and every member here is a polyhedron, so the result is
     a polyhedron -- reproduced exactly by hulling the vertices (see hull3d.py).
 
-    `print_tabs` covers the three 0.4 x 3 x 0.3 mm tabs on +Y and +/-X.  They stand
-    0.2 mm proud of the body and are an ADDITIVE-MANUFACTURING aid on a sprued plate,
-    not a functional feature -- but they are in the source, so they are on by default
-    and the moulder is asked about them in the drawing rather than being deleted here.
+    ⚠️ **The three 0.40 x 3.00 x 0.30 mm tabs on +Y and +/-X are a FUNCTIONAL feature,
+    not a print aid.**  They stand 0.20 mm proud of the body and are what makes the clear
+    keycap click on properly, so `click_tabs=False` exists only to isolate them in a
+    comparison -- it is not an option for a shipped part.  (An earlier reading of this
+    file had them down as a sprued-plate artefact and the drawing invited the moulder to
+    delete them; both were wrong.)
     """
     dx = (u_size - 1) * 2 * 5
     s = STEM_TOP_BOTTOM_RATIO
@@ -236,23 +251,24 @@ def outer_hull(u_size, print_tabs=True):
             for ex in (-1, 1):
                 for ey in (-1, 1):
                     pts.append([sx + ex * STEM_X / 2 * k, ey * STEM_Y / 2 * k, z])
-    if print_tabs:
-        tabs = [((0.0, STEM_Y / 2), (3.0, 0.4)),
-                ((STEM_X / 2 + dx, 0.0), (0.4, 3.0)),
-                ((-STEM_X / 2 - dx, 0.0), (0.4, 3.0))]
+    if click_tabs:
+        L, W = CLICK_TAB_L, CLICK_TAB_W
+        tabs = [((0.0, STEM_Y / 2), (L, W)),
+                ((STEM_X / 2 + dx, 0.0), (W, L)),
+                ((-STEM_X / 2 - dx, 0.0), (W, L))]
         for (cx, cy), (tx, ty) in tabs:
-            for z in (0.0, 0.3):
+            for z in (0.0, CLICK_TAB_H):
                 for ex in (-1, 1):
                     for ey in (-1, 1):
                         pts.append([cx + ex * tx / 2, cy + ey * ty / 2, z])
     return hull_solid(pts)
 
 
-def cap_body(u_size, print_tabs=True, engrave=True, txt=None):
+def cap_body(u_size, click_tabs=True, engrave=True, txt=None):
     """The hollow cap, in its own (untilted) frame -- keycap_stem.scad:80-152."""
     dx = (u_size - 1) * 2 * 5
     s = STEM_TOP_BOTTOM_RATIO
-    part = outer_hull(u_size, print_tabs)
+    part = outer_hull(u_size, click_tabs)
 
     # inside pockets (:101-113) -- two under the hulled bodies, one wider-but-steeper
     # in the middle "for the bulky switches"
@@ -284,11 +300,81 @@ def cap_body(u_size, print_tabs=True, engrave=True, txt=None):
         CABLE_STEM_X, CABLE_STEM_X, INSIDE_HEIGHT, 1.0, -SURFACE_OFFSET)
 
     if engrave:
-        part -= _engraving(txt if txt is not None else default_text())
+        part -= _engraving(part, txt)
     return part
 
 
-def _engraving(txt):
+def _glyph(ch):
+    """One glyph with its BASELINE at y = 0 and its left edge at x = 0."""
+    from fontTools import ttLib
+    from fontTools.pens.boundsPen import BoundsPen
+    f = ttLib.TTFont(font.bold_path())
+    gs, cmap = f.getGlyphSet(), f.getBestCmap()
+    pen = BoundsPen(gs)
+    gs[cmap[ord(ch)]].draw(pen)
+    x0, y0, x1, y1 = pen.bounds
+    k = TEXT_EM / f["head"].unitsPerEm
+    shape = Text(ch, TEXT_EM, font_path=font.bold_path(), font_style=FontStyle.BOLD,
+                 align=(Align.MIN, Align.MIN))
+    # align=(MIN, MIN) puts the glyph's yMin at 0; shift by yMin to land the baseline there
+    return Pos(0, y0 * k) * shape, (x1 - x0) * k
+
+
+def stamp_sketch():
+    """The stamp: revision then profile, side by side on a COMMON BASELINE.
+
+    Two glyphs placed explicitly rather than one string, for three reasons the string
+    could not give: the gap between them is a millimetre value (`STAMP_GAP`) instead of
+    however wide the font draws a run of spaces; the order is chosen (β leads, S
+    follows); and both sit on one baseline, so β's descender hangs below S rather than
+    dragging the pair's bounding box down and pushing the whole stamp off-centre.
+
+    ⚠️ β is 4.19 mm tall against S's 3.06 -- it has both an ascender and a descender.
+    That is what broke the SCAD's hard-coded stamp positions when the moulded revision
+    moved from α: they were tuned for a 3.06 mm glyph set, and at 4.19 the stamp reached
+    the edge of the face it is cut into (0.21 mm clear on the seat floor, and flush with
+    the edge on the pocket ceiling).  Hence `place_stamp` below.
+    """
+    lead, tail = REVISION, PROFILE
+    a, wa = _glyph(lead)
+    b, wb = _glyph(tail)
+    return (Pos(-STAMP_GAP / 2 - wa, 0) * a) + (Pos(STAMP_GAP / 2, 0) * b)
+
+
+def stamp_face(body, z):
+    """The largest planar face of `body` lying at height `z` -- what the stamp cuts into."""
+    best = None
+    for f in body.faces():
+        b = f.bounding_box()
+        if abs(b.min.Z - z) < 0.02 and abs(b.max.Z - z) < 0.02:
+            if best is None or f.area > best.area:
+                best = f
+    if best is None:
+        raise RuntimeError(f"no planar face at z={z}")
+    return best
+
+
+def place_stamp(sketch, face, nominal_y):
+    """Centre the stamp in `face` in x, and clamp it in y to keep STAMP_MARGIN clear.
+
+    Derived from the REAL face rather than hard-coded, so it re-solves itself if a
+    pocket changes or the revision character grows a descender.  ⚠️ The face is not the
+    rectangle the parameters suggest: the display seat breaks out through the tapered
+    wall at +Y, so its floor ends at y +6.86, not at the seat's nominal +7.40.
+    """
+    b = sketch.bounding_box()
+    fb = face.bounding_box()
+    cx = (fb.min.X + fb.max.X) / 2 - (b.min.X + b.max.X) / 2
+    lo = fb.min.Y + STAMP_MARGIN - b.min.Y
+    hi = fb.max.Y - STAMP_MARGIN - b.max.Y
+    if lo > hi:
+        raise ValueError(f"stamp {b.size.Y:.2f} mm tall does not fit the "
+                         f"{fb.size.Y:.2f} mm face with {STAMP_MARGIN} mm margins")
+    cy = min(max(nominal_y - (b.min.Y + b.max.Y) / 2, lo), hi)
+    return Pos(cx, cy) * sketch
+
+
+def _engraving(body, txt=None):
     """The two stamps (:138-151): one in the display-seat floor, one under the pocket.
 
     ⚠️ Both are 0.30 mm deep with **zero draft**, and on a moulded part they are steel:
@@ -303,19 +389,46 @@ def _engraving(txt):
     (areas 4.068 / 2.330 / 3.563 mm² for this string), and the tool is cut from whichever
     one the build happened to produce.  See font.py.
     """
-    top = Pos(0, DISP_Y / 2 - TEXT_SIZE / 2,
-              STEM_HEIGHT - DISP_HEIGHT - TEXT_HEIGHT + SURFACE_OFFSET * 2) * extrude(
-        Text(txt, TEXT_EM, font_path=font.bold_path(), font_style=FontStyle.BOLD,
-             align=(Align.CENTER, Align.CENTER)), amount=TEXT_HEIGHT)
-    under = Pos(0, -DISP_Y / 3, INSIDE_HEIGHT + TEXT_HEIGHT - 0.01) * Rot(180, 0, 0) * extrude(
-        Text(txt, TEXT_EM, font_path=font.bold_path(), font_style=FontStyle.BOLD,
-             align=(Align.CENTER, Align.CENTER)), amount=TEXT_HEIGHT)
-    return top + under
+    sk = stamp_sketch() if txt is None else _text_sketch(txt)
+    z_top = STEM_HEIGHT - DISP_HEIGHT
+    top = place_stamp(sk, stamp_face(body, z_top), DISP_Y / 2 - TEXT_SIZE / 2)
+    under = place_stamp(sk, stamp_face(body, INSIDE_HEIGHT), -DISP_Y / 3)
+    return (Pos(0, 0, z_top - TEXT_HEIGHT + SURFACE_OFFSET * 2)
+            * extrude(top, amount=TEXT_HEIGHT)) + \
+           (Pos(0, 0, INSIDE_HEIGHT + TEXT_HEIGHT - 0.01) * Rot(180, 0, 0)
+            * extrude(under, amount=TEXT_HEIGHT))
 
 
-def mx_stem(u_size, angle=0.0, extra_len=0.0, print_tabs=True, engrave=True, txt=None):
+def stamp_report(u_size=1.00):
+    """Measured clearance from each stamp to the edge of the face it is cut into.
+
+    Reported rather than assumed: the numbers this replaced were 0.21 mm on the seat
+    floor and 0.00 mm on the pocket ceiling, i.e. the stamp was ON the edge.
+    """
+    body = cap_body(u_size, engrave=False)
+    sk = stamp_sketch()
+    out = []
+    for label, z, nominal in (("display-seat floor", STEM_HEIGHT - DISP_HEIGHT,
+                               DISP_Y / 2 - TEXT_SIZE / 2),
+                              ("pocket ceiling", INSIDE_HEIGHT, -DISP_Y / 3)):
+        face = stamp_face(body, z)
+        placed = place_stamp(sk, face, nominal)
+        b, fb = placed.bounding_box(), face.bounding_box()
+        out.append(dict(where=label, size=(b.size.X, b.size.Y),
+                        clear=dict(x_min=b.min.X - fb.min.X, x_max=fb.max.X - b.max.X,
+                                   y_min=b.min.Y - fb.min.Y, y_max=fb.max.Y - b.max.Y)))
+    return out
+
+
+def _text_sketch(txt):
+    """Escape hatch: an arbitrary string, for comparing against the .scad's own stamp."""
+    return Text(txt, TEXT_EM, font_path=font.bold_path(), font_style=FontStyle.BOLD,
+                align=(Align.CENTER, Align.CENTER))
+
+
+def mx_stem(u_size, angle=0.0, extra_len=0.0, click_tabs=True, engrave=True, txt=None):
     """`mx_stem()` -- the whole part.  keycap_stem.scad:74-189."""
-    cap = Pos(0, 0, extra_len) * Rot(angle, 0, 0) * cap_body(u_size, print_tabs, engrave, txt)
+    cap = Pos(0, 0, extra_len) * Rot(angle, 0, 0) * cap_body(u_size, click_tabs, engrave, txt)
 
     # the MX stem itself (:153-160): a true cylinder + the flange cone, not 128 facets
     h_cyl = STEM_HEIGHT - DISP_HEIGHT - 1 + extra_len
@@ -339,7 +452,8 @@ def mx_stem(u_size, angle=0.0, extra_len=0.0, print_tabs=True, engrave=True, txt
 def build(name, **overrides):
     """Build one entry of VARIANTS by name."""
     cfg = dict(VARIANTS[name])
-    cfg.pop("label")
+    for k in ("label", "qty"):
+        cfg.pop(k)
     cfg.update(overrides)
     return mx_stem(**cfg)
 
