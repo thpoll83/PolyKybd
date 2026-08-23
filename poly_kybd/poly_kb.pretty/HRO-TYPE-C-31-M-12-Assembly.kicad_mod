@@ -1,4 +1,4 @@
-(footprint "HRO-TYPE-C-31-M-12-Assembly"
+(footprint "HRO-TYPE-C-31-M-12-Assembly" (version 20211014) (generator pcbnew)
 		(descr "Extracted from poly_kybd_split72_left.kicad_pcb (USB1), where it was already embedded, because the upstream EnvUSB library (thirdparty/EnvOpenPico/.../HRO-TYPE-C31-M-12.pretty) is not present in this repo. Geometry is byte-identical to what is on the built v3.2 boards. NOTE: kept on B.Cu - all eight instances across the four boards are bottom-mounted, and keeping the as-built side avoids any front/back mirroring transformation. ")
 		(layer "B.Cu")
 		(property "Reference" "REF**"
@@ -116,8 +116,6 @@
 				(justify mirror)
 			)
 		)
-		(sheetname "RpPico")
-		(sheetfile "rp_pico.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -4.47 0)
