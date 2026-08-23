@@ -2429,7 +2429,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "XL-3030RGBC"
+		(property "Value" "XL-3332RGBC"
 			(at 168.91 55.88 0)
 			(effects
 				(font
@@ -2438,7 +2438,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "poly_kb:XL-3030RGBC-WS2812B"
+		(property "Footprint" "poly_kb:XL-3332RGBC-WS2812B"
 			(at 141.605 64.77 90)
 			(effects
 				(font
@@ -2447,7 +2447,7 @@
 				(justify left top)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/2301111010_XINGLIGHT-XL-3030RGBC-WS2812B_C5349958.pdf"
+		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2411291656_XINGLIGHT-XL-3332RGBC-WS2812B_C42400839.pdf"
 			(at 193.675 100.33 90)
 			(effects
 				(font
@@ -2466,7 +2466,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C5349958"
+		(property "LCSC" "C42400839"
 			(at 172.72 41.91 0)
 			(effects
 				(font
@@ -2475,7 +2475,7 @@
 				(justify bottom)
 			)
 		)
-		(property "JLC" "C5349958"
+		(property "JLC" "C42400839"
 			(at 166.37 48.26 0)
 			(effects
 				(font
@@ -2484,7 +2484,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C5349958"
+		(property "MPN" "C42400839"
 			(at 166.37 48.26 0)
 			(effects
 				(font

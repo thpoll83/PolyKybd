@@ -11021,7 +11021,7 @@
 				)
 			)
 		)
-		(property "Value" "W25Q64JVXGIM"
+		(property "Value" "BY25Q64ESCIG(R)"
 			(at 76.2 224.79 0)
 			(effects
 				(font
@@ -11029,7 +11029,7 @@
 				)
 			)
 		)
-		(property "Footprint" "poly_kb:DFN_XGIQ TR_WIN"
+		(property "Footprint" "Package_SON:SON-8-1EP_3x2mm_P0.5mm_EP1.4x1.6mm"
 			(at 100.33 226.695 0)
 			(effects
 				(font
@@ -11039,7 +11039,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.winbond.com/resource-files/W25Q64JV%20RevK%2003102021%20Plus.pdf"
+		(property "Datasheet" "https://www.lcsc.com/product-detail/C50176394.html"
 			(at 100.33 229.235 0)
 			(effects
 				(font
@@ -11058,7 +11058,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "W25Q64JVXGIM"
+		(property "MPN" "BY25Q64ESCIG(R)"
 			(at 100.33 231.775 0)
 			(effects
 				(font
@@ -11068,7 +11068,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C5440778"
+		(property "JLC" "C50176394"
 			(at 48.26 229.235 0)
 			(effects
 				(font
@@ -11077,7 +11077,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C5440778"
+		(property "LCSC" "C50176394"
 			(at 48.26 229.235 0)
 			(effects
 				(font
@@ -11086,7 +11086,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Winbond"
+		(property "Manufacturer" "BOYAMICRO"
 			(at 48.26 229.235 0)
 			(effects
 				(font
