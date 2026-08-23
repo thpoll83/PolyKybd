@@ -11029,7 +11029,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_SON:SON-8-1EP_3x2mm_P0.5mm_EP1.4x1.6mm"
+		(property "Footprint" "poly_kb:BY25Q64ES-LGA8-2x3"
 			(at 100.33 226.695 0)
 			(effects
 				(font
