@@ -31931,7 +31931,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "EnvUSB:HRO-TYPE-C-31-M-12-Assembly"
+		(property "Footprint" "poly_kb:HRO-TYPE-C-31-M-12-Assembly"
 			(at 402.59 348.996 0)
 			(effects
 				(font
