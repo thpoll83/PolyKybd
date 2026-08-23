@@ -5180,6 +5180,10 @@
 		(uuid "fef5de60-9cd7-4189-8d90-d632659540f4")
 	)
 	(no_connect
+		(at 76.2 249.555)
+		(uuid "7b38d969-1472-4090-b741-4da265267b33")
+	)
+	(no_connect
 		(at 40.005 57.785)
 		(uuid "dd15466b-723d-42bf-bded-c2677bdbe7dc")
 	)
@@ -8119,17 +8123,6 @@
 			(justify left)
 		)
 		(uuid "2c17daa4-d775-45ca-8dd2-775407591bfe")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 76.2 249.555 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "3c02719d-d316-4cec-b378-3cbcebcdb548")
 	)
 	(hierarchical_label "3V3"
 		(shape input)
