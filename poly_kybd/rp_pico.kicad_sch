@@ -6,7 +6,7 @@
 	(paper "A3")
 	(title_block
 		(title "rp2040 base circuit")
-		(date "2026-08-13")
+		(date "2026-08-24")
 		(rev "3.3")
 	)
 	(lib_symbols
@@ -8789,7 +8789,7 @@
 			(uuid "c486075e-4054-4e98-a200-a68f05fc4943")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C9")
 					(unit 1)
@@ -8901,7 +8901,7 @@
 			(uuid "4ab9f291-563d-4f4a-93bf-22e95dcc7d67")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R16")
 					(unit 1)
@@ -9024,7 +9024,7 @@
 			(uuid "ab85858c-bdab-4531-bf30-adbe8d9245eb")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C6")
 					(unit 1)
@@ -9136,7 +9136,7 @@
 			(uuid "705f8570-21c5-4b85-9cd6-bccd08c64e52")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R22")
 					(unit 1)
@@ -9256,7 +9256,7 @@
 			(uuid "dfae7537-0239-4dd3-ac86-05a9950028cd")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "L2")
 					(unit 1)
@@ -9378,7 +9378,7 @@
 			(uuid "5784f5a8-e196-4fda-a9dd-bf7af952c60c")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "D2")
 					(unit 1)
@@ -9501,7 +9501,7 @@
 			(uuid "b83072cd-e8f0-48da-8202-5d2c3471b91f")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C22")
 					(unit 1)
@@ -9624,7 +9624,7 @@
 			(uuid "7aeba07b-118b-45c4-9e46-7453b1c6eba0")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C4")
 					(unit 1)
@@ -9739,7 +9739,7 @@
 			(uuid "ab8b84f7-61d9-45bf-bb26-6075b812e625")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "D1")
 					(unit 1)
@@ -9862,7 +9862,7 @@
 			(uuid "910af61d-7249-4859-bc24-902d9b3e7ac2")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C24")
 					(unit 1)
@@ -9974,7 +9974,7 @@
 			(uuid "2aa33099-80bd-4337-a437-4b124b312ec3")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R7")
 					(unit 1)
@@ -10097,7 +10097,7 @@
 			(uuid "a20f73cc-9504-40fe-8a69-e47385bbeae9")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C23")
 					(unit 1)
@@ -10209,7 +10209,7 @@
 			(uuid "5fb05b3a-3f46-4084-b571-c2870c197788")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R9")
 					(unit 1)
@@ -10398,7 +10398,7 @@
 			(uuid "e4f6c439-e664-4982-a00a-ae1d4844df2b")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "U1")
 					(unit 1)
@@ -10521,7 +10521,7 @@
 			(uuid "55d24321-18f4-47f6-a12a-5a921b147720")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C19")
 					(unit 1)
@@ -10633,7 +10633,7 @@
 			(uuid "0759a216-6bca-49cd-8853-cf6cd39a6868")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R23")
 					(unit 1)
@@ -10756,7 +10756,7 @@
 			(uuid "467d25a6-5ebe-4542-b228-beddef11421a")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C25")
 					(unit 1)
@@ -10867,7 +10867,7 @@
 			(uuid "aab7610e-db89-4f46-baba-25655aaa0be4")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "TP1")
 					(unit 1)
@@ -10988,7 +10988,7 @@
 			(uuid "5e6eaddb-e8fe-48ee-aff5-57a20ff81a46")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "SW3")
 					(unit 1)
@@ -11125,7 +11125,7 @@
 			(uuid "8ac5dc32-f43c-444d-9fa5-7b3d962471af")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "U9")
 					(unit 1)
@@ -11247,7 +11247,7 @@
 			(uuid "d3e84093-ed61-43e7-a61e-a47a26e11e04")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "SW2")
 					(unit 1)
@@ -11361,7 +11361,7 @@
 			(uuid "92929a0d-3648-40b2-8f89-43d3c2999e20")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R8")
 					(unit 1)
@@ -11484,7 +11484,7 @@
 			(uuid "4110b827-205f-4f8d-b0ac-c267031f2127")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C16")
 					(unit 1)
@@ -11607,7 +11607,7 @@
 			(uuid "d6fda6b3-2a96-4fd5-9112-3e69f3e243b6")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C21")
 					(unit 1)
@@ -11744,7 +11744,7 @@
 			(uuid "89bc1c1c-e767-4d59-a0c5-2ae461450860")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "U11")
 					(unit 1)
@@ -11867,7 +11867,7 @@
 			(uuid "ec89650a-9954-4e3b-9b3b-34912b4fcdf1")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C8")
 					(unit 1)
@@ -11981,7 +11981,7 @@
 			(uuid "0233c5b0-ef10-487a-b92c-a75d37ea2c20")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R15")
 					(unit 1)
@@ -12258,7 +12258,7 @@
 			(uuid "1c019505-5696-4a50-b240-4c45d851bf98")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "U10")
 					(unit 1)
@@ -12381,7 +12381,7 @@
 			(uuid "65d65d1c-a12a-4fbc-9ea7-ff8f694f7138")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C5")
 					(unit 1)
@@ -12493,7 +12493,7 @@
 			(uuid "d9d11f22-cfbf-4b50-a769-154ecb08411a")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R24")
 					(unit 1)
@@ -12616,7 +12616,7 @@
 			(uuid "30617ef4-bd7b-48ea-a706-742be33987d7")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C17")
 					(unit 1)
@@ -12739,7 +12739,7 @@
 			(uuid "2a3bf5e2-6b47-4a8b-a484-e393f1c1a6ba")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C20")
 					(unit 1)
@@ -12862,7 +12862,7 @@
 			(uuid "a92b73a8-90d2-429f-a08b-13f416e8d4ed")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C15")
 					(unit 1)
@@ -13018,7 +13018,7 @@
 			(uuid "e126dbbb-9686-461b-90ff-5f987c53c2fa")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "USB1")
 					(unit 1)
@@ -13083,7 +13083,7 @@
 			(uuid "aecc3653-1ca0-4f61-81ca-eb3499917936")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "#PWR01")
 					(unit 1)
@@ -13206,7 +13206,7 @@
 			(uuid "dc970bbd-d006-4f80-b6e3-1478444560b5")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C26")
 					(unit 1)
@@ -13321,7 +13321,7 @@
 			(uuid "818c48d0-cd05-4328-a245-d0ba28125076")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "FB1")
 					(unit 1)
@@ -13433,7 +13433,7 @@
 			(uuid "4121c5e9-26f2-4b1d-8378-a46aeb28f29e")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R18")
 					(unit 1)
@@ -13556,7 +13556,7 @@
 			(uuid "ac6c278c-ec0b-48c1-b01d-053e97072433")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C18")
 					(unit 1)
@@ -13668,7 +13668,7 @@
 			(uuid "11a8fe7d-3954-4f71-9c08-47b5cb7d5402")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R19")
 					(unit 1)
@@ -13797,7 +13797,7 @@
 			(uuid "20edb3d6-a45a-4ebd-bafd-2ddd5766fb88")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "Y1")
 					(unit 1)
@@ -13908,7 +13908,7 @@
 			(uuid "fc378bd9-4fa6-4ee8-bfde-606cd651ce6d")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "TP14")
 					(unit 1)
@@ -14020,7 +14020,7 @@
 			(uuid "30ecd0f4-717a-43b0-8aea-932c697071ae")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R14")
 					(unit 1)
@@ -14143,7 +14143,7 @@
 			(uuid "8179c66c-ef94-4f4f-883e-5be73f2faff8")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "C3")
 					(unit 1)
@@ -14255,7 +14255,7 @@
 			(uuid "198bdac2-355b-4954-ac8d-879e7cfaa3e3")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R17")
 					(unit 1)
@@ -14369,7 +14369,7 @@
 			(uuid "dd3b9766-aa81-41e0-be13-0ecd7ce16b99")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R20")
 					(unit 1)
@@ -14481,7 +14481,7 @@
 			(uuid "6e914988-002b-4c1c-b58c-07c6da7d6322")
 		)
 		(instances
-			(project "poly_corne_split42_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/5b575f2a-a831-41f0-985e-3d214d07238c"
 					(reference "R21")
 					(unit 1)
