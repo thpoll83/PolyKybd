@@ -69,40 +69,40 @@ a working, fabricated design. The manual CPL fix is the cheaper risk.
 |---|---|---|---|
 | **U9** | **BOYAMICRO `BY25Q64ESCIG(R)` / `C50176394`** — everything points at the Boya part: schematic, board fields, and the v3.3 export | quoted $0.6012 × 400, 7 business days | ✅ `RoHS/2006180000_BOYAMICRO-BY25Q64ESCIG-R_C50176394.pdf` |
 | **C3, C8** | **Samsung `CL05C270JB5NNNC` / `C86287`** (was FH `C1557`) | ✅ 69,800 in stock at LCSC | ✅ already filed — the Samsung series list in `RoHS/2304140030_Samsung-Electro-Mechanics-...C52923.pdf` includes `CL05C270 J B 5NNN`, and it is already in `PolyKybd-RoHS-Appendix.pdf` |
-| **D2** | Guangdong Hottech `1N5819WS` / `C191023` — ⚠️ **RoHS evidence is OPEN**, see below | ✅ 5,636,800 in stock, SOD-323, not discontinued | ⚠️ **incomplete** |
+| **D2** | Guangdong Hottech `1N5819WS` / `C191023` — kept, no change | ✅ 5,636,800 in stock, SOD-323, not discontinued | ✅ closed 2026-08-24, see below |
 
 ⚠️ **C3/C8 value string reads `27pF 0402 16V` but both the old and new parts are 50V**
 (`0402CG270J500NT` and `CL05C270JB5NNNC`). The label is inaccurate, the parts are not
 under-rated. Left alone to avoid churn; fix it if the value strings are ever tidied.
 
-### D2 — the last open RoHS row
+### D2 — RoHS closed (2026-08-24)
 
-`RoHS/schematics/parts.csv` records D2 as **`x Email sent`**, and it is the **only
-populated part still without evidence** (the other open rows are test points, mounting
-holes, headers and the DNP `SW1`). Closing it closes the appendix.
+Evidence: **`RoHS/ROHS-2025-HottechElectronics-CTI-A225024736310100101.pdf`** — Centre Testing
+International report dated 17 Apr 2025, RoHS 2011/65/EU + (EU) 2015/863, full 10-substance scope
+(Pb, Cd, Hg, Cr(VI), PBBs, PBDEs, and the phthalates DBP/BBP/DEHP/DIBP), IEC 62321 methods, all
+results **N.D. — PASS**. Its Model No. list reads `SOD-123/323/523/723`, so **SOD-323 is
+explicitly covered**. `parts.csv` updated `x Email sent` → `x`; **no part change needed**.
 
-The problem is package coverage: `RoHS/ROHS3HOTTECH.pdf` is a genuine May-2020 BST test
-report for Guangdong Hottech against RoHS 2 (EU) 2015/863, but its sample list is
+⚠️ **The earlier acceptance was based on a misreading — don't reinstate it.** D2 had been
+accepted via `ROHS3HOTTECH.pdf` on the grounds that it "includes 323-series package testing".
+That 2020 report's sample list is `SOT-23, 323, 523, 723, … SOD-123`, where the `323` belongs to
+the **SOT** run — its SOD coverage stops at **SOD-123**, and it states its results "refer only to
+the sample(s) tested". The package was never actually covered, which is why `parts.csv` carried
+`x Email sent` the whole time.
 
-> SOT-23, 323, 523, 723, 363, 223, 23-5, 23-6, 89, TO-92, 92L, 126, 252, 251, 220,
-> SOP8, TSSOP8, SOP14, DIP8, DIP14, **SOD-123**
+⚠️ Two limitations of the new report, both normal for an SMD part but worth being able to answer
+if the technical file is challenged: the sample was **tested as a whole** rather than separated
+into homogeneous materials (the report says so, and RoHS limits formally apply per homogeneous
+material), and the applicant is **Shenzhen Hottech Electronics** while LCSC lists the part's
+manufacturer as *Guangdong* Hottech — the report remarks the two are "Group-subsidiary relations",
+but that is *according to the client's statement*, not verified by CTI. It is also a
+package-family report, not MPN-specific.
 
-— **SOD-123, not SOD-323**, and the report states its results "refer only to the
-sample(s) tested". D2 is SOD-323. (The `323` in that list is SOT-323, a different
-package.)
+The PAKER `B5819WS` / `C5278927` alternative is **no longer needed**, and was the weaker option
+regardless: 2,250 in stock against 5.6M, and a 9A surge rating against 25A.
 
-Two ways to close it, undecided:
-
-1. **Chase Hottech** for a declaration that names SOD-323 — this is the email that was
-   sent and never came back.
-2. **Switch to PAKER `B5819WS` / `C5278927`**, whose datasheet is already filed at
-   `RoHS/2401041156_PAKER-B5819WS_C5278927.pdf`, explicitly covers **SOD-323**, and
-   states "Halogen free and RoHS compliant". A datasheet claim is weaker than a test
-   report, but it is package-correct where the Hottech report is not.
-
-⚠️ Minor, no order impact: the board says `Manufacturer = Hottech Semi`, the schematic
-says `Hottech`, and the real manufacturer is *Guangdong Hottech*. LCSC matches on both
-sides, so nothing is mis-ordered.
+⚠️ Minor, no order impact: the board says `Manufacturer = Hottech Semi`, the schematic says
+`Hottech`, and the real manufacturer is *Guangdong Hottech*. LCSC matches on both sides.
 
 ---
 

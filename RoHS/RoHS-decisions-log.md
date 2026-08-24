@@ -27,9 +27,29 @@ so the results can be reviewed and reproduced.
    - FB1, FB2 (GZ2012D601TF): → `2310301640_Sunlord-GZ2012D601TF_C1017.pdf` (part-specific Sunlord doc).
 
 ## Component-specific decisions
-- **D2 (1N5819WS, SOD-323):** accepted via `ROHS3HOTTECH.pdf` (Hottech/BST RoHS 2 test report, which
-  includes 323-series package testing) together with the assembly house (JLCPCB) marking the part
-  RoHS-compliant.
+- **D2 (1N5819WS, SOD-323):** ✅ closed 2026-08-24 via
+  **`ROHS-2025-HottechElectronics-CTI-A225024736310100101.pdf`** — a Centre Testing International
+  (CTI) report dated 17 Apr 2025, RoHS 2011/65/EU + (EU) 2015/863, full 10-substance scope
+  (Pb, Cd, Hg, Cr(VI), PBBs, PBDEs and the four phthalates DBP/BBP/DEHP/DIBP), IEC 62321 methods,
+  **all results N.D. — PASS**. Its Model No. list reads `SOD-123/323/523/723`, so **SOD-323 is
+  explicitly covered**.
+  - ⚠️ **This supersedes the previous rationale, which was wrong.** D2 was earlier accepted via
+    `ROHS3HOTTECH.pdf` "which includes 323-series package testing" — but that 2020 BST report's
+    sample list is `SOT-23, 323, 523, 723, … SOD-123`, where the `323` belongs to the **SOT** run.
+    Its SOD coverage stops at **SOD-123**, and the report states its results "refer only to the
+    sample(s) tested". D2 is SOD-323, so the package was never actually covered. `parts.csv` had
+    recorded D2 as `x Email sent` throughout, which was the accurate status.
+  - ⚠️ **Two limitations to state if the file is ever challenged**, both normal for an SMD part
+    but worth being able to answer: the sample was **tested as a whole** (not separated into
+    homogeneous materials — the report says so explicitly, and RoHS limits formally apply per
+    homogeneous material); and the applicant is **Shenzhen Hottech Electronics**, while LCSC lists
+    the part's manufacturer as *Guangdong* Hottech. The report carries a remark that the two are
+    "Group-subsidiary relations" — but that linkage is **according to the client's statement**,
+    not something CTI verified. The report is also a package-family report, not MPN-specific.
+  - **Consequence:** no part change needed. The PAKER `B5819WS` / `C5278927` alternative
+    (`2401041156_PAKER-B5819WS_C5278927.pdf`, SOD-323, "Halogen free and RoHS compliant") is no
+    longer required — and is the weaker option anyway: 2,250 in stock against Hottech's 5.6M, and
+    a 9A surge rating against 25A.
 - **Connectors J1–J36 / J37 / J39:** each references the Hirose spec sheet for its own part number,
   all stating RoHS compliance. J1–J36 = FH34SRJ-14S, J37 = FH34SRJ-12S, J39 = FH12-30S. The trailing
   `(50)`/`(99)` in the filenames is the **packaging quantity**, not a spec revision — so the

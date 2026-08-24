@@ -10,7 +10,7 @@
 "C9,C15-C23","100nF 0402 16V","https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL05B104KO5NNNC_C1525.pdf","Capacitor_SMD:C_0402_1005Metric","10","Samsung","x"
 "D1","Red 0805 C84256","https://www.lcsc.com/datasheet/lcsc_datasheet_2409272203_Foshan-NationStar-Optoelectronics-NCD0805R1_C84256.pdf","LED_SMD:LED_0805_2012Metric","1","NationStar","x"
 "D1_1-D1_36,D12","1N4148WSX","https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2405091035_Shenzhen-JingYang-1N4148WSX_C6423741.pdf","poly_kb:D_SOD-323Ext","37","Shenzhen JingYang","x"
-"D2","1N5819WS","https://www.lcsc.com/datasheet/lcsc_datasheet_2204281430_Guangdong-Hottech-1N5819WS_C191023.pdf","poly_kb:D_SOD-323Ext","1","Hottech Semi","x Email sent"
+"D2","1N5819WS","https://www.lcsc.com/datasheet/lcsc_datasheet_2204281430_Guangdong-Hottech-1N5819WS_C191023.pdf","poly_kb:D_SOD-323Ext","1","Hottech Semi","x"
 "D5","Green 0805 C2297","https://datasheet.lcsc.com/lcsc/1806130620_Hubei-KENTO-Elec-C2293_C2293.pdf","LED_SMD:LED_0805_2012Metric","1","Hubei KENTO","x"
 "D6","Yellow 0805 C2296","https://datasheet.lcsc.com/lcsc/1806151129_Hubei-KENTO-Elec-17-21SUYC-TR8_C2296.pdf","LED_SMD:LED_0805_2012Metric","1","Hubei KENTO","x"
 "DBG1","Conn_01x03_Male","","Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical","1","",""
