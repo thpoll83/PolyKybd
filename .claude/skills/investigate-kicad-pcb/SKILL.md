@@ -143,6 +143,15 @@ concrete lead.
   copper over **1502 of 1744 non-GND pad centres (86 %)**. Distance-to-boundary (with the
   correct pad shape) is the measure that behaves; "is this point in copper" is not a question
   to answer this way.
+- ⚠️ **`github.com/KiCad/kicad-footprints` is STALE — the live library is on GitLab.** The
+  GitHub repo still serves KiCad-5 era files (`(module …)`, `(tedit …)`, `${KISYS3DMOD}`), and
+  it returns HTTP 200, so nothing signals that the answer is a decade old. Fetching
+  `SOT-353_SC-70-5` from it reported pads identical to the boards and produced a confident
+  "the stock footprint has not drifted" — the current file
+  (`gitlab.com/kicad/libraries/kicad-footprints/-/raw/master/…`) is `1.025 × 0.35` roundrect at
+  x ±0.8375 against the board's `0.65 × 0.40` at ±0.95, i.e. a 58% longer pad. **Tell them
+  apart by the format**: a `(footprint …)` header with `(version 2024…/2026…)` is current, a
+  `(module …)` header is not.
 - ⚠️ **RUN THE CHECK ON THE WORKING BOARD FIRST — this is the rule that catches all of the
   above, and it was skipped three times in one session (2026-08).** Every false finding here
   announced itself the moment the same script was pointed at known-good data: 86 % of pads

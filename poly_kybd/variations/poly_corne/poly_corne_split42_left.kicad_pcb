@@ -17647,7 +17647,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "0bde494b-031e-4472-a324-f86724c1d8b4")
 		(at 140.1351 46.8351)
@@ -20077,7 +20077,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "0ef9a8d0-6783-464b-8550-3f2161337450")
 		(at 158.85 49.15)
@@ -34400,7 +34400,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "379f4b09-5f64-4760-867e-9e0c13ee28a5")
 		(at 179.004 54.976)
@@ -35266,7 +35266,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "395d92cc-956b-4a83-9514-0a7149a438c1")
 		(at 82.35 50.85)
@@ -38671,7 +38671,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "426e6b25-6768-4bf6-8237-542ac967f846")
 		(at 120.4 46.7)
@@ -43440,7 +43440,7 @@
 		)
 		(embedded_fonts no)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "539bd3ae-f20d-41e0-932e-48ea7bef731f")
 		(at 86.4 50.55)
@@ -49774,7 +49774,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "64d23aeb-680b-470c-9240-f824455d1be4")
 		(at 162.55 48.35)
@@ -71512,7 +71512,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "aa499647-6eb4-4d6a-82d5-73bf4d99011c")
 		(at 124.5 43.7)
@@ -74339,7 +74339,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "b5d9b48f-e94e-4aa6-abb1-2b004aa46f9c")
 		(at 66.36 65.42)
@@ -100010,7 +100010,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "f04b56be-9fa2-4f55-b5c3-818bff94d4a1")
 		(at 105.5 45.9)
@@ -100889,7 +100889,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "f74e8919-db6d-4ba3-8b35-63cc68217d9f")
 		(at 143.5 46)
@@ -105239,7 +105239,7 @@
 			)
 		)
 	)
-	(footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+	(footprint "poly_kb:SOT-353_SC-70-5_Slim"
 		(layer "B.Cu")
 		(uuid "ff1c568c-353f-4e88-b4b6-7622d7896f75")
 		(at 101.35 50.45)

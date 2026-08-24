@@ -441,7 +441,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+		(property "Footprint" "poly_kb:SOT-353_SC-70-5_Slim"
 			(at 136.525 53.975 0)
 			(effects
 				(font
@@ -586,7 +586,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+		(property "Footprint" "poly_kb:SOT-353_SC-70-5_Slim"
 			(at 136.525 117.475 0)
 			(effects
 				(font
