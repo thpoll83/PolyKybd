@@ -115,6 +115,27 @@ concrete lead.
   errors **look confined to one row** when nothing about that row is unusual.
   ⚠️ Tested and **not** the cause, so do not spend time there: `island_removal_mode` /
   `island_area_min` (all settings), and zone priority.
+- **Extracting a placed footprint into a library: pad x,y are LOCAL but pad ANGLES are
+  ABSOLUTE.** A footprint placed at rotation R stores every child `(at x y a)` with x,y in
+  unrotated footprint space but `a` already including R, so a naive copy yields a library
+  part whose pads are rotated by R. Subtract it: `local = (a - R) mod 360`, dropping the
+  angle when it lands on 0. Verified across the tantalum's five distinct placement
+  rotations (-90/-95/-103.5/-110/180), all of which reduce to local angle 0. Also strip
+  `uuid`/`path`/`sheetname`/`sheetfile`, the pads' `(net …)`, the placement `(at …)`, and
+  any **BOM properties pushed onto the instance** (`MPN`/`LCSC`/`JLC`/`Manufacturer`/
+  `RoHS`/`Etc`) — the tell for those is an `(at …)` holding an absolute *board* coordinate.
+  Verify by re-applying each instance's rotation to the library copy and comparing all
+  instances on all boards, not just the one you extracted.
+  ⚠️ **Compare pad `layers` as a SET.** Token order varies by the KiCad version that last
+  saved the board — `"B.Cu" "B.Paste" "B.Mask"` vs `"B.Cu" "B.Mask" "B.Paste"` — so an
+  ordered compare reported 38 of 135 instances as differing when every one was identical.
+- ⚠️ **A naive segment-intersection predicate reports a T-junction as a crossing.** The
+  usual `(d1>0) != (d2>0)` sign test treats a **zero** cross product (a vertex lying exactly
+  *on* another edge) as the negative side, so a touching endpoint reads as a proper
+  intersection. Handle the collinear/zero case explicitly before concluding a polygon
+  self-intersects — and note that what a malformed KiCad zone outline usually contains is
+  not a crossing but **two collinear edges overlapping in opposite directions** (a
+  zero-width sliver), which needs its own test: same line, then overlap on the dominant axis.
 - ⚠️ **KiCad does NOT persist DRC markers to disk.** There is no marker data in a
   `.kicad_pcb` — zero `(marker` tokens, and `drc_exclusions` lives in the `.kicad_pro`.
   You cannot read someone's markers from a commit; a session was spent trying. Ask for

@@ -104,6 +104,19 @@ that outlives any one investigation.
   sub-sheet and fork **that** — forking `rp_pico.kicad_sch` duplicates 45 unrelated
   symbols (46 placed symbols, 14.5k lines) to vary one, and they will drift.
 
+- **A footprint the boards use but no library provides gets EXTRACTED from the board, not
+  hunted upstream.** Three now live in `poly_kb.pretty` this way: the USB-C connector
+  (`HRO-TYPE-C-31-M-12-Assembly`, upstream `EnvUSB` absent), `RP2040-QFN-56` (upstream
+  `keebio` absent) and `CP_EIA-3216-18_Kemet-A` — the last for a different reason worth
+  remembering: **the stock KiCad tantalum footprint has since grown ~0.05 mm**, enough to
+  produce clearance violations against routing already on the boards, so the as-built copy
+  is kept deliberately and must not be "updated" from the stock library without re-running
+  DRC. All three stay on **B.Cu**: every instance of each, on every board, is bottom-mounted,
+  so there is no front-side instance to copy and converting would need a front/back mirror
+  with nothing to verify against. The mechanics (local x,y but absolute pad angles, which
+  instance junk to strip, and comparing pad layers as a set) are in the
+  `investigate-kicad-pcb` skill.
+
 - **Land-pattern changes: the target is solder THICKNESS, not solder volume.** When
   extending a pad (e.g. the LED toe, 0.9 → 1.25 mm in 2026-08), **paste must scale
   with the copper** to hold the same ~0.050 mm³ of solder per mm² of pad. Insetting the
