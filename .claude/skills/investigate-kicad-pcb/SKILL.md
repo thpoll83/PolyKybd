@@ -129,6 +129,27 @@ concrete lead.
   ⚠️ **Compare pad `layers` as a SET.** Token order varies by the KiCad version that last
   saved the board — `"B.Cu" "B.Paste" "B.Mask"` vs `"B.Cu" "B.Mask" "B.Paste"` — so an
   ordered compare reported 38 of 135 instances as differing when every one was identical.
+- ⚠️ **Pads are NOT circles, and modelling them as one manufactures overlaps.** A
+  `max(w,h)/2` radius inflates the half-width on the narrow axis — on a 1.0 × 1.6 oval USB
+  shield leg that turned a correct **+0.2005 mm** knockout into a **−0.35 mm "overlap"**, and
+  produced a written-up finding of "32 clearance violations" that did not exist. Dispatch on
+  the pad's declared shape: `circle` → radius, `oval` → stadium (segment of length
+  `|h−w|/2` with radius `min(w,h)/2`), `rect`/`roundrect` → box distance. And read the pad
+  **type**: `np_thru_hole` is a hole with no copper, so it takes the hole rule, not the
+  copper one.
+- ⚠️ **Point-in-polygon does NOT work on a zone fill — the ring is simply-connected.** KiCad
+  splices each hole into the outer boundary with a zero-width cut line, so an even-odd
+  crossing test over that ring is unreliable. Measured on a working board it claimed GND
+  copper over **1502 of 1744 non-GND pad centres (86 %)**. Distance-to-boundary (with the
+  correct pad shape) is the measure that behaves; "is this point in copper" is not a question
+  to answer this way.
+- ⚠️ **RUN THE CHECK ON THE WORKING BOARD FIRST — this is the rule that catches all of the
+  above, and it was skipped three times in one session (2026-08).** Every false finding here
+  announced itself the moment the same script was pointed at known-good data: 86 % of pads
+  "shorted", the good board flagged identically, a T-junction called a crossing. If your
+  geometry check flags the working board, **the check is wrong, not the board** — and the
+  cheapest validation is a board-wide count, because a plausible number on one pad is
+  indistinguishable from a bug.
 - ⚠️ **A naive segment-intersection predicate reports a T-junction as a crossing.** The
   usual `(d1>0) != (d2>0)` sign test treats a **zero** cross product (a vertex lying exactly
   *on* another edge) as the negative side, so a touching endpoint reads as a proper
