@@ -111,3 +111,46 @@ regardless: 2,250 in stock against 5.6M, and a 9A surge rating against 25A.
 They are the historical record of what was actually fabricated, and every board in
 existence is v3.2. Only **v3.3** is regenerated — it has never been manufactured.
 v3.2 doubles as the reference for the CPL check in §2.
+
+---
+
+## 5. Silkscreen artwork is simplified — do not re-import at full trace fidelity
+
+The Rosetta Stone artwork on the silk layers was imported as traced vector outlines at
+full curve fidelity: **5.5 million `gr_poly` vertices** across the boards, which was ~80%
+of every board file and pushed three of them past GitHub's 50 MB warning.
+
+⚠️ **That detail cannot be printed.** Measured on the left board, the median edge in the
+artwork was **0.017 mm** and **98.6% of edges were under 0.10 mm** — silkscreen resolves
+about 0.1 mm and JLC's minimum silk line width is 0.15 mm.
+
+A Douglas–Peucker pass at **0.01 mm** (a tenth of print resolution) is applied by
+`poly_kybd/tools/simplify_silkscreen.py`:
+
+| | before | after |
+|---|---|---|
+| silk vertices | 5,532,117 | 884,434 (−84%) |
+| split72 left / right | 51.6 / 52.6 MB | 18.5 / 18.6 MB |
+| split42 right / plate_left | 52.9 / 17.1 MB | 18.8 / 3.2 MB |
+| **total** | **180.5 MB** | **65.3 MB** |
+
+**Verified visually, not just by vertex count.** Rendering the artwork at 4× print
+resolution before and after, of 411,805 differing pixels exactly **4** fall inside an
+eroded core — everything else is a 1–2 px (~0.025 mm) edge shift along an outline. No
+feature is lost. The one real effect is a uniform **−3.1% ink area**, because RDP cuts
+corners inward; the art reads very slightly lighter, undistorted.
+
+The tool touches **only `gr_poly` on layers whose name contains `SilkS`**. After each run,
+everything else in the file is byte-identical — copper, mask, paste, edge cuts, footprints,
+zones, tracks, vias and the non-silk `gr_poly` blocks (there are 25 on the split72 boards,
+including some on `B.Cu` and `B.Mask`). That is asserted per board, not assumed.
+
+⚠️ **Keep the original artwork source** (SVG or whatever it was traced from) outside the
+board files. The boards now carry a print-resolution version; if the art is ever needed at
+higher fidelity — a larger panel, a poster, a different process — it has to come from the
+source, not from the board.
+
+⚠️ **Git LFS was considered and rejected.** It treats the symptom: converting existing files
+means rewriting history across every branch, everyone re-clones, and GitHub stops rendering
+`.kicad_pcb` diffs. That diffability is load-bearing here — the copper comparisons, CPL
+checks and footprint verification in this repo all depend on the boards being diffable text.
