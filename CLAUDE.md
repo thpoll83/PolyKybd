@@ -104,6 +104,18 @@ that outlives any one investigation.
   sub-sheet and fork **that** — forking `rp_pico.kicad_sch` duplicates 45 unrelated
   symbols (46 placed symbols, 14.5k lines) to vary one, and they will drift.
 
+- ⚠️ **The JLC fab exporter builds the BOM from the BOARD's footprint properties, not the
+  schematic — and *Update PCB from Schematic* does not refresh them by default.** So a
+  correct schematic still exports a wrong BOM: after the U9 flash swap the `LCSC Part #`
+  column (the only column JLC orders from) still named the superseded Winbond
+  `C5440778` while the footprint and `Value` were the new Boya part — a DFN 4x4 ordered
+  onto an LGA-8 land. Sweep board-vs-schematic `MPN`/`LCSC`/`JLC`/`Manufacturer` after
+  every export. ⚠️ Also: the **36 hot-swap sockets sit on `F.Cu` in the board but mount
+  physically on the BOTTOM**, so every CPL export writes `top` for them and has to be
+  flipped by hand; the as-fabricated v3.2 CPL is the reference to diff against. Full
+  detail, plus the per-part decisions and the open D2 RoHS row, in
+  `poly_kybd/Gerber/PCB/FABRICATION-NOTES.md` — read it before re-exporting.
+
 - **A footprint the boards use but no library provides gets EXTRACTED from the board, not
   hunted upstream.** Three now live in `poly_kb.pretty` this way: the USB-C connector
   (`HRO-TYPE-C-31-M-12-Assembly`, upstream `EnvUSB` absent), `RP2040-QFN-56` (upstream
