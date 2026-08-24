@@ -72,10 +72,56 @@ concrete lead.
   from a **rotation-sign bug** — caught only by running it on the *working* split72
   and seeing the identical bogus number. If your check flags the good board too, the
   check is wrong, not the board.
-- **shapely zone-short checks are UNRELIABLE.** kiutils drops zone-fill clearance
-  holes, so a pad inside a plane's *clearance pocket* reads as overlapping copper —
-  289/1230 known-good pads flagged as GND-shorted. Use **kicad-tools DRC** for
-  shorts, not a hand-rolled polygon overlap.
+- **shapely+kiutils zone-short checks are UNRELIABLE — but the fault is KIUTILS, not
+  hand-rolling.** kiutils drops zone-fill clearance holes, so a pad inside a plane's
+  *clearance pocket* reads as overlapping copper — 289/1230 known-good pads flagged as
+  GND-shorted. ⚠️ **This does NOT mean "never hand-roll a zone check".** Parse
+  `(filled_polygon (layer "…") (pts …))` **straight out of the s-expression** and the
+  clearance holes survive: KiCad makes each fill simply-connected with cut lines, so a
+  hole's boundary is already part of the same point list, and a plain
+  point-to-segment distance measures it correctly. A whole 2026-08 zone investigation
+  ran that way and every number held up — 744 of 746 foreign vias at *exactly* the
+  zone's 0.200 mm local clearance, cross-checked against KiCad's own DRC report.
+  Three traps to respect when you do:
+  - **Measure BOTH tails.** A via with *no* knockout shows a **large** distance to the
+    nearest fill edge, not a small one. Only checking the minimum misses it entirely
+    (cost several rounds before the maximum was looked at).
+  - **Pair the rule to the item.** Plated `thru_hole` is copper-to-copper
+    (`min_clearance`, 0.15 here); `np_thru_hole` is hole-to-copper
+    (`min_hole_clearance`, 0.13) and its "pad" is the drill, not the size. Applying
+    0.15 to both inflated a real count of 10 into 123.
+  - **Check `filled_areas_thickness`.** `no` means the stored polygons *are* the copper
+    edge. If it is absent (legacy files), polygons are stroked by `min_thickness` and
+    every measured gap needs correcting by half that.
+- ⚠️ **If the SAVED FILL is correct and DRC still reports `actual 0,0000 mm`, check the
+  zone OUTLINE for self-intersection — check it FIRST, before any of the fill settings.**
+  A self-intersecting outline has an **ambiguous interior** (a spliced-in excursion has
+  winding number 2, so even-odd and non-zero rules disagree), and KiCad's filler and its
+  DRC resolve that ambiguity **differently** — the filler writes correct polygons while
+  DRC measures against a different shape. 2026-08 cost a very long session to this: 88
+  violations, every named via measuring a clean **+0.2005 mm** in the file against DRC's
+  0.0000, root-caused to one pour whose outline stored vertices 4 and 19 as the identical
+  point with a keyhole excursion between them. Replacing it with a plain rectangle cleared
+  all 88.
+  ```python
+  # duplicate vertices + self-intersecting edge pairs, per zone
+  dupes = [(a,b) for a in range(n) for b in range(a+1,n) if pts[a]==pts[b]]
+  ```
+  ⚠️ **The failures need not be near the malformed corner** — here the keyhole was at
+  y 56–68 and every violation at y 89–97, which is exactly why "what is special about
+  that row?" was the wrong question for hours. And two symptoms actively mislead:
+  assigning the zone **a different net or no net "fixes" it** (it only changes which
+  regions fill, so the ambiguity stops mattering — it is not a clue about nets), and the
+  errors **look confined to one row** when nothing about that row is unusual.
+  ⚠️ Tested and **not** the cause, so do not spend time there: `island_removal_mode` /
+  `island_area_min` (all settings), and zone priority.
+- ⚠️ **KiCad does NOT persist DRC markers to disk.** There is no marker data in a
+  `.kicad_pcb` — zero `(marker` tokens, and `drc_exclusions` lives in the `.kicad_pro`.
+  You cannot read someone's markers from a commit; a session was spent trying. Ask for
+  **DRC dialog → Save Report to File…** and have the `.rpt` committed. That report is
+  what located the 2026-08 zone problem after every inference-based theory had failed —
+  its `actual 0,0000 mm` lines disagreed with the saved fill, which is what proved DRC
+  was refilling in memory rather than checking the file.
 - **KiCad 9 / pcbnew is UNAVAILABLE.** `add-apt-repository` breaks (`ModuleNotFoundError:
   apt_pkg`), the KiCad PPA is proxy-blocked, and the distro **KiCad 7 cannot open v9
   `.kicad_pcb`** (or run its DRC). Don't burn time installing it — the Python-only
