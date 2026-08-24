@@ -88,6 +88,15 @@ that outlives any one investigation.
   `PolyKybdHost/CLAUDE.md` — searching a designator instead of the thing itself. Once
   was evidently not enough; search by value, `lib_id`, or footprint name.
 
+- **`MPN` here usually holds an LCSC CATALOG ID, not a manufacturer part number — that is
+  the convention, not a defect.** 39 of the 46 `MPN` properties in `rp_pico.kicad_sch` are
+  `C\d+` values identical to the part's own `LCSC` property; only five carry a real part
+  number, and the true manufacturer p/n normally lives in `Value` (e.g. `USB1` is
+  `MPN C165948` / `Value TYPE-C-31-M-12`). An AI reviewer flagged this as a fault introduced
+  by a PR that had only changed that symbol's `Footprint` (2026-08). Before filing it as a
+  finding, check whether the symbol's MPN differs from the merge base at all — and note the
+  fix, if one is ever wanted, is a board-wide sweep of ~39 symbols, not a one-part edit.
+
 - **A shared sheet cannot vary a part per board.** All four boards include
   `rp_pico.kicad_sch`, so a `Value`/`Footprint` change to U9 lands on split72 *and*
   split42 whether you want it or not. There is no per-instance override. If a variant
