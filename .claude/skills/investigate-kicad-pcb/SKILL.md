@@ -93,6 +93,28 @@ concrete lead.
   - **Check `filled_areas_thickness`.** `no` means the stored polygons *are* the copper
     edge. If it is absent (legacy files), polygons are stroked by `min_thickness` and
     every measured gap needs correcting by half that.
+- ⚠️ **If the SAVED FILL is correct and DRC still reports `actual 0,0000 mm`, check the
+  zone OUTLINE for self-intersection — check it FIRST, before any of the fill settings.**
+  A self-intersecting outline has an **ambiguous interior** (a spliced-in excursion has
+  winding number 2, so even-odd and non-zero rules disagree), and KiCad's filler and its
+  DRC resolve that ambiguity **differently** — the filler writes correct polygons while
+  DRC measures against a different shape. 2026-08 cost a very long session to this: 88
+  violations, every named via measuring a clean **+0.2005 mm** in the file against DRC's
+  0.0000, root-caused to one pour whose outline stored vertices 4 and 19 as the identical
+  point with a keyhole excursion between them. Replacing it with a plain rectangle cleared
+  all 88.
+  ```python
+  # duplicate vertices + self-intersecting edge pairs, per zone
+  dupes = [(a,b) for a in range(n) for b in range(a+1,n) if pts[a]==pts[b]]
+  ```
+  ⚠️ **The failures need not be near the malformed corner** — here the keyhole was at
+  y 56–68 and every violation at y 89–97, which is exactly why "what is special about
+  that row?" was the wrong question for hours. And two symptoms actively mislead:
+  assigning the zone **a different net or no net "fixes" it** (it only changes which
+  regions fill, so the ambiguity stops mattering — it is not a clue about nets), and the
+  errors **look confined to one row** when nothing about that row is unusual.
+  ⚠️ Tested and **not** the cause, so do not spend time there: `island_removal_mode` /
+  `island_area_min` (all settings), and zone priority.
 - ⚠️ **KiCad does NOT persist DRC markers to disk.** There is no marker data in a
   `.kicad_pcb` — zero `(marker` tokens, and `drc_exclusions` lives in the `.kicad_pro`.
   You cannot read someone's markers from a commit; a session was spent trying. Ask for
