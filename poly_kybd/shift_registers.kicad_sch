@@ -1566,7 +1566,7 @@
 			(uuid "5620737c-0af3-42b1-912a-50a98c2d4473")
 		)
 		(instances
-			(project "poly_kybd_split72_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/92e782d8-f8e0-4b6b-8c13-c5574675ce33"
 					(reference "U7")
 					(unit 1)
@@ -1724,7 +1724,7 @@
 			(uuid "cd9a7412-0b7f-473d-8355-fff5da3099a7")
 		)
 		(instances
-			(project "poly_kybd_split72_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/92e782d8-f8e0-4b6b-8c13-c5574675ce33"
 					(reference "U4")
 					(unit 1)
@@ -1882,7 +1882,7 @@
 			(uuid "ee0b3985-7098-460a-b6c0-f4e278a22a2a")
 		)
 		(instances
-			(project "poly_kybd_split72_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/92e782d8-f8e0-4b6b-8c13-c5574675ce33"
 					(reference "U8")
 					(unit 1)
@@ -2040,7 +2040,7 @@
 			(uuid "0c0fdcb2-64a8-4eeb-b4f1-01cc8cfb9643")
 		)
 		(instances
-			(project "poly_kybd_split72_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/92e782d8-f8e0-4b6b-8c13-c5574675ce33"
 					(reference "U6")
 					(unit 1)
@@ -2198,7 +2198,7 @@
 			(uuid "e2abf4ec-53e5-4232-b60b-4b685c3f4966")
 		)
 		(instances
-			(project "poly_kybd_split72_left"
+			(project "poly_kybd_split72_right"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/92e782d8-f8e0-4b6b-8c13-c5574675ce33"
 					(reference "U5")
 					(unit 1)

@@ -1,0 +1,372 @@
+(footprint "HRO-TYPE-C-31-M-12-Assembly" (version 20211014) (generator pcbnew)
+		(descr "Extracted from poly_kybd_split72_left.kicad_pcb (USB1), where it was already embedded, because the upstream EnvUSB library (thirdparty/EnvOpenPico/.../HRO-TYPE-C31-M-12.pretty) is not present in this repo. Geometry is byte-identical to what is on the built v3.2 boards. NOTE: kept on B.Cu - all eight instances across the four boards are bottom-mounted, and keeping the as-built side avoids any front/back mirroring transformation. ")
+		(layer "B.Cu")
+		(property "Reference" "REF**"
+			(at -0.09 9.4705 0)
+			(layer "B.SilkS")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "Value" "TYPE-C-31-M-12"
+			(at 0 -1.15 0)
+			(layer "Dwgs.User")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Datasheet" "https://datasheet.lcsc.com/lcsc/2205251630_Korean-Hroparts-Elec-TYPE-C-31-M-12_C165948.pdf"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Etc" ""
+			(at 0 0 0)
+			(layer "B.Fab")
+			(hide yes)
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "JLC" "C165948"
+			(at 0 0 0)
+			(layer "B.Fab")
+			(hide yes)
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "LCSC" "C165948"
+			(at 0 0 0)
+			(layer "B.Fab")
+			(hide yes)
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "MPN" "C165948"
+			(at 0 0 0)
+			(layer "B.Fab")
+			(hide yes)
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "Manufacturer" "Hroparts"
+			(at 0 0 0)
+			(layer "B.Fab")
+			(hide yes)
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(property "RoHS" "x"
+			(at 0 0 0)
+			(layer "B.Fab")
+			(hide yes)
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(attr smd)
+		(fp_line
+			(start -4.47 0)
+			(end -4.47 7.3)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "Dwgs.User")
+		)
+		(fp_line
+			(start -4.47 0)
+			(end 4.47 0)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "Dwgs.User")
+		)
+		(fp_line
+			(start -4.47 7.3)
+			(end 4.47 7.3)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "Dwgs.User")
+		)
+		(fp_line
+			(start 4.47 0)
+			(end 4.47 7.3)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "Dwgs.User")
+		)
+		(fp_line
+			(start -4.5 0)
+			(end -4.5 7.5)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.CrtYd")
+		)
+		(fp_line
+			(start -4.5 7.5)
+			(end -3.75 7.5)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.CrtYd")
+		)
+		(fp_line
+			(start -3.75 7.5)
+			(end -3.75 8.5)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.CrtYd")
+		)
+		(fp_line
+			(start -3.75 8.5)
+			(end 3.75 8.5)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.CrtYd")
+		)
+		(fp_line
+			(start 3.75 7.5)
+			(end 4.5 7.5)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.CrtYd")
+		)
+		(fp_line
+			(start 3.75 8.5)
+			(end 3.75 7.5)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.CrtYd")
+		)
+		(fp_line
+			(start 4.5 0)
+			(end -4.5 0)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.CrtYd")
+		)
+		(fp_line
+			(start 4.5 7.5)
+			(end 4.5 0)
+			(stroke
+				(width 0.15)
+				(type solid)
+			)
+			(layer "B.CrtYd")
+		)
+		(fp_text user "${REFERENCE}"
+			(at 0 9.25 0)
+			(layer "B.Fab")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
+		(pad "" np_thru_hole circle
+			(at -2.89 6.25)
+			(size 0.65 0.65)
+			(drill 0.65)
+			(layers "*.Cu" "*.Mask")
+		)
+		(pad "" np_thru_hole circle
+			(at 2.89 6.25)
+			(size 0.65 0.65)
+			(drill 0.65)
+			(layers "*.Cu" "*.Mask")
+		)
+		(pad "1" smd rect
+			(at -3.225 7.695)
+			(size 0.6 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "GND")
+			(pintype "input")
+		)
+		(pad "2" smd rect
+			(at -2.45 7.695)
+			(size 0.6 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "VBUS")
+			(pintype "input")
+		)
+		(pad "3" smd rect
+			(at -1.75 7.695)
+			(size 0.3 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "SBU2")
+			(pintype "input+no_connect")
+		)
+		(pad "4" smd rect
+			(at -1.25 7.695)
+			(size 0.3 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "CC1")
+			(pintype "input")
+		)
+		(pad "5" smd rect
+			(at -0.75 7.695)
+			(size 0.3 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "DN2")
+			(pintype "input")
+		)
+		(pad "6" smd rect
+			(at -0.25 7.695)
+			(size 0.3 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "DP1")
+			(pintype "input")
+		)
+		(pad "7" smd rect
+			(at 0.25 7.695)
+			(size 0.3 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "DN1")
+			(pintype "input")
+		)
+		(pad "8" smd rect
+			(at 0.75 7.695)
+			(size 0.3 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "DP2")
+			(pintype "input")
+		)
+		(pad "9" smd rect
+			(at 1.25 7.695)
+			(size 0.3 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "SBU1")
+			(pintype "input+no_connect")
+		)
+		(pad "10" smd rect
+			(at 1.75 7.695)
+			(size 0.3 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "CC2")
+			(pintype "input")
+		)
+		(pad "11" smd rect
+			(at 2.45 7.695)
+			(size 0.6 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "VBUS")
+			(pintype "input")
+		)
+		(pad "12" smd rect
+			(at 3.225 7.695)
+			(size 0.6 1.45)
+			(layers "B.Cu" "B.Mask" "B.Paste")
+			(pinfunction "GND")
+			(pintype "input")
+		)
+		(pad "13" thru_hole oval
+			(at -4.32 2.6)
+			(size 1 1.6)
+			(drill oval 0.6 1.2)
+			(layers "*.Cu" "*.Mask")
+			(remove_unused_layers no)
+			(pinfunction "SHIELD")
+			(pintype "input")
+		)
+		(pad "13" thru_hole oval
+			(at -4.32 6.78)
+			(size 1 2.1)
+			(drill oval 0.6 1.7)
+			(layers "*.Cu" "*.Mask")
+			(remove_unused_layers no)
+			(pinfunction "SHIELD")
+			(pintype "input")
+		)
+		(pad "13" thru_hole oval
+			(at 4.32 2.6)
+			(size 1 1.6)
+			(drill oval 0.6 1.2)
+			(layers "*.Cu" "*.Mask")
+			(remove_unused_layers no)
+			(pinfunction "SHIELD")
+			(pintype "input")
+		)
+		(pad "13" thru_hole oval
+			(at 4.32 6.78)
+			(size 1 2.1)
+			(drill oval 0.6 1.7)
+			(layers "*.Cu" "*.Mask")
+			(remove_unused_layers no)
+			(pinfunction "SHIELD")
+			(pintype "input")
+		)
+		(embedded_fonts no)
+	)
