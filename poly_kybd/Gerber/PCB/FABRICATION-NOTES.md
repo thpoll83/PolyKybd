@@ -154,3 +154,29 @@ source, not from the board.
 means rewriting history across every branch, everyone re-clones, and GitHub stops rendering
 `.kicad_pcb` diffs. That diffability is load-bearing here — the copper comparisons, CPL
 checks and footprint verification in this repo all depend on the boards being diffable text.
+
+## 6. SW1 (PolyJog) mounting holes on `*.Cu` — reviewed, benign
+
+The PolyJog footprint's two 3.6 × 2.4 mm mounting-hole pads carry `(layers "*.Cu"
+"*.Mask")`. KiCad reported the footprint as outdated and the refresh widened the pad
+layer list from `F&B.Cu`, so the annulus is now flashed on **In1.Cu / In2.Cu** as well.
+Reviewed 2026-08-25 and left as it stands:
+
+- The drill (oval 2.8 × 1.5 mm) removes most of that copper anyway. The added metal is
+  only the annulus: **0.40 mm** along the long axis, **0.45 mm** across the short one —
+  two holes, two inner layers.
+- The pads carry **no net**, so the inner planes hold their normal clearance around them
+  and the annulus stays **isolated** — it does *not* merge into GND. That is why the ring
+  is visible in the gerbers. It is the same floating annulus every plated through-hole
+  already produces where it passes a plane it isn't connected to, so it needs no
+  treatment of its own.
+- F.Cu and B.Cu are unchanged; they were in the list before.
+
+⚠️ Two traps hit while checking this, both worth remembering:
+
+- **Pad `at` angles are ABSOLUTE, not relative to the footprint** (the rule is in the
+  `investigate-kicad-pcb` skill). Adding the footprint's rotation to the pad's gives a
+  part drawn at the wrong angle — silently, since the shape is still plausible.
+- The board records these two as **`np_thru_hole`** (non-plated). The *plated* holes in
+  that footprint are the 2 mm `thru_hole` pads named `S1`/`S2`. Check which you mean
+  before reasoning about barrel connectivity.
