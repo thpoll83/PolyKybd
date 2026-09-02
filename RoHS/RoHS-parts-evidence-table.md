@@ -86,5 +86,7 @@ deliberate, not a mismatched reference:
   accepted on the belief that it covered the 323-series package; its sample list is
   `SOT-23, 323, 523, 723, … SOD-123`, where the `323` belongs to the **SOT** run, so
   **SOD-323 was never covered**. The 2025 CTI report lists `SOD-123/323/523/723`
-  explicitly. See `RoHS-decisions-log.md` for the two limitations to be able to answer
-  (tested as a whole; applicant is Shenzhen Hottech vs LCSC's Guangdong Hottech).
+  explicitly. See `RoHS-decisions-log.md` for the manufacturer-identity **decision**
+  (Shenzhen and Guangdong Hottech are treated as one entity, 2026-09-02) and the two
+  remaining **disclosures** (sample tested as a whole; package-family report, not
+  MPN-specific).

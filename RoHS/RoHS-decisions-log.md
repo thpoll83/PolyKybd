@@ -1,7 +1,7 @@
 # PolyKybd — RoHS Documentation Decisions Log
 
 Standard applied throughout: **Directive 2011/65/EU (RoHS) as amended by (EU) 2015/863.**
-Last updated: 2026-08-07.
+Last updated: 2026-09-02.
 
 This file records the decisions made while assembling the RoHS evidence for the CE technical file,
 so the results can be reviewed and reproduced.
