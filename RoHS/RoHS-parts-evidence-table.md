@@ -1,7 +1,12 @@
 # RoHS evidence — parts to certificates
 
-Generated from **`parts-to-pdf-reference.xls`** (the source of truth) on 2026-08-24.
-Regenerate rather than hand-edit; edit the `.xls` and re-derive.
+**The table rows** are generated from **`parts-to-pdf-reference.xls`** (the source of truth),
+as of 2026-08-24. Regenerate rather than hand-edit; edit the `.xls` and re-derive.
+
+⚠️ **The prose sections below the table are hand-maintained and carry their own, later dates.**
+The `.xls` columns cannot express them, so they are not covered by the regenerate rule and are
+edited in place — most recently 2026-09-02 (the D2 Hottech entity decision). Read the date above
+as applying to the rows only; a decision dated after it is not a stale-vs-fresh contradiction.
 
 Standard applied throughout: **Directive 2011/65/EU as amended by (EU) 2015/863.**
 
