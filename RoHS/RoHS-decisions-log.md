@@ -39,13 +39,20 @@ so the results can be reviewed and reproduced.
     Its SOD coverage stops at **SOD-123**, and the report states its results "refer only to the
     sample(s) tested". D2 is SOD-323, so the package was never actually covered. `parts.csv` had
     recorded D2 as `x Email sent` throughout, which was the accurate status.
-  - ⚠️ **Two limitations to state if the file is ever challenged**, both normal for an SMD part
-    but worth being able to answer: the sample was **tested as a whole** (not separated into
-    homogeneous materials — the report says so explicitly, and RoHS limits formally apply per
-    homogeneous material); and the applicant is **Shenzhen Hottech Electronics**, while LCSC lists
-    the part's manufacturer as *Guangdong* Hottech. The report carries a remark that the two are
-    "Group-subsidiary relations" — but that linkage is **according to the client's statement**,
-    not something CTI verified. The report is also a package-family report, not MPN-specific.
+  - ✅ **DECIDED 2026-09-02 — Shenzhen and Guangdong Hottech are treated as ONE entity.** The
+    applicant on the report is **Shenzhen Hottech Electronics**, while LCSC (and JLC's matched
+    part on the v3.3 assembly order) lists the manufacturer as *Guangdong* Hottech. The report
+    carries a remark that the two are "Group-subsidiary relations"; that linkage is **according
+    to the client's statement**, not something CTI verified, but it is accepted here as
+    sufficient — same group, same product line. This is a **stated position, not an open
+    question**: do not re-raise it as a gap. If it is ever challenged and a firmer basis is
+    wanted, the cheap ask is written confirmation from Hottech that the two are the same legal
+    entity or a declared group, which converts a client statement into supplier correspondence.
+  - ⚠️ **Two limitations remain, as disclosures rather than decisions** — both are inherent to
+    the report and normal for an SMD part, but state them if the file is challenged: the sample
+    was **tested as a whole** (not separated into homogeneous materials — the report says so
+    explicitly, and RoHS limits formally apply per homogeneous material); and it is a
+    **package-family report** (`SOD-123/323/523/723`), not MPN-specific to `1N5819WS`.
   - **Consequence:** no part change needed. The PAKER `B5819WS` / `C5278927` alternative
     (`2401041156_PAKER-B5819WS_C5278927.pdf`, SOD-323, "Halogen free and RoHS compliant") is no
     longer required — and is the weaker option anyway: 2,250 in stock against Hottech's 5.6M, and
