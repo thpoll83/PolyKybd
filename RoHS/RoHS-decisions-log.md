@@ -45,9 +45,17 @@ so the results can be reviewed and reproduced.
     carries a remark that the two are "Group-subsidiary relations"; that linkage is **according
     to the client's statement**, not something CTI verified, but it is accepted here as
     sufficient — same group, same product line. This is a **stated position, not an open
-    question**: do not re-raise it as a gap. If it is ever challenged and a firmer basis is
-    wanted, the cheap ask is written confirmation from Hottech that the two are the same legal
-    entity or a declared group, which converts a client statement into supplier correspondence.
+    question**: do not re-raise it as a gap.
+    - **Source of the linkage, in full:** the remark is carried *inside the report itself* —
+      `ROHS-2025-HottechElectronics-CTI-A225024736310100101.pdf` (CTI report no.
+      A225024736310100101, 17 Apr 2025), held in `RoHS/`. ⚠️ **There is no separate
+      client-statement document on file**, and none is expected: the "client's statement"
+      is CTI's own attribution for that line in the report, not a record issued to us. So
+      the report is the entire traceable source for this decision — do not go looking for a
+      second one.
+    - **If it is ever challenged** and a firmer basis is wanted, the cheap ask is written
+      confirmation from Hottech that the two are the same legal entity or a declared group,
+      which converts a client statement into supplier correspondence.
   - ⚠️ **Two limitations remain, as disclosures rather than decisions** — both are inherent to
     the report and normal for an SMD part, but state them if the file is challenged: the sample
     was **tested as a whole** (not separated into homogeneous materials — the report says so
