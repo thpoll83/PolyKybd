@@ -11,6 +11,23 @@ every PolyKybd repo, this one included — in particular: start each piece of wo
 on a fresh branch cut from the updated default (**`master`** here), and never
 keep committing to a branch whose PR has merged.
 
+⚠️ **`git fetch` your own branch before concluding that work is missing — the
+container's checkout can sit BEHIND what this same session already pushed.** The
+qmk file documents the checkout being silently rolled back; the version that bit
+here was quieter, because the tree was perfectly self-consistent and simply one
+commit old. A review round that had been implemented, committed and pushed read
+as *not done*: `grep` found none of its identifiers, the built sheet showed none
+of its changes, and the natural explanation — a scripted `str.replace` that had
+matched nothing — was plausible enough to be written up as a lesson. It was
+wrong, and the whole round was rebuilt from scratch before `git push` rejected
+the duplicate. Two habits that would have caught it in seconds:
+
+- `git fetch origin <branch> && git log --oneline HEAD..FETCH_HEAD` **before**
+  starting work, and again before diagnosing anything as absent.
+- Treat "a feature I remember implementing has left no trace" as a *checkout*
+  hypothesis first and a *code* hypothesis second. Absent work leaves no
+  fingerprints; failed work usually leaves some.
+
 ## Layout
 
 **One folder per part group under `parts/`, and every generated mesh under
