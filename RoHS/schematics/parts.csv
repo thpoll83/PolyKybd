@@ -33,7 +33,7 @@
 "R12,R17","150k 0603","https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07150KL_C114660.pdf","Resistor_SMD:R_0603_1608Metric","2","Yageo","x"
 "R13","12k 0603","https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0712KL_C114659.pdf","Resistor_SMD:R_0603_1608Metric","1","Yageo","x"
 "R14","680k 0603","https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07680KL_C137690.pdf","Resistor_SMD:R_0603_1608Metric","1","Yageo","x"
-"R18","10M 0603","https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf","Resistor_SMD:R_0603_1608Metric","1","Yageo","x"
+"R18","10M 0603","https://www.lcsc.com/datasheet/C227547.pdf","Resistor_SMD:R_0603_1608Metric","1","Yageo","x"
 "R22,R23","27 0603","https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0727RL_C137753.pdf","Resistor_SMD:R_0603_1608Metric","2","Yageo","x"
 "R24","2M2 0603","https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-072M2L_C137747.pdf","Resistor_SMD:R_0603_1608Metric","1","Yageo","x"
 "SW1","RotaryEncoder_Switch","~","poly_kb:PolyJog","1","",""

@@ -1,7 +1,7 @@
 # PolyKybd — RoHS Documentation Decisions Log
 
 Standard applied throughout: **Directive 2011/65/EU (RoHS) as amended by (EU) 2015/863.**
-Last updated: 2026-09-02.
+Last updated: 2026-09-04.
 
 This file records the decisions made while assembling the RoHS evidence for the CE technical file,
 so the results can be reviewed and reproduced.
@@ -171,10 +171,107 @@ covered `XGIQ` — no new document needed. **However it cites RoHS `2002/95/EU`*
 directive, not 2011/65/EU + 2015/863. Worth requesting a current Winbond declaration before the
 technical file is finalised.
 
+## Resistor evidence — 2026-09-04
+
+Three resistor rows changed. One is a real part substitution; two were bookkeeping errors
+found while verifying the first against the board files.
+
+### `R18` 10 MΩ 0603 — substituted, Yageo RC → Yageo AC
+
+`RC0603JR-0710ML` / `C141675` went out of stock at JLC. Replacement is
+**`AC0603FR-0710ML` / `C227547`** — same manufacturer, same 10 MΩ 0603 value, ±1% instead of
+±5%, AEC-Q200 automotive grade. The AC series was **already on this board** (`R3,R4,R7,R9`),
+so it introduces no new supplier and no new document family. Tolerance moves the right way;
+nothing in the circuit needs 5%. Evidence: `50630577_YAGEO-AC0603FR-0710ML_C227547.pdf`
+(LCSC's datasheet for `C227547` — the committed file was verified byte-identical, MD5
+`4902f1493da835c32ecc47a868267c75`, against LCSC's own CDN copy). Cover page carries
+*"RoHS compliant & Halogen free"*; FEATURES declares *"Products with lead-free terminations
+meet RoHS requirements – Pb-glass contained in electrodes, resistor element and glass are
+exempted by RoHS"* — i.e. compliance by exemption 7(c)-I, the normal position for a thick-film
+chip resistor. The 0603 range is `10Ω ≤ R ≤ 10MΩ` at ±1%, so 10 MΩ is the top of the range and
+is covered.
+
+⚠️ **Uni-Royal `0603WAF1005T5E` / `C7250` was considered first and rejected on evidence, not on
+the part.** It is an ordinary 10 MΩ 0603 and there is plenty of stock, but its datasheet
+(`2206010216_UNI-ROYAL-…_C7250.pdf`, already in `RoHS/` and until now orphaned) carries **no RoHS
+statement at all**, and the LCSC compliance page for it is an **SGS exemption declaration** that
+cites a test report (`CAN23-0123161`) we do not hold. Choosing it would have meant adding a
+supplier *and* chasing a third-party report, to replace a part whose own manufacturer already has
+a covering document. That orphaned datasheet can now be described as **evaluated and not used**
+rather than merely unreferenced.
+
+### `R3,R4,R7,R9` 5.1 kΩ 0402 — citation corrected, no part change
+
+These are `AC0402FR-075K1L` / `C144745`, i.e. **AC** series, but were cited against the **RC**
+document. Both are Yageo series-wide datasheets, so the error was invisible in practice — an
+auditor comparing the MPN to the document would have caught it. Re-pointed at the AC datasheet.
+Checked the rest: of the twelve distinct resistor parts on the board, **only these two rows are
+AC series**; every other Yageo resistor is genuinely RC and its citation stands.
+
+### `R5,R6,R16,R19,R21` 1 kΩ 0402 — manufacturer corrected, no part change
+
+The table said Yageo `C144789`. The board has always carried **Vishay `CRCW04021K00FKED` /
+`C71623`** (verified in both split72 board files). Re-pointed at `vishay-rohs-20250901.pdf`,
+which was already in `RoHS/` for the tantalums and is a **company-wide** statement — Vishay
+*"hereby certifies that all its products that are identified as RoHS compliant satisfy the
+requirements of the above-listed directives"* — so it covers the CRCW part with no new document.
+This was a bookkeeping error only: the part fitted never changed.
+
+### Two more found while verifying: LCSC codes on `R10,R11,R30` and `D5`
+
+Cross-checking every row's `LCSC` cell against the board files turned up two stale codes. Both
+are **cell corrections only** — the part fitted and the evidence document are unaffected in both
+cases — but a compliance table whose part numbers disagree with the board is exactly what an
+auditor spot-checks.
+
+- **`R10,R11,R30`** (390 kΩ) carried `C114659`, which is **`R13`'s 12 kΩ part**. The board says
+  `C137735`. The likely origin is board-side: that footprint's `Datasheet` property *also* points
+  at the 12 kΩ datasheet, so the wrong code was copied forward into the table.
+- **`D5`** (green 0805) carried `C2293`. The board, both v3.3 BOM exports and the part's own
+  `Value` string (`Green 0805 C2297`) all say **`C2297`**, and the evidence file is `C2297.pdf` —
+  a Hubei KENTO approval spec for an 0805 翠绿 (green) LED, which carries no LCSC code itself, so
+  the filename is the only link. Corrected to `C2297`.
+  ⚠️ **`schematics/parts.csv` has the same error and is left as-is**: its `D5` datasheet URL points
+  at `…Hubei-KENTO-Elec-C2293_C2293.pdf`, a different LCSC part from the same manufacturer. That
+  file feeds `build_schematics.py`, not the compliance appendix, and there is no verified
+  replacement URL on hand — so it is recorded here rather than guessed at.
+
+The check itself is worth keeping: parse `(property "Reference" …)` out of a board file, pair each
+designator with its `LCSC`/`Manufacturer` properties, and compare against the table's first
+designator per row. Three of 43 rows were wrong (`R5,R6,R16,R19,R21`, `R10,R11,R30`, `D5`); the
+other 40 matched exactly.
+
+### ⚠️ The appendix was stale, and this is a recurring trap
+
+Rebuilding `PolyKybd-RoHS-Appendix.pdf` for the above revealed it had been stale since
+**2026-08-24**: the D2 evidence swap edited the `.xls` but did not rebuild, so the appendix
+shipped in the technical file still carried the **superseded `ROHS3HOTTECH.pdf`** — the very
+document that section of this log explains does *not* cover SOD-323 — instead of the 2025 Hottech
+CTI report. Rebuilding from the pre-change `.xls` with the current tooling gives 115 pages against
+the committed 113, which is how the drift was measured; this change then takes it to 119 (one new
+section: cover + 3 kept pages of the AC datasheet).
+
+**Rule: an edit to `parts-to-pdf-reference.xls` is not finished until both tools have been re-run
+and the rebuilt appendix is committed in the same change.** Nothing checks this, and the appendix
+is a binary that reviews as an opaque blob, so a stale one is invisible.
+
+⚠️ **But `update_xls_pages.py` recomputes EVERY row, so running it silently destroys the
+hand-curated page selections** — and those are the whole reason the column is editable. It did
+here: the Samsung MLCC rows carry `1,2,13,19,25`, chosen by hand to land on the pages of an
+84-page part list that actually name our parts, and the tool overwrote them with its automatic
+`1,2,3,59,60,61`. `D2` was overwritten from `all` to `1,2,3,4,5,6,7`, dropping a page of the CTI
+report. Neither shows up as an error; both would just have quietly changed what the technical
+file contains. **After running it, diff the `Appendix Pages` column against the committed `.xls`
+and restore every row you did not intend to change** — the curated values are recognisable
+because the tool cannot produce them (it only ever emits `all`, `image`, or `1` plus each keyword
+hit ±1). This change touched three rows and restored the other nine.
+
 ## Reproduce
 From `RoHS/`:
 1. `python3 appendix-tools/update_xls_pages.py` — (re)writes the `Appendix Pages` column from the certs.
-   Edit that column by hand to include more/fewer pages for any certificate.
+   Edit that column by hand to include more/fewer pages for any certificate. ⚠️ It rewrites **all**
+   rows, so it clobbers earlier hand edits — diff the column against the committed `.xls` afterwards
+   and restore the rows you did not mean to touch (see the 2026-09-04 entry).
 2. `python3 appendix-tools/build_appendix.py` — rebuilds `PolyKybd-RoHS-Appendix.pdf` from the .xls.
    Requires `xlrd`, `pypdf`, `reportlab`, `pdfplumber`, `Pillow`.
 
@@ -186,8 +283,10 @@ From `RoHS/`:
 - ~~Both appendix tools carry a hardcoded sandbox path~~ — **fixed 2026-08-07**; all six tools now
   resolve paths relative to the checkout, overridable with `POLYKYBD_ROHS`.
 - Some certificates in `RoHS/` are referenced by no BOM line (Aerosemi MT9700, Fenghua RC-02W,
-  Prosperity MCS0530, Uniroyal 0603WAF); confirm whether they are alternates/DNPs or should be
-  linked. Since 2026-08-07 this also covers `sunlord-rohs.pdf` and the TI buffer datasheet, which
+  Prosperity MCS0530, ~~Uniroyal 0603WAF~~); confirm whether they are alternates/DNPs or should be
+  linked. The **Uniroyal `0603WAF1005T5E`** one is answered as of 2026-09-04: evaluated as the
+  `R18` replacement and **rejected** (no RoHS statement in the datasheet), so it stays unreferenced
+  deliberately. Since 2026-08-07 this also covers `sunlord-rohs.pdf` and the TI buffer datasheet, which
   are **deliberately** kept as the record of what the built v3.2 boards shipped with.
 
 **→ See `CE-document-status.md`** for the full state of every compiled document and the remaining
