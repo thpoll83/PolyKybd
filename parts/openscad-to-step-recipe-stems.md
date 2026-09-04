@@ -141,7 +141,12 @@ exists precisely because a re-authored model can drift from its source. The same
 [`CLAUDE.md`](../CLAUDE.md) applies: *compare meshes as a sorted facet multiset, and pair any
 clearance test with a positive control.* For the stem the specific checks that matter:
 
-1. **MX cross**: arm length 4.35, width **1.4**, fillet 0.3 — measure these on the STEP, not by eye.
+1. **MX cross**: measure the **finished opening** on the STEP — flats **4.05 × 1.10**, corner
+   fillets **R0.30**, and the four relief bulges that take the outer span to **4.11**. ⚠️ NOT
+   4.35 × 1.4: those are the `MX_CROSS` / `MX_CROSS_WIDTH` source constants *before*
+   `offset(r = -0.3)`, so measuring to them accepts an opening 0.30 mm oversized on both
+   axes — the exact error the warning near the top of this file is about, written here as an
+   instruction. `verify.py` check 1 measures the real values off a section of the solid.
 2. **Volume delta** SCAD-mesh vs STEP solid: should agree to well under 1 % (only the facet
    approximation of the cylinders differs).
 3. **The keycap cover interface** — the transparent relegendable caps are **off-the-shelf POS parts**,
