@@ -231,15 +231,50 @@ auditor spot-checks.
   `Value` string (`Green 0805 C2297`) all say **`C2297`**, and the evidence file is `C2297.pdf` —
   a Hubei KENTO approval spec for an 0805 翠绿 (green) LED, which carries no LCSC code itself, so
   the filename is the only link. Corrected to `C2297`.
-  ⚠️ **`schematics/parts.csv` has the same error and is left as-is**: its `D5` datasheet URL points
-  at `…Hubei-KENTO-Elec-C2293_C2293.pdf`, a different LCSC part from the same manufacturer. That
-  file feeds `build_schematics.py`, not the compliance appendix, and there is no verified
-  replacement URL on hand — so it is recorded here rather than guessed at.
 
-The check itself is worth keeping: parse `(property "Reference" …)` out of a board file, pair each
+The check is worth keeping: parse `(property "Reference" …)` out of a board file, pair each
 designator with its `LCSC`/`Manufacturer` properties, and compare against the table's first
 designator per row. Three of 43 rows were wrong (`R5,R6,R16,R19,R21`, `R10,R11,R30`, `D5`); the
-other 40 matched exactly.
+other 40 matched exactly, and all 43 do now.
+
+### `schematics/parts.csv` carried the same three errors — fixed
+
+Raised in review on PR #39, and correct: `parts.csv` still named **Yageo** with an
+`AC0402FR-071KL_C144789` datasheet for the Vishay 1 kΩ parts, the **12 kΩ** datasheet for the
+390 kΩ parts, and a `C2293` URL for `D5`. All three rows now match the board; each replacement URL
+was checked to resolve
+to the right part first — `C137735` → `RC0603FR-07390KL`, `C2297` → `KT-0805G`, and the Vishay
+row takes the board's own `vishay.com/docs/20035/dcrcwe3.pdf`.
+
+⚠️ **The finding's stated consequence was wrong, and the real one is worse.** It was raised as
+*"`parts.csv` feeds `build_schematics.py`, so generated schematic documentation continues to
+disagree"* — but `build_schematics.py` only composes exported schematic PDFs, and **no script in
+this repo reads `parts.csv` at all**. It is not a generator input: `CE-Technical-File-Checklist.md`
+names it as **the bill of materials of the technical file**, alongside the `.xls`. So a wrong
+manufacturer on five fitted resistors sat in the BOM that goes to a notified body, where nothing
+downstream would ever have overwritten it — a worse place for it than a regenerable PDF. Take the
+conclusion, not the mechanism; and note this file repeated the mechanism once before checking it.
+
+⚠️ **Root cause: a part swap updates `LCSC`/`JLC`/`MPN` on the footprint but leaves the
+`Datasheet` property pointing at the old part.** Those three fields are what the fab exporter
+reads, so nothing complains, and the stale URL then propagates into anything derived from the
+board. It is not a one-off — a board-vs-`parts.csv` sweep finds the same shape on **`C3,C8`**,
+where the 2026-08 Samsung switch to `C86287` left the footprint's `Datasheet` on the superseded
+`CL10A225KO8NNNC_C23630` — and it is where the `D5` and 390 kΩ errors in this table came from.
+
+**Not fixed here.** Correcting the footprints means editing the `Datasheet` property across
+**8 files** — split72 pcb+sch and split42 pcb+sch, left and right — for a cosmetic field no
+exporter reads, on a variant that is not being fabricated. That is a sweep of its own, not part
+of an R18 substitution. Worth doing before the next `parts.csv` regeneration, because
+regenerating from the boards as they stand would put all three errors straight back.
+
+**The check**, which is cheap and catches the whole class: parse `(property "Reference" …)` out
+of a board file, pair each designator with its `Manufacturer`/`Datasheet`/`LCSC` properties, and
+compare against the first designator of each `parts.csv` row. 51 rows checked; besides the three
+fixed above it leaves `C3,C8` (the stale board URL described above), `D2` (*"Hottech Semi"* vs
+*"Hottech"*, cosmetic) and `J37` (the board joins two URLs with `;`, the csv keeps the first —
+not an error).
+
 
 ### ⚠️ The appendix was stale, and this is a recurring trap
 

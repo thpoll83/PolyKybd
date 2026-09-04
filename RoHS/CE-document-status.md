@@ -16,7 +16,7 @@ This file records *what is still outstanding*.
 | `PolyKybd-RoHS-Appendix.pdf` | ✅ **current** | Rebuilt 2026-09-04: **119 pages**, 26 sections, no missing documents. ⚠️ It had been stale since 2026-08-24 — the D2 evidence swap edited the `.xls` without rebuilding, so the shipped appendix still carried the superseded `ROHS3HOTTECH.pdf` instead of the 2025 Hottech CTI report. **Rebuild the appendix in the same change as any `.xls` edit.** |
 | `schematics/*.pdf` (7 per-sheet) | ✅ **current** | Re-exported; page counts unchanged, so composition is like-for-like |
 | `parts-to-pdf-reference.xls` | ✅ **current** | Source of truth. 44×8 preserved; every referenced certificate exists on disk. Last edited 2026-09-04 (R18 → Yageo AC `C227547`; `R3,R4,R7,R9` onto the AC datasheet; `R5,R6,R16,R19,R21` corrected to Vishay) |
-| `schematics/parts.csv` | ✅ **current** | |
+| `schematics/parts.csv` | ✅ **current** | The technical file's BOM (per `CE-Technical-File-Checklist.md`) — **not** a generator input; no script reads it. Corrected 2026-09-04: R18 → C227547, and three rows that disagreed with the board (`R5,R6,R16,R19,R21` were listed as Yageo but are Vishay; `R10,R11,R30` and `D5` carried another part's datasheet URL) |
 
 ### Still stale
 
