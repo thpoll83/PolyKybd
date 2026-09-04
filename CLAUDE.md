@@ -11,6 +11,36 @@ every PolyKybd repo, this one included — in particular: start each piece of wo
 on a fresh branch cut from the updated default (**`master`** here), and never
 keep committing to a branch whose PR has merged.
 
+⚠️ **`git fetch` your own branch before concluding that work is missing — the
+container's checkout can sit BEHIND what this same session already pushed.** The
+qmk file documents the checkout being silently rolled back; the version that bit
+here was quieter, because the tree was perfectly self-consistent and simply one
+commit old. A review round that had been implemented, committed and pushed read
+as *not done*: `grep` found none of its identifiers, the built sheet showed none
+of its changes, and the natural explanation — a scripted `str.replace` that had
+matched nothing — was plausible enough to be written up as a lesson. It was
+wrong, and the whole round was rebuilt from scratch before `git push` rejected
+the duplicate. Two habits that would have caught it in seconds:
+
+- `git fetch origin <branch> && git log --oneline HEAD..FETCH_HEAD` **before**
+  starting work, and again before diagnosing anything as absent.
+- Treat "a feature I remember implementing has left no trace" as a *checkout*
+  hypothesis first and a *code* hypothesis second. Absent work leaves no
+  fingerprints; failed work usually leaves some.
+
+⚠️ **It happened TWICE in one session, and the second form is the dangerous one: a
+rolled-back checkout silently invalidates the EXPERIMENT you run to check a review
+finding.** A reviewer reported that a Makefile rule left a deleted output unrepaired.
+The reproduction was run — carefully, twice — and the file came back both times, which
+reads as a confidently refuted finding. The tree was one commit back, so the test had
+exercised the *old* rule; against the real one the finding reproduces exactly. The tell
+was that the Makefile on disk did not contain the code the reviewer quoted. **Before
+reporting a finding as non-reproducing, confirm the code you just ran is the code the
+finding is about** — `git log --oneline -1` and a grep for the quoted line, which is two
+seconds against the round it would otherwise cost. `git show <sha>:<path>` returning
+*"fatal: invalid object name"* for your own commit is the unambiguous version of this
+signal.
+
 ## Layout
 
 **One folder per part group under `parts/`, and every generated mesh under
@@ -28,7 +58,8 @@ scripts sit together, and nothing generated is ever mixed in with a source.
 The groups are `case` (every case variant: the FDM split72 left/right, the
 metal/CNC one, POM, right2 and the right-side case, plus the spacer they
 share and the STEP pipeline under `case/step/`), `diffuser`,
-`keycap_stem`, `display_holder`, `cirque_insert`, `cover_insert`,
+`keycap_stem` (the printed plates, plus the moulded STEP + drawing pipeline
+under `keycap_stem/step/`), `display_holder`, `cirque_insert`, `cover_insert`,
 `rotary_enc_insert`, `legs`.
 
 ⚠️ **Keep every case variant in `case/` — they SHARE the imported KiCad SVG
@@ -229,6 +260,217 @@ how `parts/diffuser/diffuser.scad` can render a whole print plate on its own whi
 `diffuser_cluster()` and `torus()` under the SAME names — so a file that
 `use <>`s both silently gets one set of definitions.
 
+## build123d / OpenCASCADE (the `step/` folders)
+
+Anything a **fabricator's validator** has to accept — the CNC case, the injection-moulded
+keycap stems — is **re-authored in build123d** rather than exported from OpenSCAD, because
+OpenSCAD has no B-Rep kernel. `parts/case/step/` and `parts/keycap_stem/step/` are that
+pipeline; each carries its own README and a `make` that builds, validates and (stems)
+diffs the result back against the `.scad`. The traps that cost real time:
+
+- ⚠️ **`Shape.scale()` scales about the SHAPE'S OWN LOCATION, not the origin** — and
+  `linear_extrude(scale=)` scales the whole profile about the extrusion axis, so an
+  off-centre sub-shape has to move inward as well as shrink. Left at the default the model
+  still builds, still passes `BRepCheck_Analyzer`, and its tapered feature simply tapers at
+  a third of the intended rate (measured: the stems' MX cross came out 4.074 instead of
+  3.987 at the far end, +0.5 % volume). Nothing errors. Pass `about=(0, 0, 0)`, and check a
+  tapered prism against its closed form — `A0·h·(1 − t + t²/3)` for a `1−t` taper — which is
+  what caught it.
+- **`loft` between two rectangles gives B-SPLINE sides; a convex hull of the 8 corners gives
+  real planes.** Same solid, different surfaces: OCCT's ThruSections returns even a planar
+  trapezoid as a degree-1 B-spline patch. Hulling the corners took the stem from 36 planar /
+  62 free-form faces to 82 / 16. Worth doing wherever the flats are datums. ⚠️ **More
+  ANALYTIC faces is not automatically better, and can be the tell of a bug**: a tapered
+  off-centre arc is an *oblique* cone (its centre moves as its radius shrinks), so it must
+  come back as a B-spline — the same model built with the `Shape.scale()` centre bug above
+  reported 13 tidy `Geom_Cone` faces, because holding each centre fixed makes them right
+  circular.
+- **OpenSCAD `hull()` of polyhedra is exactly reproducible** — the convex hull of polyhedra
+  is a polyhedron, so hull the vertices and merge the coplanar simplices back into n-gons
+  (`parts/keycap_stem/step/hull3d.py`). Skipping the merge exports the ~60 triangles scipy
+  hands back, which is the facet noise the whole exercise exists to remove.
+- ⚠️ **`BRepBndLib.Add_s` on an un-meshed shape boxes the underlying SURFACES, not the
+  trimmed faces**, so a cut whose prism runs past the solid inflates the bounding box — it
+  reported z_max 11.30 for a stem that tops out at 7.91, and the metal case by up to 2.1 mm.
+  Use `AddOptimal_s`. The printed bbox is what the recipes say to compare against the old
+  mesh, so it has to be the real one.
+- ⚠️ **build123d's drafting module cannot carry a full drawing sheet: OCCT's
+  `Compound.make_text` SEGFAULTS.** Deterministically, on the 14th label, once the sheet
+  holds the frame plus projections plus a section plus dimensions — with ~500 MB resident
+  and 14 GB free, and with none of the ingredients crashing on its own. `drawing.py` takes
+  geometry from build123d and **writes the SVG itself with real `<text>`** (the same shape
+  as `parts/case/step/plate_svg.py`); the file is 200 KB instead of megabytes and the
+  dimensions stay selectable. Related: `ExtensionLine` has no fallback for a label wider
+  than its dimension line and dies with `Can't determine direction of empty Edge or Wire`
+  several frames away.
+- ⚠️ **A drawing sheet laid out by hand-tuned offsets WILL collide, and the SVG source
+  never shows it — measure the sheet instead.** Two guards in `drawing.py`, both of which
+  found real defects that had survived every code reading:
+  - **`Sheet.group()`** collects the extent of everything drawn inside it, and view titles
+    are placed from that rather than at a guessed `dy`. The guesses were wrong in both
+    directions: V1's height dimension ran back across the part, and V2's title landed
+    nearer the view *below* it than the view it names — which on a first-angle sheet is
+    the part's own projection, so the label read as belonging to the wrong view. Titles go
+    **above** all views for the same reason. Anything added to a view now moves its title.
+  - ⚠️ **Sheet furniture that lives OUTSIDE the frame needs an exemption, and the
+    cheapest one is to record it separately.** The ISO 5457 zone letters (1–8 / A–F on
+    all four edges) sit in the margin by definition, so `check_inside_frame` failed
+    them all. It now reads the recorded text extents rather than re-parsing the emitted
+    SVG, which makes a `chrome=True` flag exempt from both the frame check and the
+    collision report for free instead of needing a second rule in each.
+  - ⚠️ **A cutting-plane mark is a SHORT stroke at each end, not a line across the
+    view** (ISO 128-30 shows the plane only at its ends and at changes of direction).
+    Drawn full length, the B-B mark ran the height of the plan view and through every
+    horizontal dimension on it; the thin long-dash-short-dash centre line is what joins
+    the two ends.
+  - ⚠️ **Anything drawn outside a view's `group()` is invisible to its title.** The
+    cutting-plane marks were, so the title was placed as though they were not there and
+    landed exactly on the "B" tag — a collision the report found and the code reading
+    would not.
+  - ⚠️ **A box moves as you draw into it**, so a multi-line caption must snapshot
+    `box[..][1]` before the loop; reading it again on line 2 puts that line below the
+    floor line 1 just pushed down.
+  - **`Sheet.report_collisions()`** lists every label overlapping another label or a
+    visible outline, and **`check_inside_frame()`** raises on anything off the border. Run
+    them on every build; six overlaps and three overflows were live when they were added.
+  - **Wrap the notes in CODE, and flow them into two columns.** Every note interpolates a
+    measured value, so a hand-wrapped line overruns silently the moment a number gains a
+    digit — the block had reached 2 mm off the frame. ⚠️ Two traps in the wrapper itself:
+    the wrap width must allow for the hanging indent or a continuation line runs into the
+    next column, and `text.split(" ")` eats the second space of a sentence gap, quietly
+    reflowing the whole sheet's spacing.
+  - **Line weight is an ISO 128 GROUP (0.35/0.18 or 0.5/0.25, thick : thin = 2 : 1), not a
+    free choice per line.** 0.5/0.25 is right for a sparse sheet and reads as ink on a
+    dense one; pick the group for the sheet and do not mix.
+    ⚠️ The collision report only tracks **thick** (visible-outline) paths, so a label
+    sitting on a dimension line or a thin isometric outline still passes — the 1.25U sheet
+    (whose leaders reach 4.4 mm further out than 1U's) had exactly that, and only the
+    render showed it. **Render both variants, not just the one you were editing.**
+- ⚠️ **A detail view of a face needs the face's own DATUM in it, and `cap_body` has
+  none.** The two stamp details drew a rectangle with two letters in it and nothing to
+  locate them from, because `stamp_face()` takes its face from `cap_body`, which has no
+  MX slot — `mx_stem` cuts the cross *after* tilting and raising the cap. Pull the same
+  cross back through that placement (`Rot(-angle) * Pos(0,0,-extra_len) * cross_cut(…)`)
+  and cut it into the cap body, and the slot appears in the detail. ⚠️ Keep placing the
+  stamp against the UNCUT face, as `_engraving` does — centring it in a face with a hole
+  in it moves it.
+- ⚠️ **A snap helper earns its keep by REFUSING.** The stem sheet's `snap` rejected a
+  dimension anchor — *"no section vertex within 0.6 of (-5.65, 4.52)"*, and only on the
+  wider variant — and the vertex pair confidently labelled "the flange" turned out to be
+  the inside of the pocket, which moves with `u_size`. Taking the nearest corner quietly
+  would have shipped a wrong label on one variant and a wrong anchor on the other.
+  Corollary: **name a dimension by what it MEASURES when you have not verified which
+  feature it is.**
+- ⚠️ **Derive a scale caption from the number that drew the view.** It was a literal
+  beside each view's title; the isometric's scale went 1.6 → 2.4 and the caption went on
+  saying 1.6:1 — on the one label a reader might actually measure against.
+- ⚠️ **Anchor every section dimension on a REAL VERTEX of the cut, and make the helper
+  raise when it cannot.** Dimensions computed from model constants are what "floating in
+  the air" looks like: the display seat is 1.10 below a top face tilted −7°, so the
+  height the arithmetic names is not a height anything on that cut actually has. `snap()`
+  takes the nearest section vertex and raises past a tolerance — a silent snap to the
+  wrong corner is a wrong number on a fabrication drawing, which is worse than a build
+  that stops.
+- ⚠️ **A dimension line is not automatically better than a leader — on a section it is
+  frequently worse.** A feature in the middle of a cut (the stem boss behind the outer
+  skirt) can only be dimensioned by dragging extension lines across hatched material to
+  reach the outside. A leader touches the vertex the number comes from and crosses
+  nothing.
+- ⚠️ **Get a cutting-plane arrow's direction from the section PLANE, not by eye.**
+  build123d's `Plane.XZ` carries its normal on **-Y** and `Plane.YZ` on **+X**, so two
+  sections of the same part are viewed from opposite senses and their arrows point
+  opposite ways on the same plan view. Reason it out of the plane's `z_dir`; a guess is
+  right half the time and a reversed arrow tells a fabricator to keep the wrong half.
+- ⚠️ **A dimension's LABEL will outlive the geometry it was written from — check it
+  against the model, not against the variable name.** The stem sheet carried "5.05 slot
+  depth" through three revisions; the number is the height of the stem *boss*, and the
+  slot is not bounded by it at all (the cross is cut clean through into the cap floor).
+  The real bound has no closed form — the cap floor is tilted — so it is now bisected
+  for. Same shape as the ink-measurement rule above: the source said `h_cyl` and the
+  label said what someone assumed `h_cyl` meant.
+- ⚠️ **Draw anything a reader could get backwards; do not describe it.** The stem sheet
+  said the second stamp was "mirrored … reads correctly from below" for three revisions.
+  It is `rotate([180, 0, 0])` — TURNED, not mirrored: it reads normally when the part is
+  flipped front-to-back, and appears upside down in a projected view-from-below. Nobody
+  caught it because an `S` is 180°-symmetric and only the `β` shows the difference. It
+  was caught the moment the view was actually drawn and the picture disagreed with the
+  caption.
+- ⚠️ **A STEP re-export rewrites the file even when the solid is byte-identical** (the
+  header carries a timestamp), so `make` always leaves both files "modified". Check
+  below the header before committing —
+  `diff <(git show HEAD:<path> | tail -n +12) <(tail -n +12 <path>)` — and `git checkout`
+  when it is empty, or you commit 1.3 MB of clock. Same rule as the STL facet-order note
+  above, different mechanism.
+- ⚠️ **Hatch a section with thin RECTANGLES, not lines.** A line lying exactly in the
+  section face's plane makes OCCT's edge-face common return **nothing at all**, silently —
+  so an empty hatch reads as "no solid here" rather than as an error. Below ~0.05 mm the
+  rectangle vanishes into the boolean tolerance too.
+- ⚠️ **A positive control needs its NEGATIVE half, or it passes for the wrong reason.**
+  `verify.py --self-test` widens the MX cross and asserts the checks catch it — the
+  discipline this file already preaches. Its cross-measurement half kept its own copy of
+  the expected span with the taper omitted, which is 0.0033 mm at z = 0.30, i.e. above
+  its own 2e-3 threshold: it therefore reported "caught" against a **correct** model and
+  asserted nothing. Two fixes, both general: give the two call sites **one** shared
+  definition so they cannot drift (`cross_span()`), and assert the comparison is
+  **quiet on the unmodified model** as well as loud on the broken one. Same family as
+  the gtest-ANSI and never-applied-mutation traps in `qmk_firmware/CLAUDE.md`: every one
+  of them is a harness reporting the answer that means "your checks are worthless" and
+  reading as success.
+- ⚠️ **Gate a check on the dependency IT needs, not on the one the block around it
+  needs.** The closed-form cross-prism check — the one that caught `Shape.scale()`
+  above — sat under `if not have_scad: continue`, so a machine without **openscad**
+  silently dropped the most valuable check in the file for an unrelated missing tool.
+- ⚠️ **Pin the engraving font by DIGEST, and remember the cache is shared.** The β/S
+  outlines cut into a steel cavity come from a `main` URL, so an upstream change
+  silently alters tool geometry; `font.py` verifies SHA-256 and stops with instructions.
+  ⚠️ `build_stems.sh` fetches the same URL into the same cache with no verification, so
+  a mismatched cache is **re-downloaded, not rejected** — rejecting would fail on a file
+  the sibling script legitimately put there. Only a fresh download that still mismatches
+  is fatal, and changing the digest means re-exporting both STEPs.
+- **Diff the re-authored solid against the `.scad` both ways, and prove the diff can fail.**
+  `parts/keycap_stem/step/verify.py` measures the critical feature off a section of the real
+  solid, compares volume + bbox against an OpenSCAD export of the same call, and runs
+  `A\B` and `B\A` through OpenSCAD; `--self-test` widens the MX cross by 0.10 mm and
+  asserts the checks reject it. That self-test also shows why the cheap check is not enough:
+  a 0.10 mm error on the one tolerance-critical feature is **+0.66 % volume**, i.e. it sails
+  through a 1 % volume gate while the boolean diff and the direct measurement both catch it.
+- ⚠️ **Engraved text is where three SILENT font traps live, and each one changes the glyph
+  a toolmaker would cut.** (1) OCCT does **not** read fontconfig, so `font="Noto"` — what
+  `keycap_stem.scad` asks for — prints *"unable to find font 'Noto'; 'FreeSans' is used
+  instead"* and carries on; (2) the real family name `"Noto Sans"` finds the file but
+  renders the **variable font's default instance**, not Bold; (3) OpenSCAD's `text(size=)`
+  is a **point size at 100 DPI** while build123d's `font_size` is the em in mm, so the same
+  nominal 3 comes out **100/72 = 1.389× larger** in OpenSCAD. Measured on one string: areas
+  4.068 / 2.330 / 3.563 mm² for the three spellings, and cap height 3.058 vs 2.202 mm for
+  the size convention. Pin the font to a FILE (`parts/keycap_stem/step/font.py`
+  instantiates `wght=700` and passes `font_path=`) and convert the size. Trap (3) is the
+  same shape as `fontconvert`'s `-s` being points at 141 DPI.
+- ⚠️ **Noto Sans draws U+03B1 single-storey and TAILLESS, so the engraved `α` reads as a
+  Latin `a`** — the printed plates have carried the ambiguous glyph all along, and it is a
+  font-design fact, not a substitution bug (the cmap maps `alpha` and `a` to different
+  glyphs; DejaVu's alpha has the usual right-hand tail, Noto's does not). Check a revision
+  marker by RENDERING the glyph, not by confirming the codepoint. The **moulded** stems
+  moved to `β` for this reason and a better one: they differ from the 3D-printed
+  prototypes, so `parts/keycap_stem/step/stem_model.py` `REVISION` is deliberately **not**
+  a mirror of `keycap_stem.scad:2` — the one constant there that isn't.
+- ⚠️ **`build_stems.sh --fetch-font` FETCHES AND THEN RE-EXPORTS ALL SIXTEEN PLATES.** Its
+  name and its help line both read as "install a font", and CLAUDE.md already warns that it
+  changes which Noto resolves — but with no variant names it also runs the whole export
+  loop, so committed meshes get rewritten against the new font. It rewrote three before
+  being killed (2026-08-19). Use `make -C parts/keycap_stem/step font`, which shares the
+  same cache path and stops after the download.
+- ⚠️ **Find a feature by what it IS, not by "the smallest face".** A section-measuring check
+  that took the smallest face in the plane silently started reporting the inside of an
+  engraved `α` — 0.90 × 1.30 with r0.60/0.84, entirely plausible numbers for an MX cross —
+  once the stamp was switched on, because the cap is tilted −7° and that sweeps the
+  engraving through the section height. Select on identity (an inner wire centred on the
+  stem axis, smaller than the stem OD), not on an ordering that happens to work today.
+- **Read a constant's MEANING out of the `.scad`, not its name.** Two in `keycap_stem.scad`
+  read as one thing and are another: `u_size = 1.22` is a half-width-extension dial fed to
+  `(u_size − 1)·2·5`, not a keycap unit count; and `mx_cross` 4.35 / `mx_cross_width` 1.4
+  describe the plus *before* `offset(r = −0.3)`, so the MX opening is **4.05 × 1.10**.
+  Quoting either to a fabricator is a 0.3 mm error on the part's one critical fit.
+
 ## Verifying a printed part
 
 **`parts/diffuser/build_frame.sh` is the whole loop** — regenerate the `.scad` from
@@ -280,6 +522,50 @@ single call, so a variant renders on its own: what you open in the GUI is exactl
 what gets exported, and `variants/<x>.scad` → `export/keycap_stem/<x>.stl` with no
 name munging. `parts/keycap_stem/build_stems.sh` walks the directory and holds no
 table of its own, so **adding a plate is adding a file**.
+
+⚠️ **That is the PRINTED part. The MOULDED one is a different pipeline** —
+`parts/keycap_stem/step/` re-authors the same `mx_stem()` in build123d and emits
+`export/keycap_stem/stem_S_{1U,1U25}.step` plus an A3 drawing, for the injection
+moulder. Only the `S` profile is exported, and it carries the **same** geometry as
+the printed plates with one deliberate difference: the revision stamp reads **β**,
+not the plates' α, because a moulded part differs from the printed prototypes and
+the two have to be tellable apart by eye (`stem_model.REVISION` is therefore the one
+constant in that file that is *not* a mirror of `keycap_stem.scad`). A change to
+`keycap_stem.scad` has to be re-exported on BOTH sides — `build_stems.sh` and
+`make -C parts/keycap_stem/step`; `make verify` there is what tells you the two
+still agree.
+
+- **The MX slot is deliberately TIGHTER than Cherry's published keycap slot — this
+  table is the reasoning, and it lives here rather than on the drawing.** It was a
+  block on the sheet for two revisions; it is background for us, not an instruction to
+  a moulder, so the drawing now carries only the conclusion (note 1: gauge against a
+  real switch stem, and the relief bulges are what make the fit work).
+
+  | | this part | Cherry keycap spec | real switch stem |
+  |---|---|---|---|
+  | slot across | 4.05 (bulges 4.11) | 4.10 +0.05 | — |
+  | arm width | 1.10 (bulges 1.21) | 1.17 ±0.02 | N/S 1.05–1.10, E/W 1.25–1.30 |
+  | corner fillet | R0.30 | not published | — |
+  | lead-in | 4.61 sq × 0.30 | not published | — |
+
+  Cherry's keycap slot spec via deskthority / telcontar.net. The switch stem's own cross
+  is **asymmetric** and Cherry's uniform 1.17 slot already interferes ~0.07 on two sides;
+  ours is tighter still, so the fit rests on the four relief bulges. Verify on a moulded
+  first article, not by CMM.
+- **Provenance, also deliberately off the sheet:** the moulded geometry is re-authored
+  from `keycap_stem.scad` in build123d, and `verify.py` is what keeps the two agreeing.
+  The STEP is the shape reference and the drawing governs tolerance, material and
+  finish — that division is worth stating to a fabricator, and *is* on the sheet; where
+  the shape came from is ours.
+- ⚠️ **The three 0.4 × 3.0 × 0.3 tabs are a FUNCTIONAL click feature, not a print
+  aid** — they stand 0.2 mm proud and are what makes the transparent relegendable
+  cap click on. An earlier reading of `keycap_stem.scad` had them down as a
+  sprued-plate artefact, and the first draft of the drawing invited the moulder to
+  delete them; both were wrong. They are named (`CLICK_TAB_*`), dimensioned on the
+  sheet, and note 10 says explicitly that they must not be removed. The general
+  lesson: a small feature with no comment is not thereby decoration — ask before
+  writing "optional" onto a fabrication drawing, because that is the one document
+  the shop will act on without asking back.
 
 - **`include`, not `use`, in a variant.** `use` imports modules but *not*
   variables, and the engraved `revision` is a variable. That is also why the
