@@ -9,6 +9,13 @@
 # target exists so you never reach for ../build_stems.sh --fetch-font, which fetches AND
 # re-exports all sixteen committed printed plates against the new font.
 
+# `&:` (grouped targets) is GNU Make 4.3+.  On 4.2 the line parses as an ordinary rule
+# with an extra target literally named `&`, which is silently WRONG rather than an
+# error -- so fail loudly instead.
+ifeq ($(filter grouped-target,$(.FEATURES)),)
+$(error GNU Make 4.3+ required for grouped targets; this is $(MAKE_VERSION))
+endif
+
 PY  ?= python3
 OUT ?= ../../export/keycap_stem
 STEPS = $(OUT)/stem_S_1U.step $(OUT)/stem_S_1U25.step
@@ -19,16 +26,15 @@ all: step drawing validate
 
 step: $(STEPS)
 
-# ⚠️ ONE stamp target, not two output targets sharing a recipe.  `$(STEPS): ; build.py`
-# reads as one rule and is two, so `make -j` can start build.py twice -- both writing
-# the same pair of STEP files.  The stamp is the single thing make schedules; the STEPs
-# just depend on it, and their own recipe is empty.
-.build-stamp: stem_model.py hull3d.py font.py build.py
+# ⚠️ A GROUPED target (`&:`), because build.py produces BOTH files in one run.
+# `$(STEPS): ; build.py` reads as one rule and is two, so `make -j` can start build.py
+# twice, both writing the same pair.  A `.build-stamp` fixes that and breaks something
+# else: with the stamp up to date and one STEP deleted, the STEPs' own recipe is a
+# no-op, so `make step` reports success and leaves the file missing for `validate` to
+# trip over (verified -- it does exactly that).  `&:` says "one invocation makes all of
+# these", which make schedules once AND re-runs when any output is missing.
+$(STEPS) &: stem_model.py hull3d.py font.py build.py
 	$(PY) build.py
-	@touch $@
-
-$(STEPS): .build-stamp
-	@:
 
 drawing: $(STEPS) drawing.py
 	$(PY) drawing.py
@@ -46,6 +52,6 @@ font:
 	$(PY) font.py
 
 clean:
-	rm -f $(OUT)/stem_S_1U*.step $(OUT)/stem_S_1U*_drawing.svg *.stl .build-stamp
+	rm -f $(OUT)/stem_S_1U*.step $(OUT)/stem_S_1U*_drawing.svg *.stl
 	rm -rf __pycache__
-	# .notosans-bold.ttf is left alone -- it is a cache, not an output
+	# .notosans-bold-*.ttf is left alone -- it is a cache, not an output

@@ -252,6 +252,19 @@ volume delta +0.657 % (still inside the 1 % gate: True -- so volume ALONE would 
   rather than rejected — that heals the shared path instead of failing on a file the
   other script legitimately put there. Only a fresh download that still mismatches is
   fatal. Changing the digest means re-exporting both STEPs: the engraving moves with it.
+- ⚠️ **`build.py` writes TWO files, so its rule is a GROUPED target (`&:`), not a stamp.**
+  `$(STEPS): ; build.py` reads as one rule and is two, so `make -j` can start build.py
+  twice. A `.build-stamp` fixes that and breaks something else: with the stamp current
+  and one STEP deleted, the STEPs' own recipe is a no-op, so `make step` reports success
+  and leaves the file missing for `validate` to trip over. `&:` (GNU Make 4.3+) says
+  "one invocation makes all of these" — scheduled once, and re-run when *any* output is
+  missing. The Makefile hard-errors on older make, because there `&:` parses as an
+  ordinary rule with a target literally named `&`: wrong, and silent.
+- ⚠️ **The instantiated Bold font is named after the SOURCE DIGEST.** `bold_path()`
+  returns it without consulting the cache, so under a fixed name a Bold instance made
+  before the pin existed — or from a superseded digest — keeps engraving while the
+  verified cache sits unused beside it. `.notosans-bold-<sha12>.ttf` makes a `SHA256`
+  change a different file, so it regenerates itself and needs no staleness bookkeeping.
 - ⚠️ **A STEP re-export rewrites the file even when the solid is identical** -- the
   header carries a timestamp, so `make step` always shows both files as modified. Before
   committing one, check whether anything below the header actually moved:

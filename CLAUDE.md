@@ -28,6 +28,19 @@ the duplicate. Two habits that would have caught it in seconds:
   hypothesis first and a *code* hypothesis second. Absent work leaves no
   fingerprints; failed work usually leaves some.
 
+⚠️ **It happened TWICE in one session, and the second form is the dangerous one: a
+rolled-back checkout silently invalidates the EXPERIMENT you run to check a review
+finding.** A reviewer reported that a Makefile rule left a deleted output unrepaired.
+The reproduction was run — carefully, twice — and the file came back both times, which
+reads as a confidently refuted finding. The tree was one commit back, so the test had
+exercised the *old* rule; against the real one the finding reproduces exactly. The tell
+was that the Makefile on disk did not contain the code the reviewer quoted. **Before
+reporting a finding as non-reproducing, confirm the code you just ran is the code the
+finding is about** — `git log --oneline -1` and a grep for the quoted line, which is two
+seconds against the round it would otherwise cost. `git show <sha>:<path>` returning
+*"fatal: invalid object name"* for your own commit is the unambiguous version of this
+signal.
+
 ## Layout
 
 **One folder per part group under `parts/`, and every generated mesh under

@@ -34,7 +34,6 @@ URL = ("https://raw.githubusercontent.com/google/fonts/main/ofl/notosans/"
 CACHE = os.path.join(os.environ.get("XDG_DATA_HOME",
                                     os.path.expanduser("~/.local/share")),
                      "fonts", "polykybd", "NotoSans.ttf")
-BOLD = os.path.join(HERE, ".notosans-bold.ttf")     # generated, gitignored
 WEIGHT = 700                                        # `Noto:style=Bold` in the .scad
 
 # ⚠️ **THE DIGEST IS THE PIN.**  The URL tracks `main`, so upstream can change these
@@ -54,6 +53,15 @@ WEIGHT = 700                                        # `Noto:style=Bold` in the .
 # re-export both STEPs -- the engraving geometry changes, so the committed files must.
 SHA256 = "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d"
 VERSION = "Noto Sans 2.015 (wght 100-900, wdth 62.5-100)"   # what that digest is
+
+# ⚠️ The instantiated Bold file is NAMED AFTER THE SOURCE DIGEST, and that is what
+# carries the pin through to the geometry.  `bold_path` returns this file without
+# consulting the cache at all, so under a fixed name a Bold instance generated
+# BEFORE the pin existed -- or from a since-superseded digest -- would go on
+# engraving silently, with the verified cache sitting unused beside it.  Putting
+# the digest in the name makes a SHA256 change a *different file*, so it
+# regenerates on its own and needs no staleness bookkeeping.  (CodeRabbit, PR #38.)
+BOLD = os.path.join(HERE, f".notosans-bold-{SHA256[:12]}.ttf")   # generated, gitignored
 
 
 def _digest(path):
