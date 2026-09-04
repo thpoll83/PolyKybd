@@ -327,5 +327,3 @@ From `RoHS/`:
 **→ See `CE-document-status.md`** for the full state of every compiled document and the remaining
 certificate questions (compliance matrix, PCB layers, Declaration of Conformity, the Winbond
 directive version, the Samsung page selection, and JUSHUO vs Hirose on J1–J36).
-- Some certificates in `RoHS/` are not referenced by any BOM line (e.g. Aerosemi MT9700, Fenghua RC-02W,
-  Prosperity MCS0530, Uniroyal 0603WAF); confirm whether they are alternates/DNPs or should be linked.

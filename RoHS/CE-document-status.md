@@ -130,9 +130,13 @@ shipped with:
   (Sunlord is still live for FB1/FB2 via its own part-specific document)
 - `2410010304_Texas-Instruments-SN74AHC1G125DCKR_C151890.pdf` — the old buffer
 
-Carried over from the decisions log and still open: Aerosemi MT9700, Fenghua RC-02W,
-Prosperity MCS0530, Uniroyal 0603WAF are referenced by no BOM line. Confirm whether they are
-alternates/DNPs or should be linked.
+Carried over from the decisions log and still open: Aerosemi MT9700, Fenghua RC-02W and
+Prosperity MCS0530 are referenced by no BOM line. Confirm whether they are alternates/DNPs or
+should be linked.
+
+**Uniroyal 0603WAF is no longer one of them** — answered 2026-09-04: evaluated as the `R18`
+replacement and rejected (its datasheet carries no RoHS statement), so
+`2206010216_UNI-ROYAL-…_C7250.pdf` stays unreferenced **deliberately**. See the decisions log.
 
 **Deleted:** `sn74lvc1g126.pdf` — a datasheet for a part that was never fitted.
 
