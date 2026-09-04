@@ -1,4 +1,4 @@
-"""A dimensioned technical drawing of each keycap stem variant, on an A4 sheet.
+"""A dimensioned technical drawing of each keycap stem variant, on an A3 sheet.
 
     python drawing.py       # -> ../../export/keycap_stem/stem_S_1U{,25}_drawing.svg
 
@@ -76,7 +76,7 @@ ARROW_L, ARROW_W = 2.0, 0.7
 
 # ------------------------------------------------------------------- svg plumbing
 class Sheet:
-    """An A4 sheet in millimetres, origin at the centre, +Y up."""
+    """An A3 sheet in millimetres, origin at the centre, +Y up."""
 
     def __init__(self):
         self.out = []

@@ -15,7 +15,8 @@ datum anyone can cut to.
 ## Build
 
 ```bash
-pip install build123d scipy          # OCP comes with build123d
+pip install build123d scipy fonttools   # OCP comes with build123d; fontTools
+                                        # instantiates the Bold font instance
 sudo apt-get install -y openscad     # only for `make verify`
 
 make                 # -> ../../export/keycap_stem/stem_S_1U{,25}.step + _drawing.svg, validated
@@ -231,6 +232,26 @@ volume delta +0.657 % (still inside the 1 % gate: True -- so volume ALONE would 
   lying on a dimension line or a thin isometric outline still passes — **render both
   variants**: the 1.25U leaders reach 4.4 mm further out and one collision existed only
   there.
+- ⚠️ **A self-test can pass for the wrong reason — assert the NEGATIVE control too.**
+  `verify.py --self-test` widens the MX cross and asserts the checks catch it, and its
+  cross-measurement half had its own copy of the expected span with the taper left out.
+  That copy is 0.0033 mm off at z = 0.30 — above its own 2e-3 threshold — so it reported
+  "caught" against a **correct** model and asserted nothing at all. The fix is both
+  halves of the usual pair: one `cross_span()` shared with check 1 so the two cannot
+  disagree, and an explicit assertion that the same comparison is *quiet* on the
+  unmodified model. A harness that cannot tell "the check fired" from "my arithmetic is
+  wrong" is the fail-open shape the self-test exists to rule out. (CodeRabbit, PR #38.)
+- ⚠️ **Gate on the dependency the check actually needs.** Check 1b — the cross prism
+  against its closed form, the one that caught the `Shape.scale()` centre bug — sat
+  below `if not have_scad: continue`, so a machine without **openscad** silently skipped
+  a check that is pure build123d and needs no openscad at all.
+- ⚠️ **The engraving font is pinned by SHA-256, and the cache is SHARED.** The outlines
+  cut into a steel cavity come from a `main` URL, so `font.py` verifies the bytes and
+  stops with instructions if upstream moves. ⚠️ `../build_stems.sh` fetches the same URL
+  into the same cache path with no verification, so a mismatched cache is re-downloaded
+  rather than rejected — that heals the shared path instead of failing on a file the
+  other script legitimately put there. Only a fresh download that still mismatches is
+  fatal. Changing the digest means re-exporting both STEPs: the engraving moves with it.
 - ⚠️ **A STEP re-export rewrites the file even when the solid is identical** -- the
   header carries a timestamp, so `make step` always shows both files as modified. Before
   committing one, check whether anything below the header actually moved:

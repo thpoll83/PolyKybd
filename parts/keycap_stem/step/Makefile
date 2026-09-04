@@ -19,8 +19,16 @@ all: step drawing validate
 
 step: $(STEPS)
 
-$(STEPS): stem_model.py hull3d.py font.py build.py
+# ⚠️ ONE stamp target, not two output targets sharing a recipe.  `$(STEPS): ; build.py`
+# reads as one rule and is two, so `make -j` can start build.py twice -- both writing
+# the same pair of STEP files.  The stamp is the single thing make schedules; the STEPs
+# just depend on it, and their own recipe is empty.
+.build-stamp: stem_model.py hull3d.py font.py build.py
 	$(PY) build.py
+	@touch $@
+
+$(STEPS): .build-stamp
+	@:
 
 drawing: $(STEPS) drawing.py
 	$(PY) drawing.py
@@ -38,6 +46,6 @@ font:
 	$(PY) font.py
 
 clean:
-	rm -f $(OUT)/stem_S_1U*.step $(OUT)/stem_S_1U*_drawing.svg *.stl
+	rm -f $(OUT)/stem_S_1U*.step $(OUT)/stem_S_1U*_drawing.svg *.stl .build-stamp
 	rm -rf __pycache__
 	# .notosans-bold.ttf is left alone -- it is a cache, not an output

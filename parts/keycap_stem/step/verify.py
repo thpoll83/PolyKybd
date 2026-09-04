@@ -104,6 +104,20 @@ def boolean_diff(a_stl, b_stl, tmp, tag):
 
 
 # ------------------------------------------------------------ cross measurement
+def cross_span(z, width=None):
+    """The expected outer span of the MX cross at height `z`.
+
+    ⚠️ ONE definition, shared by check 1 and the self-test.  They each had their own
+    and the two disagreed: the self-test's omitted the taper, which is 0.0033 mm at
+    z = 0.30 -- above its own 2e-3 threshold -- so it reported "caught" against a
+    correct model and asserted nothing at all.
+    """
+    width = sm.MX_CROSS_WIDTH - sm.MX_CROSS_FILLET if width is None else width
+    taper = 1 - 0.03 * z / (2 * sm.STEM_HEIGHT)
+    return 2 * max((sm.MX_CROSS - sm.MX_CROSS_FILLET) / 2 * taper,
+                   sm.MX_CROSS / 3 * taper + width * 1.1 / 2 * taper)
+
+
 def measure_cross(part, z):
     """Section the solid at `z` and measure the cross opening in the stem."""
     sec = part & Plane.XY.offset(z)
@@ -168,23 +182,34 @@ def self_test():
         bad = sm.build("S_1U", engrave=False)
         m = measure_cross(bad, sm.MX_CROSS_FILLET)
         bad_stl = os.path.join(tmp, "bad.stl")
+        m_good = measure_cross(good, sm.MX_CROSS_FILLET)
         export_stl(bad, bad_stl, tolerance=0.001, angular_tolerance=0.05)
         missing = boolean_diff(ref, bad_stl, tmp, "selftest")
         dv = abs(bad.volume - rs["volume"]) / rs["volume"]
     finally:
         sm.MX_CROSS_WIDTH = saved
 
+    # ⚠️ The expectation has to carry the SAME taper check 1 uses.  Without it the
+    # expectation is 0.0033 mm off at this z -- above the 2e-3 threshold on its own --
+    # so `caught_cross` came out True for a CORRECT model and this half of the
+    # self-test asserted nothing.  A harness that cannot tell "the check caught the
+    # widening" from "my arithmetic is wrong" is the fail-open shape the self-test
+    # exists to rule out, so it is now asserted in both directions below.
     good_w = (saved - sm.MX_CROSS_FILLET)
-    caught_cross = abs(m["y"] - 2 * max((sm.MX_CROSS - sm.MX_CROSS_FILLET) / 2,
-                                        sm.MX_CROSS / 3 + good_w * 1.1 / 2)) > 2e-3
+    want = cross_span(sm.MX_CROSS_FILLET, good_w)
+    caught_cross = m is not None and abs(m["y"] - want) > 2e-3
+    # The negative control: the same comparison must NOT fire on the unmodified model,
+    # or "caught" means nothing.
+    quiet_on_good = m_good is not None and abs(m_good["y"] - want) < 2e-3
     caught_diff = missing / good.volume > DIFF_TOLERANCE / 10
     print("=== self-test: MX cross widened by 0.10 mm ===")
     print(f"  cross measurement differs : {caught_cross}")
+    print(f"  ...and is quiet on the correct model : {quiet_on_good}")
     print(f"  SCAD \\ STEP grew to {missing:.4f} mm3 "
           f"({missing / good.volume * 100:.3f} %) : {caught_diff}")
     print(f"  volume delta {dv * 100:+.3f} % (still inside the 1 % gate: "
           f"{dv < VOLUME_TOLERANCE} -- so volume ALONE would MISS this)")
-    ok = caught_cross and caught_diff
+    ok = caught_cross and quiet_on_good and caught_diff
     print("\n=>", "PASS (the checks reject a wrong model)" if ok else "FAIL")
     return 0 if ok else 1
 
@@ -223,10 +248,18 @@ def main():
             exp_l = (sm.MX_CROSS - sm.MX_CROSS_FILLET) * taper
             exp_w = (sm.MX_CROSS_WIDTH - sm.MX_CROSS_FILLET) * taper
             bulge = (sm.MX_CROSS_WIDTH - sm.MX_CROSS_FILLET) * 1.1 / 2 * taper
-            exp_span = 2 * max(exp_l / 2, sm.MX_CROSS / 3 * taper + bulge)
+            exp_span = cross_span(z)
+            print(f"  cross @ z={z:<5} {what}")
+            # ⚠️ `measure_cross` returns None when it cannot FIND the cross, which is
+            # itself a failure of the thing under test -- report it, don't raise on
+            # `m["x"]`.  A verifier that crashes on a wrong model tells you less than
+            # one that says MISMATCH.
+            if m is None:
+                ok = False
+                print("    no cross found in the section  MISMATCH")
+                continue
             good = abs(m["x"] - exp_span) < 2e-3 and abs(m["y"] - exp_span) < 2e-3
             ok &= good
-            print(f"  cross @ z={z:<5} {what}")
             print(f"    arms {m['x']:.4f} x {m['y']:.4f} mm  (expect {exp_span:.4f}; "
                   f"flats {exp_l:.4f} x {exp_w:.4f})  {'OK' if good else 'MISMATCH'}")
             want = sorted({round(sm.MX_CROSS_FILLET * taper, 4),
@@ -237,9 +270,6 @@ def main():
             print(f"    arc radii {[f'{r:.4f}' for r in m['radii']]} mm  "
                   f"(expect {[f'{r:.4f}' for r in want]}: the r{sm.MX_CROSS_FILLET} "
                   f"corner fillet and the relief bulges)  {'OK' if good else 'MISMATCH'}")
-
-        if not have_scad:
-            continue
 
         # 1b -- the cross cut against its own closed form.  A tapered prism's section
         # area scales as k(z)^2, so V = A0 * h * (1 - t + t^2/3) for a 1-t taper.  This
@@ -255,6 +285,13 @@ def main():
         ok &= good
         print(f"  cross prism volume {got:.6f} vs closed form {want:.6f}  "
               f"{'OK' if good else 'MISMATCH'}")
+
+        # ⚠️ The openscad gate goes HERE, not above 1b.  Check 1b needs no openscad --
+        # it is pure build123d against a closed form -- and it is the check that caught
+        # the `Shape.scale()` centre bug, so skipping it on a machine without openscad
+        # dropped the most valuable check for an unrelated missing dependency.
+        if not have_scad:
+            continue
 
         # 2 -- volume + bbox against the .scad
         ref = scad_reference(name, tmp, engrave)

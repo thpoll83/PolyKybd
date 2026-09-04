@@ -301,6 +301,28 @@ diffs the result back against the `.scad`. The traps that cost real time:
   section face's plane makes OCCT's edge-face common return **nothing at all**, silently —
   so an empty hatch reads as "no solid here" rather than as an error. Below ~0.05 mm the
   rectangle vanishes into the boolean tolerance too.
+- ⚠️ **A positive control needs its NEGATIVE half, or it passes for the wrong reason.**
+  `verify.py --self-test` widens the MX cross and asserts the checks catch it — the
+  discipline this file already preaches. Its cross-measurement half kept its own copy of
+  the expected span with the taper omitted, which is 0.0033 mm at z = 0.30, i.e. above
+  its own 2e-3 threshold: it therefore reported "caught" against a **correct** model and
+  asserted nothing. Two fixes, both general: give the two call sites **one** shared
+  definition so they cannot drift (`cross_span()`), and assert the comparison is
+  **quiet on the unmodified model** as well as loud on the broken one. Same family as
+  the gtest-ANSI and never-applied-mutation traps in `qmk_firmware/CLAUDE.md`: every one
+  of them is a harness reporting the answer that means "your checks are worthless" and
+  reading as success.
+- ⚠️ **Gate a check on the dependency IT needs, not on the one the block around it
+  needs.** The closed-form cross-prism check — the one that caught `Shape.scale()`
+  above — sat under `if not have_scad: continue`, so a machine without **openscad**
+  silently dropped the most valuable check in the file for an unrelated missing tool.
+- ⚠️ **Pin the engraving font by DIGEST, and remember the cache is shared.** The β/S
+  outlines cut into a steel cavity come from a `main` URL, so an upstream change
+  silently alters tool geometry; `font.py` verifies SHA-256 and stops with instructions.
+  ⚠️ `build_stems.sh` fetches the same URL into the same cache with no verification, so
+  a mismatched cache is **re-downloaded, not rejected** — rejecting would fail on a file
+  the sibling script legitimately put there. Only a fresh download that still mismatches
+  is fatal, and changing the digest means re-exporting both STEPs.
 - **Diff the re-authored solid against the `.scad` both ways, and prove the diff can fail.**
   `parts/keycap_stem/step/verify.py` measures the critical feature off a section of the real
   solid, compares volume + bbox against an OpenSCAD export of the same call, and runs

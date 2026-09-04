@@ -131,7 +131,7 @@ parts/keycap_stem/step/
 ```
 
 ```bash
-pip install build123d scipy
+pip install build123d scipy fonttools
 make -C parts/keycap_stem/step            # step + drawing + validate
 make -C parts/keycap_stem/step verify     # needs openscad
 ```
@@ -158,10 +158,15 @@ precedent for SVG output. `drawing.py` should emit, per variant, an **A3 sheet**
   detail. A3 prints down to A4 at 71 % if a reader wants it that way. The view from **below** is
   not optional either — the inner switch-clearance chamfer appears in no other view.
 - **A section through the MX cross** — the feature that decides fit, so it needs its own view.
-- **Number every view** (V1…V8) and say the scale under each: a sheet with eight framings and
-  three different scales is unreferenceable in an email otherwise.
-- **Dimensioned**: cross arm 4.35 and width **1.4 ±?**, `MX_CYLINDER` 5.5, overall 15.5 × 15.475,
-  height 5.65, display seat 12.2 × 12.1 × 1.1, draft angles called out.
+- **Number every view** and say the scale under each: a sheet with ten framings and five
+  different scales is unreferenceable in an email otherwise. The shipped mapping is
+  **V1–V4** ortho (right / front / above / below), **V5/V6** sections A-A and B-B,
+  **V7** the MX cross at 10:1, **V8/V9** the two stamp details, **V10** isometric.
+- **Dimensioned**: the MX opening **4.05 × 1.10 ±0.03** with **R0.30** corner fillets and the
+  four relief bulges, `MX_CYLINDER` 5.5, overall 15.5 × 15.475, height 5.65, display seat
+  12.2 × 12.1 × 1.1, draft angles called out. ⚠️ **Not 4.35 × 1.4** — those are the
+  pre-`offset()` source constants, and the warning against quoting them to a moulder is
+  eighty lines above this list. It said so and this line did it anyway.
 - **A tolerance block.** ⚠️ This is the point of the whole exercise: **the drawing governs, the STEP
   conveys shape.** State a general tolerance (e.g. ±0.1) and tighten only the cross and the cover
   interface. Without it a toolmaker will cut to the model and the tolerance question resurfaces at
