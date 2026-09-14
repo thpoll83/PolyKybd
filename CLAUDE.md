@@ -65,335 +65,116 @@ verification into an error.
 
 ## KiCad boards (`poly_kybd/`)
 
-The `investigate-kicad-pcb` skill is the entry point for reading a board with Python —
-it carries the tool choices and the geometry pitfalls. What follows is board-level fact
-that outlives any one investigation.
+The `investigate-kicad-pcb` skill is the entry point for reading a board with Python.
+Board-level facts that outlive any one investigation — the shared-sheet consequences, the
+`poly_kb.pretty` extractions, the land-pattern reasoning and the re-route cost method —
+are [`docs/KICAD_BOARDS.md`](docs/KICAD_BOARDS.md). Four that will mislead you first:
 
 - ⚠️ **`*.kicad_sch` is authoritative. `poly_kb.net`, `poly_kb.xml` and the KiCad-5
-  `.sch` files are NOT.** Those are generated artifacts last touched **2024-02-17**
-  and they describe a design **two board revisions old** — they still name the LED as
-  `WS2812B-Mini` / `C527089`, which the BOM history shows was replaced by
-  `XL-3030RGBC` / `C5349958` between v3 and v3.2. Nothing labels them stale, so they
-  read as current: an AI reviewer read one in 2026-08 and filed a confident finding
-  that the live LED was the 2024 part. Either regenerate them or delete them; until
-  then, treat any answer sourced from them as two revisions out of date.
-
+  `.sch` files are NOT** — they are generated artifacts last touched 2024-02-17,
+  describing a design **two board revisions old**. Nothing labels them stale, so they
+  read as current; an AI reviewer filed a confident finding off one.
 - ⚠️ **Grep for the PART, not the reference designator.** Symbol *instances* store only
-  `reference` and `unit`; `Value`, `Footprint` and `MPN` are **symbol-level**, shared by
-  every instance of a hierarchical sheet. So `grep '"U24"' *.kicad_sch` finds nothing
-  while `U24` sits happily on the board — it is one of 14 instances of
-  `ni_buffer2.kicad_sch` (2 symbols → 28 SOT-353 buffers). This produced a false
-  "orphan footprints declared by no schematic" alarm in 2026-08, and it is the **same
-  mistake shape** as the `Nexperia595` one already recorded in
-  `PolyKybdHost/CLAUDE.md` — searching a designator instead of the thing itself. Once
-  was evidently not enough; search by value, `lib_id`, or footprint name.
-
-- **`MPN` here usually holds an LCSC CATALOG ID, not a manufacturer part number — that is
-  the convention, not a defect.** 39 of the 46 `MPN` properties in `rp_pico.kicad_sch` are
-  `C\d+` values identical to the part's own `LCSC` property; only five carry a real part
-  number, and the true manufacturer p/n normally lives in `Value` (e.g. `USB1` is
-  `MPN C165948` / `Value TYPE-C-31-M-12`). An AI reviewer flagged this as a fault introduced
-  by a PR that had only changed that symbol's `Footprint` (2026-08). Before filing it as a
-  finding, check whether the symbol's MPN differs from the merge base at all — and note the
-  fix, if one is ever wanted, is a board-wide sweep of ~39 symbols, not a one-part edit.
-
+  `reference` and `unit`; `Value`/`Footprint`/`MPN` are symbol-level and shared by every
+  instance of a hierarchical sheet, so `grep '"U24"'` finds nothing while U24 sits happily
+  on the board. Search by value, `lib_id`, or footprint name.
 - **A shared sheet cannot vary a part per board.** All four boards include
-  `rp_pico.kicad_sch`, so a `Value`/`Footprint` change to U9 lands on split72 *and*
-  split42 whether you want it or not. There is no per-instance override. If a variant
-  genuinely needs a different part, extract just that part into its own small
-  sub-sheet and fork **that** — forking `rp_pico.kicad_sch` duplicates 45 unrelated
-  symbols (46 placed symbols, 14.5k lines) to vary one, and they will drift.
-
+  `rp_pico.kicad_sch`, so a `Value`/`Footprint` change lands on split72 *and* split42.
+  There is no per-instance override.
 - ⚠️ **The JLC fab exporter builds the BOM from the BOARD's footprint properties, not the
-  schematic — and *Update PCB from Schematic* does not refresh them by default.** So a
-  correct schematic still exports a wrong BOM: after the U9 flash swap the `LCSC Part #`
-  column (the only column JLC orders from) still named the superseded Winbond
-  `C5440778` while the footprint and `Value` were the new Boya part — a DFN 4x4 ordered
-  onto an LGA-8 land. Sweep board-vs-schematic `MPN`/`LCSC`/`JLC`/`Manufacturer` after
-  every export. ⚠️ Also: the **36 hot-swap sockets sit on `F.Cu` in the board but mount
-  physically on the BOTTOM**, so every CPL export writes `top` for them and has to be
-  flipped by hand; the as-fabricated v3.2 CPL is the reference to diff against. Full
-  detail, plus the per-part decisions and the open D2 RoHS row, in
-  `poly_kybd/Gerber/PCB/FABRICATION-NOTES.md` — read it before re-exporting.
-
-- **A footprint the boards use but no library provides gets EXTRACTED from the board, not
-  hunted upstream.** Three now live in `poly_kb.pretty` this way: the USB-C connector
-  (`HRO-TYPE-C-31-M-12-Assembly`, upstream `EnvUSB` absent), `RP2040-QFN-56` (upstream
-  `keebio` absent) and `CP_EIA-3216-18_Kemet-A` — the last for a different reason worth
-  remembering: **the stock KiCad tantalum footprint has since grown ~0.05 mm**, enough to
-  produce clearance violations against routing already on the boards, so the as-built copy
-  is kept deliberately and must not be "updated" from the stock library without re-running
-  DRC. All three stay on **B.Cu**: every instance of each, on every board, is bottom-mounted,
-  so there is no front-side instance to copy and converting would need a front/back mirror
-  with nothing to verify against. The mechanics (local x,y but absolute pad angles, which
-  instance junk to strip, and comparing pad layers as a set) are in the
-  `investigate-kicad-pcb` skill.
-
-- **Land-pattern changes: the target is solder THICKNESS, not solder volume.** When
-  extending a pad (e.g. the LED toe, 0.9 → 1.25 mm in 2026-08), **paste must scale
-  with the copper** to hold the same ~0.050 mm³ of solder per mm² of pad. Insetting the
-  paste to "limit added solder" spreads roughly the same solder over more copper and
-  yields a joint **thinner than the one you started with** — the opposite of the
-  intent. A long *bare* copper toe with paste held well back is worse still: bare
-  copper adjacent to a joint **robs solder** outward and thins the fillet. Two
-  corollaries worth keeping:
-  - **Tombstoning is not a mechanism on a 4-pad part.** Drawbridging needs a
-    two-terminal component able to rotate about one end; four symmetric corner pads
-    constrain both axes, and extending all four equally preserves self-centering. The
-    real volume risk is float/tilt, which scales with how much you added (+39 % was
-    accepted, +111 % was not).
-  - **Extend the toe only, never the heel.** Keeping the heel fixed means nothing under
-    the package moves, so the paste over the terminal is unchanged and the addition
-    lands on bare toe copper where the fillet forms.
-
-- **Measure the re-route cost before picking a pad size.** Rectangle-to-segment against
-  every `F.Cu` track and via, own-net excluded, per board. For the 2026-08 LED toe that
-  turned "1 mm each?" into a table (1.40 → 21 pads/15 overlaps on the right board;
-  1.25 → 19/9) and picked the size. ⚠️ A 0.15 mm threshold is **stricter than the
-  board's own rule** — the **negative-clearance overlaps are the real count**, not the
-  flagged total. Field-confirmed: 5 flagged on the left board, 0 overlaps, and exactly
-  1 trace actually needed moving.
+  schematic — and *Update PCB from Schematic* does not refresh them by default.** A
+  correct schematic still exports a wrong BOM; that ordered a DFN part onto an LGA-8 land
+  once. Sweep board-vs-schematic `MPN`/`LCSC` after every export, and read
+  `poly_kybd/Gerber/PCB/FABRICATION-NOTES.md` first.
 
 ## OpenSCAD
 
-The CLI is **2021.01** (CGAL backend only — there is no Manifold backend here, so
-advice that starts "switch to Manifold" does not apply).
+The CLI is **2021.01** (CGAL backend only — there is no Manifold backend here, so advice
+that starts "switch to Manifold" does not apply).
 
 ```bash
-# export geometry -- no display needed
-openscad -o out.stl --export-format asciistl part.scad
-# render a PNG -- display IS needed
-xvfb-run -a openscad -o view.png --imgsize=1000,700 --camera=… --render=cgal part.scad
+openscad -o out.stl --export-format asciistl part.scad          # no display needed
+xvfb-run -a openscad -o view.png --render=cgal part.scad        # display IS needed
 ```
 
-⚠️ **To LOOK at a part, use the existing wrapper — don't hand-roll the flags.**
-`.claude/skills/explain-geometry-figure/scad_view.sh` takes `out.png model.scad
-[top|front|iso|<camera>]`, handles the missing-display and empty-PNG traps, and
-documents both `--camera` forms (7 numbers = gimbal `transx,y,z, rotx,y,z, dist`;
-6 = `eye, centre`). It was written for that skill's figures but is a general
-viewer. This is worth stating because it did not get used: a session spent ~12
-hand-built `--camera`/`--imgsize`/`--render` invocations, and five of those were
-wasted purely on camera geometry, while the wrapper sat one directory away in
-this repo (2026-08-17). Same lesson as the control-server deadlock in
-`PolyKybdHost/CLAUDE.md` — **the remedy was already in the tree and the failure
-was search, not design.** Search the skills for a helper before writing one —
-recursively, since each skill is its own directory:
+⚠️ **To LOOK at a part, use the existing wrapper** —
+`.claude/skills/explain-geometry-figure/scad_view.sh` takes
+`out.png model.scad [top|front|iso|<camera>]` and handles both camera forms. It did not
+get used once: a session spent ~12 hand-built invocations while the wrapper sat one
+directory away. **Search the skills for a helper before writing one** —
 `grep -RIn '<what you need>' .claude/skills/`.
 
-Four traps, each of which has cost real time:
+The camera traps, the render-framing rules and the full write-up are
+[`parts/OPENSCAD_NOTES.md`](parts/OPENSCAD_NOTES.md). Four that cost real time:
 
-- ⚠️ **`use <x.scad>` resolves relative to the .scad FILE, not the cwd.** A helper
-  written in the wrong directory silently finds no modules, so the top-level
-  object is empty — and for an intersection test that is **indistinguishable from
-  "no collision"**. It is a false PASS, not an error. **Always pair a
-  clearance/collision test with a positive control** that displaces the part a
-  couple of mm and confirms the test still reports an overlap;
-  `parts/diffuser/check_frame.py` does exactly this.
-- ⚠️ **openscad exits `1` for an EMPTY result and `1` for a syntax error alike**
-  (both verified). So the return code cannot classify the outcome: test for the
-  `Current top level object is empty` marker **first**, then treat any remaining
-  non-zero exit as a failure. Getting this backwards makes every clean
-  no-collision result raise.
-- **An empty top-level object writes no output file**, so a script that reuses one
-  output path across several runs will silently re-read the *previous* run's mesh.
-  Give each invocation its own output file.
-- **`$fn` set at your top level does NOT override a `$fn=` hard-coded inside a
-  module's primitives.** The facets you see are the facets the STL has.
-- ⚠️ **Framing a render: `--viewall` is loose, and `rotz` decides which model axis
-  runs across the screen.** Two separate camera traps, both of which read as a
-  broken model rather than a bad camera:
-  - **`--viewall --autocenter` fits the bounding SPHERE**, so a wide, shallow
-    subject (a row of parts) comes out small in a sea of margin — ~60% dead space
-    on a 5-stem lineup. Give an explicit `dist` instead and tune it; that is also
-    the ortho scale in the 7-number form.
-  - **The axis you `translate()` the row along must match the camera's `rotz`** —
-    the model's own layout, *not* the camera's `transx,y,z`. At `rotz=0` the
-    model's X runs horizontally on screen, at `rotz=90` it is Y. Lay a row out
-    along the wrong one and the parts stack in DEPTH — they overlap into a single
-    blob, which looks like a geometry failure, not a viewpoint. Cost three renders
-    before it was obvious.
-  - Useful `rotx` values, gimbal form: `0` top, `90` pure side, `180` straight up
-    at the underside (what "from the backside" usually means for a keycap),
-    `70`–`80` a 3/4 that still shows the top face.
-- **STL export is not byte-reproducible.** Facets come out in a different order
-  run to run, so re-exporting an *unchanged* design still rewrites the whole file
-  (23k lines of diff on one frame), burying any real change. Compare meshes as a
-  **sorted facet multiset**, not with `cmp` — and when only the order moved, put
-  the committed bytes back. `parts/diffuser/build_frame.sh` does this automatically;
-  the same trick is what proves a refactor left the solid alone.
+- ⚠️ **`use <x.scad>` resolves relative to the .scad FILE, not the cwd.** A helper in the
+  wrong directory finds no modules, so the top-level object is empty — and for a
+  collision test that is **indistinguishable from "no collision"**. It is a false PASS.
+  **Always pair a clearance test with a positive control** that displaces the part and
+  confirms the test still reports an overlap.
+- ⚠️ **openscad exits `1` for an EMPTY result and `1` for a syntax error alike.** Test for
+  the `Current top level object is empty` marker FIRST, then treat any remaining non-zero
+  exit as a failure — backwards, and every clean no-collision result raises.
+- **An empty top-level object writes no output file**, so a script reusing one output path
+  silently re-reads the previous run's mesh. Give each invocation its own file.
+- **STL export is not byte-reproducible** — facets come out in a different order run to
+  run. Compare meshes as a **sorted facet multiset**, never with `cmp`, and put the
+  committed bytes back when only the order moved.
 
-`use <>` imports a file's modules and **ignores its top-level geometry**, which is
-how `parts/diffuser/diffuser.scad` can render a whole print plate on its own while
-`diffuser_frame_*.scad` pulls just `diffuser()` out of it. ⚠️ `led_caps.scad`
-(the superseded earlier generation, kept beside it) defines `diffuser()`,
-`diffuser_cluster()` and `torus()` under the SAME names — so a file that
-`use <>`s both silently gets one set of definitions.
+## Verifying a printed part, and designing for resin
 
-## Verifying a printed part
+`parts/diffuser/build_frame.sh` is the whole loop — regenerate the `.scad` from the
+board, export every STL, then verify with `check_frame.py` (watertight, minimum wall,
+symmetry, plate trap, spacer clearance). Extend the verifier rather than re-deriving
+these by hand; it reports FAIL rather than raising, because a gating script that crashes
+on a malformed input tells you nothing about the design. The wall-thickness metric
+comparison, the three resin design rules and their measurements are
+[`parts/PRINT_VERIFICATION.md`](parts/PRINT_VERIFICATION.md). Five rules:
 
-**`parts/diffuser/build_frame.sh` is the whole loop** — regenerate the `.scad` from
-the board, export every STL (both frames plus both stacked ones), then verify.
-Run it after any edit to `diffuser.scad` or the generator; `--no-4x` skips the
-slow stacked exports for a quick iteration, `--check` verifies without exporting.
-Doing the steps by hand is where they get missed: a `diffuser.scad` change alters
-the stacked pair too, and forgetting them leaves those a revision behind.
-
-`parts/diffuser/check_frame.py` is the verifier it calls: watertight, minimum wall,
-left/right symmetry, plate trap, and spacer clearance in both flip orientations.
-It exits non-zero on failure. Extend it rather than re-deriving these by hand —
-and note it deliberately reports FAIL rather than raising, because a gating script
-that crashes on a malformed input tells you nothing about the design.
-
-**Picking a wall-thickness metric is itself the hard part** — three of them were
-wrong before the fourth answered the question:
-
-- **Inward-normal ray-cast on the STL** (what `min_wall()` does) is correct where
-  two walls are parallel, which covers a plate-like part in z. It is **wrong near
-  a corner**: the normal runs oblique to the far face and overestimates — it read
-  3.0 mm across a wedge whose real wall was 1.55 mm.
-- **Distance to the boundary is not thickness.** Every point near any edge scores
-  low, so the "thin area" comes out enormous and meaningless.
-- **For in-plane features, rasterise the profile and apply a morphological
-  opening** (a disc of radius t/2 must fit). That is the test a print service
-  runs, and it is what finally ranked an axis-aligned trim against a 45° one.
-- **Report the AREA below a threshold, not the infimum.** Every polygon corner
-  tapers to zero thickness at its apex, so the minimum is always ~0 and tells you
-  nothing; how *much* material is thin is the number that decides anything.
-
-⚠️ **Identify an orphan mesh by re-exporting the candidate source and comparing,
-not by its filename.** Two meshes committed as `case_ins_r2.stl` /
-`case_ins_leg_v0.stl` were grouped as a "case insert" on the strength of that
-prefix, and separately guessed to be the plate-to-PCB spacer (they are 3.8 mm
-thick, the same as `right_spacer()`, so the guess was reasonable). Re-exporting
-`legs.scad` settled it in one command: same 32202 facets, same 5263.0 mm³, same
-bounding box, 100 % of facets equal at 3 dp -- they are the **tenting legs**
-(`connected_8p()`, 8 legs in 4 mirrored pairs). Now `export/legs/legs_r2_8p.stl`.
-Float noise between OpenSCAD builds means an exact facet-set compare returns
-False, so compare rounded, or on count+volume+bbox.
+- **Picking a wall-thickness metric is itself the hard part.** An inward-normal ray-cast
+  is wrong near a corner (read 3.0 mm across a wall that was really 1.55); distance to
+  the boundary is not thickness. For in-plane features, **rasterise the profile and apply
+  a morphological opening** — the test a print service actually runs.
+- **Report the AREA below a threshold, not the infimum.** Every polygon corner tapers to
+  zero, so the minimum is always ~0 and tells you nothing.
+- ⚠️ **A print service refuses below 0.8 mm**, and three shapes generate a wafer without
+  looking like it: a tapered rim beside passing geometry, a `linear_extrude(scale=)`
+  chamfer whose ANGLE changes when you change its height, and a minor circular segment
+  ending in a knife edge.
+- **Engraved text always leaves sub-0.8 mm relief** between strokes — it is surface
+  relief, not a wall. Exclude the engraving zone from a wall check and assert the
+  residual separately, and tell the vendor the same.
+- ⚠️ **Identify an orphan mesh by RE-EXPORTING the candidate source and comparing**, not
+  by its filename. Two meshes were grouped as a "case insert" on a filename prefix and
+  turned out to be the tenting legs. Float noise means an exact facet compare returns
+  False — compare rounded, or on count+volume+bbox.
 
 ## Keycap stems
 
-**One `.scad` per plate in `parts/keycap_stem/variants/`, over a library that has
-NO top-level geometry** — `R1..R5` curved and `S1`/`S`/`S5` stepped, each in both
-`1U` and `1U25`, sixteen files. Each `include`s `../keycap_stem.scad` and makes a
-single call, so a variant renders on its own: what you open in the GUI is exactly
-what gets exported, and `variants/<x>.scad` → `export/keycap_stem/<x>.stl` with no
-name munging. `parts/keycap_stem/build_stems.sh` walks the directory and holds no
-table of its own, so **adding a plate is adding a file**.
+**One `.scad` per plate in `parts/keycap_stem/variants/`** — `R1..R5` curved and
+`S1`/`S`/`S5` stepped, each in `1U` and `1U25`, sixteen files over a library with **no
+top-level geometry**. `build_stems.sh` walks the directory and holds no table, so
+**adding a plate is adding a file**. The full notes — why `include` and not `use`, the
+engraving field width, the font traps and the re-export comparison method — are
+[`parts/keycap_stem/NOTES.md`](parts/keycap_stem/NOTES.md). Five things to know first:
 
-- **`include`, not `use`, in a variant.** `use` imports modules but *not*
-  variables, and the engraved `revision` is a variable. That is also why the
-  library must stay free of top-level geometry: `include` executes it, so
-  anything left there would appear in all sixteen plates. The photo arrangements
-  that used to sit at the bottom of the library live in `preview_stems.scad`
-  (a `view=` selector), which the build script does not export.
-- The profile set previously existed **only** as commented-out calls at the
-  bottom of `keycap_stem.scad`, exported by uncommenting one line at a time —
-  exactly how revAlpha shipped the stepped plates while the curved `R2..R5` were
-  missing for a whole revision.
-- ⚠️ **Verify a refactor here by re-exporting all sixteen — but expect only the
-  plates YOUR machine last exported to report `unchanged`.** The library/variant
-  split was checked this way and came back 8 `unchanged` / 8 `CHANGED`, split
-  exactly along who exported what: the eight R2–R5 plates (exported in this
-  container) were byte-identical, while R1 and the three S plates (exported by
-  the author on their own machine) differed. That is **not** a refactor failure —
-  each of the eight was confirmed to have an identical bounding box and a volume
-  within 0.04%, i.e. only the engraving is tessellated differently, per the Noto
-  note above. **Restore them (`git checkout`) rather than committing the
-  rewrite**, or you trade ~16 MB of diff for a re-tessellated `α`. A single plate
-  is not a sufficient check either way, since the two widths and the two profile
-  families take different code paths.
-
-- ⚠️ **The engraved revision silently renders in the WRONG FACE when Noto is
-  absent.** `keycap_stem.scad` asks for `text_font = "Noto:style=Bold"`, and
-  fontconfig substitutes (DejaVu Sans Bold in a bare container) rather than
-  failing — the plate exports fine and nothing in the output mentions it. In a
-  fresh container: `apt-get install fonts-noto-core`, or `build_stems.sh
-  --fetch-font` (per-user, no root). `build_stems.sh` warns via `fc-match`,
-  which is the only reason this is visible at all.
-- ⚠️ **WHICH Noto also matters — `--fetch-font` on a machine that already has one
-  will make every later re-export report `CHANGED`.** The engraving is tessellated
-  from whatever file fontconfig resolves, and the downloaded *variable* NotoSans
-  and a distro *static* NotoSans-Bold do not agree: measured 46192 vs 44912 facets
-  on the same plate, at identical volume and bounding box. That is a real
-  difference in the glyph outlines, well above what the settle rounding absorbs, so
-  it is not a bug in the comparison — it is the comparison working. Use
-  `--fetch-font` to acquire a Noto where there is none, not to "refresh" one.
-- **`R1` and `S1` are deliberately identical geometry** (angle 5, extra_len 0.5)
-  and differ only in the engraving. That is what the source says — don't "fix" it.
-- **The engraved label matches the FILENAME's profile token, in a 5-character
-  field.** `txt = str("R5   ", revision)` → the keycap reads `R5 α`. The field is
-  padded to 5 so the profile sits at one corner of the top face and the revision
-  at the other; keep that width when adding a profile (`"S    "`, `"R3   "`,
-  `"S1   "` are all 5). It was not always so: the curved plates engraved a **bare
-  digit** (`3 α`) while only the stepped ones carried a letter, so a printed stem
-  could not be matched to the file that made it and "is the flat one R3?" was a
-  question the part itself could not answer (2026-08-17). Note the consequence
-  that survives: **flat IS R3** — same parameters, same mesh, same engraving — so
-  a flat stem and a curved set's R3 are one interchangeable part, not two.
-- ⚠️ **A full `build_stems.sh` run exceeds a two-minute tool timeout** (16 plates,
-  CGAL each). Pass name filters (`build_stems.sh R1 R2 R3`) or run it in the
-  background. A run killed part-way is not harmless: it leaves the plates it did
-  reach re-exported, which then have to be told apart from a real change by bbox
-  and volume before being reverted.
-- ⚠️ **The README profile pictures draw the coordinate AXES on purpose — the
-  horizontal axis line is the REFERENCE the cap angle is read against, and
-  without it the images are five tilted caps with nothing to measure against.**
-  The originals were GUI screenshots with the axes visible; a first scripted
-  version dropped them as chrome and lost the one thing that made the pictures
-  informative (field, 2026-08-17). Two rules follow, and they pull in opposite
-  directions from the obvious instinct:
-  - **Never rotate the row to make the profile read better.** A view tilt adds
-    itself to every cap angle *without* moving the axes, so the picture reports
-    the wrong profile: a `rotate([8,0,0])` in `profile_row()` made **R3, which is
-    flat by definition, sit 8° nose-up on the axis**. Tilt the **camera** instead
-    (`CAM` in `render_profiles.sh`) — that moves the axes with it, so the reading
-    stays honest.
-  - **Render with `--view=axes`** (2021.01 supports `axes`, `scales`,
-    `crosshairs`, `edges`, `wireframe`). `scales` adds tick labels that render
-    rotated and unreadable at this camera, so `axes` alone is the useful one.
-  - The four views must share **one** camera or they cannot be compared —
-    a difference in elevation reads as a difference in profile. That is the
-    entire reason `render_profiles.sh` exists rather than a note about which
-    camera to use.
-- **Judge a regenerated plate by bbox + volume, not by facet count.** Text
-  tessellation depends on the installed font *version*, so the triangle count
-  moves between machines while the part is unchanged: regenerating the committed
-  revAlpha R1 here reproduced its bounding box to 0.01 mm and its volume to
-  0.01 % while the facet count differed by 2240. That comparison is what proved
-  the commented "Curved Profile" parameters really are the alpha R-set.
-
-## Design rules for resin-printed parts
-
-A print service will quote a **0.8 mm minimum / 1.5 mm recommended** wall and
-refuse the part if it measures below. Three ways this bit the diffuser frame:
-
-- ⚠️ **A tapered rim beside passing geometry leaves a wafer.** A
-  `linear_extrude(scale=)` rim sweeps its radius over its height, so *any*
-  neighbouring wall whose edge lands anywhere in that band runs tangent to the
-  slope at some height and leaves a near-zero-thickness sliver. On the frame this
-  measured **0.043 mm** where a web stem passed a diffuser's bottom cap — an order
-  of magnitude thinner than what the vendor complained about, and invisible until
-  measured. **Use a vertical rim wherever other geometry passes close**: one
-  radius means a neighbour can only clear it or merge with it.
-- ⚠️ **`linear_extrude(scale=)` chamfers change ANGLE if you change their
-  height.** The inward step is proportional to the *profile*, not the height, so
-  thickening a flange by raising the chamfer layer lays the chamfer down (34.9° →
-  21.8° when a flange went 1.0 → 1.5 mm). Keep the chamfer layer at its original
-  height and put the extra thickness in the straight layer.
-- ⚠️ **A minor circular segment ends in a knife edge.** `circle(d)` cut by a chord
-  *above* centre runs out to nothing; the last fraction of a millimetre is what a
-  vendor measures and rejects. Square the end off — and prefer a **cut that leans
-  in plan** over an axis-aligned one: leaning opens the corner against the chord
-  from 90° to 135° and spends the cut on the shallow strip, which measured **half
-  the sub-0.8 mm area while keeping 4.4% more material**.
-
-**Engraved text always leaves sub-0.8 mm relief** between glyph strokes — no pad
-size fixes it, because legible text at any size that fits has strokes closer
-together than the threshold. It is **surface relief, not a wall** (the full web
-runs continuous underneath). Say so explicitly: exclude the engraving zone from a
-wall check and assert the residual material separately, rather than reporting a
-flattering number, and tell the vendor the same when they flag it.
+- **`R1` and `S1` are deliberately identical geometry**, differing only in the engraving;
+  and **flat IS R3** — same parameters, same mesh, so a flat stem and a curved set's R3
+  are one interchangeable part.
+- ⚠️ **The engraved revision silently renders in the WRONG FACE when Noto is absent** —
+  fontconfig substitutes rather than failing, and nothing in the output mentions it.
+  `build_stems.sh --fetch-font`, but ⚠️ **use it to acquire a Noto where there is none,
+  never to "refresh" one**: a variable NotoSans and a static NotoSans-Bold disagree, and
+  every later re-export then reports CHANGED.
+- **Judge a regenerated plate by bbox + volume, not by facet count** — text tessellation
+  depends on the installed font version, so the triangle count moves between machines
+  while the part is unchanged.
+- ⚠️ **The README profile pictures draw the coordinate AXES on purpose** — the horizontal
+  axis is the REFERENCE the cap angle is read against. **Never rotate the row to make the
+  profile read better**: a view tilt adds itself to every cap angle without moving the
+  axes, which made R3, flat by definition, sit 8° nose-up. Tilt the **camera** instead.
+- ⚠️ **A full `build_stems.sh` run exceeds a two-minute tool timeout.** Pass name filters
+  or background it; a run killed part-way leaves the plates it reached re-exported.
 
 ## Drawing a finding
 
