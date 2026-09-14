@@ -129,7 +129,7 @@ symmetry, plate trap, spacer clearance). Extend the verifier rather than re-deri
 these by hand; it reports FAIL rather than raising, because a gating script that crashes
 on a malformed input tells you nothing about the design. The wall-thickness metric
 comparison, the three resin design rules and their measurements are
-[`parts/PRINT_VERIFICATION.md`](parts/PRINT_VERIFICATION.md). Four rules:
+[`parts/PRINT_VERIFICATION.md`](parts/PRINT_VERIFICATION.md). Five rules:
 
 - **Picking a wall-thickness metric is itself the hard part.** An inward-normal ray-cast
   is wrong near a corner (read 3.0 mm across a wall that was really 1.55); distance to
@@ -156,7 +156,7 @@ comparison, the three resin design rules and their measurements are
 top-level geometry**. `build_stems.sh` walks the directory and holds no table, so
 **adding a plate is adding a file**. The full notes — why `include` and not `use`, the
 engraving field width, the font traps and the re-export comparison method — are
-[`parts/keycap_stem/NOTES.md`](parts/keycap_stem/NOTES.md). Four things to know first:
+[`parts/keycap_stem/NOTES.md`](parts/keycap_stem/NOTES.md). Five things to know first:
 
 - **`R1` and `S1` are deliberately identical geometry**, differing only in the engraving;
   and **flat IS R3** — same parameters, same mesh, so a flat stem and a curved set's R3

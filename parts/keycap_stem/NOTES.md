@@ -1,6 +1,7 @@
 # Keycap stems — plates, engraving and re-export
 
-Moved out of `CLAUDE.md` 2026-09-14. Verbatim.
+Extracted from `CLAUDE.md` 2026-09-14. The prose is unchanged; only heading levels
+and relative links were adjusted to suit a standalone file.
 
 ## Keycap stems
 
@@ -30,7 +31,7 @@ table of its own, so **adding a plate is adding a file**.
   the author on their own machine) differed. That is **not** a refactor failure —
   each of the eight was confirmed to have an identical bounding box and a volume
   within 0.04%, i.e. only the engraving is tessellated differently, per the Noto
-  note above. **Restore them (`git checkout`) rather than committing the
+  note below (it predates this extraction). **Restore them (`git checkout`) rather than committing the
   rewrite**, or you trade ~16 MB of diff for a re-tessellated `α`. A single plate
   is not a sufficient check either way, since the two widths and the two profile
   families take different code paths.

@@ -1,6 +1,7 @@
 # Verifying a printed part
 
-Moved out of `CLAUDE.md` 2026-09-14. Verbatim.
+Extracted from `CLAUDE.md` 2026-09-14. The prose is unchanged; only heading levels
+and relative links were adjusted to suit a standalone file.
 
 ## Verifying a printed part
 

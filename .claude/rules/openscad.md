@@ -1,8 +1,6 @@
 ---
 paths:
-  - "parts/**/*.scad"
-  - "parts/**/*.py"
-  - "parts/**/*.sh"
+  - "parts/**"
 ---
 # Working on a printed part
 
