@@ -78910,7 +78910,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C227547.pdf"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -78934,7 +78934,7 @@
 				)
 			)
 		)
-		(property "MPN" "C141675"
+		(property "MPN" "C227547"
 			(at 69.43 90.7796 0)
 			(layer "B.Fab")
 			(hide yes)
@@ -78947,7 +78947,7 @@
 				(justify mirror)
 			)
 		)
-		(property "JLC" "C141675"
+		(property "JLC" "C227547"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -78961,7 +78961,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C141675"
+		(property "LCSC" "C227547"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "B.Fab")

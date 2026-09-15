@@ -13,10 +13,10 @@ This file records *what is still outstanding*.
 | Document | State | Notes |
 |---|---|---|
 | `PolyKybd-Schematics.pdf` | ✅ **current** | Re-exported with kicad-cli 9.0 and re-composed. Verified: buffer sheet shows `74AHC1G125`, RP2040 sheet shows `W25Q64JVXGIM` |
-| `PolyKybd-RoHS-Appendix.pdf` | ✅ **current** | 113 pages, no missing documents. Vishay §2, Nexperia §19 (U4–U8 + U12–U25), Winbond §20 |
+| `PolyKybd-RoHS-Appendix.pdf` | ✅ **current** | Rebuilt 2026-09-04: **119 pages**, 26 sections, no missing documents. ⚠️ It had been stale since 2026-08-24 — the D2 evidence swap edited the `.xls` without rebuilding, so the shipped appendix still carried the superseded `ROHS3HOTTECH.pdf` instead of the 2025 Hottech CTI report. **Rebuild the appendix in the same change as any `.xls` edit.** |
 | `schematics/*.pdf` (7 per-sheet) | ✅ **current** | Re-exported; page counts unchanged, so composition is like-for-like |
-| `parts-to-pdf-reference.xls` | ✅ **current** | Source of truth. 44×8 preserved; every referenced certificate exists on disk |
-| `schematics/parts.csv` | ✅ **current** | |
+| `parts-to-pdf-reference.xls` | ✅ **current** | Source of truth. 44×8 preserved; every referenced certificate exists on disk. Last edited 2026-09-04 (R18 → Yageo AC `C227547`; `R3,R4,R7,R9` onto the AC datasheet; `R5,R6,R16,R19,R21` corrected to Vishay) |
+| `schematics/parts.csv` | ✅ **current** | The technical file's BOM (per `CE-Technical-File-Checklist.md`) — **not** a generator input; no script reads it. Corrected 2026-09-04: R18 → C227547, and three rows that disagreed with the board (`R5,R6,R16,R19,R21` were listed as Yageo but are Vishay; `R10,R11,R30` and `D5` carried another part's datasheet URL) |
 
 ### Still stale
 
@@ -130,9 +130,13 @@ shipped with:
   (Sunlord is still live for FB1/FB2 via its own part-specific document)
 - `2410010304_Texas-Instruments-SN74AHC1G125DCKR_C151890.pdf` — the old buffer
 
-Carried over from the decisions log and still open: Aerosemi MT9700, Fenghua RC-02W,
-Prosperity MCS0530, Uniroyal 0603WAF are referenced by no BOM line. Confirm whether they are
-alternates/DNPs or should be linked.
+Carried over from the decisions log and still open: Aerosemi MT9700, Fenghua RC-02W and
+Prosperity MCS0530 are referenced by no BOM line. Confirm whether they are alternates/DNPs or
+should be linked.
+
+**Uniroyal 0603WAF is no longer one of them** — answered 2026-09-04: evaluated as the `R18`
+replacement and rejected (its datasheet carries no RoHS statement), so
+`2206010216_UNI-ROYAL-…_C7250.pdf` stays unreferenced **deliberately**. See the decisions log.
 
 **Deleted:** `sn74lvc1g126.pdf` — a datasheet for a part that was never fitted.
 
