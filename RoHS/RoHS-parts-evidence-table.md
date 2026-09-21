@@ -1,17 +1,21 @@
 # RoHS evidence — parts to certificates
 
 **The table rows** are generated from **`parts-to-pdf-reference.xls`** (the source of truth),
-as of 2026-08-24. Regenerate rather than hand-edit; edit the `.xls` and re-derive.
+as of 2026-09-04. Regenerate rather than hand-edit; edit the `.xls` and re-derive.
+(The `LCSC` column has no counterpart in the `.xls` and is maintained alongside it,
+against the board files.)
 
 ⚠️ **The prose sections below the table are hand-maintained and carry their own, later dates.**
 The `.xls` columns cannot express them, so they are not covered by the regenerate rule and are
-edited in place — most recently 2026-09-02 (the D2 Hottech entity decision). Read the date above
-as applying to the rows only; a decision dated after it is not a stale-vs-fresh contradiction.
+edited in place — most recently 2026-09-04 (the Yageo AC/RC split and the Vishay
+scope). Read the date above as applying to the rows only; a decision dated after it
+is not a stale-vs-fresh contradiction.
 
 Standard applied throughout: **Directive 2011/65/EU as amended by (EU) 2015/863.**
 
-All 43 referenced evidence files are present in `RoHS/`. Every **populated** part has
-evidence; the only rows without a certificate are unpopulated or bare-copper items
+All 43 rows resolve to evidence files present in `RoHS/` (25 distinct documents).
+Every **populated** part has evidence; the only rows without a certificate are
+unpopulated or bare-copper items
 (`DBG1`, `DBG3`, `H1-H9`, `J38`, `JP1`, `SW1`, `TP1`, `TP14`) — headers not fitted,
 mounting holes and test points covered by the PCB substrate evidence, and `SW1` is DNP.
 
@@ -31,7 +35,7 @@ mounting holes and test points covered by the PCB substrate evidence, and `SW1` 
 | `D1` | Red 0805 C84256 | 1 | NationStar | C84256 | `2409272203_Foshan-NationStar-Optoelectronics-NCD0805R1_C84256.pdf` |  |
 | `D1_1-D1_36,D12` | 1N4148WSX | 37 | Shenzhen JingYang | C6423741 | `2405091035_Shenzhen-JingYang-1N4148WSX_C6423741.pdf` |  |
 | `D2` | 1N5819WS | 1 | Hottech | C191023 | `ROHS-2025-HottechElectronics-CTI-A225024736310100101.pdf` | CTI report 17-Apr-2025, covers SOD-323; supersedes ROHS3HOTTECH.pdf (SOD-123 only) |
-| `D5` | Green 0805 C2297 | 1 | Hubei KENTO | C2293 | `C2297.pdf` |  |
+| `D5` | Green 0805 C2297 | 1 | Hubei KENTO | C2297 | `C2297.pdf` | LCSC code corrected from C2293; board, both BOM exports and the value string all say C2297 |
 | `D6` | Yellow 0805 C2296 | 1 | Hubei KENTO | C2296 | `1806151129_Hubei-KENTO-Elec-KT-0805Y_C2296.pdf` |  |
 | **Ferrite beads** | | | | | | |
 | `FB1,FB2` | GZ2012D601TF | 2 | Sunlord | C1017 | `2310301640_Sunlord-GZ2012D601TF_C1017.pdf` |  |
@@ -46,16 +50,16 @@ mounting holes and test points covered by the PCB substrate evidence, and `SW1` 
 | `LED1-LED36` | XL-3030RGBC | 36 | Xinglight | C5349958 | `2402181502_XINGLIGHT-XL-3030RGBC-WS2812B_C5349958.pdf` |  |
 | **Resistors** | | | | | | |
 | `R1,R2` | 22 0603 | 2 | Yageo | C108405 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
-| `R10,R11,R30` | 390k 0603 1% | 3 | Yageo | C114659 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
+| `R10,R11,R30` | 390k 0603 1% | 3 | Yageo | C137735 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` | LCSC code corrected from C114659 (that is R13's 12k part); evidence unchanged |
 | `R12,R17` | 150k 0603 | 2 | Yageo | C114660 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
 | `R13` | 12k 0603 | 1 | Yageo | C114659 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
 | `R14` | 680k 0603 | 1 | Yageo | C137690 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
-| `R18` | 10M 0603 | 1 | Yageo | C141675 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
+| `R18` | 10M 0603 | 1 | Yageo | C227547 | `50630577_YAGEO-AC0603FR-0710ML_C227547.pdf` | AC0603FR-0710ML — substituted for the out-of-stock RC0603JR (C141675), 2026-09-04 |
 | `R1_1-R1_36,R15,R20,R25` | 10k 0402 | 39 | Yageo | C60490 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
 | `R22,R23` | 27 0603 | 2 | Yageo | C137753 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
 | `R24` | 2M2 0603 | 1 | Yageo | C137747 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
-| `R3,R4,R7,R9` | 5.1K 0402 | 4 | Yageo | C144745 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
-| `R5,R6,R16,R19,R21` | 1k 0402 | 5 | Yageo | C144789 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
+| `R3,R4,R7,R9` | 5.1K 0402 | 4 | Yageo | C144745 | `50630577_YAGEO-AC0603FR-0710ML_C227547.pdf` | AC0402FR-075K1L — AC series, was mis-cited against the RC document |
+| `R5,R6,R16,R19,R21` | 1k 0402 | 5 | Vishay | C71623 | `vishay-rohs-20250901.pdf` | CRCW04021K00FKED — the board has always been Vishay; the Yageo C144789 entry was wrong |
 | `R8` | 5.6K 0402 | 1 | Yageo | C163457 | `2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf` |  |
 | **Switches / sockets** | | | | | | |
 | `SW2,SW3` | EVQPUC02K | 2 | Panasonic | C79174 | `panasonic_rohs_2ma_2000379.pdf` |  |
@@ -80,11 +84,29 @@ deliberate, not a mismatched reference:
   series-wide part list. Verified to include `CL05C270 J B 5NNN` (= `C86287`, the
   `C3,C8` part), so the 2026-08 switch of `C3,C8` from FH `C1557` to Samsung `C86287`
   needed **no new evidence**.
-- **Yageo resistors** all cite `…YAGEO-RC0603JR-0710ML_C141675.pdf` for the same reason.
+- **Yageo resistors** cite one of two Yageo documents, by series: the **RC** parts cite
+  `…YAGEO-RC0603JR-0710ML_C141675.pdf` and the **AC** parts (`R18` 10M, `R3,R4,R7,R9`
+  5.1K) cite `…YAGEO-AC0603FR-0710ML_C227547.pdf`. Both are series-wide and cover every
+  size and value fitted here — the AC datasheet's 0603 range is `10Ω ≤ R ≤ 10MΩ` at ±1%,
+  and it carries **“RoHS compliant & Halogen free”** on its cover, with lead in the
+  electrodes/resistor element/glass declared under the RoHS exemptions.
 - **Nexperia logic** (`U4-U8`, `U12-U25`) cites the company-wide RoHS statement.
+- **Vishay** (`C4_1-C4_36,C33,C34` tantalums and `R5,R6,R16,R19,R21` 1k thick-film)
+  cites `vishay-rohs-20250901.pdf`, which is a **company-wide** statement — Vishay
+  “hereby certifies that all its products that are identified as RoHS compliant satisfy
+  the requirements of the above-listed directives” (2011/65/EU, (EU) 2015/863; 1 Sept
+  2025) — so it covers `CRCW04021K00FKED` without a part-specific document.
 
-## Two rows carry history worth keeping
+## Rows that carry history worth keeping
 
+- **`R18`** — changed 2026-09-04 from Yageo `RC0603JR-0710ML` / `C141675` (±5%) to Yageo
+  `AC0603FR-0710ML` / `C227547` (±1%, AEC-Q200), because the RC part went out of stock at
+  JLC. Same manufacturer, same 10M 0603 value, tighter tolerance; the AC series was already
+  on the board (`R3,R4,R7,R9`). Evidence moved to the AC datasheet in the same change.
+- **`R5,R6,R16,R19,R21`** — the row said Yageo `C144789` until 2026-09-04; the board has
+  always carried Vishay `CRCW04021K00FKED` / `C71623`. Corrected against the board files.
+  This was a **bookkeeping** error, not a sourcing one: the part fitted never changed, and
+  the correct evidence (`vishay-rohs-20250901.pdf`) was already in `RoHS/` for the tantalums.
 - **`U9`** — changed 2026-08 from Winbond `W25Q64JVXGIM` (evidence was
   `winbond-W25Q64JV-rohs.png`) to BOYAMICRO `BY25Q64ESCIG(R)` / `C50176394`.
 - **`D2`** — evidence replaced 2026-08-24. The previous `ROHS3HOTTECH.pdf` (2020) was

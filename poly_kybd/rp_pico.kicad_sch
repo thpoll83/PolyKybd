@@ -13363,7 +13363,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603JR-0710ML_C141675.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/C227547.pdf"
 			(at 243.205 67.31 0)
 			(effects
 				(font
@@ -13381,7 +13381,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "C141675"
+		(property "MPN" "C227547"
 			(at 243.205 67.31 0)
 			(effects
 				(font
@@ -13390,7 +13390,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLC" "C141675"
+		(property "JLC" "C227547"
 			(at 243.205 67.31 0)
 			(effects
 				(font
@@ -13399,7 +13399,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C141675"
+		(property "LCSC" "C227547"
 			(at 243.205 67.31 0)
 			(effects
 				(font
