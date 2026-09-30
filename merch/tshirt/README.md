@@ -9,7 +9,7 @@ Print-ready vector artwork for PolyKybd T-shirts. The SVGs have physical `mm` si
 | `polykybd-tee-2g-keycap-grid.svg` | 280 × 168 mm | 1 (`#2f7bf6`) |
 | `polykybd-tee-2g-wordmark.svg` | 79.6 × 15.8 mm | 1 |
 
-The grid has 160 keycaps in 16 columns, each with a different glyph from 19 scripts. It has 24 Latin glyphs (accents, strokes, ligatures), 11 Arabic, 5 Cherokee, and 8 from each other script. The glyphs were picked to carry no bad meaning when read alone, and no two look alike across scripts. The glyph is knocked out of the keycap, so the shirt colour shows through. The wordmark "PolyKybd" goes above the grid.
+The grid has 160 keycaps in 16 columns, each with a different glyph from 18 scripts. It has 24 Latin glyphs (accents, strokes, ligatures), 11 Arabic, 5 Cherokee, and 8 from each of the other 15 scripts. The glyphs were picked to carry no bad meaning when read alone, and no two look alike across scripts. The glyph is knocked out of the keycap, so the shirt colour shows through. The wordmark "PolyKybd" goes above the grid.
 
 ## POLY blocks
 
@@ -26,7 +26,7 @@ A 2 × 2 keycap block spelling POLY. Each file is 33.25 × 32 mm and uses one co
 
 ## Colour bursts (for a black shirt)
 
-The 160 keycaps plus several hundred filler keycaps, with depth shading: front keycaps are bigger and brighter. Tiny coloured sparkles follow the outline of the design, so the print shows no rectangular edge. Glyph tops point toward the centre. These need DTG or DTF printing, since each uses 36–39 fill colours.
+The 160 keycaps plus several hundred filler keycaps, with depth shading: front keycaps are bigger and brighter. Tiny coloured sparkles follow the outline of the design, so the print shows no rectangular edge. Glyph tops point toward the centre. These need DTG or DTF printing, since each uses 35–39 fill colours.
 
 | File | Size | Shape |
 |------|------|-------|
