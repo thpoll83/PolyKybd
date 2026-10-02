@@ -53,6 +53,16 @@ The rules that bind code *outside* these folders are in
   because its path says `poly_kybd/` and its name says `logo`. Check by content:
   the P is a SINGLE `<path>`, identical to the docs site's `polytasten-logo.svg` and
   its favicon, and 4 KB against the other's 26 KB.
+  - ⚠️ **Generalises past logos: when something is reported missing but the code
+    plainly draws it, test ASSET IDENTITY before rewriting the MECHANISM.** "Use the
+    PolyKybd logo" was read as *the logo is not reaching the page*, and answered by
+    rebuilding the whole embed path on a hypothesis — that some viewer had dropped the
+    nested `<svg>` — which could not be tested here, since the only renderer in the
+    container drew it correctly. That rewrite was worth having on its own merits and was
+    **not the fix**; the next sentence from the user ("I wanted the P") was. The cheap
+    check comes first: render the candidate assets side by side and ask *which* of them
+    the page is showing. A mechanism you cannot reproduce failing is a weak hypothesis
+    however plausible it reads.
 - ⚠️ **Do not emit a nested `<svg>` into a deliverable, and PARSE what you write.** The
   title-block logo was inlined by keeping the source file's own `<svg>` root and
   overriding its width/height — valid SVG 1.1, which Chromium renders, and the one
@@ -100,6 +110,17 @@ The rules that bind code *outside* these folders are in
   - **`Sheet.report_collisions()`** lists every label overlapping another label or a
     visible outline, and **`check_inside_frame()`** raises on anything off the border. Run
     them on every build; six overlaps and three overflows were live when they were added.
+  - **To LOOK at the result, use
+    `.claude/skills/explain-geometry-figure/svg_view.sh`** — it crops a region in the
+    FILE's own units (`svg_view.sh out.png sheet.svg x y w h [px_per_unit]`), so
+    inspecting one view costs a line instead of a hand-built HTML wrapper and px/mm
+    arithmetic. One session spent ~8 of those on a single drawing and got two of the
+    crops wrong, while this repo had already written the same lesson about `scad_view.sh`
+    and models. ⚠️ `drawing.py` works in SHEET coordinates (origin at the page centre,
+    **+y up**), so a BOX needs both y bounds converted **and they swap** — the crop's
+    top comes from the sheet's HIGHER y: `x = x0 + PAGE_W/2`, `y = PAGE_H/2 - y1`,
+    `w = x1 - x0`, `h = y1 - y0`. Converting the lower y puts the crop one box-height
+    too far down.
   - **Wrap the notes in CODE, and flow them into two columns.** Every note interpolates a
     measured value, so a hand-wrapped line overruns silently the moment a number gains a
     digit — the block had reached 2 mm off the frame. ⚠️ Two traps in the wrapper itself:

@@ -144,6 +144,44 @@ it's a one-off defect rather than something inherent to the shape.
 |------|------|
 | `figlib.py` | stdlib-only SVG builder: palette, panels, mm→px frames, dimension bars, leaders, PNG embed, `rsvg-convert` |
 | `scad_view.sh` | headless OpenSCAD → PNG with the camera/render/display traps handled |
+| `svg_view.sh` | headless Chromium → PNG of an existing SVG, whole or **a region in the file's own units** |
+| `_png.py` | the two PNG operations `svg_view.sh` needs (measure the viewport band, trim it), stdlib only |
+
+`svg_view.sh` is for looking at a drawing that has already been generated — one view
+out of an A3 sheet, say — rather than at a model:
+
+```bash
+svg_view.sh out.png sheet.svg                 # whole document, 1600 px wide
+svg_view.sh out.png sheet.svg 138 48 70 58    # region x y w h, in the FILE's units
+svg_view.sh out.png sheet.svg 138 48 70 58 20 # ...at 20 px per unit
+```
+
+`x y w h` are the region's **top-left corner and size**, in the file's units.
+
+⚠️ `drawing.py` works in SHEET coordinates (origin at the page centre, **+y up**)
+while the file's units put the origin top-left, so a BOX needs both y bounds
+converted **and they swap** — the file-space top comes from the sheet's *higher* y.
+For a sheet-space box `x0..x1`, `y0..y1`:
+
+```
+x = x0 + PAGE_W/2        w = x1 - x0
+y = PAGE_H/2 - y1        h = y1 - y0
+```
+
+Converting the box's *lower* y instead (the point formula `PAGE_H/2 - y`) puts the
+crop one box-height too far down.
+
+Two things it handles that cost time by hand:
+
+- It **parses the SVG first** and refuses a malformed one, because a browser renders
+  that as a blank page rather than partly — indistinguishable from a crop that missed.
+- ⚠️ **Chromium's `--window-size` is not its viewport**: the page gets a band fewer
+  rows at the bottom (87 on this build) and the screenshot pads it with the page
+  background, so a naive crop silently loses its last rows *as white*. The script
+  measures that band against a full-bleed page on whatever browser is installed, asks
+  for a correspondingly taller window and trims the result, so the PNG is exactly the
+  region requested.
 
 Requires `rsvg-convert` (librsvg2-bin), and for renders `openscad` + `xvfb-run`
-(`xvfb`) — all present in the PolyKybd dev container.
+(`xvfb`) — all present in the PolyKybd dev container. `svg_view.sh` wants Chromium
+(`/opt/pw-browsers/chromium`, or set `CHROME`) and `_png.py` beside it.
