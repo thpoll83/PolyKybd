@@ -11,6 +11,28 @@ every PolyKybd repo, this one included — in particular: start each piece of wo
 on a fresh branch cut from the updated default (**`master`** here), and never
 keep committing to a branch whose PR has merged.
 
+⚠️ **`git fetch` your own branch before concluding that work is missing — the
+container's checkout can sit BEHIND what this same session already pushed, or be
+reclaimed outright.** Three forms, in rising order of nastiness. (1) The tree is one
+commit old and perfectly self-consistent, so a round that *was* implemented, committed
+and pushed reads as not done — `grep` finds none of its identifiers and the natural
+"my scripted edit matched nothing" explanation is plausible enough to write up as a
+lesson. It was wrong, and the whole round was rebuilt before `git push` rejected the
+duplicate. (2) The same staleness silently invalidates the EXPERIMENT you run to check
+a review finding: a Makefile finding was reproduced twice as *not* reproducing, because
+the test exercised the old rule. (3) The container is reclaimed and the branch head is
+not in the object store at all — `git log` shows an unrelated commit under your own
+branch name. Three habits:
+
+- `git fetch origin <branch> && git log --oneline HEAD..FETCH_HEAD` **before** starting
+  work, and again before diagnosing anything as absent.
+- Treat "work I remember doing has left no trace" as a *checkout* hypothesis first and a
+  *code* hypothesis second. Absent work leaves no fingerprints; failed work leaves some.
+- **Before reporting a finding as non-reproducing, confirm the code you just ran is the
+  code the finding is about** — `git log --oneline -1` plus a grep for the quoted line.
+  `git show <sha>:<path>` answering *"fatal: invalid object name"* for your own commit
+  is the unambiguous version of the signal.
+
 ## Layout
 
 **One folder per part group under `parts/`, and every generated mesh under
@@ -28,7 +50,8 @@ scripts sit together, and nothing generated is ever mixed in with a source.
 The groups are `case` (every case variant: the FDM split72 left/right, the
 metal/CNC one, POM, right2 and the right-side case, plus the spacer they
 share and the STEP pipeline under `case/step/`), `diffuser`,
-`keycap_stem`, `display_holder`, `cirque_insert`, `cover_insert`,
+`keycap_stem` (the printed plates, plus the moulded STEP + drawing pipeline
+under `keycap_stem/step/`), `display_holder`, `cirque_insert`, `cover_insert`,
 `rotary_enc_insert`, `legs`.
 
 ⚠️ **Keep every case variant in `case/` — they SHARE the imported KiCad SVG
@@ -121,6 +144,54 @@ The camera traps, the render-framing rules and the full write-up are
   run. Compare meshes as a **sorted facet multiset**, never with `cmp`, and put the
   committed bytes back when only the order moved.
 
+## build123d / OpenCASCADE (the `step/` folders)
+
+Anything a **fabricator's validator** has to accept — the CNC case, the injection-moulded
+keycap stems — is **re-authored in build123d** rather than exported from OpenSCAD, because
+OpenSCAD has no B-Rep kernel. `parts/case/step/` and `parts/keycap_stem/step/` are that
+pipeline, each with its own README and a `make` that builds, validates and (stems) diffs
+the result back against the `.scad`. The traps that cost real time — the `Shape.scale()`
+centre, loft-vs-hull surfaces, `AddOptimal_s`, the segfaulting `make_text`, the
+sheet-layout and dimension-anchoring rules, and the font traps — are
+[`parts/STEP_PIPELINE.md`](parts/STEP_PIPELINE.md). Five bind code outside it:
+
+- ⚠️ **BOTH pipelines pin their toolchain (`BUILD123D_PIN`, currently 0.12.0) and
+  refuse to run on another version.** The geometry is version-sensitive: 0.13.0 projects
+  the stem sheet
+  materially differently (111 of 2087 paths, 8 of them structural, a 43 mm coordinate
+  delta) and rewrites the STEP below its header too, so an unpinned `pip install`
+  silently rewrites a fabrication deliverable. The check is an ORDER-ONLY prerequisite
+  of the outputs, which means it runs on `make`, `make step`, `make drawing` and
+  `make verify` alike, **including when every output is already up to date** (verified:
+  a wrong pin exits 2 on all four with nothing to rebuild) — an order-only prerequisite
+  is still updated, it just does not drag the target with it. That property matters more
+  in `case/step/`, where a needless rebuild costs ~15 minutes (903.7 s for the right side
+  alone). The case pin is **verified, not assumed**: rebuilding on 0.12.0 reproduces the
+  committed `metal-case-left.step` byte for byte below the header, and
+  `metal-case-right.step` to one DIRECTION written `(-0.,-0.,-1.)` rather than
+  `(0.,0.,-1.)` — the same direction, since `-0.0 == 0.0`.
+  **Compare a re-export as an unordered POINT MULTISET, never byte-wise** — even on the
+  right version the SVG path order is not stable RUN TO RUN on one machine (18-55
+  segments reshuffle, geometry and text identical), the SVG analogue of the STL
+  facet-order rule below. So a byte diff is noise by default, and it cannot tell that
+  noise apart from a real geometry change.
+- ⚠️ **A STEP re-export rewrites the file even when the solid is byte-identical** (the
+  header carries a timestamp), so `make` always leaves both files "modified". Check below
+  the header before committing — `diff <(git show HEAD:<path> | tail -n +12) <(tail -n +12
+  <path>)` — and `git checkout` when it is empty, or you commit 1.3 MB of clock.
+- ⚠️ **Engraved text has three SILENT font traps**, and each changes the glyph a toolmaker
+  would cut: OCCT does **not** read fontconfig (`font="Noto"` silently falls back to
+  FreeSans), the real family name renders the variable font's **default** instance rather
+  than Bold, and OpenSCAD's `text(size=)` is a point size at 100 DPI while build123d's
+  `font_size` is the em in mm — a 1.389× difference on the same nominal number. Pin the
+  font to a FILE and convert the size.
+- **The drawing governs tolerance, material and finish; the STEP conveys shape.** A solid
+  model carries no tolerances, so a toolmaker handed only a STEP cuts to the model and the
+  tolerance question resurfaces at first article.
+- ⚠️ **Measure the sheet, do not eyeball the offsets.** `Sheet.report_collisions()` and
+  `check_inside_frame()` run on every build and found six overlaps and three overflows
+  that had survived every code reading; a hand-tuned layout collides silently in SVG.
+
 ## Verifying a printed part, and designing for resin
 
 `parts/diffuser/build_frame.sh` is the whole loop — regenerate the `.scad` from the
@@ -150,6 +221,19 @@ comparison, the three resin design rules and their measurements are
   False — compare rounded, or on count+volume+bbox.
 
 ## Keycap stems
+
+⚠️ **The printed plates are only half of it. The MOULDED stem is a different
+pipeline** — `parts/keycap_stem/step/` re-authors the same `mx_stem()` in build123d and
+emits `export/keycap_stem/stem_S_{1U,1U25}.step` plus an A3 drawing, for the injection
+moulder. Only the `S` profile is exported, carrying the **same** geometry as the printed
+plates with one deliberate difference: the revision stamp reads **β**, not the plates' α,
+so a moulded part and a printed prototype are tellable apart by eye (`stem_model.REVISION`
+is therefore the one constant in that file that is *not* a mirror of `keycap_stem.scad`).
+**A change to `keycap_stem.scad` has to be re-exported on BOTH sides** — `build_stems.sh`
+and `make -C parts/keycap_stem/step`; `make verify` there is what tells you the two still
+agree. Why our MX slot is deliberately tighter than Cherry's published keycap slot, and
+why the three click tabs are functional rather than a print aid, are in
+[`parts/STEP_PIPELINE.md`](parts/STEP_PIPELINE.md).
 
 **One `.scad` per plate in `parts/keycap_stem/variants/`** — `R1..R5` curved and
 `S1`/`S`/`S5` stepped, each in `1U` and `1U25`, sixteen files over a library with **no

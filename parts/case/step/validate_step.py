@@ -46,7 +46,14 @@ def check(path):
     while ex.More():
         mt = max(mt, BRep_Tool.Tolerance_s(TopoDS.Edge_s(ex.Current()))); n_edge += 1; ex.Next()
 
-    bb = Bnd_Box(); BRepBndLib.Add_s(s, bb)
+    # AddOptimal_s, NOT Add_s: without a triangulation Add_s boxes the underlying
+    # SURFACES (their poles / natural UV extent), not the trimmed faces, so a cut
+    # whose prism runs past the solid inflates the box -- on the keycap stem it
+    # reported z_max 11.30 for a part that tops out at 7.91 (the cross cut is
+    # lofted over 2 x stem_height).  The case is off by up to 2.1 mm the same way.
+    # The printed bbox is what the recipe says to compare against the old mesh, so
+    # it has to be the real one.
+    bb = Bnd_Box(); BRepBndLib.AddOptimal_s(s, bb)
     xmin, ymin, zmin, xmax, ymax, zmax = bb.Get()
 
     # A closed solid: exactly one SOLID with positive volume.  BRepCheck_Analyzer.IsValid()

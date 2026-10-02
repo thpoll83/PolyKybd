@@ -1,0 +1,4 @@
+__pycache__/
+*.stl
+.notosans-bold-*.ttf
+.parity-stamp
