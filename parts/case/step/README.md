@@ -10,7 +10,9 @@ STEP has true planar/cylindrical surfaces and tight tolerances — instead of th
 ## Build
 
 ```bash
-pip install build123d          # pulls in OCP (OpenCASCADE bindings)
+# ⚠️ build123d is PINNED.  The geometry is version-sensitive, so an unpinned
+# install silently rewrites a fabrication deliverable; `make` checks and refuses.
+pip install build123d==0.12.0  # pulls in OCP (OpenCASCADE bindings)
 pip install matplotlib         # only for `make preview`
 make                           # -> ../../export/case/metal-case-{right,left}.step + validate
 make preview                   # -> compare.png : this model vs the original mesh
