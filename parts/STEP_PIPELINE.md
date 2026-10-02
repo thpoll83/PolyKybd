@@ -117,7 +117,10 @@ The rules that bind code *outside* these folders are in
     arithmetic. One session spent ~8 of those on a single drawing and got two of the
     crops wrong, while this repo had already written the same lesson about `scad_view.sh`
     and models. ⚠️ `drawing.py` works in SHEET coordinates (origin at the page centre,
-    +y up), so convert first: `x + PAGE_W/2`, `PAGE_H/2 - y`.
+    **+y up**), so a BOX needs both y bounds converted **and they swap** — the crop's
+    top comes from the sheet's HIGHER y: `x = x0 + PAGE_W/2`, `y = PAGE_H/2 - y1`,
+    `w = x1 - x0`, `h = y1 - y0`. Converting the lower y puts the crop one box-height
+    too far down.
   - **Wrap the notes in CODE, and flow them into two columns.** Every note interpolates a
     measured value, so a hand-wrapped line overruns silently the moment a number gains a
     digit — the block had reached 2 mm off the frame. ⚠️ Two traps in the wrapper itself:
