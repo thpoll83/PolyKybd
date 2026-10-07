@@ -1,0 +1,135 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PolyKybd 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<script type="module" src="https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<style>
+  /* Layout: a tall stage for the model, the part switch and the facts in one band under it. */
+  :root {
+    --bg: #eef0f2;          /* brushed-aluminium grey, the plate */
+    --panel: #ffffff;
+    --fg: #16181b;
+    --muted: #5b6168;
+    --line: #d4d8dd;
+    --accent: #c46a10;      /* the flex cable's polyimide amber */
+    --stage: radial-gradient(120% 90% at 50% 35%, #ffffff 0%, #dfe3e7 70%, #cfd4d9 100%);
+    --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+    --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101215; --panel: #181b1f; --fg: #e9ecef; --muted: #9aa1a9; --line: #2a2f35;
+      --accent: #e08a2c;
+      --stage: radial-gradient(120% 90% at 50% 35%, #2a2e33 0%, #16191c 70%, #0f1113 100%);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101215; --panel: #181b1f; --fg: #e9ecef; --muted: #9aa1a9; --line: #2a2f35;
+    --accent: #e08a2c;
+    --stage: radial-gradient(120% 90% at 50% 35%, #2a2e33 0%, #16191c 70%, #0f1113 100%);
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--body); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 32px;
+          display: grid; gap: 16px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
+  h1 { font: 600 clamp(1.5rem, 1rem + 2vw, 2.2rem)/1.1 var(--display); margin: 0; letter-spacing: 0.01em; text-wrap: balance; }
+  .sub { color: var(--muted); margin: 0; max-width: 60ch; }
+  .stage { position: relative; border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+           background: var(--stage); }
+  model-viewer { width: 100%; height: min(70vh, 640px); min-height: 340px; display: block;
+                 --poster-color: transparent; background: transparent; }
+  .switch { position: absolute; top: 12px; left: 12px; display: flex; gap: 4px; padding: 4px;
+            background: var(--panel); border: 1px solid var(--line); border-radius: 999px; }
+  .switch button { font: 500 13px/1 var(--body); color: var(--muted); background: transparent; border: 0;
+                   padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+  .switch button[aria-pressed="true"] { background: var(--fg); color: var(--panel); }
+  .switch button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .hint { position: absolute; right: 12px; bottom: 10px; font: 12px var(--mono); color: var(--muted); }
+  .progress { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--accent); width: 0; transition: width .2s; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .fact { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+  .fact .k { font: 12px var(--mono); color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .fact .v { font: 600 1.15rem/1.3 var(--display); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .fact p { margin: 6px 0 0; color: var(--muted); font-size: 13.5px; }
+  @media (prefers-reduced-motion: reduce) { .progress { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>PolyKybd Split72</h1>
+    <p class="sub">A split keyboard where every key is a display. Drag to orbit, scroll or pinch to zoom.</p>
+  </header>
+
+  <div class="stage">
+    <model-viewer id="mv" alt="The PolyKybd Split72, both halves"
+      camera-controls touch-action="pan-y" environment-image="neutral" exposure="1.05"
+      shadow-intensity="0.8" shadow-softness="0.9" camera-orbit="0deg 55deg 62%"
+      interaction-prompt="none" ar ar-modes="webxr scene-viewer quick-look">
+    </model-viewer>
+    <div class="switch" role="group" aria-label="Model">
+      <button id="b-board" type="button" aria-pressed="true" data-src="keyboard.glb.b64.txt"
+              data-alt="The PolyKybd Split72, both halves" data-orbit="0deg 55deg 62%">Keyboard</button>
+      <button id="b-key" type="button" aria-pressed="false" data-src="key.glb.b64.txt"
+              data-alt="One PolyKybd key: switch, socket, display, flex cable and cap" data-orbit="-30deg 65deg auto">One key</button>
+    </div>
+    <div class="hint" id="hint">drag · zoom · double-tap to reset</div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <section class="facts" aria-label="What you are looking at">
+    <div class="fact"><div class="k">Keys</div><div class="v">36 per half</div>
+      <p>Each under a clear cap, on a Kailh hotswap socket and an MX switch.</p></div>
+    <div class="fact"><div class="k">Per-key display</div><div class="v">72 × 40 px OLED</div>
+      <p>0.42" panel on a flex cable that drops through the switch and loops back into an FH34 socket under the board.</p></div>
+    <div class="fact"><div class="k">Switch plate</div><div class="v">Aluminium PCB</div>
+      <p>The Rosetta Stone artwork faces up, 5 mm above the main board.</p></div>
+    <div class="fact"><div class="k">Case</div><div class="v">FDM print, r7</div>
+      <p>Dark grey PLA, screwed through plate and PCB into nut inserts.</p></div>
+  </section>
+</div>
+
+<script>
+  const mv = document.getElementById("mv");
+  const buttons = [...document.querySelectorAll(".switch button")];
+  const progress = document.getElementById("progress");
+  // The models ship as base64 text (the host serves no binary model type)
+  // and are handed to model-viewer as blob: URLs, decoded once each.
+  const urls = {};
+  async function modelUrl(path) {
+    if (!urls[path]) urls[path] = fetch(path).then(r => {
+      if (!r.ok) throw new Error(r.status);
+      return r.text();
+    }).then(t => {
+      const bin = atob(t.trim()), bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return URL.createObjectURL(new Blob([bytes], { type: "model/gltf-binary" }));
+    });
+    return urls[path];
+  }
+  let current = null;                    // only the latest selection may set src
+  async function show(b) {
+    current = b;
+    buttons.forEach(o => o.setAttribute("aria-pressed", String(o === b)));
+    mv.alt = b.dataset.alt; mv.cameraOrbit = b.dataset.orbit;
+    progress.hidden = false; progress.style.width = "5%";
+    try {
+      const url = await modelUrl(b.dataset.src);
+      if (current === b) mv.src = url;
+    } catch (e) {
+      if (current === b) document.getElementById("hint").textContent = "The model could not be loaded.";
+    }
+  }
+  buttons.forEach(b => b.addEventListener("click", () => show(b)));
+  show(buttons[0]);
+  mv.addEventListener("progress", e => {
+    const p = e.detail.totalProgress;
+    progress.style.width = (p * 100) + "%";
+    progress.hidden = p >= 1;
+  });
+  mv.addEventListener("dblclick", () => { mv.cameraOrbit = buttons.find(b => b.getAttribute("aria-pressed") === "true").dataset.orbit; mv.fieldOfView = "auto"; });
+  mv.addEventListener("error", () => { document.getElementById("hint").textContent = "The model could not be loaded."; });
+</script>
