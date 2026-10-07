@@ -24,10 +24,17 @@ import bpy
 import mathutils
 
 
-def splay(deg):
+def splay(deg, right=None):
+    """Turn each half by deg: positive opens the halves towards the back (the
+    inner ends move away, blender_scene.py's 10), negative brings the inner
+    ends forward. `right` gives the right half its own angle.
+
+    ⚠️ This was math.copysign(deg, x), which keeps only deg's SIZE: a negative
+    angle turned the halves exactly like the positive one."""
     for o in bpy.data.objects:
         if o.name.startswith("piv") and o.type == "EMPTY":
-            o.rotation_euler.z = math.radians(-math.copysign(deg, o.location.x))
+            a = deg if o.location.x < 0 or right is None else right
+            o.rotation_euler.z = math.radians(-math.copysign(1.0, o.location.x) * a)
 
 
 def _material(name, rgb, roughness):

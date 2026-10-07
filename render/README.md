@@ -46,6 +46,34 @@ scene uses the same table, so a look settled on the key carries over. Each role
 matches the model's source colour exactly (`TOL` 0.001), since the switch
 housing (0.098) and the display face (0.1) differ by only 0.002.
 
+```bash
+blender -b render/out/key.blend --python render/key_views.py -- render/out/key_views 128 1000
+```
+
+`key_views.py` loads that scene, re-applies the materials, lights the
+display with one legend from the layer-0 atlas (KC_A by default) and renders
+the key from five directions: front, front_left, side, top and low.
+
+### Display and flex textures
+
+```bash
+python render/gen_textures.py      # Blender's python: numpy + Pillow
+```
+
+writes `textures/display_front.png`, `display_rim.png`, `flex.png`,
+`flex_traces.png` and `braid.png`. The display face and the flex are a
+reconstruction traced from a photo of the real part
+(`textures/source/oled_module_photo.jpg`, FPT042000Z05_V2): the glass and its
+cut edge, the dark panel, the striped sticker with the lot number, the black
+sticker over the flex with the flex fading into its shadow, the traces,
+part number and contact fingers. `STYLE = "photo"` uses the photo itself
+instead. ⚠️ The photo is not evenly scaled (29.1 px/mm along the display,
+24.3 across); `keymatch.A_*`, the active area the lit legends and the host
+editor's display quads use, is centred in the photo's dark panel, so a
+different photo means re-measuring it. `display_rim.png` drives a glass coat
+on the rim and `flex_traces.png` makes the copper traces metallic
+(`materials.py`).
+
 ### Re-rendering without re-importing
 
 ```bash
@@ -120,13 +148,46 @@ The Blender 4.0 import of one half takes about 7 minutes and creates about
 
 - the USB-C receptacles (HRO TYPE-C-31-M-12) have no model: the KiCad 9
   library ships none, and inside the case only the plug shows
-- the key displays show the unlit panel (`textures/display_front.png`); no
-  legends are drawn on them yet
+- the key displays are unlit in the hero and top views; only the product
+  photo's viewpoint (below) turns them on (`screens.py`)
+
+## The product photo's viewpoint
+
+```bash
+blender -b render/out/hero.blend --python render/photo_view.py -- render/out/photo_view.png 128 2600
+```
+
+The composition of `images/PolyKybdSplit72p.jpg` on the white studio: from
+in front, 42 deg above the desk, a 35 mm lens, the halves 35 mm apart with
+their inner ends brought forward (the left 2 deg, the right 9 deg, measured
+on the photo's top edges), the bridge cable looping in front of them
+(`bridge_cable.add(toward=-1, clear=...)`: the 90 deg plugs turn the cable
+forwards and it runs straight down the gap before the U) and the host cable
+leaving the left half's back edge. The optional arguments after the width
+are the gap (m), the turns as "left,right" (deg, negative = inner end
+forward), elevation (deg), lens (mm) and the share of the frame's width the
+keyboard fills. The log reports the bridge cable's closest approach to a
+case.
+
+The displays are on, as in the photo (`screens.py`): every key display shows
+its layer-0 legend and both status panels their layer-0 screen, as emissive
+quads over the active areas. The pictures are the raw framebuffers in
+`textures/screens_layer0.png` (an atlas, cells listed in
+`screens_layer0.json`) and `textures/status_{left,right}.png`, drawn by
+PolyKybdHost's layout-editor preview code over the firmware's default keymap:
+
+```bash
+QT_QPA_PLATFORM=offscreen ../PolyKybdHost/.venv/bin/python render/export_screens.py
+```
+
+Re-run it when the keymap or the legends change. Two keys stay dark: (8,0)
+has no display, and (6,1) holds `KC_HYPR`, for which the preview draws no
+legend.
 
 ## Top view for PolyKybdHost's layout editor
 
 ```bash
-blender -b render/out/hero.blend --python render/topview.py -- render/out/topview.png 3200 96
+blender -b render/out/hero.blend --python render/topview.py -- render/out/topview.png 4800 96
 ```
 
 An orthographic render straight down on both halves, unsplayed, without
