@@ -9,7 +9,9 @@ the 72x40 active area as four image-pixel corners in the OLED's own order
 framebuffer is the first corner, legends upright when read from the front),
 plus the key's KLE matrix label ("row,col", the label PolyKybdHost's
 polykybd-split72.json uses), its board reference and side. The two status
-displays are listed separately. Image pixels: origin top-left, x right, y down.
+displays are listed separately, and so is each expansion-port lid's outline
+(the editor puts the labels of the two keys without a display there). Image
+pixels: origin top-left, x right, y down.
 
 The halves are not splayed (splay 0), the camera looks straight down, so the
 picture lines up with the KLE layout up to one scale and offset per half.
@@ -111,6 +113,27 @@ def board_refs(board):
         r = re.search(r'"Reference" "([^"]+)"', t[m.start():e])
         refs.append(r.group(1) if r else None)
     return refs
+
+
+def lid(board):
+    """Centre (x, y_up) and rotation of the expansion-port lid, from its model block.
+
+    The lid (cover_insert.wrl) is a model on J39 whose frame centres the
+    17 x 14 mm cut-out on the origin; its offset and z rotation place it."""
+    import re
+    t = open(board, encoding="utf-8").read()
+    i = t.index("cover_insert.wrl")
+    fp = t[t.rindex("\n\t(footprint ", 0, i):i]
+    at = re.search(r"\n\t\t\(at ([-\d.]+) ([-\d.]+)(?: ([-\d.]+))?\)", fp)
+    x, y, r = float(at.group(1)), -float(at.group(2)), float(at.group(3) or 0)
+    blk = t[i:t.index("\n\t\t)\n", i)]
+    ox, oy = (float(v) for v in re.search(r"\(offset\s*\(xyz ([-\d.]+) ([-\d.]+)", blk).groups())
+    rz = float(re.search(r"\(rotate\s*\(xyz [-\d.]+ [-\d.]+ ([-\d.]+)", blk).group(1))
+    c = np.array([x, y]) + textured_parts._rot((ox, oy), r)
+    return c, r + rz
+
+
+LID_W, LID_H = 17.0, 14.0                   # cover_insert.scad's cut-out
 
 
 def match(board_xy, kle):
@@ -227,7 +250,7 @@ data = {"image": os.path.basename(out), "size": [W, H],
         "pixel_origin": "top-left, x right, y down",
         "corner_order": "OLED top-left, top-right, bottom-right, bottom-left",
         "mm_per_px": round(cam.data.ortho_scale * 1000 / max(W, H), 5),
-        "keys": [], "status_displays": []}
+        "keys": [], "status_displays": [], "expansion_ports": []}
 for side, root, board in halves:
     keys = textured_parts.board_keys(board)
     (tx, ty), dz = textured_parts.fit(root, keys)
@@ -249,6 +272,13 @@ for side, root, board in halves:
         cy = sum(q[1] for q in quad) / 4
         data["keys"].append({"matrix": label, "side": side, "ref": ref, "rotation_deg": r,
                              "oled": quad, "center": [round(cx, 2), round(cy, 2)]})
+    # expansion-port lid: its outline in the image, corners as seen from above
+    # (top-left first, clockwise), so the editor can put a label on it
+    (lc, lr), lz = lid(board), Z + dz
+    lquad = [px(mw @ mathutils.Vector((*(textured_parts._rot((u * LID_W / 2, v * LID_H / 2), lr) + lc
+                                         + np.array([tx, ty])), lz)))
+             for u, v in ((-1, 1), (1, 1), (1, -1), (-1, -1))]
+    data["expansion_ports"].append({"side": side, "quad": lquad, "rotation_deg": round(lr, 3)})
     # status display: the top face of the "status lcd" box
     pts = textured_parts._display_points(root, "status lcd")
     top = pts[pts[:, 2] > pts[:, 2].max() - 1e-6]
