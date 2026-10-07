@@ -179,8 +179,10 @@ studio.white_look(sc)
 # The camera does not see the floor (it still bounces light onto the board),
 # the film is transparent, and the white is put under it after the render
 # (see onto_white); a white world would pass through AgX and come out light
-# grey. A shadow-catcher floor was tried: the big soft lights shade the whole
-# floor, which left the edges at 150-220, not 255.
+# grey. The shadow comes from a second, cheap render with the floor as a
+# shadow catcher (shadow_render): taken as it is, that floor is shaded all
+# over by the big soft lights (edges at 150-220), so its border level counts
+# as no shadow and the rest fades out towards the image edge.
 bpy.data.objects["cove"].visible_camera = False
 sc.render.film_transparent = True
 sc.render.image_settings.color_mode = "RGBA"
@@ -202,7 +204,7 @@ for c in list(cam.constraints):
     cam.constraints.remove(c)
 cam.data.type = "ORTHO"
 cam.data.dof.use_dof = False
-margin = 1.06
+margin = 1.25                               # room for the shadow to fade out to white
 span_x, span_y = (hi.x - lo.x) * margin, (hi.y - lo.y) * margin
 cam.data.ortho_scale = max(span_x, span_y)
 cam.location = ((lo.x + hi.x) / 2, (lo.y + hi.y) / 2, hi.z + 1.0)
@@ -298,16 +300,59 @@ with open(out.rsplit(".", 1)[0] + ".json", "w", encoding="utf-8") as f:
 print(f"wrote {len(data['keys'])} key displays, {len(data['status_displays'])} status displays")
 
 
-def onto_white(path):
-    """Composite the transparent render onto pure white, in display space.
+SHADOW = 0.45       # how dark the strongest shadow gets, 0..1 of black over white
+FADE = 0.10         # the outer fraction of the image over which the shadow fades out
+
+
+def _pixels(path):
+    img = bpy.data.images.load(path)
+    w, h = img.size
+    px = np.array(img.pixels[:], dtype=np.float32).reshape(h, w, 4)
+    return img, px
+
+
+def shadow_render(path):
+    """The floor's shadow alone, as a darkening 0..1 at the main render's size.
+
+    A cheap second render (half size, few samples: the shadow is soft) with the
+    floor as a shadow catcher; its alpha is the keyboard plus the shadow. The big
+    soft lights also shade the whole floor evenly, so the level at the image
+    border is taken as zero, and the rest is faded out towards the border, so the
+    edge of the picture stays exactly white."""
+    cove = bpy.data.objects["cove"]
+    cove.visible_camera, cove.is_shadow_catcher = True, True
+    samples, pct = sc.cycles.samples, sc.render.resolution_percentage
+    sc.cycles.samples, sc.render.resolution_percentage = 32, 50
+    sc.render.filepath = path
+    bpy.ops.render.render(write_still=True)
+    sc.cycles.samples, sc.render.resolution_percentage = samples, pct
+    cove.visible_camera, cove.is_shadow_catcher = False, False
+    img, px = _pixels(path)
+    bpy.data.images.remove(img)
+    a = px[:, :, 3]
+    border = np.concatenate([a[0], a[-1], a[:, 0], a[:, -1]])
+    base = np.percentile(border, 50)
+    a = np.clip((a - base) / max(1e-6, 1.0 - base), 0.0, 1.0)
+    a = np.repeat(np.repeat(a, 2, 0), 2, 1)[:H, :W]           # back to full size
+    a = np.pad(a, ((0, H - a.shape[0]), (0, W - a.shape[1])), mode="edge")
+    yy = np.minimum(np.arange(H), np.arange(H)[::-1])[:, None] / (H * FADE)
+    xx = np.minimum(np.arange(W), np.arange(W)[::-1])[None, :] / (W * FADE)
+    fade = np.clip(np.minimum(yy, xx), 0.0, 1.0)
+    fade = fade * fade * (3 - 2 * fade)                         # smoothstep
+    return a * fade * SHADOW
+
+
+def onto_white(path, shadow):
+    """Composite the transparent render onto white with the shadow, in display space.
 
     The PNG holds display-referred 8-bit values with straight alpha, so this is
-    the plain over operator: a pixel the keyboard does not touch is 255."""
-    img = bpy.data.images.load(path)
-    px = np.array(img.pixels[:], dtype=np.float32).reshape(-1, 4)
-    a = px[:, 3:4]
-    px[:, :3] = px[:, :3] * a + (1.0 - a)
-    px[:, 3] = 1.0
+    the plain over operator onto a background of white darkened by the shadow;
+    a pixel far from the keyboard is exactly 255."""
+    img, px = _pixels(path)
+    a = px[:, :, 3:4]
+    bg = (1.0 - shadow)[:, :, None]
+    px[:, :, :3] = px[:, :, :3] * a + bg * (1.0 - a)
+    px[:, :, 3] = 1.0
     img.pixels[:] = px.ravel()
     img.filepath_raw = path
     img.file_format = "PNG"
@@ -318,4 +363,4 @@ def onto_white(path):
 sc.render.filepath = out
 bpy.ops.wm.save_as_mainfile(filepath=out.rsplit(".", 1)[0] + ".blend", compress=True)
 bpy.ops.render.render(write_still=True)
-onto_white(out)
+onto_white(out, shadow_render(out.rsplit(".", 1)[0] + "_shadow.png"))
