@@ -131,7 +131,10 @@ def lid(board):
     ox, oy = (float(v) for v in re.search(r"\(offset\s*\(xyz ([-\d.]+) ([-\d.]+)", blk).groups())
     rz = float(re.search(r"\(rotate\s*\(xyz [-\d.]+ [-\d.]+ ([-\d.]+)", blk).group(1))
     c = np.array([x, y]) + textured_parts._rot((ox, oy), r)
-    return c, r + rz
+    # KiCad turns a model by -rz in the board's y-up frame (clockwise for a
+    # positive angle), the opposite of _rot(); measured on the render, the
+    # left lid's long edge runs at +20 deg in the image with rz = 20
+    return c, r - rz
 
 
 LID_W, LID_H = 17.0, 14.0                   # cover_insert.scad's cut-out

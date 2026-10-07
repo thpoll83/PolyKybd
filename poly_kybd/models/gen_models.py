@@ -98,18 +98,20 @@ def screw_m3():
     head = fillet(head.edges().group_by(Axis.Z)[0], 0.2)
     # 2 mm hex socket (M3), 1.0 mm of hex above a 118 deg drill-point floor,
     # with a small chamfer at the mouth: a flat floor reflects the same light
-    # as the head top and reads as a painted hexagon, not a hole
+    # as the head top and reads as a painted hexagon, not a hole. The point
+    # reaches ~0.19 mm below the head, so the socket is cut from the joined
+    # screw: cut from the head alone, the shank would fill the tip back in.
+    shank = Cylinder(d / 2, length).moved(Location((0, 0, -length / 2)))
+    screw = head + shank
     s_hex, depth, chamfer = 2.0, 1.0, 0.15
     r_corner = s_hex / math.sqrt(3)
     recess = extrude(RegularPolygon(r_corner, 6), amount=depth + 1.0)
-    head -= recess.moved(Location((0, 0, k - depth)))
+    screw -= recess.moved(Location((0, 0, k - depth)))
     point = r_corner / math.tan(math.radians(59))
-    head -= Cone(0, r_corner, point, align=(Align.CENTER, Align.CENTER, Align.MIN)).moved(
+    screw -= Cone(0, r_corner, point, align=(Align.CENTER, Align.CENTER, Align.MIN)).moved(
         Location((0, 0, k - depth - point)))
-    head -= Cone(r_corner, r_corner + chamfer, chamfer, align=(Align.CENTER, Align.CENTER, Align.MIN)).moved(
+    screw -= Cone(r_corner, r_corner + chamfer, chamfer, align=(Align.CENTER, Align.CENTER, Align.MIN)).moved(
         Location((0, 0, k - chamfer)))
-    shank = Cylinder(d / 2, length).moved(Location((0, 0, -length / 2)))
-    screw = head + shank
     screw.color = STEEL
     screw.label = "M3x10 pan head hex socket"
     return Compound(children=[screw], label="screw M3")
