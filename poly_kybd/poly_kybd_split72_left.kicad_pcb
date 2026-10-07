@@ -1208,6 +1208,72 @@
 			(uuid "a4153154-0d40-4c0c-8be9-1e5c89843f99")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -1826,6 +1892,72 @@
 			(uuid "c082720a-0ea2-4cad-9040-53d63fcc8624")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -2089,6 +2221,17 @@
 			(uuid "1173924f-7868-4421-8f3a-9aeb6f0be823")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -2707,6 +2850,72 @@
 			(uuid "8054efd2-6544-40cc-82d4-110c32200892")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "F.Cu")
@@ -2897,7 +3106,7 @@
 			(uuid "50acd925-a96c-4f3a-a43b-2c7786554f4c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -3171,6 +3380,17 @@
 			(uuid "94a9cc9f-65e0-4217-8edf-a8d1154d6951")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -3434,6 +3654,17 @@
 			(uuid "4248b398-6ad5-454c-ba42-44534df5c21d")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -4052,6 +4283,72 @@
 			(uuid "7d0a67a6-2baf-4a71-8a8c-5d81849a9578")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
@@ -4254,7 +4551,7 @@
 			(uuid "bb1aeaac-5faf-4063-8815-d92633d8af3c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -4528,6 +4825,17 @@
 			(uuid "a553eba3-bd74-4b7b-9fd2-fc71dd0e1674")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -5146,6 +5454,72 @@
 			(uuid "9dd723c3-87e8-4672-906a-d8410129e346")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -5764,6 +6138,72 @@
 			(uuid "84c6431c-20dc-4c46-ad08-fb4ac2e41dea")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7_1u25.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u25.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0402_1005Metric"
 		(layer "F.Cu")
@@ -5954,7 +6394,7 @@
 			(uuid "90f4a5a7-2ba2-48f9-a4fd-e1290baaafe1")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -6583,6 +7023,72 @@
 			(uuid "10b7c789-7180-4e1e-9d28-a3b31ea04daa")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -6846,6 +7352,17 @@
 			(uuid "97b15e88-2f7b-40c8-9609-dd8dcd64fa2c")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:D_SOD-323Ext"
 		(layer "F.Cu")
@@ -7176,7 +7693,7 @@
 			(uuid "8303422c-a6b2-4af0-8f2a-adfb22c5d057")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -7450,6 +7967,17 @@
 			(uuid "623d3d06-8f20-4492-8aee-e3ea088b7468")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -7713,6 +8241,17 @@
 			(uuid "90b82999-00af-4d41-bd51-c96a937f0c6d")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -7976,6 +8515,17 @@
 			(uuid "e93051ed-2ebb-4e05-a87e-62b8f532d3e5")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "Package_TO_SOT_SMD:SOT-23-5"
 		(layer "F.Cu")
@@ -8698,6 +9248,17 @@
 			(uuid "fcb56d07-1ac4-42f3-8a1a-98222c13cde5")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/screw_M3_pan_hex_2mm.step"
+			(offset
+				(xyz 0 0 5)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
@@ -8900,7 +9461,7 @@
 			(uuid "13337f69-e3c1-40d8-a8f9-24b6ef94098b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -9529,6 +10090,83 @@
 			(uuid "198a1354-30ba-497d-a95c-358e94dc6bda")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7_1u25.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u25.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/plate_split72_left.wrz"
+			(offset
+				(xyz 0 0 4.2)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 180 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -10147,6 +10785,72 @@
 			(uuid "ec19d20f-bbc0-4b76-8f96-4bc5d054a630")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
@@ -10349,7 +11053,7 @@
 			(uuid "3f0c5fc8-e5e8-48c7-8c12-5f478ec28a74")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -10623,6 +11327,17 @@
 			(uuid "3eca69da-7f5d-40b1-823c-c6b673813620")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -11241,6 +11956,72 @@
 			(uuid "e970c32f-bb9d-40cb-93b0-5ef307530e1d")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7_1u25.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u25.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -11504,6 +12285,17 @@
 			(uuid "43795dc3-be5c-4627-9414-ea091f82eafe")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -12122,6 +12914,72 @@
 			(uuid "c1cfaf46-39d2-448e-a900-72dd82ec5ac2")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -12740,6 +13598,72 @@
 			(uuid "18ef1efa-f1a6-4abb-bb42-703e0f79e941")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7_1u25.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u25.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -13003,6 +13927,17 @@
 			(uuid "00d7ba20-c469-48bc-a1c9-d5c1c42c7c65")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -13266,6 +14201,17 @@
 			(uuid "6f855a77-335a-4380-865b-6d44110d5316")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
@@ -13468,7 +14414,7 @@
 			(uuid "55a22486-4e53-43a2-a7d4-036bab94afca")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -13681,7 +14627,7 @@
 			(uuid "2138efcc-70ea-4702-b19b-ba0382b25095")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -13952,6 +14898,17 @@
 			(uuid "d4602b72-fe08-4cf1-b998-00fc665aa231")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/case_polykybd_split72_left_r7.wrl"
+			(offset
+				(xyz 95.727 -131.7882 -13.1062)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "F.Cu")
@@ -14142,7 +15099,7 @@
 			(uuid "51f04300-76d5-402b-8493-4d64ce42a09c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -14977,6 +15934,17 @@
 			(uuid "9758998e-9f67-48f7-b7db-dbf272ec774e")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -15595,6 +16563,72 @@
 			(uuid "f4f22f46-f69e-47c5-8b16-7e9094d444af")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -15858,6 +16892,17 @@
 			(uuid "80b529ff-3223-44b6-a21b-8b98cab51604")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "MountingHole:MountingHole_3mm_Pad_Via"
 		(layer "F.Cu")
@@ -16381,6 +17426,17 @@
 			(uuid "38b8dd8e-9f1f-4c28-915c-df159ae5d0f1")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -16644,6 +17700,17 @@
 			(uuid "d7e5495f-cc75-4681-8fee-5e81a612f8cc")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -17262,6 +18329,72 @@
 			(uuid "ef2b1ee0-9f3d-4e52-a423-fbe7bd8ca71a")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7_1u25.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u25.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -17880,6 +19013,72 @@
 			(uuid "f4a0218e-6304-44d3-acc6-ca05cdfbd775")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
@@ -18082,7 +19281,7 @@
 			(uuid "92a4efac-05c9-4f45-b1a3-88230aaae35b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -18455,17 +19654,6 @@
 			(uuid "b441d254-9719-4073-96db-213ca3b37513")
 		)
 		(embedded_fonts no)
-		(model "${KICAD9_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x10_P2.54mm_Vertical.step"
-			(offset
-				(xyz 0 0 0)
-			)
-			(scale
-				(xyz 1 1 1)
-			)
-			(rotate
-				(xyz 0 0 0)
-			)
-		)
 	)
 	(footprint "MountingHole:MountingHole_3mm_Pad_Via"
 		(layer "F.Cu")
@@ -18726,6 +19914,17 @@
 			(uuid "1fc687ea-f822-459b-b674-72032be37f2f")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/screw_M3_pan_hex_2mm.step"
+			(offset
+				(xyz 0 0 5)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
@@ -18928,7 +20127,7 @@
 			(uuid "5da75965-3075-42ad-a908-50d19ece4829")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -19202,6 +20401,17 @@
 			(uuid "08a028eb-eec2-4d5b-8f26-1ec083c22c8f")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -19465,6 +20675,17 @@
 			(uuid "fa37ccf1-9f21-440c-bd51-f57da88e4f95")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -20083,6 +21304,72 @@
 			(uuid "cf1bee0a-9920-43e0-8636-666b5870b3cc")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -20346,6 +21633,17 @@
 			(uuid "46a5a4a8-e2b0-4f26-b024-05cb1d4ac78b")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -20609,6 +21907,17 @@
 			(uuid "79f02dc5-1e8b-40de-8937-b6c36aef1d35")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "MountingHole:MountingHole_3mm_Pad_Via"
 		(layer "F.Cu")
@@ -20869,6 +22178,17 @@
 			(uuid "023a5973-830f-4449-bca5-321ed45fc74e")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/screw_M3_pan_hex_2mm.step"
+			(offset
+				(xyz 0 0 5)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -21487,6 +22807,72 @@
 			(uuid "9296c1eb-b6f6-4935-80b0-2ad619f95146")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -21750,6 +23136,17 @@
 			(uuid "19d4d597-062d-4322-a95d-09b4ff69f46e")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -22013,6 +23410,17 @@
 			(uuid "5c9c6339-1654-485e-9cd7-571caa5c9f30")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "Package_TO_SOT_SMD:SOT-23-5"
 		(layer "F.Cu")
@@ -22677,7 +24085,7 @@
 			(uuid "13d0b87c-d338-4afb-be15-e9ce248e5f25")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -22973,17 +24381,6 @@
 			(uuid "5d2db08f-b045-48f7-bb2e-a68435e32d11")
 		)
 		(embedded_fonts no)
-		(model "${KICAD9_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x03_P2.54mm_Vertical.step"
-			(offset
-				(xyz 0 0 0)
-			)
-			(scale
-				(xyz 1 1 1)
-			)
-			(rotate
-				(xyz 0 0 0)
-			)
-		)
 	)
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
@@ -23186,7 +24583,7 @@
 			(uuid "29ebef16-ecb9-4219-99ff-646caa2bb334")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -23460,6 +24857,17 @@
 			(uuid "b29299be-5c52-4ebe-b57a-f6abbb003d90")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -24078,6 +25486,72 @@
 			(uuid "ad9b4e4f-81c9-4e3d-9fe0-24cd69f7d393")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -24696,6 +26170,72 @@
 			(uuid "ece5a2e5-94fe-41e9-9c16-a63b5dab5b7e")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical"
 		(layer "F.Cu")
@@ -25004,17 +26544,6 @@
 			(uuid "1c413711-6c5b-4bad-8bd3-c46b06c41935")
 		)
 		(embedded_fonts no)
-		(model "${KICAD9_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x05_P2.54mm_Vertical.step"
-			(offset
-				(xyz 0 0 0)
-			)
-			(scale
-				(xyz 1 1 1)
-			)
-			(rotate
-				(xyz 0 0 0)
-			)
-		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -25633,6 +27162,72 @@
 			(uuid "20c79020-a631-44b6-8868-ecdf9b60f699")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
@@ -25835,7 +27430,7 @@
 			(uuid "46e85ba5-51fa-44f6-92c5-a55f68356de4")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -26036,7 +27631,7 @@
 			(uuid "79600bc3-4336-424e-a174-4693ec1f0068")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -26570,6 +28165,17 @@
 			(uuid "4a8cf5fe-650b-4ebb-9f30-68fd02fa38dd")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -27188,6 +28794,72 @@
 			(uuid "be2ae682-b22c-4f75-9dc1-6e85e8deb476")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -27451,6 +29123,17 @@
 			(uuid "9774395b-4b63-49d8-8091-8c4cd95f9f0c")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0402_1005Metric"
 		(layer "F.Cu")
@@ -27641,7 +29324,7 @@
 			(uuid "7081dab2-5fc8-4283-b5cd-c75d46dc7d5c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -27915,6 +29598,17 @@
 			(uuid "1fd24062-e5d1-4385-a282-b09f68c96741")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -28178,6 +29872,17 @@
 			(uuid "79f4f10d-016c-4bb3-a987-709c3986a4d7")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -28796,6 +30501,72 @@
 			(uuid "dfb84e5b-6c3d-41c8-a8e9-30f04143484d")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
@@ -28998,7 +30769,7 @@
 			(uuid "d514405a-3ee0-448f-81a5-c13b0c3cb8ac")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -29211,7 +30982,7 @@
 			(uuid "38b7c439-189e-4f82-a94a-ea2a431001e2")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -29840,6 +31611,72 @@
 			(uuid "10632842-2b2e-4894-9da3-9b7dac90085b")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7_1u25.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u25.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -30103,6 +31940,17 @@
 			(uuid "fbbd5ef9-42b4-4f23-b606-3e43ec48820c")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -30721,6 +32569,72 @@
 			(uuid "d5d0928d-174e-4bd4-b67d-4401d9d8af79")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -30984,6 +32898,17 @@
 			(uuid "0d863c5a-d6dd-4e49-a384-d405a8c104b2")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -31602,6 +33527,72 @@
 			(uuid "34e2225d-52a2-41a6-a02c-c85321eb6981")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "F.Cu")
@@ -31792,7 +33783,7 @@
 			(uuid "50c9d5c3-55b7-4fde-b98e-a24f13d1d22b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -32066,6 +34057,17 @@
 			(uuid "05099af5-1d55-4d4e-95fa-d057ed784372")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
@@ -32268,7 +34270,7 @@
 			(uuid "31448f13-52c3-43c2-9f30-ffe3216136f6")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -32955,7 +34957,7 @@
 			(uuid "651fa32f-267d-41ee-912f-475e72660d54")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Connector_FFC-FPC.3dshapes/Hirose_FH12-30S-0.5SH_1x30-1MP_P0.50mm_Horizontal.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Connector_FFC-FPC.3dshapes/Hirose_FH12-30S-0.5SH_1x30-1MP_P0.50mm_Horizontal.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -32964,6 +34966,28 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/status_display_holder.wrl"
+			(offset
+				(xyz 13.438 30.877 2.5)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
+		(model "${KIPRJMOD}/models/cover_insert.wrl"
+			(offset
+				(xyz -4.422 -23.378 4.6)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 20)
 			)
 		)
 	)
@@ -33844,6 +35868,72 @@
 			(uuid "430d5145-4d57-43dd-8330-3449f35fbc47")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
@@ -34046,7 +36136,7 @@
 			(uuid "4cf34fe1-7cd5-4214-b736-a8c7c3e1e9a5")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -34675,6 +36765,72 @@
 			(uuid "a5db55b6-7ecd-4b6b-b921-0bc8c1cf5423")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -34938,6 +37094,17 @@
 			(uuid "44b23dc4-de95-447f-bfc9-37cfa0d220a0")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -35556,6 +37723,72 @@
 			(uuid "484ab184-e9c7-4466-9808-8694647f5551")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
@@ -35758,7 +37991,7 @@
 			(uuid "ff961c78-48fa-4c36-a5a5-d7759423433a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -35971,7 +38204,7 @@
 			(uuid "5da81760-82e7-4bd5-879e-d06edaf4f0e1")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -36245,6 +38478,17 @@
 			(uuid "d81c991f-4dbf-4a62-b020-7d62447d9286")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0402_1005Metric"
 		(layer "F.Cu")
@@ -36435,7 +38679,7 @@
 			(uuid "134cc873-5c58-4ebd-b55d-c80f28bc1738")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -36648,7 +38892,7 @@
 			(uuid "99ceef91-2a75-492d-9115-9f87f9dc55c7")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -37277,6 +39521,72 @@
 			(uuid "49849d7c-4533-4e61-b16e-7a850fc6e621")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -37895,6 +40205,72 @@
 			(uuid "7f03ea0a-0765-4987-b25a-3c9c79fa4422")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Inductor_SMD:L_0805_2012Metric"
 		(layer "F.Cu")
@@ -38085,7 +40461,7 @@
 			(uuid "6376e7c5-1358-44b7-bd37-6540bc341587")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Inductor_SMD.3dshapes/L_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Inductor_SMD.3dshapes/L_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -38813,6 +41189,17 @@
 			(uuid "c0e5accb-bd44-4ab1-ac56-8f83c64cc7d8")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/screw_M3_pan_hex_2mm.step"
+			(offset
+				(xyz 0 0 5)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -39431,6 +41818,72 @@
 			(uuid "4739aab4-05d2-431c-b749-be4fd1156f69")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -39694,6 +42147,17 @@
 			(uuid "cbd13b93-adf1-4c77-9e6b-1aaff148b8c8")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -40312,6 +42776,72 @@
 			(uuid "e89cc138-eaa7-4528-93d9-9233af171261")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -40930,6 +43460,72 @@
 			(uuid "27244243-44c8-41f7-9f2c-149f4c742b82")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -41193,6 +43789,17 @@
 			(uuid "53b8c76e-1fb7-431d-8f26-69de7a3526b5")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -41456,6 +44063,17 @@
 			(uuid "9570c7a1-518f-48ea-aba5-7437b0d50cda")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -42074,6 +44692,72 @@
 			(uuid "d7079eb8-3f46-418b-adf6-417dd3bc2a75")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -42692,6 +45376,72 @@
 			(uuid "fc38b8ef-f769-4e3d-b5ee-dc08bd57436c")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7_1u25.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u25.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:XL-3030RGBC-WS2812B"
 		(layer "F.Cu")
@@ -42955,6 +45705,17 @@
 			(uuid "1bf25b9b-45fc-4c73-aa47-e14e48953a4f")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_Wuerth-PLCC4_3.2x2.8mm_150141M173100.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 180)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
@@ -43573,6 +46334,72 @@
 			(uuid "0f7d6115-34bf-4705-82f9-3d06a92085fc")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/SW_Hotswap_Kailh.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/SW_Cherry_MX_PCB.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_stem_r7.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_display.wrl"
+			(offset
+				(xyz 0 0 12)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/keycap_flex_cable.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/models/outercap1u.wrl"
+			(offset
+				(xyz -89.15 -89.3 6.8)
+			)
+			(scale
+				(xyz 0.39 0.39 0.39)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0402_1005Metric"
 		(layer "F.Cu")
@@ -43763,7 +46590,7 @@
 			(uuid "7f50262a-3fc5-43d6-91de-88a2bf3a2c18")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -43964,7 +46791,7 @@
 			(uuid "3f877d41-2bb9-448a-8fdf-dd1eb4dbb4fb")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -44186,7 +47013,7 @@
 			(uuid "f261a14a-befc-497d-8653-a0df7a66600d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -44493,7 +47320,7 @@
 			(uuid "7d955d2d-affd-4fd9-90dc-945777c21428")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -44703,7 +47530,7 @@
 			(uuid "1862d7dd-6410-478f-af2e-6b146d1f0aa8")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -45041,7 +47868,7 @@
 			(uuid "2d250590-315b-4195-ad48-fc95dbc9d63f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -45253,7 +48080,7 @@
 			(uuid "489a315c-744f-4607-a873-be6249ce9a18")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -45463,7 +48290,7 @@
 			(uuid "3ee3e8d6-be80-4541-9a68-5b12cbe0870c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -45675,7 +48502,7 @@
 			(uuid "3d2dfacc-5d1f-4dc8-9b8e-88fb5b4cd02f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -46000,7 +48827,7 @@
 			(uuid "844f3b28-5833-409a-8d0e-8b5783627eda")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -46338,7 +49165,7 @@
 			(uuid "a97d6501-d8de-4709-8bbf-e16019fb8153")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -46560,7 +49387,7 @@
 			(uuid "17759c48-2092-4ba0-99c7-0aba34b1f1d6")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -46770,7 +49597,7 @@
 			(uuid "1c186995-8f1a-40ae-9fa1-3ba1be1cfeeb")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -46980,7 +49807,7 @@
 			(uuid "0e5938aa-7ba6-4376-b3e9-5f1dd789e4f0")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -47298,7 +50125,7 @@
 			(uuid "46c63e29-1693-4d04-a177-a1687c63ea91")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -47508,7 +50335,7 @@
 			(uuid "8f2b1a04-d88a-4a2d-ad75-d8c664c87c9c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -47858,7 +50685,7 @@
 			(uuid "b2af7b93-25a9-4985-90ef-92235fcb1f0d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -48165,7 +50992,7 @@
 			(uuid "80ad515e-3e0b-410c-8c68-080c92fc963f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -48375,7 +51202,7 @@
 			(uuid "040467a7-7262-4d5d-a108-4f69fe3935aa")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -48682,7 +51509,7 @@
 			(uuid "8afb5ac5-c95f-4c97-aec4-8fe36440cf9f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -48892,7 +51719,7 @@
 			(uuid "412caaad-fedf-4304-8967-6572bf4674c3")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -49553,7 +52380,7 @@
 			(uuid "5fb572b9-8de3-4010-a296-4bd957cfdd7b")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -49860,7 +52687,7 @@
 			(uuid "e0de7b74-54cc-4d6b-a4fb-6d06d59288a6")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -50521,7 +53348,7 @@
 			(uuid "46fbe498-8e66-4e7e-a41d-f283aac9988f")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -50743,7 +53570,7 @@
 			(uuid "0826df0f-035e-47a7-89cb-353b6055e15b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -51063,7 +53890,7 @@
 			(uuid "9e3da549-5659-4925-a4df-cb57edb89169")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -51273,7 +54100,7 @@
 			(uuid "bf2e28de-e86c-4888-a23e-d46963b522bd")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -51496,7 +54323,7 @@
 			(uuid "5d007d79-391c-458d-b7c8-81223783dfed")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -51799,7 +54626,7 @@
 			(uuid "4ab68e1c-c96a-468e-bb1a-6769a8ed3181")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -52009,7 +54836,7 @@
 			(uuid "bb89a637-3192-4358-b9c9-77918e187932")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -52219,7 +55046,7 @@
 			(uuid "bd1dccd3-7ad1-406d-a8ee-de8d9d00d7a9")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -52444,7 +55271,7 @@
 			(uuid "d627075c-29a0-4c93-b0a8-2b258698b944")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -52782,7 +55609,7 @@
 			(uuid "7e4e6929-f714-4180-9854-ac56491f897e")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -53089,7 +55916,7 @@
 			(uuid "6c224bb2-e26f-4683-aca6-052214bac4fc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -53408,7 +56235,7 @@
 			(uuid "e9ca95e6-73f5-4b36-b6fe-b863cf48042f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -53725,7 +56552,7 @@
 			(uuid "c203bdf0-18d5-4c7d-8ef1-e1a15dd2e381")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -54169,7 +56996,7 @@
 			(uuid "c22cb202-def9-4ad3-ab0e-6729638c4a5b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -54391,7 +57218,7 @@
 			(uuid "473d6620-b2f1-4df5-8301-be5a3919da01")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -54613,7 +57440,7 @@
 			(uuid "d7bdcc83-0b2b-4d86-acb1-84d066f784e0")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -54823,7 +57650,7 @@
 			(uuid "b3ce6557-0a90-4bb4-985e-38661ea04157")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -55161,7 +57988,7 @@
 			(uuid "9debb652-c51d-483d-aac9-8e44cadce5df")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -55373,7 +58200,7 @@
 			(uuid "4c50cb29-22b1-4fbf-89d2-665d8cd35a59")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -55969,7 +58796,7 @@
 			(uuid "b6675f14-429d-4232-9773-fb1b7d233337")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -56179,7 +59006,7 @@
 			(uuid "e21041ee-f6a4-4d14-8cd1-976e87a8d45b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -56388,7 +59215,7 @@
 			(uuid "279ca087-8c71-400e-8433-6a58c0303b50")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -56598,7 +59425,7 @@
 			(uuid "916b1bc3-073b-4e47-868b-5ff65feb7da2")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -56808,7 +59635,7 @@
 			(uuid "6cc0a4c8-707c-498f-bc57-80bdb57e436e")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -57113,7 +59940,7 @@
 			(uuid "2ec15f1f-e271-4b8e-88ca-cd13695ed6d2")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -57323,7 +60150,7 @@
 			(uuid "8c6937fb-0717-4a40-a58a-1feca1b0d62c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -57533,7 +60360,7 @@
 			(uuid "8dedb8ae-8dcb-4956-aa4b-71ea2632711a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -58194,7 +61021,7 @@
 			(uuid "ef42892d-292e-4e56-a00e-def1ebea365a")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -58404,7 +61231,7 @@
 			(uuid "a60c90aa-8b6f-4b8a-be94-7f05e0c557c6")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -58629,7 +61456,7 @@
 			(uuid "b665c21c-164d-4475-b913-9ee296b24d0b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -59121,7 +61948,7 @@
 			(uuid "c48c6752-9147-4403-8566-9bee39016728")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-12S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -59331,7 +62158,7 @@
 			(uuid "4596994f-37a0-4511-b653-d1b4a1ac1435")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -59541,7 +62368,7 @@
 			(uuid "a322aa6b-9b0b-40c5-ab69-a6c6ff966314")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -59879,7 +62706,7 @@
 			(uuid "8a0bae01-12ea-499e-b8f9-6a458755eb45")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -60186,7 +63013,7 @@
 			(uuid "d1a932bd-f97d-4f6d-b1d0-722b1b2160db")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -60847,7 +63674,7 @@
 			(uuid "34c2bf0c-1d84-4094-a7c6-609da9e6ff77")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -61294,7 +64121,7 @@
 			(uuid "0ffe1a46-de66-42fb-9b6b-8da3610afdf7")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -61740,6 +64567,17 @@
 			(uuid "1653e3c1-8694-446d-8484-060fb9c18d61")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/Connector_USB.3dshapes/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.step"
+			(offset
+				(xyz 0 3.65 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm"
 		(layer "B.Cu")
@@ -62183,7 +65021,7 @@
 			(uuid "509995e1-2f6a-4681-b812-5d6f78eff0b9")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -62493,7 +65331,7 @@
 			(uuid "6e933d53-f85f-497f-ba6e-458c992b267f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -62702,7 +65540,7 @@
 			(uuid "de496b17-3644-4d83-9fdf-0d0579620017")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -63480,7 +66318,7 @@
 			(uuid "de7b39fa-0108-47f5-ac5d-b176614e7bf2")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -63692,7 +66530,7 @@
 			(uuid "19acb897-295c-4a59-89b6-b9c4489dcb01")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -63902,7 +66740,7 @@
 			(uuid "71cbd9fe-2fb2-4847-a2d0-57a6c24225f9")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -64112,7 +66950,7 @@
 			(uuid "93c5060a-8290-4ea5-830d-be6f44bba0bb")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -64421,7 +67259,7 @@
 			(uuid "d951320a-ee25-4772-9e27-73cbe4c4f20b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -64631,7 +67469,7 @@
 			(uuid "b3450293-0391-4c29-b0c6-72d1aab9b146")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -65292,7 +68130,7 @@
 			(uuid "dd6532eb-a71c-4480-9635-cae6a6bb20f5")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -65599,7 +68437,7 @@
 			(uuid "65c8765a-04d5-41b7-b5cb-2b905bbe0db6")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -65811,7 +68649,7 @@
 			(uuid "aa393015-0de4-4633-8e7b-e8d827e01a7c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -66359,7 +69197,7 @@
 			(uuid "af80085e-fbe8-4938-bdcf-362e0f11259d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -66569,7 +69407,7 @@
 			(uuid "c6f8bfea-688f-4b67-a036-085b0c6053f3")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -66792,7 +69630,7 @@
 			(uuid "d30ba433-54e0-424d-bcb2-86e05c2dc08e")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -67001,7 +69839,7 @@
 			(uuid "9ba7dfd3-25c0-4842-9bc3-24fdcf2abd5e")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -67224,7 +70062,7 @@
 			(uuid "aaaaad43-241c-4cfe-8609-8eae0f29c001")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -67434,7 +70272,7 @@
 			(uuid "2248cc82-ca63-488e-b129-2081a9a43d0d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -68095,7 +70933,7 @@
 			(uuid "9f1379d1-33f4-46cd-9a24-ad8259d36f69")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -68756,7 +71594,7 @@
 			(uuid "b721c83c-72b0-48de-949b-bb3149c62bf8")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -69229,7 +72067,7 @@
 			(uuid "b5905cd1-3871-48b9-8b32-ba862fe25a41")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -69441,7 +72279,7 @@
 			(uuid "25a325b3-36a0-48dd-9905-0eedc96a7b62")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -69813,7 +72651,7 @@
 			(uuid "d3ea08c0-77de-4080-b130-2df2768ba0da")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Button_Switch_SMD.3dshapes/Panasonic_EVQPUL_EVQPUC.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Button_Switch_SMD.3dshapes/Panasonic_EVQPUL_EVQPUC.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -70023,7 +72861,7 @@
 			(uuid "84c3c962-f98d-49ab-9029-4899bd369aec")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -70246,7 +73084,7 @@
 			(uuid "d145346a-42b1-4de5-91d3-c2cb9da02c12")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -70456,7 +73294,7 @@
 			(uuid "152e912f-effa-4f13-ac5e-e43440c66a0f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -70666,7 +73504,7 @@
 			(uuid "f77099a5-a9b1-4f6a-a294-f0d40ec846f9")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -70876,7 +73714,7 @@
 			(uuid "add57427-408b-4474-8ac4-468de64d67a1")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -71086,7 +73924,7 @@
 			(uuid "4163b02f-5024-44c4-8131-d63635b57595")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -71296,7 +74134,7 @@
 			(uuid "b9e1690a-2c6f-405d-905c-53b1f362d472")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -71506,7 +74344,7 @@
 			(uuid "9672c4d9-518e-42d5-b900-1c6c22f370e8")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -71729,7 +74567,7 @@
 			(uuid "033e31f7-cd7b-4329-8180-1c213e78d657")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -71939,7 +74777,7 @@
 			(uuid "bbbe60a8-954f-4614-acda-cb1175b888f4")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -72149,7 +74987,7 @@
 			(uuid "e15ac55c-38bd-4d35-9e20-d49e5bb0cf0b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -72358,7 +75196,7 @@
 			(uuid "bbda5308-0bea-4025-8ba3-8d7065b071aa")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -72568,7 +75406,7 @@
 			(uuid "aaf1cc43-4586-46f9-a79b-1a44082a473f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -73229,7 +76067,7 @@
 			(uuid "df4cabf5-a4d8-407b-bf6a-af946d2f0a67")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -73439,7 +76277,7 @@
 			(uuid "baaa7c69-8780-4aae-9dc8-2ad18a014ecb")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -73649,7 +76487,7 @@
 			(uuid "05e2e73b-c3d5-4a68-a583-f9b5557d26f0")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -73956,7 +76794,7 @@
 			(uuid "e3947802-9f23-4427-a049-22cef5ff293d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -74617,7 +77455,7 @@
 			(uuid "d0d9da92-4d81-44f1-a5c1-6dd62a0aeda4")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -74827,7 +77665,7 @@
 			(uuid "5125c51b-ff48-4d4a-b817-bb626d9508fa")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -75488,7 +78326,7 @@
 			(uuid "85a28002-bb01-482e-8318-bbaad147941c")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -75830,7 +78668,7 @@
 			(uuid "e8d61086-33e6-4fae-aed6-933d43c2bcb7")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -76040,7 +78878,7 @@
 			(uuid "49000a3e-d468-42ee-9249-f6373e8f77fc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -76265,7 +79103,7 @@
 			(uuid "6a4ee943-3060-4060-8e94-44e04f974800")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -76926,7 +79764,7 @@
 			(uuid "7ed08c06-757c-47db-bb02-79fb041b2ea0")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -77233,7 +80071,7 @@
 			(uuid "15d93802-1901-427e-8295-943ec1a41c8a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -77443,7 +80281,7 @@
 			(uuid "a03c7afd-ab26-4ec4-a7f5-24da82ca24fa")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -77653,7 +80491,7 @@
 			(uuid "c798f17f-38cd-4cd2-b95b-c89f5a9b2a9d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -77863,7 +80701,7 @@
 			(uuid "065264a2-81ef-4c1b-a098-b39ffa04bc3a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -78201,7 +81039,7 @@
 			(uuid "26379bb2-ad00-4383-b135-c626ba5a34b6")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -78410,7 +81248,7 @@
 			(uuid "f8bd2c6b-5c0f-4bae-af69-d08b176b5ea1")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -78622,7 +81460,7 @@
 			(uuid "f5e0d60a-613b-4449-af5b-fc41fcde84a8")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -78957,7 +81795,7 @@
 			(uuid "b0c5e667-196a-4249-817e-5010f68cdcd9")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Inductor_SMD.3dshapes/L_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Inductor_SMD.3dshapes/L_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -79167,7 +82005,7 @@
 			(uuid "ab2dbb94-b19d-4b9b-ab7f-8a60a6f022db")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -79474,7 +82312,7 @@
 			(uuid "a21f1588-64cc-424c-a12c-218f81da138a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -79794,7 +82632,7 @@
 			(uuid "efa2367d-af21-4ca4-8bc7-dc13eb698007")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -80017,7 +82855,7 @@
 			(uuid "b7d58b46-191b-424d-9f6e-a0ed6e013864")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -80239,7 +83077,7 @@
 			(uuid "5508771c-783c-407a-b229-0d61b4fc8b13")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -80557,7 +83395,7 @@
 			(uuid "0eed79ed-f514-48db-b935-583d13eac30f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -81218,7 +84056,7 @@
 			(uuid "2408e550-0480-4f65-bd80-081122e80a26")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -81556,7 +84394,7 @@
 			(uuid "47254633-3055-4cea-aaf0-261413f4d67e")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -81766,7 +84604,7 @@
 			(uuid "ac26fef4-6443-42c1-a203-8e865b79f239")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -82073,7 +84911,7 @@
 			(uuid "df16c934-f1b6-4f5e-a704-ccb59f4a21f7")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -82734,7 +85572,7 @@
 			(uuid "878c7854-6ccc-4ca9-a468-55f0a62f3fbe")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -83734,6 +86572,17 @@
 			(uuid "f9252d45-bcc9-475f-a5dd-d0a9d6f2a7e6")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/Connector_USB.3dshapes/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.step"
+			(offset
+				(xyz 0 3.65 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:SMMS0420-2R2M"
 		(layer "B.Cu")
@@ -83960,6 +86809,17 @@
 			(uuid "56a1220c-149d-453c-bc03-7b08c0ef5432")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/Inductor_SMD.3dshapes/L_Changjiang_FXL0420.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "B.Cu")
@@ -84159,7 +87019,7 @@
 			(uuid "274ca026-8545-45c7-a4d9-a7d447935ef2")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -84490,6 +87350,17 @@
 			(uuid "56f0b436-53c4-4675-a951-e1e3540d958e")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/Package_SON.3dshapes/Winbond_USON-8-1EP_3x2mm_P0.5mm_EP0.2x1.6mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 270)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0402_1005Metric"
 		(layer "B.Cu")
@@ -84689,7 +87560,7 @@
 			(uuid "eac24432-9c5b-41b7-9fd3-232291060c83")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -84899,7 +87770,7 @@
 			(uuid "540a5728-a576-481c-b50c-7195d8559d15")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -85111,7 +87982,7 @@
 			(uuid "334c9da7-3ad3-42ba-b869-e1a1b3e5f50a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -85321,7 +88192,7 @@
 			(uuid "bb824bc0-1c5c-4839-b5cb-955814502e57")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -85531,7 +88402,7 @@
 			(uuid "2aafda83-1083-42ec-b295-ba55b8e85260")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -85854,7 +88725,7 @@
 			(uuid "254ebbdd-0267-4949-b156-a11f1a52c6e8")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -86064,7 +88935,7 @@
 			(uuid "45fa9db0-9ff3-454f-a668-a91f90551e43")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -86725,7 +89596,7 @@
 			(uuid "6712748b-baee-48ab-9c43-36cff7dd935b")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -87021,7 +89892,7 @@
 			(uuid "e0ec6669-25e2-44b5-a194-1099ecc2ecb7")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -87334,7 +90205,7 @@
 			(uuid "3c0e9efd-d0e1-4387-a0b0-c07f69346ebc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -87544,7 +90415,7 @@
 			(uuid "291ac246-10e1-42a5-8ba3-790a9966df02")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -87753,7 +90624,7 @@
 			(uuid "41c1573b-3a0b-493c-ab01-2bbeb5cb0a26")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -88178,7 +91049,7 @@
 			(uuid "db26a36d-f4bf-41ae-8403-21541181bdd3")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -88496,7 +91367,7 @@
 			(uuid "b321b2d7-0c86-471b-8665-3ab4c5825b2c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -88708,7 +91579,7 @@
 			(uuid "63244c35-e0cc-41b0-a684-6429311935db")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -88918,7 +91789,7 @@
 			(uuid "395021eb-cdf2-4901-aa4d-9d1990a4398d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -89128,7 +91999,7 @@
 			(uuid "55c30cfb-0e3d-4366-8ecc-a8a5a2fac231")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -89338,7 +92209,7 @@
 			(uuid "9b3ded9e-a309-4028-967c-6a4c5983e60b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -89561,7 +92432,7 @@
 			(uuid "e8786781-f839-4438-9d25-7f46e0fcbbb3")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -89773,7 +92644,7 @@
 			(uuid "10809f49-5a60-45ac-b0e1-820650d8e5ce")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -90111,7 +92982,7 @@
 			(uuid "5b7414c0-e2de-4c38-955a-7e236c016b8b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -90418,7 +93289,7 @@
 			(uuid "15ca6fc6-e977-4441-a89c-389c90721e2f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -90736,7 +93607,7 @@
 			(uuid "452bc0d1-9009-443d-8c38-9cf18c289d07")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -91397,7 +94268,7 @@
 			(uuid "da4e9faa-7088-4a15-834e-da2415f6d36c")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -91735,7 +94606,7 @@
 			(uuid "f74e6ff4-370d-40f7-88ee-98c2eaa53170")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -92396,7 +95267,7 @@
 			(uuid "38648cca-9c1e-4c22-9add-779f69c5eb64")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -92946,7 +95817,7 @@
 			(uuid "7fd5e416-021d-42f4-9207-0a3c26138f3e")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -93261,7 +96132,7 @@
 			(uuid "b60e0ce5-8a9c-4a9c-b8ba-714043e4bdbc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -93473,7 +96344,7 @@
 			(uuid "703a3189-d20a-49d3-af21-c14570ea318b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -93696,7 +96567,7 @@
 			(uuid "dc3375c3-bf3f-4309-99e4-e83f83e8033d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -93905,7 +96776,7 @@
 			(uuid "ccf0f9ab-cf80-4917-a0ec-9c52e42440aa")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -94128,7 +96999,7 @@
 			(uuid "3463d88f-904d-4ef0-b268-fb93bd6dd0f1")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -94466,7 +97337,7 @@
 			(uuid "f23461cd-1fa6-4b7b-becf-50f0d9b5d58d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -94676,7 +97547,7 @@
 			(uuid "8b93b139-9ba5-4c62-bf46-27ce5097c897")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -94886,7 +97757,7 @@
 			(uuid "89a447ce-bc9e-4352-93b0-2c9231edc95a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -95207,7 +98078,7 @@
 			(uuid "e1794902-c220-4e30-bc7b-32f9cafb21f4")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -95419,7 +98290,7 @@
 			(uuid "5340ccef-6ec5-49ed-8e55-096960860a3c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -95641,7 +98512,7 @@
 			(uuid "99866b98-56b3-4e22-bce9-53871dd64f16")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -95979,7 +98850,7 @@
 			(uuid "456c5261-7864-4141-975b-e1bfbb53c46c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -96202,7 +99073,7 @@
 			(uuid "34730574-1fae-4e4e-b708-37a51e0dec41")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -96520,7 +99391,7 @@
 			(uuid "dcfd4c05-ace3-4b3b-b34a-01210de2c438")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -96730,7 +99601,7 @@
 			(uuid "59616958-df8a-46c5-aeb6-9bf1276b7aa7")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -96940,7 +99811,7 @@
 			(uuid "90957db9-1459-405d-8be6-088e3d9a37ca")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -97247,7 +100118,7 @@
 			(uuid "35682ee2-08d3-4367-bed4-b9fc39234692")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -97585,7 +100456,7 @@
 			(uuid "6da183d9-6c19-4d48-80f6-595fb870123e")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -97923,7 +100794,7 @@
 			(uuid "16eeeb06-f3d5-40fd-bfd2-244ef842c93b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -98135,7 +101006,7 @@
 			(uuid "1afba627-e5fe-4c3a-b16c-70ca9c6d67a5")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -98345,7 +101216,7 @@
 			(uuid "48f554ad-87e5-4220-bb25-abfd1f206411")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -98673,7 +101544,7 @@
 			(uuid "5d9a7800-0e07-4a4c-b1d5-d597a076de24")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -98883,7 +101754,7 @@
 			(uuid "6c8ecfb2-45c3-4189-9c10-730c754643d4")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -99093,7 +101964,7 @@
 			(uuid "c2f99987-82ea-4496-a2bd-1569c9237b16")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -99303,7 +102174,7 @@
 			(uuid "48de4f45-d23a-4911-98e6-9b45165b5d75")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -99675,7 +102546,7 @@
 			(uuid "1927f7eb-5077-4589-82fa-c1d8fde7dccf")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Button_Switch_SMD.3dshapes/Panasonic_EVQPUL_EVQPUC.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Button_Switch_SMD.3dshapes/Panasonic_EVQPUL_EVQPUC.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -99884,7 +102755,7 @@
 			(uuid "b9405d61-8bf1-4ecf-a787-572791cff82d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -100313,6 +103184,17 @@
 			(uuid "0b786000-4e85-4aec-8fcf-4d13e1802729")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/DHVQFN-16-1EP_2.5x3.5mm_P0.5mm_EP1x2mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "B.Cu")
@@ -100512,7 +103394,7 @@
 			(uuid "3c62b759-4ab1-402e-8b94-9dccc3f74160")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -100941,6 +103823,17 @@
 			(uuid "f5fff538-c1c6-4ccf-9e94-6688beaf551c")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/DHVQFN-16-1EP_2.5x3.5mm_P0.5mm_EP1x2mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:FH34SRJ14S05SH50-Rev2"
 		(layer "B.Cu")
@@ -101591,7 +104484,7 @@
 			(uuid "8aa1d3e4-0245-45f4-858c-73c6a91cf3ac")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -101801,7 +104694,7 @@
 			(uuid "52898e70-f049-4d96-8dc7-0a8299318908")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -102011,7 +104904,7 @@
 			(uuid "aecd0fe5-5236-4b17-8686-f72a688ccddd")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -102223,7 +105116,7 @@
 			(uuid "9a5088f7-096b-4469-b957-6e8295de2bd5")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -102433,7 +105326,7 @@
 			(uuid "639e31e5-31a4-4b6b-8a7d-1018c51549cc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -102740,7 +105633,7 @@
 			(uuid "9a4a7d49-fbf1-464c-825c-76ae45f6e401")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -103401,7 +106294,7 @@
 			(uuid "cac693ff-1ac2-4fd8-a0be-70610339e1b5")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -103624,7 +106517,7 @@
 			(uuid "5e7a662d-4261-4ce8-8954-bef4c4ad22de")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -103834,7 +106727,7 @@
 			(uuid "54ac1866-b9ca-4851-bcb7-cb49b7bf8619")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -104044,7 +106937,7 @@
 			(uuid "6856a11e-1f1f-4df3-baff-079277ff8765")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -104351,7 +107244,7 @@
 			(uuid "e395cef6-a787-4c65-b00a-80a4127327a1")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -104561,7 +107454,7 @@
 			(uuid "75d35cb7-56b4-47a4-80d0-d2cea404f136")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -104771,7 +107664,7 @@
 			(uuid "e8feaa64-4271-4a1a-a0d8-648166cc5bd7")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -104981,7 +107874,7 @@
 			(uuid "567d87a5-0eb3-4f55-bdba-c64a179f093b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -105191,7 +108084,7 @@
 			(uuid "ee0c8466-6bba-486e-ae79-f1fcc23cc632")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -105403,7 +108296,7 @@
 			(uuid "0b72d11c-d4ce-43ca-93c3-8a6739b8a697")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -105721,7 +108614,7 @@
 			(uuid "2055bba7-93fe-4972-ba05-4b57a3886b1c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -105931,7 +108824,7 @@
 			(uuid "a4f4860a-9e6e-4732-b8e7-982df758359f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -106141,7 +109034,7 @@
 			(uuid "0bc265fa-3283-4fc3-84c1-c859eb7210cc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -106353,7 +109246,7 @@
 			(uuid "b95292c4-91a8-46c0-b862-3bca8ebf5266")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -106782,7 +109675,7 @@
 			(uuid "affaf109-f0d2-4404-8883-485ffd731b94")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -107112,7 +110005,7 @@
 			(uuid "0c30eaf0-697a-44e2-b520-b2cdbb34f0b5")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -107450,7 +110343,7 @@
 			(uuid "dee1e585-6efd-461b-a3dd-09341bd9b12a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -107788,7 +110681,7 @@
 			(uuid "436fef94-523d-4909-81be-786c5013071d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -108095,7 +110988,7 @@
 			(uuid "fd02373e-9126-4a58-b7e0-e9ce25373efe")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -108546,7 +111439,7 @@
 			(uuid "247662df-4a14-465f-8f2e-0002bbc3d518")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/LED_SMD.3dshapes/LED_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -108884,7 +111777,7 @@
 			(uuid "45f20017-4772-45ba-bb96-7b585293b06a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -109222,7 +112115,7 @@
 			(uuid "2bbf3ee3-07f8-4484-a358-900b8c2fdf64")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -109828,7 +112721,7 @@
 			(uuid "b2533b93-3b66-4615-b52a-d4a8939cc7a3")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -110038,7 +112931,7 @@
 			(uuid "7a9317fa-a513-4fe3-a57a-43017bd040be")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -110248,7 +113141,7 @@
 			(uuid "b8829ecd-a2de-4c58-8aa6-da6e3df45278")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -110586,7 +113479,7 @@
 			(uuid "4ab19d6e-5953-45cd-aebd-199777d6cb55")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -110796,7 +113689,7 @@
 			(uuid "af5e24c2-758a-4900-a7dc-12e10913a084")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -111134,7 +114027,7 @@
 			(uuid "a4d14011-f77e-4c0e-a16c-53af84df1601")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -111344,7 +114237,7 @@
 			(uuid "6cf83a44-a042-499f-9d42-caf8f97cdc4f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -111554,7 +114447,7 @@
 			(uuid "eeee2895-92fb-4548-a39c-4ee4805eb5f1")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -111880,7 +114773,7 @@
 			(uuid "95a06713-2f53-4eed-bda1-7fd49ebfa6da")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -112187,7 +115080,7 @@
 			(uuid "234b9458-7e60-4763-ac75-8970be6a8ec9")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -112397,7 +115290,7 @@
 			(uuid "cd52a23a-4958-4697-9968-5a0afcd98301")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -112826,6 +115719,17 @@
 			(uuid "03ab84f2-0ffe-4713-b051-18b748549e53")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/DHVQFN-16-1EP_2.5x3.5mm_P0.5mm_EP1x2mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "kibuzzard-639C34AE"
 		(layer "B.Cu")
@@ -113245,7 +116149,7 @@
 			(uuid "45e702ec-0f90-4603-afa5-578566b1ec35")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -113468,7 +116372,7 @@
 			(uuid "9122e112-fa73-4cab-a115-a653d87331fb")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -113677,7 +116581,7 @@
 			(uuid "a27a2950-00d0-461f-aa4b-a40abd25c21b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -114338,7 +117242,7 @@
 			(uuid "a4047598-b1ed-420c-9e33-42526dc4fa77")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -114548,7 +117452,7 @@
 			(uuid "04fdd810-b2b0-48cb-8bab-3af996cb289b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -114771,7 +117675,7 @@
 			(uuid "31a5c03c-1f45-43b7-b5be-4c32c1aaf4ba")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -114994,7 +117898,7 @@
 			(uuid "f575e912-4f67-4bed-9a5c-fa74a0a2b09a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -115217,7 +118121,7 @@
 			(uuid "1b76e4a1-9ff8-4aa9-b7d9-07cdee4840df")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -115427,7 +118331,7 @@
 			(uuid "fe5a76cc-c2ec-488b-97a0-4af959cfbd4b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -115637,7 +118541,7 @@
 			(uuid "7504b92c-ed59-4b72-ba5a-d7905b61e1a9")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -116298,7 +119202,7 @@
 			(uuid "53538340-b299-4218-82ec-0f523326e5f3")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -116508,7 +119412,7 @@
 			(uuid "7436f391-2b7d-4b53-894d-b87896484487")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -116718,7 +119622,7 @@
 			(uuid "f97cc53f-2101-463f-9e4b-c7b842c69925")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -116928,7 +119832,7 @@
 			(uuid "f28ab18c-870e-467b-873e-729dfe69c6ac")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -117589,7 +120493,7 @@
 			(uuid "6c8f420e-e859-4e15-b42b-2407da7cdb35")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -117927,7 +120831,7 @@
 			(uuid "6e104f71-213b-4a87-985f-801476265fb1")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -118187,7 +121091,7 @@
 			(uuid "58def16f-645e-4db3-a0cc-2a105f4a526d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/LED_SMD.3dshapes/LED_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -118975,7 +121879,7 @@
 			(uuid "afddafd9-5302-4486-8c86-2893fd19612a")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -119185,7 +122089,7 @@
 			(uuid "238540e8-e711-4fbc-9852-65513a89afc2")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -119503,7 +122407,7 @@
 			(uuid "af5d93a4-929a-4684-8055-cf5c6c89aa5c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -119799,7 +122703,7 @@
 			(uuid "bd7958b7-cc6d-4361-9919-0e323b00d08c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -120106,7 +123010,7 @@
 			(uuid "80fbb5a3-1db4-4683-a447-6a7e55a79fdb")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -120331,7 +123235,7 @@
 			(uuid "776dbd9d-66a2-48e4-b5ad-cf14cd20f74a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -120540,7 +123444,7 @@
 			(uuid "8e7fcd20-7b39-4a22-957b-13cdbc660a77")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -120750,7 +123654,7 @@
 			(uuid "36c74a39-4ee6-43a6-9e90-a69d0adfadf4")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -121151,7 +124055,7 @@
 			(uuid "f96f223b-5233-472f-8e4c-a1c9c26bed98")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -121812,7 +124716,7 @@
 			(uuid "dc07128c-7bfb-4637-9bb3-f1736a5d2b4b")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -122035,7 +124939,7 @@
 			(uuid "e93b900c-51c0-4489-afb5-5d20717fc2ba")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -122258,7 +125162,7 @@
 			(uuid "aa17d903-17ac-4b8c-a994-40927fb3f54d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -122565,7 +125469,7 @@
 			(uuid "dab66690-82d5-4186-a020-57a57e95b235")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -122775,7 +125679,7 @@
 			(uuid "6a1444d8-88a2-4ec4-adb1-de13df2d0f1c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -123087,7 +125991,7 @@
 			(uuid "3cef95fd-5e4e-4f63-9398-2594a175d358")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -123297,7 +126201,7 @@
 			(uuid "0cbae888-01ae-467c-8a71-0fbd0164fac8")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -123507,7 +126411,7 @@
 			(uuid "8641d7b2-5b0d-4d02-ae90-6a970559b38a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -123717,7 +126621,7 @@
 			(uuid "3dd21004-8da1-454d-950a-bd3aa0b5f82e")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -123927,7 +126831,7 @@
 			(uuid "4f66f234-6ed6-49c7-8bac-bb58e749ddff")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -124289,6 +127193,17 @@
 			(uuid "a5f95dfd-1c8f-46bd-b097-0b70b5abfd0e")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/Package_SON.3dshapes/USON-10_2.5x1.0mm_P0.5mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "kibuzzard-639C3575"
 		(layer "B.Cu")
@@ -124571,7 +127486,7 @@
 			(uuid "4fee374e-3b93-4270-b85f-3ba09b188f03")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -124889,7 +127804,7 @@
 			(uuid "f8c71bdd-c666-4f29-8f1f-b6cca111167b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -125099,7 +128014,7 @@
 			(uuid "e4ba870b-c495-410b-b874-af5c94d397de")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -125437,7 +128352,7 @@
 			(uuid "e4efb368-6160-4a3e-b0ac-d356d97e77c9")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -125844,7 +128759,7 @@
 			(uuid "4de5b447-0e44-4a29-8e64-2d4b2dde0ef6")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -126054,7 +128969,7 @@
 			(uuid "f83cfe4e-8953-484d-a413-021d8dd5073a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -126264,7 +129179,7 @@
 			(uuid "b4276979-ee44-4d00-a19c-1218a2fd22f0")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -126578,7 +129493,7 @@
 			(uuid "0339d953-72e2-4ea5-8cf7-dfbcf695ca2f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -126916,7 +129831,7 @@
 			(uuid "96f46a16-413b-45ce-a559-912519c6649b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -127577,7 +130492,7 @@
 			(uuid "1cef9899-f135-4cb3-87e5-ef021cfdbf6c")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -128238,7 +131153,7 @@
 			(uuid "d02ff6c7-afbd-4bb0-ac98-567631d75f79")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -128448,7 +131363,7 @@
 			(uuid "1e4e6a75-e38e-43b6-9e33-dfe42fa7f5b7")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -128873,7 +131788,7 @@
 			(uuid "a3f6b499-2e04-4636-a385-0f1ecce6cee3")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -129085,7 +132000,7 @@
 			(uuid "a64db176-2d4b-4a2d-9640-89cbb480a079")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -129295,7 +132210,7 @@
 			(uuid "596a7530-57e6-4abc-b90b-07d02a151904")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -129956,7 +132871,7 @@
 			(uuid "ef9ac991-db8d-4716-9699-9a420cfc420b")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -130179,7 +133094,7 @@
 			(uuid "2bf3addb-a255-48ae-9b07-c8c629bde180")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -130486,7 +133401,7 @@
 			(uuid "60d211e8-d0d4-454c-95bc-bca123efa45f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -130696,7 +133611,7 @@
 			(uuid "b81d16a8-9845-4322-8445-a62cfa3157bc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -130919,7 +133834,7 @@
 			(uuid "129f20d5-f9cf-4207-a722-5ff072e4a42b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -131580,7 +134495,7 @@
 			(uuid "5a65c5b6-4efc-4b15-b64b-8056e8ed32ee")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -131790,7 +134705,7 @@
 			(uuid "e07f636a-d483-4c39-a9ff-55cdab791a48")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -132095,7 +135010,7 @@
 			(uuid "061f4350-a650-4c66-b077-d387ee9656f0")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -132413,7 +135328,7 @@
 			(uuid "4332369e-a5ca-4c5e-af70-d24bc53833aa")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -132740,7 +135655,7 @@
 			(uuid "2d16929e-b40b-41d6-afdc-ba030fbe35cd")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -133047,7 +135962,7 @@
 			(uuid "078dedc6-0b2d-4d23-a753-af8a8ad89b66")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -133257,7 +136172,7 @@
 			(uuid "6c87cc27-295d-45aa-bbe8-26281cfaf73a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -133576,7 +136491,7 @@
 			(uuid "c2aa5bcf-3fd7-482a-9edc-5f3a145c4c59")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -133914,7 +136829,7 @@
 			(uuid "ad4b51e9-1f80-4b14-b425-9563d8635589")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -134343,6 +137258,17 @@
 			(uuid "9dbacde2-0670-4a9c-88f3-78b1765b71ae")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/DHVQFN-16-1EP_2.5x3.5mm_P0.5mm_EP1x2mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:FH34SRJ14S05SH50-Rev2"
 		(layer "B.Cu")
@@ -134993,7 +137919,7 @@
 			(uuid "884d9b58-5d15-458f-985e-57a6c0e95786")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -135304,7 +138230,7 @@
 			(uuid "e73507cf-ace1-4817-8c96-548b1e828a74")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -135514,7 +138440,7 @@
 			(uuid "2016a386-7ed3-49fb-aaf7-c652ded77114")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -135828,7 +138754,7 @@
 			(uuid "71147b01-5687-474b-82aa-512ade09ec78")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -136038,7 +138964,7 @@
 			(uuid "3b49cde2-8711-4d9c-9ef9-1f3a34cdf73c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -136568,7 +139494,7 @@
 			(uuid "3b2cbb83-aaaf-4b67-9a41-607f0a864d16")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -136778,7 +139704,7 @@
 			(uuid "27eca4b3-7011-4dc2-9d4d-c619266938f8")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -137439,7 +140365,7 @@
 			(uuid "9bad06da-c21a-4ff7-860d-6ea99e62f9ae")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -137746,7 +140672,7 @@
 			(uuid "1bfc0df1-16d2-4dd6-aaf0-133563209c90")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -137968,7 +140894,7 @@
 			(uuid "18b090de-9785-4b18-b255-96e230e8245b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -138276,7 +141202,7 @@
 			(uuid "1aac4d10-c267-4948-9f65-9d47e151c3c7")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -138696,7 +141622,7 @@
 			(uuid "4233c4c6-131f-483c-bd8d-fa051548e5a8")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -138906,7 +141832,7 @@
 			(uuid "a6b1e472-4a4e-4d8e-bb4b-81322319d70f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -139116,7 +142042,7 @@
 			(uuid "45866c0d-9e5f-4c92-8283-17ae5a4a93cc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -139339,7 +142265,7 @@
 			(uuid "4c5c02ae-e9e6-49bd-9904-c3d4c905eb32")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -139549,7 +142475,7 @@
 			(uuid "f75dfb27-4b91-4b42-8f02-6d65018f3482")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -139891,7 +142817,7 @@
 			(uuid "1e5453f5-3daf-49b6-8c82-4ecc736be495")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -140211,7 +143137,7 @@
 			(uuid "6d5687d1-9e4a-4988-adce-0b8e2d3ff1ac")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -140421,7 +143347,7 @@
 			(uuid "2c7231b3-595e-4b0c-a7cf-1d6e8f272694")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -140631,7 +143557,7 @@
 			(uuid "735f360b-4505-4c60-b3bf-cf33e7462867")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -140841,7 +143767,7 @@
 			(uuid "78707ef8-b476-4dc3-9f8b-ce38eafdaf55")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -141051,7 +143977,7 @@
 			(uuid "d54cd11e-e180-4273-b3e1-07cddbed7403")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -141261,7 +144187,7 @@
 			(uuid "15cccfb1-3c3c-4dcf-a61d-79ab2ea5aed8")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -141568,7 +144494,7 @@
 			(uuid "c9ba8c14-0b27-4852-a737-1f0918770100")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -142007,7 +144933,7 @@
 			(uuid "d7dd7edc-9d9e-4ca8-b7ab-df1a3a62685c")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -142230,7 +145156,7 @@
 			(uuid "8a6e0241-78eb-47e8-bdc0-3b9b235c2fe9")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -142537,7 +145463,7 @@
 			(uuid "b068f3b4-84b0-44d6-860e-6824b5da6f0d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -142760,7 +145686,7 @@
 			(uuid "cfc3e108-f197-45c8-ab1a-70c9a5d306bf")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -142972,7 +145898,7 @@
 			(uuid "c7925382-ea01-4a66-8ae2-b05db13ba41b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -143182,7 +146108,7 @@
 			(uuid "67814e08-4adf-4a47-9279-cd82f194f430")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -143419,6 +146345,17 @@
 			(uuid "40c1a1b8-ea53-4d09-bfb1-5d319786188d")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/Inductor_SMD.3dshapes/L_Changjiang_FXL0420.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "B.Cu")
@@ -143618,7 +146555,7 @@
 			(uuid "f97a2bd7-2fd0-410c-806d-feae5f7f3f8f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -143828,7 +146765,7 @@
 			(uuid "20a57f5a-7776-4451-b5b9-4d81c54050dc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -144037,7 +146974,7 @@
 			(uuid "c7d2cc6a-19d2-49f8-900b-2c6a8df0e3bc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -144344,7 +147281,7 @@
 			(uuid "5e69e906-dce0-4486-8252-fd38018ce982")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -144554,7 +147491,7 @@
 			(uuid "d24b6221-5afa-4041-a910-5d87c7167b27")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -144777,7 +147714,7 @@
 			(uuid "74c43460-f38d-4683-bad4-d41bae4bf8aa")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -144987,7 +147924,7 @@
 			(uuid "77289c0f-65af-456f-bdf8-6dd33acf58d7")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -145196,7 +148133,7 @@
 			(uuid "a83bae97-1b11-49b2-9e19-24e38c2e1a60")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -145406,7 +148343,7 @@
 			(uuid "17e2b589-f103-48cf-85e1-7d0067b530a8")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -145768,6 +148705,17 @@
 			(uuid "b43f3e63-41a2-4b1e-a4b9-bcb7f11977f8")
 		)
 		(embedded_fonts no)
+		(model "${KICAD9_3DMODEL_DIR}/Package_SON.3dshapes/USON-10_2.5x1.0mm_P0.5mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:FH34SRJ14S05SH50-Rev2"
 		(layer "B.Cu")
@@ -146418,7 +149366,7 @@
 			(uuid "1daeea82-c8d3-46f0-992d-f145c694ae5b")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -146725,7 +149673,7 @@
 			(uuid "79027a75-a7d2-41ea-9dbc-bf4f4f00cf81")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -147043,7 +149991,7 @@
 			(uuid "f6955fb1-1872-41a0-8eb7-37715c9d1a89")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -147356,7 +150304,7 @@
 			(uuid "91523b00-dccd-470e-9b4a-c1e26a94ffb5")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -147663,7 +150611,7 @@
 			(uuid "811fda55-659d-4f7e-bf27-2da1d330dc6a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -147872,7 +150820,7 @@
 			(uuid "eb4d46ab-4649-412d-9a36-68f773bb0a8a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -148179,7 +151127,7 @@
 			(uuid "74e71461-7645-4ca4-b676-31720270f951")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -148840,7 +151788,7 @@
 			(uuid "f8c29d6e-3b7c-4267-b729-861d3fbab18c")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -149257,7 +152205,7 @@
 			(uuid "2aeb5678-c2b7-45e6-9949-24a5f173aa36")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -149467,7 +152415,7 @@
 			(uuid "b4a39029-6589-49aa-816c-11ebb2382c91")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -149805,7 +152753,7 @@
 			(uuid "2d6e8a9e-5c57-40df-affa-7d7fa795575a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -150143,7 +153091,7 @@
 			(uuid "97f6d165-aec5-4b6b-b727-2bb1b934c8c4")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -150450,7 +153398,7 @@
 			(uuid "23de926b-bc28-4d0c-a042-7dc34f8f7869")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -150788,7 +153736,7 @@
 			(uuid "55850c69-5811-413c-8795-66bb69a6b689")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -151106,7 +154054,7 @@
 			(uuid "66de5901-0846-4d4a-a349-04b3ee7a7f70")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -151318,7 +154266,7 @@
 			(uuid "918b91db-ca64-447d-b726-43ad6251fa3f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -151528,7 +154476,7 @@
 			(uuid "41f7d27a-8ff1-4697-aa72-13b6abab1794")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -152189,7 +155137,7 @@
 			(uuid "e2626be4-5452-4950-9852-6d28477cfb3d")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -152527,7 +155475,7 @@
 			(uuid "dda1f18d-316f-4539-b482-c60689d75a0e")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -152737,7 +155685,7 @@
 			(uuid "32eedc0c-fd5c-43ff-be07-f63182157012")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -152947,7 +155895,7 @@
 			(uuid "f6f49f06-1b6d-4ef3-bfb5-e2099d5659c1")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -153409,7 +156357,7 @@
 			(uuid "278ddc2a-279f-4921-a44e-249b667e63fc")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -153634,7 +156582,7 @@
 			(uuid "8f66ffd0-0478-4580-848b-fd8fdb61ad0b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -153972,7 +156920,7 @@
 			(uuid "0c4f8d27-53d1-4f7e-a022-67843431a68f")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -154195,7 +157143,7 @@
 			(uuid "4b6c38a2-5ef7-416e-bad4-ce5bbff98fef")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -154533,7 +157481,7 @@
 			(uuid "cface6fc-100f-45f0-8569-4cf3075fa645")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -154743,7 +157691,7 @@
 			(uuid "234aef97-9a43-412b-a1ce-ba62e8145c42")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -154953,7 +157901,7 @@
 			(uuid "4bdfea21-d4aa-47f7-9f94-b0f6121aadc6")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -155163,7 +158111,7 @@
 			(uuid "02c96c5a-c813-490d-b0b2-a50573ed5aff")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -155386,7 +158334,7 @@
 			(uuid "14f11c33-0867-4ebb-a4b6-c93e40080b51")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -155596,7 +158544,7 @@
 			(uuid "14336b3c-0b89-41c9-a886-dfb42a642b7b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -155903,7 +158851,7 @@
 			(uuid "d78103f4-7d8a-4054-a07e-de79bec7167e")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -156125,7 +159073,7 @@
 			(uuid "7e7ce855-9c9d-4c8c-bca0-cb96dbc4d047")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -156432,7 +159380,7 @@
 			(uuid "53b9f843-dc57-4601-82db-d5a790e8f7a9")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -157093,7 +160041,7 @@
 			(uuid "25aa400d-120c-4c9d-a924-fe342f3b1391")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -157303,7 +160251,7 @@
 			(uuid "d12011c3-9d16-4205-8e56-7d8384f5cc45")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -157764,7 +160712,7 @@
 			(uuid "140f5332-404a-4caf-9f12-17954ccf452d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -157974,7 +160922,7 @@
 			(uuid "b8c773fb-4abc-4a3c-8fb9-5002b179e100")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -158635,7 +161583,7 @@
 			(uuid "4677b77b-288b-4956-a3df-9e54a295c717")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -159640,7 +162588,7 @@
 			(uuid "7851530f-d443-4ecb-b11a-9dedd275e53a")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_DFN_QFN.3dshapes/QFN-56-1EP_7x7mm_P0.4mm_EP5.6x5.6mm.step"
+		(model "${KICAD9_3DMODEL_DIR}/Package_DFN_QFN.3dshapes/QFN-56-1EP_7x7mm_P0.4mm_EP5.6x5.6mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -159958,7 +162906,7 @@
 			(uuid "d4aba33d-88f9-4880-a39b-307cbfa1168d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -160170,7 +163118,7 @@
 			(uuid "5104ca1b-7caa-4ea5-bd2b-9fd7e44d76a4")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -160430,7 +163378,7 @@
 			(uuid "00c9160f-b09b-41ec-8a6c-b43e7f83f9be")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/LED_SMD.3dshapes/LED_0805_2012Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_0805_2012Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -160768,7 +163716,7 @@
 			(uuid "c74287ac-4107-4900-a3bb-cf7fb129aa75")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -161197,6 +164145,17 @@
 			(uuid "4f08ad5f-afa7-4bf4-b424-5bf7b481421a")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/models/DHVQFN-16-1EP_2.5x3.5mm_P0.5mm_EP1x2mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "poly_kb:FH34SRJ14S05SH50-Rev2"
 		(layer "B.Cu")
@@ -161847,7 +164806,7 @@
 			(uuid "d5ddba09-4ee5-433c-9507-c44715ee3e0d")
 		)
 		(embedded_fonts no)
-		(model "FH34SRJ-14S-0.5SH_50_.stp"
+		(model "${KIPRJMOD}/models/FH34SRJ-14S-0.5SH_50_.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -162154,7 +165113,7 @@
 			(uuid "2fa8d950-c204-4d31-9676-864879cd6ba8")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -162461,7 +165420,7 @@
 			(uuid "65d42d96-e962-45d4-b362-722398330bee")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_Tantalum_SMD.3dshapes/CP_EIA-3216-18_Kemet-A.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -162799,7 +165758,7 @@
 			(uuid "0d2ffed7-80de-4198-8044-9c0c362bb570")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Diode_SMD.3dshapes/D_SOD-323.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -163022,7 +165981,7 @@
 			(uuid "4472f4c3-748f-44f5-bf87-0a4833d47447")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -163340,7 +166299,7 @@
 			(uuid "4c862ecc-1fd5-49a9-91c2-514513588539")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-353_SC-70-5.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -163563,7 +166522,7 @@
 			(uuid "26e8ea82-1a70-4b9d-a2d2-88412c40ac84")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0603_1608Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -163773,7 +166732,7 @@
 			(uuid "4fa6aa79-51c1-4828-8855-c3d0bbce3383")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -163983,7 +166942,7 @@
 			(uuid "ab3790d6-195a-4a0f-89a9-276d15dae813")
 		)
 		(embedded_fonts no)
-		(model "${KICAD6_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_0402_1005Metric.step"
 			(offset
 				(xyz 0 0 0)
 			)
