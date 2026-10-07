@@ -18,7 +18,9 @@ directly overhead, so the black card goes there (studio.flag() follows the
 camera) and the overhead softbox is hidden from reflections; the card casts
 no shadow, so the floor stays evenly lit. The plate is flat as well and
 mirrors the same card, so the card glows white, light-linked to the plate
-alone: the plate reads silver while the caps still see black.
+alone: the plate reads silver while the caps still see black. The background
+is pure white (a shadow-catcher floor under a transparent film, composited
+onto white after the render), so the picture has no edge on a white widget.
 
 Matrix labels: each board key is matched to the nearest KLE key after fitting
 that half's KLE keys (19.05 mm per U) to the board by a translation; the
@@ -148,6 +150,14 @@ for name in ("overhead", "rim"):
     bpy.data.objects[name].visible_glossy = False
     bpy.data.objects[name].visible_transmission = False
 studio.white_look(sc)
+# The editor shows this picture on a white widget, so the background must be
+# exactly white: any grey reads as a box around the keyboard when zooming.
+# The floor only catches shadows, the film is transparent, and the white is
+# put under it after the render (see onto_white); a white world would pass
+# through AgX and come out light grey.
+bpy.data.objects["cove"].is_shadow_catcher = True
+sc.render.film_transparent = True
+sc.render.image_settings.color_mode = "RGBA"
 bpy.context.view_layer.update()
 
 # frame the keyboard: everything but the studio
@@ -253,6 +263,27 @@ data["keys"].sort(key=lambda k: tuple(int(v) for v in k["matrix"].split(",")))
 with open(out.rsplit(".", 1)[0] + ".json", "w", encoding="utf-8") as f:
     json.dump(data, f, indent=1)
 print(f"wrote {len(data['keys'])} key displays, {len(data['status_displays'])} status displays")
+
+
+def onto_white(path):
+    """Composite the transparent render onto pure white, in display space.
+
+    The PNG holds display-referred 8-bit values with straight alpha, so this is
+    the plain over operator: a pixel the keyboard does not touch is 255, and a
+    shadow the floor caught is a translucent black that greys the white."""
+    img = bpy.data.images.load(path)
+    px = np.array(img.pixels[:], dtype=np.float32).reshape(-1, 4)
+    a = px[:, 3:4]
+    px[:, :3] = px[:, :3] * a + (1.0 - a)
+    px[:, 3] = 1.0
+    img.pixels[:] = px.ravel()
+    img.filepath_raw = path
+    img.file_format = "PNG"
+    img.save()
+    bpy.data.images.remove(img)
+
+
 sc.render.filepath = out
 bpy.ops.wm.save_as_mainfile(filepath=out.rsplit(".", 1)[0] + ".blend", compress=True)
 bpy.ops.render.render(write_still=True)
+onto_white(out)

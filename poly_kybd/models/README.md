@@ -13,11 +13,12 @@ Referenced from the split72 boards as `${KIPRJMOD}/models/<file>`.
 | `DHVQFN-16-1EP_2.5x3.5mm_P0.5mm_EP1x2mm.step` | 74HC595BQ shift register; KiCad's footprint names this file but the KiCad 9 3D library lacks it | `gen_models.py` |
 | `FH34SRJ-14S-0.5SH_50_.step` | Hirose FH34SRJ 14-pos FFC connector (one per key display) | `gen_models.py` |
 | `FH34SRJ-12S-0.5SH_50_.step` | the same in 12 positions, for J37 (the status display's connector) | `gen_models.py` |
-| `screw_M3_pan_hex_2mm.step` | M3x10 pan head, 2 mm hex socket, 1.5 mm flat head with a rounded edge; on the 4 outer mounting holes per half (H2, H3, H6, H9), head on the plate top | `gen_models.py` |
+| `screw_M3_pan_hex_2mm.step` | M3x10 pan head, 2 mm hex socket (1.0 mm deep, 118° drill-point floor, 0.15 mm mouth chamfer), 1.5 mm flat head with a rounded edge; on the 4 outer mounting holes per half (H2, H3, H6, H9), head on the plate top | `gen_models.py` |
 | `case_polykybd_split72_{left,right}_r7.wrl` | the FDM case r7, on H5 | `stl_to_wrl.py` from `parts/export/case/case_polykybd_split72_{left,right}_r7.stl` |
 | `plate_split72_{left,right}.wrz` | switch plate, flipped (Rosetta artwork up), on SW_K_1 at z 4.2, rotate 0 180 0 | `gen_plates.py` from the plate PCBs (see below) |
 | `status_display_holder.wrl` | status OLED holder with the display, on J39 | `gen_inserts.py` from `display_holder_r1.stl` |
 | `cover_insert.wrl` | lid for the expansion port, both halves, on J39 | `gen_inserts.py` from `cover_insert_r3_10p.stl` |
+| `diffuser_frame_split72_{left,right}.wrl` | one-piece LED diffuser frame (36 diffusers and the web under the plate), attached like the plate: on SW_K_1 at z 4.2, rotate 0 180 0, scale 0.3937 | `gen_inserts.py` from `parts/export/diffuser/diffuser_frame_{left,right}.stl` |
 | `SW_Cherry_MX_PCB.wrl`, `SW_Hotswap_Kailh.wrl` | MX switch and Kailh hotswap socket | [keyswitch-kicad-library](https://github.com/perigoso/keyswitch-kicad-library) release v2.0, `3dmodels/3d-library.3dshapes/`, CC-BY-SA 4.0 |
 
 The two switch models used to be referenced as

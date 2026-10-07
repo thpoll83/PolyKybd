@@ -10,8 +10,20 @@
   parts/export/cover_insert/cover_insert_r3_10p.stl (the piece at x = -26,
   sprues dropped), recentred. Frame: cover_insert.scad's, the 17 x 14 cut-out
   centred on the origin, flange underside (= plate top) at z = 0.4.
+- diffuser_frame_split72_{left,right}.wrl  parts/export/diffuser/
+  diffuser_frame_<side>.stl, the one-piece LED diffuser frame, moved into the
+  plate model's frame so it attaches exactly like the plate (see below).
 
-Both are in mm, so the boards reference them with scale 0.3937.
+All are in mm, so the boards reference them with scale 0.3937.
+
+The diffuser frame is generated in plate coordinates (gen_diffuser_frame.py):
+x = plate x - 139.3036, y = -(plate y - 93.701), plate underside at z = 0 and
+z up through the plate. Both offsets were fitted from the 36 LED holes of each
+plate (worst residual 0.0006 mm). The plate VRML (gen_plates.py) puts plate
+point PLATE_ORIGIN at its origin with the plate mid-plane at z = 0, and the
+board turns it over (rotate 0 180 0, offset z 4.2). So the frame is written in
+that same frame with z mirrored: plate underside z = 0 -> +0.8, the face that
+ends up at the bottom. That makes it a reflection, so the faces are rewound.
 """
 from pathlib import Path
 
@@ -22,6 +34,11 @@ from stl_to_wrl import load_stl, write_wrl
 HERE = Path(__file__).resolve().parent
 PARTS = HERE.parent.parent / "parts" / "export"
 CASE_GREY = (0.35, 0.35, 0.37)
+DIFFUSER = (0.85, 0.86, 0.88)           # a colour no other model uses: render/materials.py's role
+FRAME_TO_PLATE = (139.3036, 93.701)     # plate (x, y) = (fx + 139.3036, 93.701 - fy)
+PLATE_ORIGIN = {"left": (259.7096 - 48.4915, 50.6615),       # gen_plates.PLATES
+                "right": (259.6016 - 73.152, 50.66025)}
+PLATE_HALF_T = 0.8
 
 
 def box(x0, y0, z0, sx, sy, sz):
@@ -52,6 +69,25 @@ def cover_insert():
     write_wrl(HERE / "cover_insert.wrl", [(piece, CASE_GREY)], "cover_insert_r3_10p.stl, one piece")
 
 
+def load_ascii_stl(path):
+    """Vertices (N*3, 3) of an ASCII STL, the format the diffuser frames are kept in."""
+    v = [line.split()[1:4] for line in open(path, encoding="ascii") if line.lstrip().startswith("vertex")]
+    return np.array(v, dtype=np.float64)
+
+
+def diffuser_frames():
+    for side in ("left", "right"):
+        v = load_ascii_stl(PARTS / "diffuser" / f"diffuser_frame_{side}.stl")
+        ox, oy = PLATE_ORIGIN[side]
+        out = np.column_stack([v[:, 0] + FRAME_TO_PLATE[0] - ox,
+                               v[:, 1] - FRAME_TO_PLATE[1] + oy,
+                               PLATE_HALF_T - v[:, 2]])
+        out = out.reshape(-1, 3, 3)[:, ::-1].reshape(-1, 3)     # z mirrored: rewind
+        write_wrl(HERE / f"diffuser_frame_split72_{side}.wrl", [(out, DIFFUSER)],
+                  f"diffuser_frame_{side}.stl, in the plate model's frame")
+
+
 if __name__ == "__main__":
     display_holder()
     cover_insert()
+    diffuser_frames()
