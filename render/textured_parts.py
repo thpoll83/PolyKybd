@@ -121,7 +121,7 @@ def add(root, keys):
     if root.get("pk_textured"):
         return
     t, dz = fit(root, keys)
-    disp_mat = _image_material("display decal", "display_front.png", 0.04, coat=1.0)
+    disp_mat = _image_material("display decal", "display_front.png", 0.16)   # materials.DISPLAY_GLASS
     flex_mat = _image_material("flex textured", "flex.png", 0.22, coat=0.5)   # polyimide is glossy
     sv, stris, suv, _ = strip()
     suv = np.column_stack([suv[:, 0], 1.0 - suv[:, 1]])     # image top = display end
