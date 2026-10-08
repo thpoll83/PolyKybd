@@ -22,6 +22,7 @@ import sys
 
 import bpy
 import mathutils
+import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bridge_cable  # noqa: E402
@@ -51,6 +52,12 @@ ASPECT = float(os.environ.get("PK_ASPECT", 550 / 1300))
 # status-panel suffix: screens_layer1 + _l1 for layer 1, the boot layer
 ATLAS = os.environ.get("PK_ATLAS", "screens_layer0")
 STATUS = os.environ.get("PK_STATUS", "")
+# PK_WHITE=1 puts the keyboard on pure white with its own soft shadow, as
+# topview.py does: the camera does not see the cove, the film is transparent,
+# and a cheap shadow-catcher render supplies the shadow
+WHITE = os.environ.get("PK_WHITE") == "1"
+SHADOW = 0.45       # how dark the strongest shadow gets, 0..1 of black over white
+FADE = 0.10         # the outer fraction of the image over which the shadow fades out
 SCENE_GAP = 0.05                        # blender_scene.py's gap between the halves
 
 sc = bpy.context.scene
@@ -128,4 +135,58 @@ if border:
     sc.render.border_min_y, sc.render.border_max_y = 1 - y1, 1 - y0
 else:
     bpy.ops.wm.save_as_mainfile(filepath=out.rsplit(".", 1)[0] + ".blend", compress=True)
+
+
+def _pixels(path):
+    img = bpy.data.images.load(path)
+    w, h = img.size
+    return img, np.array(img.pixels[:], dtype=np.float32).reshape(h, w, 4)
+
+
+def shadow_render(path):
+    """The floor's shadow alone, 0..1, at the main render's size (topview.py's).
+    A half-size, 32-sample render with the cove as a shadow catcher; the level
+    at the image border counts as zero and the rest fades out towards it, so
+    the picture's edge stays exactly white."""
+    W, H = sc.render.resolution_x, sc.render.resolution_y
+    cove = bpy.data.objects["cove"]
+    cove.visible_camera, cove.is_shadow_catcher = True, True
+    samples, pct = sc.cycles.samples, sc.render.resolution_percentage
+    sc.cycles.samples, sc.render.resolution_percentage = 32, 50
+    sc.render.filepath = path
+    bpy.ops.render.render(write_still=True)
+    sc.cycles.samples, sc.render.resolution_percentage = samples, pct
+    cove.visible_camera, cove.is_shadow_catcher = False, False
+    img, px = _pixels(path)
+    bpy.data.images.remove(img)
+    a = px[:, :, 3]
+    border = np.concatenate([a[0], a[-1], a[:, 0], a[:, -1]])
+    base = np.percentile(border, 50)
+    a = np.clip((a - base) / max(1e-6, 1.0 - base), 0.0, 1.0)
+    a = np.repeat(np.repeat(a, 2, 0), 2, 1)[:H, :W]
+    a = np.pad(a, ((0, H - a.shape[0]), (0, W - a.shape[1])), mode="edge")
+    yy = np.minimum(np.arange(H), np.arange(H)[::-1])[:, None] / (H * FADE)
+    xx = np.minimum(np.arange(W), np.arange(W)[::-1])[None, :] / (W * FADE)
+    fade = np.clip(np.minimum(yy, xx), 0.0, 1.0)
+    return a * fade * fade * (3 - 2 * fade) * SHADOW
+
+
+def onto_white(path, shadow):
+    """The transparent render over white darkened by the shadow (straight alpha)."""
+    img, px = _pixels(path)
+    a = px[:, :, 3:4]
+    px[:, :, :3] = px[:, :, :3] * a + (1.0 - shadow)[:, :, None] * (1.0 - a)
+    px[:, :, 3] = 1.0
+    img.pixels[:] = px.ravel()
+    img.filepath_raw, img.file_format = path, "PNG"
+    img.save()
+    bpy.data.images.remove(img)
+
+
+WHITE = WHITE and not border          # the shadow pass assumes the full frame
+if WHITE:
+    sc.render.film_transparent = True
+    bpy.data.objects["cove"].visible_camera = False
 bpy.ops.render.render(write_still=True)
+if WHITE:
+    onto_white(out, shadow_render(out.rsplit(".", 1)[0] + "_shadow.png"))
