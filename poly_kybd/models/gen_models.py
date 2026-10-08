@@ -23,8 +23,8 @@ height from the footprint and the part family, not a vendor model.
 import math
 from pathlib import Path
 
-from build123d import (Axis, Box, Color, Compound, Cylinder, Location, RegularPolygon, export_step,
-                       extrude, fillet)
+from build123d import (Align, Axis, Box, Color, Compound, Cone, Cylinder, Location, RegularPolygon,
+                       export_step, extrude, fillet)
 
 HERE = Path(__file__).resolve().parent
 
@@ -96,12 +96,22 @@ def screw_m3():
     # radius softens the bearing edge
     head = fillet(head.edges().group_by(Axis.Z)[-1], 0.6)
     head = fillet(head.edges().group_by(Axis.Z)[0], 0.2)
-    # 2 mm hex socket (M3), 0.9 mm deep
-    s_hex, depth = 2.0, 0.9
-    recess = extrude(RegularPolygon(s_hex / math.sqrt(3), 6), amount=depth + 1.0)
-    head -= recess.moved(Location((0, 0, k - depth)))
+    # 2 mm hex socket (M3), 1.0 mm of hex above a 118 deg drill-point floor,
+    # with a small chamfer at the mouth: a flat floor reflects the same light
+    # as the head top and reads as a painted hexagon, not a hole. The point
+    # reaches ~0.19 mm below the head, so the socket is cut from the joined
+    # screw: cut from the head alone, the shank would fill the tip back in.
     shank = Cylinder(d / 2, length).moved(Location((0, 0, -length / 2)))
     screw = head + shank
+    s_hex, depth, chamfer = 2.0, 1.0, 0.15
+    r_corner = s_hex / math.sqrt(3)
+    recess = extrude(RegularPolygon(r_corner, 6), amount=depth + 1.0)
+    screw -= recess.moved(Location((0, 0, k - depth)))
+    point = r_corner / math.tan(math.radians(59))
+    screw -= Cone(0, r_corner, point, align=(Align.CENTER, Align.CENTER, Align.MIN)).moved(
+        Location((0, 0, k - depth - point)))
+    screw -= Cone(r_corner, r_corner + chamfer, chamfer, align=(Align.CENTER, Align.CENTER, Align.MIN)).moved(
+        Location((0, 0, k - chamfer)))
     screw.color = STEEL
     screw.label = "M3x10 pan head hex socket"
     return Compound(children=[screw], label="screw M3")

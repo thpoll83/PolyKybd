@@ -64,6 +64,11 @@ ROLES = [
     # status display active area (gen_inserts.py lcd): unlit OLED, black and glossy
     ("status lcd", (0.01, 0.01, 0.015), False, {
         "Base Color": (0.002, 0.002, 0.003, 1), "Roughness": 0.06}),
+    # LED diffuser frame (gen_inserts.py DIFFUSER): frosted clear resin, so
+    # each diffuser reads as a milky plug beside its switch
+    ("diffuser resin", (0.85, 0.86, 0.88), False, {
+        "Base Color": (0.92, 0.93, 0.95, 1), "Transmission Weight": 0.85,
+        "Roughness": 0.45, "IOR": 1.5}),
     # M3 case screws (gen_models.py STEEL): dark silver metal
     ("screw steel", (0.62, 0.63, 0.66), False, {
         "Base Color": (0.40, 0.40, 0.42, 1), "Metallic": 1.0, "Roughness": 0.32}),

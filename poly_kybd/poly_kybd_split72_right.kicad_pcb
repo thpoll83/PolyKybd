@@ -9612,6 +9612,17 @@
 				(xyz 0 180 0)
 			)
 		)
+		(model "${KIPRJMOD}/models/diffuser_frame_split72_right.wrl"
+			(offset
+				(xyz 0 0 4.2)
+			)
+			(scale
+				(xyz 0.3937 0.3937 0.3937)
+			)
+			(rotate
+				(xyz 0 180 0)
+			)
+		)
 	)
 	(footprint "poly_kb:Kailh_socket_MX_Indicators"
 		(layer "F.Cu")
