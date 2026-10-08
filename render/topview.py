@@ -107,6 +107,14 @@ for side in ("left", "right"):
     textured_parts.add(root, textured_parts.board_keys(board))
     halves.append((side, root, board))
 print("material roles", materials.apply(bpy))
+# from straight above the photo view's display colours read as one black
+# square, so the top view's decals use gen_textures' lighter FACE_TOP
+top_face = bpy.data.images.load(os.path.join(HERE, "textures", "display_front_top.png"), check_existing=True)
+for m in bpy.data.materials:
+    if m.get("pk_role") == "display decal" and m.use_nodes:
+        for n in m.node_tree.nodes:
+            if n.type == "TEX_IMAGE" and n.image and os.path.basename(n.image.filepath) == "display_front.png":
+                n.image = top_face
 materials.scene_settings(sc)
 bridge_cable.remove()                       # no cables in an editor picture
 studio.splay(0)

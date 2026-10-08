@@ -14,6 +14,7 @@ lies with its flex to the left, the display at the right):
   is down: glass, the dark active area, the striped sticker over the bond
   with its lot number, and the start of the black sticker over the flex.
   A 0.1 mm black seam is drawn round it, where the glass meets the key stem.
+- display_front_top.png is the same with lighter glass, for topview.py.
 - display_rim.png masks the glass's edge for materials.py's glass coat.
 - flex.png is mapped by flex_cable.strip()'s uv: u across the 7.5 mm width,
   v along the strip from the display (top of the image) to the connector
@@ -136,7 +137,21 @@ def _fade(im, box, a0, a1, mask=None):
         mask.paste(Image.fromarray((m * (1 - a)).astype("uint8")), (x0, y0))
 
 
-def display_front_drawn():
+# The display face's light colours: glass cut edge, glass body, the light strip,
+# the tan glue, the pads. The photo view's are calmer, matched to the photo.
+# Seen from straight above (topview.py, the host editor's picture) the light
+# reaches the displays only past the cap walls, and those colours read as one
+# black square: the top view gets lighter ones, so the panel, the sticker and
+# the pads stay readable.
+FACE = {"edge": (74, 75, 77), "body": (30, 31, 33), "strip": (60, 60, 59),
+        "glue": (80, 73, 62), "pad": (108, 108, 108), "panel": (14, 14, 20),
+        "stripes": ((34, 34, 36), (24, 24, 26))}
+FACE_TOP = {"edge": (168, 174, 178), "body": (80, 84, 88), "strip": (88, 88, 86),
+            "glue": (125, 107, 78), "pad": (168, 168, 168), "panel": FACE["panel"],
+            "stripes": FACE["stripes"]}
+
+
+def display_front_drawn(face=FACE):
     """The module traced from the photo (mm, image top = the far end, cable
     side down) and drawn with sharp edges: the glass and its light cut edge,
     the dark panel with the active area, the light strip and tan corners
@@ -153,24 +168,24 @@ def display_front_drawn():
     for x in (1.95, 9.25, 9.65, 10.05):
         d.rectangle(R(x - 0.08, 9.6, x + 0.08, h), fill=(112, 64, 8))
     # the glass: its cut edge reads light, the body dark
-    d.rounded_rectangle(R(0.15, 0.15, 11.95, 9.95), mm(0.12), fill=(74, 75, 77))
-    d.rectangle(R(0.45, 0.45, 11.65, 9.65), fill=(30, 31, 33))
+    d.rounded_rectangle(R(0.15, 0.15, 11.95, 9.95), mm(0.12), fill=face["edge"])
+    d.rectangle(R(0.45, 0.45, 11.65, 9.65), fill=face["body"])
     # the dark panel area and the active area in it
-    d.rounded_rectangle(R(0.55, 0.55, 11.75, 6.35), mm(0.25), fill=(14, 14, 20))
+    d.rounded_rectangle(R(0.55, 0.55, 11.75, 6.35), mm(0.25), fill=face["panel"])
     d.rectangle(R(0.6, 6.0, 11.7, 6.35), fill=(6, 6, 8))           # its darker bottom band
     d.rectangle(R(1.5, 1.0, 10.7, 6.1), fill=(8, 8, 14))           # keymatch.A_*: unlit, near black
     # the light strip below the panel, and the tan glue at its ends
-    d.rectangle(R(0.55, 6.35, 11.75, 6.7), fill=(60, 60, 59))
+    d.rectangle(R(0.55, 6.35, 11.75, 6.7), fill=face["strip"])
     for x0, x1 in ((0.2, 1.6), (11.0, 12.0)):
-        d.rectangle(R(x0, 6.6, x1, 7.0), fill=(80, 73, 62))
+        d.rectangle(R(x0, 6.6, x1, 7.0), fill=face["glue"])
     # the black bond blocks either side, each with two light pads
     for x0, x1, dots in ((0.2, 1.85, ((0.95, 8.1), (1.35, 8.75))), (10.7, 11.95, ((10.95, 8.15), (11.5, 7.6)))):
         d.rectangle(R(x0, 7.0, x1, 9.1), fill=(10, 10, 11))
         for cx, cy in dots:
-            d.ellipse(R(cx - 0.09, cy - 0.09, cx + 0.09, cy + 0.09), fill=(108, 108, 108))
+            d.ellipse(R(cx - 0.09, cy - 0.09, cx + 0.09, cy + 0.09), fill=face["pad"])
     # the striped sticker with the lot number
     sx0, sy0, sx1, sy1 = 1.95, 6.55, 11.0, 9.15
-    tile = _stripes((mm(sx1 - sx0), mm(sy1 - sy0)), mm(0.42), max(1, mm(0.07)), (34, 34, 36), (24, 24, 26))
+    tile = _stripes((mm(sx1 - sx0), mm(sy1 - sy0)), mm(0.42), max(1, mm(0.07)), *face["stripes"])
     td = ImageDraw.Draw(tile)
     td.text((tile.width // 2 - mm(0.3), mm(1.75)), "2305054", fill=(26, 26, 28), font=font(mm(0.9), bold=False), anchor="mm")
     _rounded_paste(im, tile, (mm(sx0), mm(sy0)), mm(0.3))
@@ -254,9 +269,9 @@ def flex_drawn(length_mm):
     return _grain(im, 4.0, 2).filter(ImageFilter.GaussianBlur(0.5))
 
 
-def display_front():
+def display_front(face=FACE):
     if STYLE == "drawn":
-        return display_front_drawn()
+        return display_front_drawn(face)
     w, h = 12.2, 11.0
     im = _photo(MODULE_BOX, (w, h))
     # the thin black seam between the key stem and the glass, so the glass
@@ -298,10 +313,13 @@ def main():
     *_, length = strip()
     OUT.mkdir(exist_ok=True)
     display_front().save(OUT / "display_front.png", optimize=True)
+    display_front(FACE_TOP).save(OUT / "display_front_top.png", optimize=True)
     display_rim().save(OUT / "display_rim.png", optimize=True)
     flex(length).save(OUT / "flex.png", optimize=True)
     if STYLE == "drawn":
         flex_drawn.mask.save(OUT / "flex_traces.png", optimize=True)
+    else:       # the drawn traces do not line up with the photo's
+        (OUT / "flex_traces.png").unlink(missing_ok=True)
     braid().save(OUT / "braid.png", optimize=True)
     print(f"wrote textures, flex length {length:.2f} mm")
 
