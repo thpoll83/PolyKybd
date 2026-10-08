@@ -297,7 +297,7 @@ On the backside, you can check if both pins have been inserted properly:
 15. Insert the 4 hex screws and tighten them carefully. ![One halve assembled](images/assembled.jpg) Now repeat with the other side ;)
 16. Connect the two halves with the short USB-C to USB-C cable.
 17. Finally connect the left side with the USB-C cable connecting to the host system and you are done!
-18. Congratulations! You made it! ![PolyKybd Split72](images/PolyKybdSplit72.jpg) In case you experience any issues, pleas let me know or make a PR on the build guide!
+18. Congratulations! You made it! ![PolyKybd Split72](images/PolyKybdSplit72_assembled_render.jpg) In case you experience any issues, please let me know or make a PR on the build guide!
 
 The fun just starts now! You will recognize that there are a lot of ways to play around with this keyboard.
 
