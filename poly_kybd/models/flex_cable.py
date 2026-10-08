@@ -36,7 +36,7 @@ WIDTH = 7.5            # mm; the 14 pins span 6.5, the slot is 9.76 long
 THICK = 0.11           # mm
 PCB = 1.6062
 Y_SLOT = -5.08
-Z_TOP = 16.583         # on the stem's top (16.508) and under the display glass, centre + gap
+Z_TOP = 16.583         # on the stem's top (16.508), centre + gap
 Z_MOUTH = -(PCB + 0.35)  # the middle of the connector's 0.7 mm high mouth
 Z_RUN = -3.95          # under the hotswap socket (-3.60) and centre post (-3.16)
 # The keycap stem's front over the flex's width (keycap_stem_r7.wrl in the key
@@ -61,7 +61,8 @@ BEND = (1.71, 1.40)
 R_SWEEP = 2.0          # the wide bend from the slot back under the switch
 R_LOOP = (Z_MOUTH - Z_RUN) / 2
 Y_LOOP = 11.4          # loop centre, past the connector's far end (+11.0)
-Y_START = -3.6         # bonded under the display's front edge
+Y_START = -4.57        # the display's front edge: the glass sits on the stem top, so the
+                       # bonded part under it would be buried in the display body
 Y_END = 9.0            # inserted ~1.5 mm into the mouth (far side at +10.5)
 
 
