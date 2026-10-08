@@ -36,10 +36,28 @@ WIDTH = 7.5            # mm; the 14 pins span 6.5, the slot is 9.76 long
 THICK = 0.11           # mm
 PCB = 1.6062
 Y_SLOT = -5.08
-Z_TOP = 16.45          # just under the display glass (its underside is 16.51)
+Z_TOP = 16.583         # on the stem's top (16.508) and under the display glass, centre + gap
 Z_MOUTH = -(PCB + 0.35)  # the middle of the connector's 0.7 mm high mouth
 Z_RUN = -3.95          # under the hotswap socket (-3.60) and centre post (-3.16)
-R_TOP = 0.8
+# The keycap stem's front over the flex's width (keycap_stem_r7.wrl in the key
+# frame, y, z, raycast): the top (16.508) ends at an edge at y -5.821, a
+# chamfer runs down to the foremost point (-6.322, 15.951), and the face
+# slopes back in to a tip at (-5.91, 14.40), with nothing below it. The flex
+# is stiff, so it does not follow that outline: it lies flat on the top to the
+# edge, then one cubic Bezier carries it round the front and back to vertical
+# over the slot at Z_IN. Its handles (BEND: along -y from the edge, along +z
+# from Z_IN) are, of the pairs that rest the strip on the stem's foremost
+# point (centreline GAP..GAP + 0.01 from the stem, never closer), the one
+# with the least bending energy, searched on a grid. Left free, the stiffest
+# curve floats ~0.8 mm off the stem and nearly into the cap; the cable is
+# held taut between the display and the slot, so it rests on that point. It
+# bends no tighter than 0.46 mm and stays 0.82 mm off the cap's inner wall. It used to bend
+# down at the slot's y, which runs it straight through the stem's front slab
+# (z 14.97..16.51).
+GAP = THICK / 2 + 0.02
+EDGE_Y = -5.821
+Z_IN = 10.0
+BEND = (1.71, 1.40)
 R_SWEEP = 2.0          # the wide bend from the slot back under the switch
 R_LOOP = (Z_MOUTH - Z_RUN) / 2
 Y_LOOP = 11.4          # loop centre, past the connector's far end (+11.0)
@@ -94,12 +112,12 @@ def centreline(step=0.15):
             a = a0 + (a1 - a0) * i / n
             pts.append((c[0] + r * math.cos(a), c[1] + r * math.sin(a)))
 
-    # under the display, heading -y
-    line((Y_START, Z_TOP), (Y_SLOT + R_TOP, Z_TOP))
-    # bend down
-    arc((Y_SLOT + R_TOP, Z_TOP - R_TOP), R_TOP, math.pi / 2, math.pi)
+    # under the display and over the stem's top to its front edge, then round
+    # the front and back in to the slot's y
+    line((Y_START, Z_TOP), (EDGE_Y, Z_TOP))
+    pts.extend(bezier(((EDGE_Y, Z_TOP), (EDGE_Y - BEND[0], Z_TOP), (Y_SLOT, Z_IN + BEND[1]), (Y_SLOT, Z_IN)), step))
     # straight down through the plate's switch hole and the PCB slot
-    line((Y_SLOT, Z_TOP - R_TOP), (Y_SLOT, -0.4))
+    line((Y_SLOT, Z_IN), (Y_SLOT, -0.4))
     # under the board: two cubic Beziers, no straight run. The first sags
     # from the slot under the switch, the hotswap socket and the connector
     # and comes up past the connector's far end; the second curls forward
