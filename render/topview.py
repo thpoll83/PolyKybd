@@ -47,6 +47,7 @@ import materials  # noqa: E402
 import studio  # noqa: E402
 import textured_parts  # noqa: E402
 import bridge_cable  # noqa: E402
+from keymatch import A_U0, A_U1, A_V0, A_V1, U, kle_keys, match  # noqa: E402,F401
 
 argv = sys.argv[sys.argv.index("--") + 1:]
 out = os.path.abspath(argv[0])
@@ -58,50 +59,7 @@ if not os.path.exists(kle_path):
     raise SystemExit(f"topview.py needs PolyKybdHost's KLE layout for the matrix labels: {kle_path} "
                      "is missing. Check PolyKybdHost out next to this repo, or pass the file as "
                      "the 4th argument (polyhost/res/polykybd-split72.json).")
-U = 19.05
 PLATE_SKY = 1.0                             # emission the plate mirrors: 3 reads white, 1.0 silver
-
-# display active area inside the decal (gen_textures.display_front: 12.2 x 11.0 mm
-# image, active 9.2 x 5.1 mm at x 1.5, 1.35 mm below the image top; image bottom =
-# key -y = the cable side)
-A_U0, A_U1 = 1.5 / 12.2, 10.7 / 12.2
-A_V0, A_V1 = 1 - 6.45 / 11.0, 1 - 1.35 / 11.0
-
-
-def kle_keys(path):
-    """[(label, cx, cy)] key centres in U, KLE frame (y down), rotations applied."""
-    rows = json.load(open(path, encoding="utf-8"))
-    keys = []
-    r = rx = ry = 0.0
-    x = y = 0.0
-    for row in rows:
-        if not isinstance(row, list):
-            continue
-        w = h = 1.0
-        for item in row:
-            if isinstance(item, dict):
-                if "r" in item:
-                    r = item["r"]
-                if "rx" in item:
-                    rx = item["rx"]
-                    x, y = rx, ry
-                if "ry" in item:
-                    ry = item["ry"]
-                    x, y = rx, ry
-                x += item.get("x", 0)
-                y += item.get("y", 0)
-                w, h = item.get("w", w), item.get("h", h)
-                continue
-            cx, cy = x + w / 2, y + h / 2
-            a = math.radians(r)
-            dx, dy = cx - rx, cy - ry
-            keys.append((item.split("\n")[0], rx + dx * math.cos(a) - dy * math.sin(a),
-                         ry + dx * math.sin(a) + dy * math.cos(a)))
-            x += w
-            w = h = 1.0
-        y += 1
-        x = rx
-    return keys
 
 
 def board_refs(board):
@@ -140,21 +98,6 @@ def lid(board):
 LID_W, LID_H = 17.0, 14.0                   # cover_insert.scad's cut-out
 
 
-def match(board_xy, kle):
-    """Board key centres (KiCad mm, y down) -> KLE labels, by translation fit."""
-    pts = np.array([[k[1] * U, k[2] * U] for k in kle])
-    t = board_xy.mean(0) - pts.mean(0)
-    for _ in range(5):
-        d = ((board_xy[:, None] - (pts + t)[None]) ** 2).sum(-1)
-        near = d.argmin(1)
-        t = (board_xy - pts[near]).mean(0)
-    d = ((board_xy[:, None] - (pts + t)[None]) ** 2).sum(-1)
-    near = d.argmin(1)
-    resid = np.sqrt(d[np.arange(len(near)), near]).max()
-    assert len(set(near)) == len(near), "two board keys matched one KLE key"
-    return [kle[i][0] for i in near], resid
-
-
 sc = bpy.context.scene
 materials.tag(bpy)
 halves = []
@@ -164,6 +107,14 @@ for side in ("left", "right"):
     textured_parts.add(root, textured_parts.board_keys(board))
     halves.append((side, root, board))
 print("material roles", materials.apply(bpy))
+# from straight above the photo view's display colours read as one black
+# square, so the top view's decals use gen_textures' lighter FACE_TOP
+top_face = bpy.data.images.load(os.path.join(HERE, "textures", "display_front_top.png"), check_existing=True)
+for m in bpy.data.materials:
+    if m.get("pk_role") == "display decal" and m.use_nodes:
+        for n in m.node_tree.nodes:
+            if n.type == "TEX_IMAGE" and n.image and os.path.basename(n.image.filepath) == "display_front.png":
+                n.image = top_face
 materials.scene_settings(sc)
 bridge_cable.remove()                       # no cables in an editor picture
 studio.splay(0)

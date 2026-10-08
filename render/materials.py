@@ -43,15 +43,23 @@ ROLES = [
         "Base Color": (0.65, 0.33, 0.06, 1), "Roughness": 0.35,
         "Transmission Weight": 0.3}),
     # MX switch and Kailh socket housings
-    # Tecsee Medium/Middle tactile: translucent "banana" yellow top and
-    # bottom housing (HPE / nylon) ...
+    # Tecsee Medium/Middle tactile: a translucent "banana" yellow bottom
+    # housing (HPE / nylon) ...
     ("switch housing", (0.098, 0.098, 0.098), False, {
         "Base Color": (0.95, 0.75, 0.22, 1), "Transmission Weight": 0.35,
         "Roughness": 0.3, "IOR": 1.5}),
-    # the MX model's top housing is a separate part, exported pure white
+    # the MX model's top housing is a separate part, exported pure white. On
+    # the Tecsee switch it is a MILKY translucent plastic, whitish with a
+    # trace of yellow, not the bottom's banana yellow: transmissive but
+    # frosted, so light passes and nothing behind it reads sharp. 0.75 at
+    # Fully transmissive but strongly FROSTED is what reads milky: the
+    # internals behind it (the yellow stem, the bottom housing's posts that
+    # reach up to 9.6 mm inside it) only blur through. Partial transmission
+    # (0.75..0.95) read as a solid or a second plastic under it; little frost
+    # (0.08..0.28) read as clear glass; subsurface tinted it blue-grey
     ("switch top housing", (1.0, 1.0, 1.0), False, {
-        "Base Color": (0.95, 0.75, 0.22, 1), "Transmission Weight": 0.35,
-        "Roughness": 0.3, "IOR": 1.5}),
+        "Base Color": (0.99, 0.97, 0.90, 1), "Transmission Weight": 1.0,
+        "Roughness": 0.8, "IOR": 1.5}),
     # ... and an opaque cheese-yellow POM stem
     ("switch stem", (0.533, 0.235, 0.0), False, {
         "Base Color": (0.93, 0.70, 0.17, 1), "Roughness": 0.4}),
@@ -74,6 +82,26 @@ ROLES = [
         "Base Color": (0.40, 0.40, 0.42, 1), "Metallic": 1.0, "Roughness": 0.32}),
 ]
 DEFAULT_ROUGHNESS = 0.3
+
+# The key displays' glass: the textured decal (textured_parts.py) and the lit
+# legends over it (screens.py). Glossy, but a polished coat on top mirrored
+# the white studio and read as bright, metallic glass; without the coat, a
+# little rougher and with less specular it stays dark like the real panel.
+DISPLAY_GLASS = {"Roughness": 0.16, "Coat Weight": 0.0, "Specular IOR Level": 0.25}
+RIM_MASK = "display_rim.png"        # gen_textures.display_rim(): a glass coat on the rim
+# textured materials whose image stays linked; apply() sets only these inputs
+# The flex's polyimide film is satin, not glossy: only its copper traces and
+# fingers shine (_flex_traces() drives roughness and the coat from their mask).
+# the traces were metallic 0.7, roughness 0.12 and coated: they mirrored the
+# white switch beside them and read as glass. Fully matte (film and traces
+# 0.5, metallic 0) looked dull in the photo view; this is a little sheen on both
+FLEX_FILM_ROUGH, FLEX_TRACE_ROUGH = 0.3, 0.25
+FLEX_TRACE_METAL, FLEX_TRACE_COAT = 0.3, False
+# set on every apply, so a scene saved with an older finish (or the photo
+# style, which has no trace mask) gets the same film as a fresh one
+FLEX_FILM = {"Specular IOR Level": 0.35, "Roughness": FLEX_FILM_ROUGH, "Coat Weight": 0.0}
+TEXTURED = {"display decal": DISPLAY_GLASS, "flex textured": FLEX_FILM}
+FLEX_TRACES = "flex_traces.png"      # gen_textures.flex_drawn(): the copper traces and fingers
 
 
 def _set(bsdf, name, value):
@@ -131,6 +159,105 @@ def scene_settings(sc):
     c.use_denoising = denoiser_available()
 
 
+def _rim_glass(bpy, m, bsdf):
+    """The display glass's rim: clear glass over the substrate's lighter
+    underside. The texture carries the underside's colour; the rim mask
+    drives Coat Weight, so a glossy glass layer lies over it there and only
+    there. (Metallic from the mask made the rim a mirror, not glass.)
+    Idempotent."""
+    import os
+    nt = m.node_tree
+    tex = nt.nodes.get("rim mask")
+    if tex is None:
+        tex = nt.nodes.new("ShaderNodeTexImage")
+        tex.name = "rim mask"
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "textures", RIM_MASK)
+    tex.image = bpy.data.images.load(path, check_existing=True)
+    tex.image.colorspace_settings.name = "Non-Color"
+    for link in list(nt.links):
+        if link.from_node == tex:
+            nt.links.remove(link)
+    bsdf.inputs["Metallic"].default_value = 0.0
+    nt.links.new(tex.outputs["Color"], bsdf.inputs["Coat Weight"])
+    _rim_irregular(nt, bsdf, tex)
+
+
+def _rim_irregular(nt, bsdf, mask):
+    """Irregularities along the rim: the substrate's underside is not an even
+    film, so its colour varies in brightness and a little in hue, in patches
+    about a millimetre across. The noise runs in the decal object's own
+    coordinates (mm, all keys in one mesh), so no two keys' rims look alike,
+    and the rim mask confines it to the rim. Idempotent."""
+    base = next((l.from_socket for l in nt.links
+                 if l.to_socket == bsdf.inputs["Base Color"] and l.from_node.name != "rim mix"), None)
+    mix = nt.nodes.get("rim mix")
+    if mix is None:
+        if base is None:
+            return
+        coord = nt.nodes.new("ShaderNodeTexCoord")
+        noise = nt.nodes.new("ShaderNodeTexNoise")
+        noise.name = "rim noise"
+        noise.inputs["Scale"].default_value = 0.9           # per mm
+        noise.inputs["Detail"].default_value = 4.0
+        nt.links.new(coord.outputs["Object"], noise.inputs["Vector"])
+        # noise colour 0..1 per channel -> a factor 0.55..1.45 per channel
+        span = nt.nodes.new("ShaderNodeVectorMath")
+        span.operation = "MULTIPLY_ADD"
+        span.inputs[1].default_value = (0.9, 0.9, 0.9)
+        span.inputs[2].default_value = (0.1, 0.1, 0.1)
+        nt.links.new(noise.outputs["Color"], span.inputs[0])
+        mix = nt.nodes.new("ShaderNodeMix")
+        mix.name = "rim mix"
+        mix.data_type = "RGBA"
+        mix.blend_type = "MULTIPLY"
+        nt.links.new(base, mix.inputs["A"])
+        nt.links.new(span.outputs["Vector"], mix.inputs["B"])
+        nt.links.new(mix.outputs["Result"], bsdf.inputs["Base Color"])
+    # every call: _rim_glass() drops all of the mask's links before re-linking
+    # Coat Weight, and without this one the noise covers the whole display
+    nt.links.new(mask.outputs["Color"], mix.inputs["Factor"])
+
+
+def _flex_traces(bpy, m, bsdf):
+    """The flex's copper traces under the polyimide catch the light: the trace
+    mask sets their metallic (FLEX_TRACE_METAL), roughness (FLEX_TRACE_ROUGH)
+    and coat (FLEX_TRACE_COAT) apart from the film's (FLEX_FILM_ROUGH, no coat).
+    Idempotent. A missing mask (the photo style) unlinks any trace nodes a
+    saved scene still has, so the film's own values apply."""
+    import os
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "textures", FLEX_TRACES)
+    nt = m.node_tree
+    if not os.path.exists(path):
+        for l in list(nt.links):
+            if l.to_node == bsdf and l.from_node.name in ("trace mask", "trace metal", "trace rough"):
+                nt.links.remove(l)
+        return
+    tex = nt.nodes.get("trace mask")
+    if tex is None:
+        tex = nt.nodes.new("ShaderNodeTexImage")
+        tex.name = "trace mask"
+        metal = nt.nodes.new("ShaderNodeMath")
+        metal.name = "trace metal"
+        metal.operation = "MULTIPLY"
+        rough = nt.nodes.new("ShaderNodeMapRange")
+        rough.name = "trace rough"
+        nt.links.new(tex.outputs["Color"], metal.inputs[0])
+        nt.links.new(tex.outputs["Color"], rough.inputs["Value"])
+    rough = nt.nodes["trace rough"]
+    # every call: a pass without the mask unlinked them
+    nt.links.new(nt.nodes["trace metal"].outputs["Value"], bsdf.inputs["Metallic"])
+    nt.links.new(rough.outputs["Result"], bsdf.inputs["Roughness"])
+    rough.inputs["To Min"].default_value = FLEX_FILM_ROUGH
+    rough.inputs["To Max"].default_value = FLEX_TRACE_ROUGH
+    nt.nodes["trace metal"].inputs[1].default_value = FLEX_TRACE_METAL
+    for l in list(bsdf.inputs["Coat Weight"].links):
+        nt.links.remove(l)
+    if FLEX_TRACE_COAT:
+        nt.links.new(tex.outputs["Color"], bsdf.inputs["Coat Weight"])   # a coat on the copper only
+    tex.image = bpy.data.images.load(path, check_existing=True)
+    tex.image.colorspace_settings.name = "Non-Color"
+
+
 def apply(bpy):
     """Rewrite every imported material by its role; returns {role: count}.
 
@@ -149,6 +276,14 @@ def apply(bpy):
             m["pk_role"] = detect(b) or ""
         role = m["pk_role"] or None
         counts[role] = counts.get(role, 0) + 1
+        if role in TEXTURED:
+            for k, v in TEXTURED[role].items():
+                _set(b, k, v)
+            if role == "display decal":
+                _rim_glass(bpy, m, b)
+            if role == "flex textured":
+                _flex_traces(bpy, m, b)
+            continue
         if role is not None and role not in settings:     # textured_parts.py's own
             continue
         if role is None:

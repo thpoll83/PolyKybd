@@ -4,7 +4,7 @@ Official hardware repository of the PolyKybd Split72 keyboard. If you are lookin
 
 The instructions here are still in a very early stage. There is also a build video available: https://www.youtube.com/watch?v=K5RpbYzx7gw
 
-![PolyKybd Split72](images/PolyKybdSplit72p.jpg)
+![PolyKybd Split72, rendered from the KiCad models](images/PolyKybdSplit72_render.jpg)
 
 You can find the matching QMK firmware here: [https://github.com/thpoll83/qmk_firmware/tree/PolyKybd](https://github.com/thpoll83/qmk_firmware/tree/PolyKybd)
 

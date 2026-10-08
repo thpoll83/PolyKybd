@@ -119,10 +119,17 @@ def add(root, keys):
     """Add the decals and textured cables to every key of `root`, remove the
     imported cables. Idempotent per root (marks root['pk_textured'])."""
     if root.get("pk_textured"):
+        # a saved scene keeps the parts it was built with: say so when
+        # flex_cable.py has changed since, or the old route renders silently
+        old = [o for o in root.children_recursive if o.name.startswith(root.name + " flex cables")]
+        want = len(strip()[0]) * len(keys)
+        if old and len(old[0].data.vertices) != want:
+            print(f"WARNING {root.name}: the scene's flex cables ({len(old[0].data.vertices)} vertices) "
+                  f"predate flex_cable.py ({want}); rebuild it with render/rebuild_scene.py")
         return
     t, dz = fit(root, keys)
-    disp_mat = _image_material("display decal", "display_front.png", 0.04, coat=1.0)
-    flex_mat = _image_material("flex textured", "flex.png", 0.22, coat=0.5)   # polyimide is glossy
+    disp_mat = _image_material("display decal", "display_front.png", 0.16)   # materials.DISPLAY_GLASS
+    flex_mat = _image_material("flex textured", "flex.png", 0.3)   # materials.FLEX_FILM_ROUGH: satin film
     sv, stris, suv, _ = strip()
     suv = np.column_stack([suv[:, 0], 1.0 - suv[:, 1]])     # image top = display end
     dv, dtris, duv = [], [], []
