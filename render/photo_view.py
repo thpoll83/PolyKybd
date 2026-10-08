@@ -58,6 +58,8 @@ STATUS = os.environ.get("PK_STATUS", "")
 WHITE = os.environ.get("PK_WHITE") == "1"
 SHADOW = 0.45       # how dark the strongest shadow gets, 0..1 of black over white
 FADE = 0.10         # the outer fraction of the image over which the shadow fades out
+# PK_LIGHT scales every studio light; the lit displays are emissive and do not move
+LIGHT = float(os.environ.get("PK_LIGHT", 1.0))
 SCENE_GAP = 0.05                        # blender_scene.py's gap between the halves
 
 sc = bpy.context.scene
@@ -75,7 +77,7 @@ for side in ("left", "right"):
           f"status panel {screens.status(root, side, suffix=STATUS)} mm")
 materials.scene_settings(sc)
 tgt = bpy.data.objects.get("target")
-lighting.studio(sc, tgt, 1.0)
+lighting.studio(sc, tgt, LIGHT)
 
 # the halves: turned, and moved apart to `gap`
 studio.splay(turn_left, right=turn_right)
