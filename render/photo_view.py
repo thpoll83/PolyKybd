@@ -58,7 +58,9 @@ STATUS = os.environ.get("PK_STATUS", "")
 WHITE = os.environ.get("PK_WHITE") == "1"
 SHADOW = 0.45       # how dark the strongest shadow gets, 0..1 of black over white
 FADE = 0.10         # the outer fraction of the image over which the shadow fades out
-# PK_LIGHT scales every studio light; the lit displays are emissive and do not move
+# PK_LIGHT scales the four lights on the keyboard (lighting.studio). The cove
+# keeps its own light, so the backdrop stays white rather than blowing out, and
+# the lit displays are emissive and do not move
 LIGHT = float(os.environ.get("PK_LIGHT", 1.0))
 SCENE_GAP = 0.05                        # blender_scene.py's gap between the halves
 
@@ -188,6 +190,7 @@ def onto_white(path, shadow):
 WHITE = WHITE and not border          # the shadow pass assumes the full frame
 if WHITE:
     sc.render.film_transparent = True
+    sc.render.image_settings.color_mode = "RGBA"    # a scene saved as RGB drops the alpha
     bpy.data.objects["cove"].visible_camera = False
 bpy.ops.render.render(write_still=True)
 if WHITE:
