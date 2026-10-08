@@ -44,7 +44,13 @@ turn_left, turn_right = turn[0], turn[-1]
 elevation = float(argv[5]) if len(argv) > 5 else 42.0
 lens = float(argv[6]) if len(argv) > 6 else 35.0
 fill = float(argv[7]) if len(argv) > 7 else 0.97
-ASPECT = 550 / 1300                     # the reference photo
+# the reference photo's aspect; PK_ASPECT (height / width) frames another one,
+# such as 1463/2800 for images/PolyKybdSplit72.jpg
+ASPECT = float(os.environ.get("PK_ASPECT", 550 / 1300))
+# PK_ATLAS names the legend atlas (textures/<name>.png/.json) and PK_STATUS the
+# status-panel suffix: screens_layer1 + _l1 for layer 1, the boot layer
+ATLAS = os.environ.get("PK_ATLAS", "screens_layer0")
+STATUS = os.environ.get("PK_STATUS", "")
 SCENE_GAP = 0.05                        # blender_scene.py's gap between the halves
 
 sc = bpy.context.scene
@@ -58,8 +64,8 @@ print("material roles", materials.apply(bpy))
 # the displays on, as in the photo: layer 0's legends and both status panels
 for side in ("left", "right"):
     root = bpy.data.objects[f"split72_{side}.wrl"]
-    print(f"{side}: {screens.keys(root, boards[side], side)} legends lit, "
-          f"status panel {screens.status(root, side)} mm")
+    print(f"{side}: {screens.keys(root, boards[side], side, atlas_name=ATLAS)} legends lit, "
+          f"status panel {screens.status(root, side, suffix=STATUS)} mm")
 materials.scene_settings(sc)
 tgt = bpy.data.objects.get("target")
 lighting.studio(sc, tgt, 1.0)
