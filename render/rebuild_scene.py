@@ -20,8 +20,11 @@ body = src[a:b]
 out = os.path.abspath(sys.argv[sys.argv.index("--") + 1]) if "--" in sys.argv else os.path.join(os.path.dirname(p), "out", "hero.png")
 samples, res = 64, 1600
 pre = src[:src.index("halves=[imp(left),imp(right)]")]
-pre = pre.replace("bpy.ops.wm.read_factory_settings(use_empty=True)", "")
-pre = pre.replace("argv=sys.argv[sys.argv.index('--')+1:]\nleft, right, out, samples, res = argv[0], argv[1], argv[2], int(argv[3]), int(argv[4])", "")
+for cut in ("bpy.ops.wm.read_factory_settings(use_empty=True)",
+            "argv=sys.argv[sys.argv.index('--')+1:]\nleft, right, out, samples, res = argv[0], argv[1], argv[2], int(argv[3]), int(argv[4])"):
+    # left in, the factory reset wipes the checkpoint and the argv line wants arguments
+    assert cut in pre, f"blender_scene.py changed, rebuild_scene.py cannot strip {cut[:40]!r}"
+    pre = pre.replace(cut, "")
 g = {"__file__": p, "__name__": "__main__", "out": out, "samples": samples, "res": res}
 exec(compile(pre, p, "exec"), g)
 g["halves"] = [(bpy.data.objects[f"split72_{s}.wrl"], None) for s in ("left", "right")]

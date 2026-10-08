@@ -62,7 +62,7 @@ blender -b render/out/hero_imported.blend --python render/rebuild_scene.py
 Otherwise every photo and top view keeps the old flex route; `add()` prints a
 WARNING when the scene's flex no longer matches.
 
-`key_views.py` loads that scene, re-applies the materials, lights the
+`key_views.py` loads `render/out/key.blend`, re-applies the materials, lights the
 display with one legend from the layer-0 atlas (KC_A by default) and renders
 the key from five directions: front, front_left, side, top and low.
 

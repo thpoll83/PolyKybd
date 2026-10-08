@@ -222,12 +222,16 @@ def _flex_traces(bpy, m, bsdf):
     """The flex's copper traces under the polyimide catch the light: the trace
     mask sets their metallic (FLEX_TRACE_METAL), roughness (FLEX_TRACE_ROUGH)
     and coat (FLEX_TRACE_COAT) apart from the film's (FLEX_FILM_ROUGH, no coat).
-    Idempotent; a missing mask (the photo style) leaves the material as it is."""
+    Idempotent. A missing mask (the photo style) unlinks any trace nodes a
+    saved scene still has, so the film's own values apply."""
     import os
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "textures", FLEX_TRACES)
-    if not os.path.exists(path):
-        return
     nt = m.node_tree
+    if not os.path.exists(path):
+        for l in list(nt.links):
+            if l.to_node == bsdf and l.from_node.name in ("trace mask", "trace metal", "trace rough"):
+                nt.links.remove(l)
+        return
     tex = nt.nodes.get("trace mask")
     if tex is None:
         tex = nt.nodes.new("ShaderNodeTexImage")
@@ -239,9 +243,10 @@ def _flex_traces(bpy, m, bsdf):
         rough.name = "trace rough"
         nt.links.new(tex.outputs["Color"], metal.inputs[0])
         nt.links.new(tex.outputs["Color"], rough.inputs["Value"])
-        nt.links.new(metal.outputs["Value"], bsdf.inputs["Metallic"])
-        nt.links.new(rough.outputs["Result"], bsdf.inputs["Roughness"])
     rough = nt.nodes["trace rough"]
+    # every call: a pass without the mask unlinked them
+    nt.links.new(nt.nodes["trace metal"].outputs["Value"], bsdf.inputs["Metallic"])
+    nt.links.new(rough.outputs["Result"], bsdf.inputs["Roughness"])
     rough.inputs["To Min"].default_value = FLEX_FILM_ROUGH
     rough.inputs["To Max"].default_value = FLEX_TRACE_ROUGH
     nt.nodes["trace metal"].inputs[1].default_value = FLEX_TRACE_METAL
