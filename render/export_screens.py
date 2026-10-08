@@ -1,6 +1,10 @@
 """Draw what the displays show on layer 0, for screens.py (PolyKybdHost's renderer).
 
-    QT_QPA_PLATFORM=offscreen ../PolyKybdHost/.venv/bin/python render/export_screens.py [host checkout]
+    QT_QPA_PLATFORM=offscreen ../PolyKybdHost/.venv/bin/python render/export_screens.py [host checkout] [board.json layer]
+
+With a board file and a layer number (a board.json for another base layer, in
+export_preview_data.py's format), it writes screens_layer<N>.png/.json and
+status_{left,right}_l<N>.png instead, so a render can show what that layer draws.
 
 Writes render/textures/screens_layer0.png, an atlas of every key display's
 72x40 legend (one cell per key, 10 columns), screens_layer0.json (matrix
@@ -15,6 +19,7 @@ firmware's default keymap), so they are what the editor's Preview mode draws.
 """
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -32,19 +37,34 @@ CELL_W, CELL_H, ATLAS_COLS = 72, 40, 10
 # the export could not resolve this token to a number; HYPR(KC_NO) is QK_MODS | 0x0F << 8
 UNRESOLVED = {"KC_HYPR": 0x0F00}
 
-board = json.load(open(os.path.join(HOST, "polyhost", "res", "preview", "board.json"), encoding="utf-8"))
+BOARD = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HOST, "polyhost", "res", "preview", "board.json")
+LAYER = int(sys.argv[3]) if len(sys.argv) > 3 else 0
+board = json.load(open(BOARD, encoding="utf-8"))
 keys = []
 for k in board["keys"]:
     code = k["keycode"] if k["keycode"] is not None else UNRESOLVED.get(k["token"], 0)
     keys.append((tuple(k["matrix"]), code))
 buf = [0] * (COLS * ROWS * LAYERS)
+
+
+def layer_names():
+    """The base layouts' full names from the firmware's layer_names.c (what the
+    split72 status panel prints), L<n> past them or without a firmware checkout."""
+    path = os.path.join(HOST, "..", "qmk_firmware", "keyboards", "polykybd", "layer_names.c")
+    names = []
+    if os.path.exists(path):
+        src = open(path, encoding="utf-8").read()
+        block = re.search(r"layouts\[\]\s*=\s*\{(.*?)\n\};", src, re.S)
+        if block:
+            names = re.findall(r'\{\s*U"([^"]*)"', block.group(1))
+    return names + [f"L{i}" for i in range(len(names), LAYERS)]
 for (r, c), code in keys:
     buf[r * COLS + c] = code
 
 
 class Core:
     """Just enough of PolyCore for the dialog to open with this keymap."""
-    def keymap_layer_names(self): return True, [f"L{i}" for i in range(LAYERS)]
+    def keymap_layer_names(self): return True, layer_names()[:LAYERS]
     def keymap_layer_count(self): return True, LAYERS
     def keymap_buffer(self, *a, **k): return True, buf
     def keymap_default_layer(self): return True, 0
@@ -84,11 +104,12 @@ for i, ((r, c), code) in enumerate(keys):
     cells[f"{r},{c}"] = [x, y]
 p.end()
 out = os.path.join(HERE, "textures")
-atlas.save(os.path.join(out, "screens_layer0.png"))
-with open(os.path.join(out, "screens_layer0.json"), "w", encoding="utf-8") as f:
+atlas.save(os.path.join(out, f"screens_layer{LAYER}.png"))
+with open(os.path.join(out, f"screens_layer{LAYER}.json"), "w", encoding="utf-8") as f:
     json.dump({"cell": [CELL_W, CELL_H], "size": [atlas.width(), atlas.height()],
                "fw_version": board.get("fw_version"), "keys": cells}, f, indent=1)
 sr = kb.StatusScreenRenderer(d._preview.status_faces())
 for side in ("left", "right"):
-    unlit(sr.render(side, 0, d._layer_name(0))).save(os.path.join(out, f"status_{side}.png"))
+    suffix = f"_l{LAYER}" if LAYER else ""
+    unlit(sr.render(side, LAYER, d._layer_name(LAYER))).save(os.path.join(out, f"status_{side}{suffix}.png"))
 print(f"{len(cells)} legends, blank: {blank}")

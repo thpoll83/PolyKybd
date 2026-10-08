@@ -199,6 +199,29 @@ Re-run it when the keymap or the legends change. Two keys stay dark: (8,0)
 has no display, and (6,1) holds `KC_HYPR`, for which the preview draws no
 legend.
 
+## Close-ups of the lit keys
+
+`closeup_view.py` frames a block of the left half's keys, for the docs' close-up
+photos. Its legends come from a named atlas, so a close-up can show any layer
+or an app's overlay:
+
+```bash
+# layer 1 (Qwerty Stag!, what a fresh board boots on) instead of the shipped layer 0
+QT_QPA_PLATFORM=offscreen ../PolyKybdHost/.venv/bin/python render/board_layer.py _L1 /tmp/board_L1.json
+QT_QPA_PLATFORM=offscreen ../PolyKybdHost/.venv/bin/python render/export_screens.py ../PolyKybdHost /tmp/board_L1.json 1
+# GIMP's overlay icons over those legends, as update_displays() ORs them
+python render/overlay_atlas.py /tmp/board_L1.json ../PolyKybdHost/polyhost/res/overlays/gimp_template.mods.png screens_layer1 screens_gimp_l1
+PK_STRENGTH=3 PK_STATUS=_l1 blender -b render/out/hero.blend --python render/closeup_view.py -- \
+    out.png 128 2100 screens_gimp_l1 0.47 0.6 0.15 52 0 55
+```
+
+The lit pixels sample their texture with `Closest`, so one OLED pixel stays one
+square, and carry a faint blue cast (`screens.LIT_TINT`). ⚠️ At the default
+emission strength (6) a close-up's legends clip, and AgX bleaches clipped
+highlights to white, which hides the tint: strength 3 keeps them near
+(228, 233, 237). ⚠️ The camera's near clip is 5 mm; Blender's default 0.1 m
+cuts the front keys off at close-up distance.
+
 ## Top view for PolyKybdHost's layout editor
 
 ```bash
