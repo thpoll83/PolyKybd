@@ -212,7 +212,7 @@ QT_QPA_PLATFORM=offscreen ../PolyKybdHost/.venv/bin/python render/export_screens
 # GIMP's overlay icons over those legends, as update_displays() ORs them
 python render/overlay_atlas.py /tmp/board_L1.json ../PolyKybdHost/polyhost/res/overlays/gimp_template.mods.png screens_layer1 screens_gimp_l1
 PK_STRENGTH=3 PK_STATUS=_l1 blender -b render/out/hero.blend --python render/closeup_view.py -- \
-    out.png 128 2100 screens_gimp_l1 0.47 0.6 0.16 45 0 55
+    out.png 128 2100 screens_gimp_l1 0.47 0.58 0.145 50 0 55
 ```
 
 The lit pixels sample their texture with `Closest`, so one OLED pixel stays one
