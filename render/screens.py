@@ -86,7 +86,7 @@ def keys(root, board, side, strength=6.0, kle_path=KLE, atlas_name="screens_laye
         uv += [(u0, v1), (u1, v1), (u1, v0), (u0, v0)]
         tris += [(base, base + 3, base + 2), (base, base + 2, base + 1)]
     textured_parts._mesh(root.name + " lit legends", verts, tris, uv,
-                         _material("lit legends", atlas_name + ".png", strength), root)
+                         _material(f"lit legends {atlas_name}", atlas_name + ".png", strength), root)
     return len(verts) // 4
 
 
