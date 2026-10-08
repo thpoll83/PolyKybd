@@ -50,6 +50,18 @@ housing (0.098) and the display face (0.1) differ by only 0.002.
 blender -b render/out/key.blend --python render/key_views.py -- render/out/key_views 128 1000
 ```
 
+⚠️ `photo_view.py` and `topview.py` load the saved `render/out/hero.blend`, and
+`textured_parts.add()` keeps the decals and flex cables a saved scene already
+has. After changing `poly_kybd/models/flex_cable.py` (or the decal geometry),
+rebuild that scene first, from the import checkpoint, in about a minute:
+
+```
+blender -b render/out/hero_imported.blend --python render/rebuild_scene.py
+```
+
+Otherwise every photo and top view keeps the old flex route; `add()` prints a
+WARNING when the scene's flex no longer matches.
+
 `key_views.py` loads that scene, re-applies the materials, lights the
 display with one legend from the layer-0 atlas (KC_A by default) and renders
 the key from five directions: front, front_left, side, top and low.
@@ -60,8 +72,11 @@ the key from five directions: front, front_left, side, top and low.
 python render/gen_textures.py      # Blender's python: numpy + Pillow
 ```
 
-writes `textures/display_front.png`, `display_rim.png`, `flex.png`,
-`flex_traces.png` and `braid.png`. The display face and the flex are a
+writes `textures/display_front.png`, `display_front_top.png`,
+`display_rim.png`, `flex.png`, `flex_traces.png` and `braid.png`.
+`display_front_top.png` is the display face with lighter glass, for
+`topview.py`: seen from straight above, the photo view's calmer colours read
+as one black square. The display face and the flex are a
 reconstruction traced from a photo of the real part
 (`textures/source/oled_module_photo.jpg`, FPT042000Z05_V2): the glass and its
 cut edge, the dark panel, the striped sticker with the lot number, the black

@@ -90,7 +90,17 @@ DEFAULT_ROUGHNESS = 0.3
 DISPLAY_GLASS = {"Roughness": 0.16, "Coat Weight": 0.0, "Specular IOR Level": 0.25}
 RIM_MASK = "display_rim.png"        # gen_textures.display_rim(): a glass coat on the rim
 # textured materials whose image stays linked; apply() sets only these inputs
-TEXTURED = {"display decal": DISPLAY_GLASS, "flex textured": {}}
+# The flex's polyimide film is satin, not glossy: only its copper traces and
+# fingers shine (_flex_traces() drives roughness and the coat from their mask).
+# the traces were metallic 0.7, roughness 0.12 and coated: they mirrored the
+# white switch beside them and read as glass. Fully matte (film and traces
+# 0.5, metallic 0) looked dull in the photo view; this is a little sheen on both
+FLEX_FILM_ROUGH, FLEX_TRACE_ROUGH = 0.3, 0.25
+FLEX_TRACE_METAL, FLEX_TRACE_COAT = 0.3, False
+# set on every apply, so a scene saved with an older finish (or the photo
+# style, which has no trace mask) gets the same film as a fresh one
+FLEX_FILM = {"Specular IOR Level": 0.35, "Roughness": FLEX_FILM_ROUGH, "Coat Weight": 0.0}
+TEXTURED = {"display decal": DISPLAY_GLASS, "flex textured": FLEX_FILM}
 FLEX_TRACES = "flex_traces.png"      # gen_textures.flex_drawn(): the copper traces and fingers
 
 
@@ -202,15 +212,17 @@ def _rim_irregular(nt, bsdf, mask):
         mix.blend_type = "MULTIPLY"
         nt.links.new(base, mix.inputs["A"])
         nt.links.new(span.outputs["Vector"], mix.inputs["B"])
-        nt.links.new(mask.outputs["Color"], mix.inputs["Factor"])
         nt.links.new(mix.outputs["Result"], bsdf.inputs["Base Color"])
+    # every call: _rim_glass() drops all of the mask's links before re-linking
+    # Coat Weight, and without this one the noise covers the whole display
+    nt.links.new(mask.outputs["Color"], mix.inputs["Factor"])
 
 
 def _flex_traces(bpy, m, bsdf):
     """The flex's copper traces under the polyimide catch the light: the trace
-    mask makes them partly metallic and a little glossier than the film
-    around them. Idempotent; a missing mask (the photo style) leaves the
-    material as it is."""
+    mask sets their metallic (FLEX_TRACE_METAL), roughness (FLEX_TRACE_ROUGH)
+    and coat (FLEX_TRACE_COAT) apart from the film's (FLEX_FILM_ROUGH, no coat).
+    Idempotent; a missing mask (the photo style) leaves the material as it is."""
     import os
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "textures", FLEX_TRACES)
     if not os.path.exists(path):
@@ -223,15 +235,20 @@ def _flex_traces(bpy, m, bsdf):
         metal = nt.nodes.new("ShaderNodeMath")
         metal.name = "trace metal"
         metal.operation = "MULTIPLY"
-        metal.inputs[1].default_value = 0.7
         rough = nt.nodes.new("ShaderNodeMapRange")
         rough.name = "trace rough"
-        rough.inputs["To Min"].default_value = 0.22
-        rough.inputs["To Max"].default_value = 0.12
         nt.links.new(tex.outputs["Color"], metal.inputs[0])
         nt.links.new(tex.outputs["Color"], rough.inputs["Value"])
         nt.links.new(metal.outputs["Value"], bsdf.inputs["Metallic"])
         nt.links.new(rough.outputs["Result"], bsdf.inputs["Roughness"])
+    rough = nt.nodes["trace rough"]
+    rough.inputs["To Min"].default_value = FLEX_FILM_ROUGH
+    rough.inputs["To Max"].default_value = FLEX_TRACE_ROUGH
+    nt.nodes["trace metal"].inputs[1].default_value = FLEX_TRACE_METAL
+    for l in list(bsdf.inputs["Coat Weight"].links):
+        nt.links.remove(l)
+    if FLEX_TRACE_COAT:
+        nt.links.new(tex.outputs["Color"], bsdf.inputs["Coat Weight"])   # a coat on the copper only
     tex.image = bpy.data.images.load(path, check_existing=True)
     tex.image.colorspace_settings.name = "Non-Color"
 
