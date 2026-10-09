@@ -31,14 +31,19 @@ current values from the README command, not from memory.
 ```bash
 S=<scratchpad>
 .claude/skills/render-variant-grid/variants.sh $S/base.sh $S/v \
-    ref ""  g10 "PK_GLOW=10"  g20 "PK_GLOW=20"
+    ref ""  g10 "PK_GLOW=10"  g20 "PK_GLOW=20;PK_FLEX=1,0.3"
 ```
+
+Separate a variant's overrides with `;`, because values may hold spaces
+(`PK_LOOK=AgX - High Contrast`) and commas (`PK_RGB=170,280`).
 
 Run it with `run_in_background`. Expect about 4 minutes per variant at the
 defaults (64 samples, 1400 px wide, 4 CPUs) and about 75 minutes for a final
-render at 1024 samples. The script waits for any running Blender first. It
-prints `ok <name>` or `FAILED <name>` per variant, and FAILED means a
-Traceback or no PNG.
+render at 1024 samples. The script holds a lock, so a second queue waits for
+the first, and it waits for any running Blender render before it starts. It
+creates the output directory and deletes each variant's old PNG first. It
+prints `ok <name>` only when Blender exits 0, logs no Traceback and writes a
+new PNG, and `FAILED <name>` otherwise.
 
 - Change **one** value per variant. Two changes in one cell make the
   comparison unreadable.
@@ -95,7 +100,10 @@ After the user picks:
   queue, `pgrep -af "[b]lender -b"`, then `kill <pid>` of the script and of
   Blender, each as its own command.
 - **One render at a time.** Two Blender processes on 4 CPUs finish later than
-  the same two run in sequence. `variants.sh` waits for that reason.
+  the same two run in sequence. `variants.sh` waits for any `blender -b` for
+  that reason, a top-view render included, so don't narrow the match. A
+  full-quality render you start by hand is not covered by the lock, so start it
+  only when no queue is running.
 - **A preview at 64 samples is noisy, not wrong.** Judge brightness, colour and
   where light lands. Leave grain and fine caustics to the final render.
 - **Blender loads `render/*.py` when it starts.** Editing the code while a
