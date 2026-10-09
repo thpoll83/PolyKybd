@@ -222,6 +222,56 @@ highlights to white, which hides the tint: strength 3 keeps them near
 (228, 233, 237). ⚠️ The camera's near clip is 5 mm; Blender's default 0.1 m
 cuts the front keys off at close-up distance.
 
+### The RGB night shot
+
+The docs' RGB close-up (`rgb-keycaps-closeup.jpg`) is the same view at night:
+the studio off, the clear case, the stepped stem profile with a dented cap
+top, and light only from the per-key LEDs. About 75 minutes on 4 CPUs:
+
+```bash
+PK_RGB=170,280 PK_EMIT=6000 PK_GLOW=15 PK_FLEX=1,0.15 PK_LED=0 PK_HIDE_ROLES="diffuser resin" \
+PK_PROFILE=stepped PK_DENT=0.3,2.5 PK_CASE_GLOW=300,420,80 \
+PK_POWER_LED=0.15 PK_CASE_LEDS=30 PK_INDICATOR_HAZE=200 PK_HAZE_RADIUS=0.02 PK_INDICATOR_RADIUS=0.006 \
+PK_FOCUS=0.36,0.42 PK_LOOK="AgX - High Contrast" PK_STRENGTH=5 PK_STATUS=_l1 \
+blender -b render/out/hero.blend --python render/closeup_view.py -- \
+    out.png 1024 1400 screens_layer1 0.45 0.45 0.085 48 -15 22 6.3
+```
+
+- `PK_RGB="h0,h1"` turns the studio off and spreads a hue gradient over the
+  LEDs from left to right; `PK_EMIT` puts an emissive 3 mm square over each
+  LED. It sits 4.4 mm above the PCB (`PK_EMIT_Z`), in the plate opening where
+  the diffuser frame glows on the board. ⚠️ The bare LED lies under the plate,
+  and from there almost nothing reaches the caps in Cycles (image mean 5.9
+  against 30); the frame itself is hidden, because its frosted resin traps
+  the light (4x the LED power changed the image mean by 2%).
+- `PK_GLOW=15` adds a faint volume glow in the caps, which puts the bright
+  rims of the photo back on the cap edges: a wall seen edge-on holds a longer
+  path. ⚠️ Cycles does not find the light that the clear walls guide up from
+  the LEDs, so without it the rims are dark, and putting the diffuser frame
+  back does not help (the image only gets darker). At 40 the caps look milky.
+- `PK_FLEX="dim,roughness"` makes the display flex a clear film with no
+  specular and no coat, and its copper traces fully metallic (`clear_flex()`).
+  At the studio values its satin film lit up the space under every cap.
+- `PK_PROFILE` re-poses every cap, display and legend to the stepped,
+  stepped-uniform or curved stem profile (`profile.py`, the angle and lift of
+  `keycap_stem.scad`'s variants). `PK_DENT="depth,rim"` presses the cap tops
+  into a shallow dent with a soft rim; the model's top is a few large
+  triangles, so it is rebuilt by a constrained Delaunay fill first.
+- `clear_case()` keeps the lid and the status display holder opaque: they
+  come in merged with the case (one source colour), so every piece narrower
+  than 100 mm gets an opaque copy of the material.
+- The indicator LEDs (D1 red, D5 green, D6 yellow on the back of both halves)
+  are hidden point lights; `PK_CASE_LEDS` bakes their light into the clear
+  case's edges, and the red one gets a soft glow (`PK_INDICATOR_HAZE`). ⚠️ A
+  light inside a clear solid never reaches the camera in Cycles, because
+  shadow rays stop at glass; the same is why the key LEDs need `PK_EMIT`.
+- `PK_FOCUS="fx,fy"` moves the depth-of-field focus off the target, here onto
+  the front three rows.
+
+⚠️ `textured_parts.fit()` is cached per half. A fit taken after `profile.py`
+has re-posed the displays drifts by 3.5 mm of height, which once put the LED
+emitters inside the plate.
+
 ## Top view for PolyKybdHost's layout editor
 
 ```bash

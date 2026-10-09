@@ -60,8 +60,24 @@ def _display_points(root, role="display face"):
     return np.concatenate(pts) if pts else np.zeros((0, 3))
 
 
+_FITS = {}
+
+
 def fit(root, keys):
-    """Translation (tx, ty) and dz taking board key frames into root's frame."""
+    """Translation (tx, ty) and dz taking board key frames into root's frame.
+
+    Cached per half: the fit reads the display meshes, and once profile.py
+    has re-posed those (tilted and lifted per row) a fresh fit drifts, by
+    0.9 mm and 3.5 mm of dz on the stepped profile, which put rgb.py's LEDs
+    inside the plate. The first fit, taken before anything moves, is the one
+    the board defines."""
+    if root.name in _FITS:
+        return _FITS[root.name]
+    _FITS[root.name] = _fit(root, keys)
+    return _FITS[root.name]
+
+
+def _fit(root, keys):
     pts = _display_points(root)
     if not len(pts):
         raise SystemExit(f"{root.name}: no display meshes to fit against")
