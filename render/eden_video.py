@@ -21,9 +21,11 @@ Each frame is built from the layers:
 - the sum goes through Blender's AgX view with PK_LOOK (default "AgX - High
   Contrast"), as the stills do, then to H.264 with ffmpeg.
 """
+import atexit
 import json
 import math
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -135,7 +137,8 @@ step = 1000 / fps
 times = [int(round(i * step)) for i in range(int(sim.TOTAL / step) + 1)]
 if os.environ.get("PK_TIMES"):                    # stills at these ms (out.png -> out_t<ms>.png)
     times = [int(v) for v in os.environ["PK_TIMES"].split(",")]
-tmp = tempfile.mkdtemp()
+tmp = tempfile.mkdtemp()                          # the frames, removed when the script ends
+atexit.register(shutil.rmtree, tmp, ignore_errors=True)
 for n, el in enumerate(times):
     k = coefficients(el) * rainbow_level(el)
     lin = base + w * k[0] + cos_l * k[1] + sin_l * k[2]

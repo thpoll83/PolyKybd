@@ -124,7 +124,7 @@ if env("PK_GAP"):                 # mm between the halves' facing edges: move bo
     shift = (gap - float(env("PK_GAP")) / 1000) / 2
     for o in bpy.data.objects:
         if o.name.startswith("piv") and o.type == "EMPTY":
-            o.location.x -= math.copysign(shift, o.location.x)
+            o.location.x -= math.copysign(1.0, o.location.x) * shift   # shift < 0 widens the gap
     bpy.context.view_layer.update()
     print("eden gap", round(gap * 1000, 1), "->", round((half_box(halves[1][1])[0] - half_box(halves[0][1])[1]) * 1000, 1), "mm")
 for o in sc.objects:
