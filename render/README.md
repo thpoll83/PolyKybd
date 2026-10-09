@@ -148,6 +148,33 @@ builds carry OpenImageDenoise. The Ubuntu/Debian package lacks the denoiser,
 so its images stay grainy at any sample count you would wait for. The scripts
 switch denoising on whenever the build has it.
 
+### Editing an imported mesh (bmesh)
+
+`profile.dent()` and `rgb.clear_case()` rebuild geometry that came in from
+VRML. Each of these steps failed silently once, so skipping one gives a wrong
+image rather than an error:
+
+- **Weld first.** VRML stores every triangle's corners separately, so the
+  mesh has no shared edges and no boundary loop to find. `remove_doubles`
+  fixes that.
+- **Weld in world millimetres.** The imported objects carry a scale. A 1 µm
+  threshold in the object's own frame merged the case's pieces into one, and
+  the whole case went opaque. Measure with `matrix_world * 1000`.
+- **Map vertices by identity, not `v.index`.** bmesh renumbers vertices when
+  faces are removed and added, so an index taken before the edit points at a
+  different vertex after it.
+- **Call `normal_update()` on new faces.** Without it, the rebuilt cap tops
+  rendered as mirrors.
+- **Set sharp edges after a weld** (`set_sharp_from_angle`, 30°). Once the
+  corners are shared, smooth shading spans them, and the caps looked like a
+  kaleidoscope.
+
+⚠️ **`ShaderNodeMix` carries float, vector and colour sockets under the same
+names.** Setting `data_type = "RGBA"` does not make `inputs["B"]` the colour
+input, and assigning a colour to the float socket raises an error before the
+render writes anything. Select the sockets by `type == "RGBA"`, as
+`screens.py` and `rgb.clear_flex()` do.
+
 ### Why VRML and not GLB or STEP
 
 KiCad 9 can export GLB and STEP, but both go through OpenCASCADE, which drops
@@ -267,6 +294,15 @@ blender -b render/out/hero.blend --python render/closeup_view.py -- \
   shadow rays stop at glass; the same is why the key LEDs need `PK_EMIT`.
 - `PK_FOCUS="fx,fy"` moves the depth-of-field focus off the target, here onto
   the front three rows.
+
+Two approaches that do not work in Cycles here, so the next attempt can skip
+them: a Point Density texture over the LED positions contributed nothing to
+the caps, even with its bounding box fixed; and a vertex attribute read inside
+a volume shader does not interpolate. `glow_from_leds()` bakes the falloff into
+a surface colour attribute instead.
+
+To tune one of these values against the photo, use the `render-variant-grid`
+skill (`.claude/skills/render-variant-grid/`).
 
 ⚠️ `textured_parts.fit()` is cached per half. A fit taken after `profile.py`
 has re-posed the displays drifts by 3.5 mm of height, which once put the LED
