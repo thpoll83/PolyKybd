@@ -292,8 +292,9 @@ cam = sc.camera
 cam.data.lens = float(env("PK_LENS", 50))
 cam.data.dof.use_dof = False
 cam.data.clip_start = 0.005
-W = width * (2 if PASS in MAP_PASSES else 1)
-H = int(round(W * 9 / 16))
+# the map passes are exactly twice the light passes in both axes (eden_video.py asserts it)
+scale = 2 if PASS in MAP_PASSES else 1
+W, H = width * scale, int(round(width * 9 / 16)) * scale
 fov = 2 * math.atan(cam.data.sensor_width / 2 / cam.data.lens)
 margin = float(env("PK_MARGIN", 1.15))
 need = max((hi.x - lo.x) * margin, (hi.y - lo.y) * margin * W / H)

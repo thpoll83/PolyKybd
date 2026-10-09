@@ -1,7 +1,6 @@
 """The Eden boot-animation video from eden_view.py's layers.
 
-    /tmp/blender-4.1.1-linux-x64/4.1/python/bin/python3.11 render/eden_video.py \
-        <layer dir> <out.mp4> [fps]
+    <blender dir>/4.1/python/bin/python3.11 render/eden_video.py <layer dir> <out.mp4> [fps]
 
 <layer dir> holds eden_view.py's base.exr, w.exr, c1.exr, s1.exr, uv.exr and
 id.exr. Run it with Blender's bundled Python: it brings OpenImageIO (EXR),
@@ -119,7 +118,12 @@ half_idx = mp_to_half_idx()
 keys = [half_idx.get(lab) for lab in labels]
 print(f"layers {W}x{H}, screen pixels {int(seen.sum())}, keys {sum(k is not None for k in keys)}")
 
-cfg = ocio.Config.CreateFromFile("/tmp/blender-4.1.1-linux-x64/4.1/datafiles/colormanagement/config.ocio")
+# Blender's own OCIO config: $BLENDER_OCIO or $OCIO when set, else the one beside this
+# bundled Python (<version>/python/bin/python3.x -> <version>/datafiles/colormanagement).
+OCIO_CONFIG = (os.environ.get("BLENDER_OCIO") or os.environ.get("OCIO")
+               or os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(sys.executable)))),
+                               "datafiles", "colormanagement", "config.ocio"))
+cfg = ocio.Config.CreateFromFile(OCIO_CONFIG)
 look = os.environ.get("PK_LOOK", "AgX - High Contrast")
 grp = ocio.GroupTransform()
 grp.appendTransform(ocio.LookTransform(src="Linear Rec.709", dst="Linear Rec.709", looks=look))

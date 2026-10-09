@@ -324,8 +324,8 @@ export PK_EMIT=6000 PK_GLOW=15 PK_FLEX=1,0.15 PK_HIDE_ROLES="diffuser resin" \
 for p in uv id base ambient w c1 s1; do
   blender -b render/out/hero.blend --python render/eden_view.py -- layers/$p.exr 256 2560 $p
 done
-PK_AMBIENT=0.07 PK_ASPECT=2.35 PK_CROP_CY=0.55 \
-  /tmp/blender-4.1.1-linux-x64/4.1/python/bin/python3.11 render/eden_video.py layers eden-intro.mp4 25
+BPY="$(dirname "$(readlink -f "$(command -v blender)")")/4.1/python/bin/python3.11"   # Blender's own Python
+PK_AMBIENT=0.07 PK_ASPECT=2.35 PK_CROP_CY=0.55 "$BPY" render/eden_video.py layers eden-intro.mp4 25
 ```
 
 - The backlight is QMK's `CYCLE_LEFT_RIGHT` rainbow, which Eden turns on
