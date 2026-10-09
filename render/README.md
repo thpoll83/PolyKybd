@@ -308,6 +308,47 @@ skill (`.claude/skills/render-variant-grid/`).
 has re-posed the displays drifts by 3.5 mm of height, which once put the LED
 emitters inside the plate.
 
+### The Eden intro video
+
+The docs' First run video plays the Eden boot animation on both halves seen
+from above, in the night look. Rendering every frame in Cycles would take a
+day, but only the keycap screens and the backlight change during Eden, and
+light adds. So `eden_view.py` renders a few layers once, and `eden_video.py`
+sums them per frame in about a second:
+
+```bash
+export PK_EMIT=6000 PK_GLOW=15 PK_FLEX=1,0.15 PK_HIDE_ROLES="diffuser resin" \
+  PK_PROFILE=stepped PK_DENT=0.3,2.5 PK_CASE_GLOW=80 PK_POWER_LED=0.15 PK_CASE_LEDS=30 \
+  PK_INDICATOR_HAZE=200 PK_HAZE_RADIUS=0.02 PK_INDICATOR_RADIUS=0.006 PK_LOOK="AgX - High Contrast" \
+  PK_ELEV=65 PK_SPLAY=0 PK_SPLAY_RIGHT=0 PK_GAP=38.5 PK_FLOOR=0.02,0.45
+for p in uv id base ambient w c1 s1; do
+  blender -b render/out/hero.blend --python render/eden_view.py -- layers/$p.exr 256 2560 $p
+done
+BPY="$(dirname "$(readlink -f "$(command -v blender)")")/4.1/python/bin/python3.11"   # Blender's own Python
+PK_AMBIENT=0.07 PK_ASPECT=2.35 PK_CROP_CY=0.55 "$BPY" render/eden_video.py layers eden-intro.mp4 25
+```
+
+- The backlight is QMK's `CYCLE_LEFT_RIGHT` rainbow, which Eden turns on
+  (`tutorial_rgb.c`). Its light is rendered three times in white, weighted 1,
+  (1 + cos)/2 and (1 + sin)/2 of the rainbow's phase over x (`w`, `c1`, `s1`);
+  any moment of the rainbow is a sum of those, to its first harmonic, so its
+  colours come out a little softer than real HSV. `startup_anim_rainbow_level()`
+  fades it out as on the board.
+- The screens come from PolyKybdHost's `tools/fw_anim_sim.py`, the port of
+  `startup_anim.c`. The `uv` and `id` layers say which screen pixel each image
+  pixel sees through the glass: the screens emit their own coordinates, the
+  glass is pure refraction, so one sample per pixel is exact. They render at
+  twice the width and are averaged down.
+- `base` holds the indicator LEDs and `ambient` a dim room light, which
+  `PK_AMBIENT` scales without a new render. `PK_TIMES=1500,7000` with a `.png`
+  output writes only those frames, for comparing settings.
+- `PK_SPLAY=0` lines the halves up parallel and `PK_GAP` keeps the 38.5 mm gap
+  of the splayed hero shot. `PK_FLOOR` makes the desk a dark satin that
+  catches the rainbow's spill.
+
+About 1 hour 50 minutes on 4 CPUs at 2560 wide; the 356 frames take another
+20 minutes.
+
 ## Top view for PolyKybdHost's layout editor
 
 ```bash
