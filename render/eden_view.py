@@ -216,8 +216,62 @@ def volume_glow(role, strength):
         nt.links.new(em.outputs[0], o.inputs["Volume"])
 
 
+DIFF_GLOW = float(env("PK_DIFFUSER_GLOW", 0))   # >0: the diffuser frames are the key LEDs' light
+DIFF_FALL = float(env("PK_DIFFUSER_FALL", 3.0))  # mm: how far the glow spreads from each LED in the resin
+
+
+def diffuser_setup():
+    """Per vertex of each half's diffuser frame: the nearest LED (its world xy) and a
+    falloff 1 / (1 + (d / DIFF_FALL)^2)^2 from it, stored as the float attribute
+    "led_fall". Returns [(mesh, nearest LED xy per vertex, falloff)] for the led pass."""
+    out = []
+    for side, root, board in halves:
+        pos, _ = rgb.led_points(root, board, (0, 0), float(env("PK_EMIT_Z", 4.4)))
+        for o in root.children_recursive:
+            if o.type != "MESH" or not o.active_material or o.active_material.get("pk_role") != "diffuser resin":
+                continue
+            mw = np.array(o.matrix_world)
+            co = np.empty(len(o.data.vertices) * 3)
+            o.data.vertices.foreach_get("co", co)
+            w = co.reshape(-1, 3) @ mw[:3, :3].T + mw[:3, 3]
+            d2 = ((w[:, None, :2] - pos[None, :, :2]) ** 2).sum(-1)
+            near = d2.argmin(1)
+            d = np.sqrt(d2[np.arange(len(w)), near]) * 1000
+            fall = (1 / (1 + (d / DIFF_FALL) ** 2)) ** 2
+            a = o.data.attributes.get("led_fall") or o.data.attributes.new("led_fall", "FLOAT", "POINT")
+            a.data.foreach_set("value", fall.astype(np.float32))
+            out.append((o, pos[near, :2], fall))
+    return out
+
+
+def diffuser_emission(color_socket_fn):
+    """Emission on the diffuser material: color_socket_fn(nt) gives the colour,
+    times "led_fall", times DIFF_GLOW."""
+    for m in bpy.data.materials:
+        if m.get("pk_role") != "diffuser resin":
+            continue
+        nt = m.node_tree
+        b = nt.nodes["Principled BSDF"]
+        att = nt.nodes.new("ShaderNodeAttribute")
+        att.attribute_name = "led_fall"
+        mul = nt.nodes.new("ShaderNodeMix")
+        mul.data_type = "RGBA"
+        mul.blend_type = "MULTIPLY"
+        mul.inputs["Factor"].default_value = 1.0
+        a_in, b_in = [i for i in mul.inputs if i.type == "RGBA"]
+        nt.links.new(color_socket_fn(nt), a_in)
+        nt.links.new(att.outputs["Fac"], b_in)
+        nt.links.new(next(o for o in mul.outputs if o.type == "RGBA"), b.inputs["Emission Color"])
+        b.inputs["Emission Strength"].default_value = DIFF_GLOW
+
+
+if PASS in ("preview",) + LIGHT_PASSES and DIFF_GLOW > 0:
+    diffuser_setup()
+    diffuser_emission(weight_node)
 if PASS in ("preview",) + LIGHT_PASSES:
     for side, root, board in halves:
+        if DIFF_GLOW > 0:
+            break                                 # the frames carry the light; no emitter squares
         rgb.emitters(root, board, (0, 0), float(env("PK_EMIT", 6000)), z=float(env("PK_EMIT_Z", 4.4)))
     for o in sc.objects:
         if o.name.startswith("led emitter"):
@@ -400,7 +454,30 @@ if PASS == "led":
     chans = env("PK_LED_KEYS", "").split(";")
     want = {lab: i for i, lab in enumerate(chans) if lab and lab != "-"}
     centre = {lab: sum(footprint(lab), mathutils.Vector()) / 4 for lab in KEYS}
+    if DIFF_GLOW > 0:
+        # the frame glows around each lit key's LED, in that key's channel
+        for o, near, fall in diffuser_setup():
+            col = np.zeros((len(fall), 4), np.float32)
+            col[:, 3] = 1
+            for lab, ch in want.items():
+                m = ((near[:, 0] - centre[lab].x) ** 2 + (near[:, 1] - centre[lab].y) ** 2) < 0.012 ** 2
+                col[m, ch] = fall[m]
+            a = o.data.color_attributes.get("led_rgb") or o.data.color_attributes.new("led_rgb", "FLOAT_COLOR", "POINT")
+            a.data.foreach_set("color", col.ravel())
+
+        def _led_col(nt):
+            att = nt.nodes.new("ShaderNodeAttribute")
+            att.attribute_name = "led_rgb"
+            return att.outputs["Color"]
+        for m in bpy.data.materials:
+            if m.get("pk_role") == "diffuser resin":
+                b = m.node_tree.nodes["Principled BSDF"]
+                nt = m.node_tree
+                nt.links.new(_led_col(nt), b.inputs["Emission Color"])
+                b.inputs["Emission Strength"].default_value = DIFF_GLOW
     for side, root, board in halves:
+        if DIFF_GLOW > 0:
+            break
         rgb.emitters(root, board, (0, 0), float(env("PK_EMIT", 6000)), z=float(env("PK_EMIT_Z", 4.4)))
     kept = 0
     for o in [o for o in sc.objects if o.name.startswith("led emitter")]:
