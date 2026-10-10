@@ -1,0 +1,192 @@
+[
+ {
+  "name": "full"
+ },
+ {
+  "name": "left",
+  "focus": [
+   "0,0",
+   "4,0",
+   "0,6",
+   "3,6",
+   "4,7"
+  ],
+  "elev": 55,
+  "azim": -10,
+  "margin": 1.15
+ },
+ {
+  "name": "right",
+  "focus": [
+   "5,1",
+   "9,1",
+   "5,6",
+   "8,7",
+   "9,7"
+  ],
+  "elev": 55,
+  "azim": 10,
+  "margin": 1.15
+ },
+ {
+  "name": "numrow",
+  "focus": [
+   "0,1",
+   "0,6",
+   "1,3"
+  ],
+  "elev": 45,
+  "margin": 1.3,
+  "azim": -10
+ },
+ {
+  "name": "k_e",
+  "focus": [
+   "1,3"
+  ],
+  "azim": -15,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_k",
+  "focus": [
+   "7,4"
+  ],
+  "azim": 15,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_b",
+  "focus": [
+   "3,5"
+  ],
+  "azim": -15,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_lsft",
+  "focus": [
+   "3,0"
+  ],
+  "azim": -15,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_rsft",
+  "focus": [
+   "8,7"
+  ],
+  "azim": 15,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_fn",
+  "focus": [
+   "2,0"
+  ],
+  "azim": -15,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_lang",
+  "focus": [
+   "9,1"
+  ],
+  "azim": 15,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_base",
+  "focus": [
+   "4,0"
+  ],
+  "azim": -15,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_emj",
+  "focus": [
+   "3,6"
+  ],
+  "azim": -10,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_num",
+  "focus": [
+   "4,7"
+  ],
+  "azim": -10,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_intl",
+  "focus": [
+   "7,1"
+  ],
+  "azim": 15,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_lat2",
+  "focus": [
+   "0,3"
+  ],
+  "azim": -10,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "k_enext",
+  "focus": [
+   "5,7"
+  ],
+  "azim": 15,
+  "elev": 40,
+  "margin": 3.0,
+  "lens": 50
+ },
+ {
+  "name": "tabs_l",
+  "focus": [
+   "0,1",
+   "0,6"
+  ],
+  "elev": 40,
+  "azim": -10,
+  "margin": 1.6
+ },
+ {
+  "name": "tabs_r",
+  "focus": [
+   "5,1",
+   "5,6"
+  ],
+  "elev": 40,
+  "azim": 10,
+  "margin": 1.6
+ }
+]

@@ -38,6 +38,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import bridge_cable  # noqa: E402
+import keymatch  # noqa: E402
 import materials  # noqa: E402
 import profile  # noqa: E402
 import rgb  # noqa: E402
@@ -48,6 +49,7 @@ import textured_parts  # noqa: E402
 a = sys.argv[sys.argv.index("--") + 1:]
 out, samples, width, PASS = os.path.abspath(a[0]), int(a[1]), int(a[2]), a[3]
 LIGHT_PASSES = ("w", "c1", "s1")
+STATUS_ID = 126                                   # id-pass cells of the status panels (126 left, 127 right)
 MAP_PASSES = ("uv", "id")
 assert PASS in ("preview", "base", "ambient") + LIGHT_PASSES + MAP_PASSES, PASS
 # QMK's CYCLE_LEFT_RIGHT spreads hue = led x (0..224 of 256) across the board
@@ -92,9 +94,12 @@ if PASS in MAP_PASSES:
     # float EXR (below), so the 8-bit copy only has to exist
     im = bpy.data.images.load(os.path.join(tmp, name + ".exr"))
     im.name = name
-    screens.TEX = tmp
+    tex, screens.TEX = screens.TEX, tmp
     for side, root, board in halves:
         screens.keys(root, board, side, strength=1.0, atlas_name=name)
+    screens.TEX = tex                             # the status quads load a real panel image;
+    for side, root, board in halves:              # their material is replaced below
+        screens.status(root, side, strength=1.0)
 for side, root, board in halves:
     if env("PK_DENT"):
         profile.dent(root, board, *[float(v) for v in env("PK_DENT").split(",")])
@@ -109,7 +114,9 @@ if env("PK_FLOOR"):                               # "grey,roughness": the desk t
     _b.inputs["Base Color"].default_value = (_g, _g, _g * 1.05, 1)
     _b.inputs["Roughness"].default_value = _r
 studio.splay(float(env("PK_SPLAY", -2)), right=float(env("PK_SPLAY_RIGHT", -9)))
-bridge_cable.remove(keep_bridge=True)
+# PK_CABLES="bridge+host" rebuilds the cables after the halves have moved (below);
+# without it a bridge saved in the scene is kept as it was
+bridge_cable.remove(keep_bridge=not env("PK_CABLES"))
 bpy.context.view_layer.update()
 
 
@@ -127,6 +134,12 @@ if env("PK_GAP"):                 # mm between the halves' facing edges: move bo
             o.location.x -= math.copysign(1.0, o.location.x) * shift   # shift < 0 widens the gap
     bpy.context.view_layer.update()
     print("eden gap", round(gap * 1000, 1), "->", round((half_box(halves[1][1])[0] - half_box(halves[0][1])[1]) * 1000, 1), "mm")
+CABLES = env("PK_CABLES", "").split("+")
+if "bridge" in CABLES:
+    bridge_cable.add(sc, [(root, board) for _, root, board in halves])
+if "host" in CABLES:
+    bridge_cable.add_host(sc, halves[0][1], halves[0][2])
+bpy.context.view_layer.update()
 for o in sc.objects:
     if o.active_material and o.active_material.get("pk_role") in env("PK_HIDE_ROLES", "").split(","):
         o.hide_render = True
@@ -255,6 +268,27 @@ if PASS in MAP_PASSES:
             rf.inputs["IOR"].default_value = 1.49
             rf.inputs["Color"].default_value = (1, 1, 1, 1)
             nt.links.new(rf.outputs[0], o.inputs["Surface"])
+        elif m.name.startswith("lit status "):
+            # the 128x64 status panels: uv = the quad's own uv, top row at G = 0;
+            # id = STATUS_ID + side, past every key cell
+            em = nt.nodes.new("ShaderNodeEmission")
+            em.inputs["Strength"].default_value = 1.0
+            if PASS == "uv":
+                sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+                nt.links.new(nt.nodes.new("ShaderNodeTexCoord").outputs["UV"], sep.inputs[0])
+                inv = nt.nodes.new("ShaderNodeMath")
+                inv.operation = "SUBTRACT"
+                inv.inputs[0].default_value = 1.0
+                nt.links.new(sep.outputs["Y"], inv.inputs[1])
+                col = nt.nodes.new("ShaderNodeCombineColor")
+                nt.links.new(sep.outputs["X"], col.inputs[0])
+                nt.links.new(inv.outputs[0], col.inputs[1])
+                col.inputs[2].default_value = 1.0
+                nt.links.new(col.outputs[0], em.inputs["Color"])
+            else:
+                n = STATUS_ID + (m.name.endswith("right"))
+                em.inputs["Color"].default_value = ((n + 0.5) / 128, 0, 1, 1)
+            nt.links.new(em.outputs[0], o.inputs["Surface"])
         elif m.name.startswith("lit legends eden_"):
             tex = next(n for n in nt.nodes if n.type == "TEX_IMAGE")
             tex.image = bpy.data.images[f"eden_{PASS}"]
@@ -278,7 +312,83 @@ else:
     sc.cycles.samples = samples
     sc.cycles.filter_width = 1.0
 
-# frame both halves' displays from above
+# frame both halves' displays from above, or the keys a shot names
+def key_frames(root, board, side):
+    """{matrix label: (x, y, rot)} in the half's own frame (mm), as screens.keys() places them."""
+    kb = textured_parts.board_keys(board)
+    (tx, ty), _dz = textured_parts.fit(root, kb)
+    kle = [k for k in keymatch.kle_keys(screens.KLE) if (int(k[0].split(",")[0]) < 5) == (side == "left")]
+    labels, _ = keymatch.match(np.array([[x, -y] for x, y, _ in kb]), kle)
+    return {lab: (x + tx, y + ty, r, _dz) for (x, y, r), lab in zip(kb, labels)}
+
+
+KEYS = {}
+for side, root, board in halves:
+    for lab, f in key_frames(root, board, side).items():
+        KEYS[lab] = (root, f)
+CAP = 9.0                                         # mm: half a keycap, the footprint a press moves
+
+
+def footprint(lab):
+    """The 4 corners of key `lab`'s cap, world space, at the display top."""
+    root, (x, y, r, dz) = KEYS[lab]
+    z = textured_parts.DISP_TOP + dz
+    return [root.matrix_world @ mathutils.Vector((*(textured_parts._rot((u, v), r) + (x, y)), z))
+            for u, v in ((-CAP, -CAP), (CAP, -CAP), (CAP, CAP), (-CAP, CAP))]
+
+
+_pressed = []                                     # (mesh, original coords) to put back
+
+
+def press(lab, depth_mm):
+    """Push key `lab`'s cap stack down by depth_mm: every vertex of its half inside the
+    cap's footprint and no lower than the cap glass's lowest point there."""
+    root, (x, y, r, _dz) = KEYS[lab]
+    inv = root.matrix_world.inverted()
+    objs = [o for o in root.children_recursive if o.type == "MESH" and not o.hide_render]
+    zmin = None
+    sel = []
+    for o in objs:
+        m = np.array(inv @ o.matrix_world)
+        co = np.empty(len(o.data.vertices) * 3)
+        o.data.vertices.foreach_get("co", co)
+        co = co.reshape(-1, 3)
+        loc = co @ m[:3, :3].T + m[:3, 3]
+        d = loc[:, :2] - (x, y)
+        a = math.radians(-r)
+        u = d[:, 0] * math.cos(a) - d[:, 1] * math.sin(a)
+        v = d[:, 0] * math.sin(a) + d[:, 1] * math.cos(a)
+        inside = (abs(u) < CAP) & (abs(v) < CAP)
+        if not inside.any():
+            continue
+        if o.active_material and o.active_material.get("pk_role") == "keycap glass":
+            z0 = loc[inside, 2].min()
+            zmin = z0 if zmin is None else min(zmin, z0)
+        sel.append((o, m, co, loc, inside))
+    assert zmin is not None, f"no keycap glass under {lab}"
+    for o, m, co, loc, inside in sel:
+        mv = inside & (loc[:, 2] >= zmin - 0.05)
+        if not mv.any():
+            continue
+        if o.data.users > 1:
+            o.data = o.data.copy()
+        _pressed.append((o.data, co.copy()))
+        loc2 = loc.copy()
+        loc2[mv, 2] -= depth_mm
+        mi = np.linalg.inv(m)
+        new = loc2 @ mi[:3, :3].T + mi[:3, 3]
+        o.data.vertices.foreach_set("co", new.ravel())
+        o.data.update()
+    print("press", lab, depth_mm, "mm,", len(_pressed), "meshes")
+
+
+def unpress():
+    while _pressed:
+        me, co = _pressed.pop()
+        me.vertices.foreach_set("co", co.ravel())
+        me.update()
+
+
 lo = mathutils.Vector((1e9,) * 3)
 hi = -lo
 for o in sc.objects:
@@ -286,27 +396,65 @@ for o in sc.objects:
         for v in o.data.vertices:
             w = o.matrix_world @ v.co
             lo, hi = mathutils.Vector(map(min, lo, w)), mathutils.Vector(map(max, hi, w))
+BOARD_BOX = (lo, hi)
 tgt = bpy.data.objects["target"]
-tgt.location = ((lo.x + hi.x) / 2, (lo.y + hi.y) / 2, hi.z)
 cam = sc.camera
-cam.data.lens = float(env("PK_LENS", 50))
 cam.data.dof.use_dof = False
 cam.data.clip_start = 0.005
 # the map passes are exactly twice the light passes in both axes (eden_video.py asserts it)
 scale = 2 if PASS in MAP_PASSES else 1
 W, H = width * scale, int(round(width * 9 / 16)) * scale
-fov = 2 * math.atan(cam.data.sensor_width / 2 / cam.data.lens)
-margin = float(env("PK_MARGIN", 1.15))
-need = max((hi.x - lo.x) * margin, (hi.y - lo.y) * margin * W / H)
-dist = need / 2 / math.tan(fov / 2)
-e = math.radians(min(float(env("PK_ELEV", 90)), 89.9))
-cam.location = tgt.location + mathutils.Vector((0, -dist * math.cos(e), dist * math.sin(e)))
-print("eden camera", PASS, "dist", round(dist, 3), "elev", math.degrees(e), "frame", W, H)
 sc.render.resolution_x, sc.render.resolution_y = W, H
 sc.render.resolution_percentage = 100
-sc.render.filepath = out
-if out.endswith(".exr"):
+EXT = ".png" if PASS == "preview" else ".exr"
+if out.endswith(".exr") or (env("PK_SHOTS") and EXT == ".exr"):
     sc.render.image_settings.file_format = "OPEN_EXR"
     sc.render.image_settings.color_depth = "32"
     sc.render.image_settings.exr_codec = "ZIP"
-bpy.ops.render.render(write_still=True)
+
+
+def shot(path, focus=None, elev=None, azim=0.0, lens=None, margin=None, presses=None, fstop=0):
+    """Render one camera. focus = matrix labels to frame (default both halves);
+    elev / azim in degrees (azim turns the camera around the target, 0 = from the
+    front); presses = {label: mm}."""
+    for lab, mm in (presses or {}).items():
+        press(lab, mm)
+    bpy.context.view_layer.update()
+    if focus:
+        pts = [p for lab in focus for p in footprint(lab)]
+        lo = mathutils.Vector([min(p[i] for p in pts) for i in range(3)])
+        hi = mathutils.Vector([max(p[i] for p in pts) for i in range(3)])
+    else:
+        lo, hi = BOARD_BOX
+    aim = mathutils.Vector(((lo.x + hi.x) / 2, (lo.y + hi.y) / 2, hi.z))
+    tgt.matrix_world = mathutils.Matrix.Translation(aim)   # world space: the target may have a parent
+    bpy.context.view_layer.update()
+    cam.data.lens = float(lens or env("PK_LENS", 50))
+    fov = 2 * math.atan(cam.data.sensor_width / 2 / cam.data.lens)
+    m = float(margin or env("PK_MARGIN", 1.15))
+    need = max((hi.x - lo.x) * m, (hi.y - lo.y) * m * W / H)
+    dist = need / 2 / math.tan(fov / 2)
+    e = math.radians(min(float(elev if elev is not None else env("PK_ELEV", 90)), 89.9))
+    az = math.radians(float(azim))
+    cam.location = aim + mathutils.Vector((dist * math.cos(e) * math.sin(az),
+                                                    -dist * math.cos(e) * math.cos(az), dist * math.sin(e)))
+    cam.data.dof.use_dof = fstop > 0
+    if fstop > 0:
+        cam.data.dof.focus_object = tgt
+        cam.data.dof.aperture_fstop = fstop
+    print("eden camera", PASS, os.path.basename(path), "dist", round(dist, 3), "elev", math.degrees(e), "frame", W, H)
+    sc.render.filepath = path
+    bpy.ops.render.render(write_still=True)
+    unpress()
+
+
+if env("PK_SHOTS"):                               # out is a directory: <out>/<shot name>.exr per shot
+    os.makedirs(out, exist_ok=True)
+    only = set(env("PK_ONLY", "").split(",")) - {""}
+    for s in json.load(open(env("PK_SHOTS"), encoding="utf-8")):
+        if only and s["name"] not in only:
+            continue
+        shot(os.path.join(out, s["name"] + EXT), s.get("focus"), s.get("elev"), s.get("azim", 0.0),
+             s.get("lens"), s.get("margin"), s.get("press"), s.get("fstop", 0))
+else:
+    shot(out)
