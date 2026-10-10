@@ -454,6 +454,7 @@ if PASS == "led":
     chans = env("PK_LED_KEYS", "").split(";")
     want = {lab: i for i, lab in enumerate(chans) if lab and lab != "-"}
     centre = {lab: sum(footprint(lab), mathutils.Vector()) / 4 for lab in KEYS}
+    want = {lab: ch for lab, ch in want.items() if lab in centre}   # the encoders have no key footprint
     if DIFF_GLOW > 0:
         # the frame glows around each lit key's LED, in that key's channel
         for o, near, fall in diffuser_setup():
