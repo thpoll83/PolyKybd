@@ -332,3 +332,28 @@ The rules that bind code *outside* these folders are in
   lesson: a small feature with no comment is not thereby decoration — ask before
   writing "optional" onto a fabrication drawing, because that is the one document
   the shop will act on without asking back.
+
+## Why the build123d pin exists
+
+_Moved verbatim from `CLAUDE.md` on 2026-10-10._
+
+- ⚠️ **BOTH pipelines pin their toolchain (`BUILD123D_PIN`, currently 0.12.0) and
+  refuse to run on another version.** The geometry is version-sensitive: 0.13.0 projects
+  the stem sheet
+  materially differently (111 of 2087 paths, 8 of them structural, a 43 mm coordinate
+  delta) and rewrites the STEP below its header too, so an unpinned `pip install`
+  silently rewrites a fabrication deliverable. The check is an ORDER-ONLY prerequisite
+  of the outputs, which means it runs on `make`, `make step`, `make drawing` and
+  `make verify` alike, **including when every output is already up to date** (verified:
+  a wrong pin exits 2 on all four with nothing to rebuild) — an order-only prerequisite
+  is still updated, it just does not drag the target with it. That property matters more
+  in `case/step/`, where a needless rebuild costs ~15 minutes (903.7 s for the right side
+  alone). The case pin is **verified, not assumed**: rebuilding on 0.12.0 reproduces the
+  committed `metal-case-left.step` byte for byte below the header, and
+  `metal-case-right.step` to one DIRECTION written `(-0.,-0.,-1.)` rather than
+  `(0.,0.,-1.)` — the same direction, since `-0.0 == 0.0`.
+  **Compare a re-export as an unordered POINT MULTISET, never byte-wise** — even on the
+  right version the SVG path order is not stable RUN TO RUN on one machine (18-55
+  segments reshuffle, geometry and text identical), the SVG analogue of the STL
+  facet-order rule below. So a byte diff is noise by default, and it cannot tell that
+  noise apart from a real geometry change.
