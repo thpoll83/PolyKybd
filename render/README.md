@@ -349,6 +349,111 @@ PK_AMBIENT=0.07 PK_ASPECT=2.35 PK_CROP_CY=0.55 "$BPY" render/eden_video.py layer
 About 1 hour 50 minutes on 4 CPUs at 2560 wide; the 356 frames take another
 20 minutes.
 
+## The bare PCB shot (pcb2blender)
+
+One split72 half as the fab delivers it, socket side up, for the docs' PCB
+page: the right half, from the angle of the Rev.2 photo it replaced (the
+left half works the same way, with `PK_AZIM=8` for the mirrored view). It does not come from the hero scene: the VRML route flattens the
+board's layers into flat-coloured geometry, so the mask, silkscreen and
+copper never looked like a board. [pcb2blender](https://github.com/30350n/pcb2blender)
+exports the layers as artwork and imports them into its own PCB shaders, so
+the traces show under the mask and the pads are real copper.
+
+Setup, once per container (pcb2blender's importer needs Blender 5.1):
+
+```bash
+git clone https://github.com/30350n/pcb2blender /tmp/pcb2blender
+git -C /tmp/pcb2blender checkout 2a2ac82 && git -C /tmp/pcb2blender submodule update --init --recursive
+curl -sSLO https://download.blender.org/release/Blender5.1/blender-5.1.2-linux-x64.tar.xz && tar -xf blender-5.1.2-linux-x64.tar.xz
+B51=$PWD/blender-5.1.2-linux-x64
+apt-get install -y libegl1 libgl1                       # skia-python needs libEGL
+$B51/5.1/python/bin/python3.13 -m pip install error-helper==1.4 pillow==11.3 skia-python==138
+curl -sSL -o studio_small_09.hdr https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/studio_small_09_2k.hdr
+```
+
+Then, from the repo root:
+
+```bash
+python3 render/pcb_shot/board_copy.py poly_kybd/poly_kybd_split72_right.kicad_pcb poly_kybd/_shot_right.kicad_pcb
+cp poly_kybd/poly_kybd_split72_right.kicad_pro poly_kybd/_shot_right.kicad_pro
+xvfb-run -a python3 render/pcb_shot/export.py poly_kybd/_shot_right.kicad_pcb render/out/right.pcb3d
+rm poly_kybd/_shot_right.*
+$B51/blender -b --python render/pcb_shot/import.py -- render/out/right.pcb3d render/out/pcb_right.blend
+PK_HDRI=$PWD/studio_small_09.hdr $B51/blender -b --python render/pcb_shot/shot.py -- \
+    render/out/pcb_right.png 128 2800 render/out/pcb_right.blend render/out/right.pcb3d
+```
+
+The export takes about 1.5 minutes and the import 3. A 32-sample, 900 px
+preview takes about a minute. Traps:
+
+- **The mask colour is set in shot.py, not in the board.** A custom stackup
+  colour (`#RRGGBB`) reaches the importer as 0..255 and the mask renders
+  white. The copy therefore says `Purple`, which picks the mask shader, and
+  shot.py sets its two colours (over copper, over bare board) to the Rev.2
+  boards' redder purple. pcb2blender's own purple is a blue-violet.
+- **Register the add-on before opening the .blend.** Its materials are built
+  from node types it defines; opened without it, every material renders white.
+- **The exporter is a pcbnew GUI plugin.** export.py loads its modules without
+  the wx dialog and swaps `pcbnew.GetBoard()` and `pcbnew.ExportVRML()` (which
+  writes nothing without the editor frame) for the loaded board and kicad-cli.
+- **The board copy needs its own .kicad_pro**, or `${KIPRJMOD}` does not
+  resolve and the repo's models drop silently.
+- **Khronos PBR Neutral, not AgX.** AgX turned the mask and the parts pastel.
+  PBR Neutral keeps base colours, but clips a bright highlight, so exposure
+  cannot rescue too much light: the key is 12 W and the HDRI 0.15.
+- **The flex slots are cut in shot.py.** KiCad's VRML export cuts round drills
+  only, so each key's 9.76 x 1.7 mm plated slot arrives as solid board. The
+  .pcb3d's pad records give each slot; their positions map onto the board
+  through the solder joints, which are named after their pads (the fit is
+  exact on 1846 joints). Passing the .pcb3d as the fifth argument cuts them.
+  pcb2blender's drill shapes are one off from KiCad 9's (1 = circle, 2 =
+  oblong), so a round drill reads "OVAL" and a slot "UNKNOWN".
+  ⚠️ The pad rotation goes in as is, the way the importer places its own
+  joints. Negated, it changes nothing at 0 and 90 degrees and crosses every
+  rotated thumb-key slot with a second cut at the mirrored angle (an X).
+  The cutter's faces are wound outward. With the walls facing the hole, a
+  bright mirror-like plating reflects the floor and reads white, so the
+  plating is a deeper gold (`PK_SLOT_COLOR`, `PK_SLOT_ROUGH` 0.5).
+- **Component colours are matched to the Rev.2 photo** in `COLOR_MATCH`,
+  keyed on the colour each material imports with: mat4cad reads near-black
+  plastics as mid grey, the Kailh contacts' gold as plastic and their tin as
+  a mirror that reads as glass. Compare at full resolution, not downscaled:
+  render a crop with `PK_BORDER=x0,y0,x1,y1` (fractions, origin bottom left)
+  at the final width and put it beside the matching photo crop.
+- No depth of field: the board is sharp to the far corner. The camera
+  (`PK_ELEV` 50, `PK_AZIM` -8, `PK_LENS` 24, `PK_DIST` 0.15 m) is close and
+  wide like the phone photo; it tracks the board's centre.
+- **Part markings are added in shot.py** (`MARKINGS`): the stock models carry
+  none, and the RP2040, the flash, the inductors, the crystal and the shift
+  registers show theirs clearly. export.py writes `<board>.parts.json` (each
+  footprint's place) beside the .pcb3d; shot.py finds each part's body there
+  and lays the text on its top face, upright to the camera.
+- **The hotswap pads' solder is added in shot.py.** The Kailh footprint has
+  no paste layer, so the importer's SMART mode skips its 288 SMD pads and they
+  render as bare gold. shot.py adds the joints, placed relative to the
+  importer's joint on an FH34 socket pad. ⚠️ The reference must come from a
+  part on the sockets' face: a joint from the other face puts all 288 under
+  the board, and the render looks unchanged. Paint the joints a debug colour
+  and look straight down (`PK_ELEV=89.9 PK_AZIM=0`) before believing a
+  placement. Each joint is a fillet on the two outer tabs only (the inner
+  pads lie under the black body): the tin covers the land and climbs the
+  tab's end and sides in a concave arc (`PK_HS_SOLDER_H` 0.2 mm at the tab,
+  falling to the land over `PK_HS_SOLDER_REACH` 0.8 mm). It is built in the
+  socket's own frame, the socket's rotation read off its two small holes.
+  Over the tab's outer end sits a convex bead (`PK_HS_BEAD_H` 0.35 mm,
+  `PK_HS_BEAD_R` 0.7 mm) that stands above the tab: the concave fillet
+  alone does not show at the full image's scale.
+  The importer's joints in the two switch-pin holes are removed: the switch
+  plugs into the socket and is never soldered.
+- **The FH34 sockets are recoloured per object**: their housing shares its
+  imported colour with the 74HC595 bodies, so COLOR_MATCH cannot separate
+  them. The
+  Kailh model hangs 0.27 mm clear of the board, so shot.py seats it
+  (`PK_HS_SEAT`) and the tabs rest on their pads.
+- **mat4cad's 0.05 mm edge bevel is cut to 0.015 mm** (`PK_BEVEL`). At the
+  default, every 0603 part carries a bright rim along each edge and corner.
+- A 2800 px, 128-sample render takes about 45 minutes on 4 CPUs.
+
 ## Top view for PolyKybdHost's layout editor
 
 ```bash

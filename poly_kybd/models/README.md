@@ -101,4 +101,13 @@ clockwise as seen from above, so +20 is the left cut-out's clockwise tilt.
 The plate is an aluminium PCB: `gen_plates.py` recolours the export's mask and
 board body to grey aluminium (0.58), dark enough that the white artwork reads.
 
-Still without a model: `poly_kb:PolyJog` (rotary encoder option).
+Every part the fab places has a model. The DNP parts deliberately carry none,
+so the 3D view shows a board as delivered: SW1 (`poly_kb:PolyJog`, the optional
+rotary encoder) and the pin headers DBG1, DBG3 and J38. The other footprints
+without a model have no part: the kibuzzard silkscreen labels, the mounting
+holes, the test points and the JP1 solder jumper.
+
+⚠️ `kicad-cli` resolves `${KIPRJMOD}` from a `.kicad_pro` beside the board. A
+copy of a board without one (a temp file for a test render) drops every model
+in this folder with no error; pass `-D KIPRJMOD=<repo>/poly_kybd`. That is how
+a test render once showed no hotswap sockets.
