@@ -414,12 +414,22 @@ preview takes about a minute. Traps:
   The cutter's faces are wound outward. With the walls facing the hole, a
   bright mirror-like plating reflects the floor and reads white, so the
   plating is a deeper gold (`PK_SLOT_COLOR`, `PK_SLOT_ROUGH` 0.5).
+  ⚠️ Each cutter is 0.03 mm over its drill. The import already opens most slots
+  (38 of 46 on the right board), and a cutter whose walls coincide with an
+  existing hole leaves the EXACT solver undecided: one encoder slot kept its
+  whole capsule, a 20 mm copper rod standing out of the board, with no error.
+  After a change here, check the board's z range after the cut (it should stay
+  at about +-0.80 mm) before spending an hour on a render.
 - **Component colours are matched to the Rev.2 photo** in `COLOR_MATCH`,
   keyed on the colour each material imports with: mat4cad reads near-black
   plastics as mid grey, the Kailh contacts' gold as plastic and their tin as
   a mirror that reads as glass. Compare at full resolution, not downscaled:
   render a crop with `PK_BORDER=x0,y0,x1,y1` (fractions, origin bottom left)
   at the final width and put it beside the matching photo crop.
+  ⚠️ The photo is a reference for colour and camera angle only, not for
+  features: its board is Rev.2, whose flex slots were unplated. The rev3.3
+  slots are plated, so the render shows copper walls the photo lacks. The
+  photo shows the right half.
 - No depth of field: the board is sharp to the far corner. The camera
   (`PK_ELEV` 50, `PK_AZIM` -8, `PK_LENS` 24, `PK_DIST` 0.15 m) is close and
   wide like the phone photo; it tracks the board's centre.
@@ -452,7 +462,10 @@ preview takes about a minute. Traps:
   (`PK_HS_SEAT`) and the tabs rest on their pads.
 - **mat4cad's 0.05 mm edge bevel is cut to 0.015 mm** (`PK_BEVEL`). At the
   default, every 0603 part carries a bright rim along each edge and corner.
-- A 2800 px, 128-sample render takes about 45 minutes on 4 CPUs.
+- A 2800 px, 128-sample render takes about 60 minutes on 4 CPUs at the
+  default close camera (45 with the earlier 70 mm, 0.45 m view), longer than
+  a background command's default limit: run it detached and watch its log
+  (see `polykybd-claude/docs/web-session.md`).
 
 ## Top view for PolyKybdHost's layout editor
 
