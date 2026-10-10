@@ -163,10 +163,11 @@ if len(argv) > 4:
         cx, cy = p["position"][0] * 1e-3 + ox, -p["position"][1] * 1e-3 + oy
         c, sn = math.cos(rot), math.sin(rot)
         verts = [[bm.verts.new((cx + x * c - y * sn, cy + x * sn + y * c, z)) for x, y in ring] for z in (-0.01, 0.01)]
-        bm.faces.new(verts[0][::-1]); bm.faces.new(verts[1])
+        # ring runs clockwise from above: wind every face so its normal points out
+        bm.faces.new(verts[0]); bm.faces.new(verts[1][::-1])
         for i in range(len(ring)):
             j = (i + 1) % len(ring)
-            bm.faces.new((verts[0][i], verts[0][j], verts[1][j], verts[1][i]))
+            bm.faces.new((verts[0][j], verts[0][i], verts[1][i], verts[1][j]))
     me = bpy.data.meshes.new("slot cutters"); bm.to_mesh(me); bm.free()
     cutter = bpy.data.objects.new("slot cutters", me)
     sc.collection.objects.link(cutter)
