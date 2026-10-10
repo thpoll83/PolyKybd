@@ -157,7 +157,10 @@ if len(argv) > 4:
         if W > L:
             L, W = W, L
             rot += math.pi / 2
-        r, half, seg = W / 2, (L - W) / 2, 12
+        # 0.03 mm over the drill: the import already opens most slots, and a
+        # cutter whose walls coincide with the hole's leaves the EXACT solver
+        # undecided (one encoder slot kept its whole 20 mm capsule standing)
+        r, half, seg = W / 2 + 3e-5, (L - W) / 2, 12
         ring = [(half + r * math.cos(a), r * math.sin(a)) for a in [math.pi / 2 - math.pi * i / seg for i in range(seg + 1)]]
         ring += [(-half - r * math.cos(a), -r * math.sin(a)) for a in [math.pi / 2 - math.pi * i / seg for i in range(seg + 1)]]
         cx, cy = p["position"][0] * 1e-3 + ox, -p["position"][1] * 1e-3 + oy
