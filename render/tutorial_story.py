@@ -43,15 +43,17 @@ def ringed(frame, mp):
     fr = frame.copy()
     base = fr.keys.get(mp, np.zeros((ts.OH, ts.OW), np.float32))
     fr.keys[mp] = ts.ring(base, ts.OW / 2, ts.OH / 2, 19, 3)
+    fr.point = mp                     # the video pulses this key
     return fr
 
 
 def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=ROOM, note=""):
+    point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
         fr.status = S.status_line(*status)
     SCENES.append(dict(id=sid, shot=shot, caption=caption, press=press, ambient=ambient,
-                       note=note, status=list(status), frame=fr))
+                       note=note, status=list(status), point=point, frame=fr))
 
 
 def wait_press(sid, shot, key, status, frame, after, after_status, caption, after_caption,

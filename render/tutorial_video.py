@@ -1,6 +1,7 @@
 """The first-run tutorial video, from eden_view.py's per-shot layers and tutorial_story.py's screens.
 
     <blender dir>/4.1/python/bin/python3.11 render/tutorial_video.py storyboard <layers> <story.npz> <out dir>
+    <blender dir>/4.1/python/bin/python3.11 render/tutorial_video.py video <layers> <story.npz> <out.mp4> [width] [fps]
 
 <layers> holds one folder per pass (uv, id, ambient, base), each with one EXR per
 camera shot (eden_view.py with PK_SHOTS). <story.npz> and its .json come from
@@ -78,8 +79,10 @@ class Shot:
                 lit[yy, xx] = keys[LABELS[c]][self.ky[yy, xx], self.kx[yy, xx]]
         return (lit * self.trans).reshape(self.H, 2, self.W, 2).mean((1, 3))
 
-    def frame(self, keys, status, ambient, cpu):
+    def frame(self, keys, status, ambient, cpu, extra=None):
         lin = self.base + self.ambient * ambient
+        if extra is not None:
+            lin = lin + extra
         scr = self.screens(keys, status)
         lin = lin + (scr + BLOOM * blur(scr, max(1, self.W // 320)))[..., None] * LIT_TINT * SCREEN
         img = np.ascontiguousarray(np.clip(lin, 0, None).astype(np.float32))
@@ -163,9 +166,141 @@ def storyboard(layers, story, out, cols=3, pw=640):
     return paths
 
 
+# ---- the video -------------------------------------------------------------------
+# Eden's rainbow, as eden_video.py builds it: QMK's CYCLE_LEFT_RIGHT fitted to 1, cos
+# and sin of the phase over x, scaled by startup_anim_rainbow_level()
+HUE_SPAN, HUE_PER_MS, INTRO_MS = 224 / 256, (40 // 4 + 1) / 256 / 256, 5000
+THETA = np.linspace(0, 2 * np.pi * HUE_SPAN, 400)
+BASIS = np.stack([np.ones_like(THETA), np.cos(THETA), np.sin(THETA)], 1)
+
+
+def rainbow_level(el):
+    a, b = INTRO_MS * 180 // 256, INTRO_MS * 240 // 256
+    return 1.0 if el <= a else 0.0 if el >= b else 1.0 - (el - a) / (b - a)
+
+
+def rainbow(el):
+    h6 = ((THETA / (2 * np.pi) - HUE_PER_MS * el) % 1.0) * 6
+    i, f = np.floor(h6).astype(int) % 6, h6 - np.floor(h6)
+    one, zero, q = np.ones_like(f), np.zeros_like(f), 1 - f
+    table = [(one, f, zero), (q, one, zero), (zero, one, f), (zero, q, one), (f, zero, one), (one, zero, q)]
+    rgb = np.zeros((len(f), 3))
+    for k, (r, g, b) in enumerate(table):
+        m = i == k
+        rgb[m] = np.stack([r[m], g[m], b[m]], 1)
+    return np.linalg.lstsq(BASIS, rgb, rcond=None)[0] * rainbow_level(el)
+
+
+PULSE_MS, PULSE_FLOOR = 1400, 24 / 255          # base/tutorial_plan.h TUT_PULSE_*
+FADE_MS = 300                                    # screens cross-fade within one shot
+PRESS_AT, PRESS_MS = 450, 350                    # a close-up: the key goes down here, this long
+
+
+def duration(s, sim):
+    """How long a scene holds on screen, ms (the preview's pacing, not the firmware's)."""
+    if s["id"] == "E1":
+        return 6500
+    if s["id"] == "E2":
+        return sim.TOTAL - 6500
+    if s["id"] == "E3":
+        return 2600                              # SA_TAIL_MS
+    if s.get("press"):
+        return 1400
+    if s["id"].startswith("C4"):
+        return 3000
+    if s["id"] == "F":
+        return 3500
+    return 2200 if s.get("point") else 2400
+
+
+def video(layers, story, out, width=320, fps=25):
+    sys.path.insert(0, os.path.join(HERE, "..", "..", "PolyKybdHost", "tools"))
+    from fw_anim_sim import FwSim, mp_to_half_idx
+    sim, half_idx = FwSim(), mp_to_half_idx()
+    cpu = agx()
+    meta = load_story(story)
+    if os.environ.get("PK_SCENES"):              # a subset, for a quick check
+        meta = [s for s in meta if s["id"] in os.environ["PK_SCENES"].split(",")]
+    shots = {}
+
+    def shot(name):
+        if name not in shots:
+            shots[name] = Shot(layers, name)
+            sh = shots[name]
+            sh.rgb = None
+            if all(os.path.exists(os.path.join(layers, p, name + ".exr")) for p in ("w", "c1", "s1")):
+                w = exr(os.path.join(layers, "w", name + ".exr"))
+                c1, s1 = (exr(os.path.join(layers, p, name + ".exr")) for p in ("c1", "s1"))
+                sh.rgb = (w, 2 * c1 - w, 2 * s1 - w)
+        return shots[name]
+
+    def eden_keys(t):
+        keys = {}
+        for mp, hi in half_idx.items():
+            if hi is not None:
+                b = sim.panel(hi[0], hi[1], int(round(t)))
+                if b is not None:
+                    keys[mp] = np.asarray(b, np.float32)
+        return keys
+
+    tmp = os.path.join(out + ".frames")
+    os.makedirs(tmp, exist_ok=True)
+    step, n, prev = 1000 / fps, 0, None
+    t0 = 0.0                                     # story time at the start of this scene
+    for s in meta:
+        dur = duration(s, sim)
+        for k in range(int(round(dur / step))):
+            t = k * step
+            name = s["shot"]
+            if s.get("press") and PRESS_AT <= t < PRESS_AT + PRESS_MS and \
+                    os.path.exists(os.path.join(layers, "uv", name + "_dn.exr")):
+                name += "_dn"
+            sh = shot(name)
+            ambient = s["ambient"]
+            extra = None
+            if s["id"] in ("E1", "E2"):
+                el = t if s["id"] == "E1" else 6500 + t
+                keys, status = eden_keys(el), [None, None]
+                if sh.rgb is not None:
+                    c = rainbow(el)
+                    extra = sh.rgb[0] * c[0] + sh.rgb[1] * c[1] + sh.rgb[2] * c[2]
+            else:
+                keys, status = dict(s["keys_img"]), list(s["status_img"])
+                if s["id"] == "E3":                # Eden's tail; the room light comes up
+                    keys = eden_keys(sim.INTRO + sim.HOLD + t)
+                    ambient = 0.07 + (0.35 - 0.07) * min(1.0, t / 2000)
+                if s.get("point") in keys and not (s.get("press") and t >= PRESS_AT):
+                    lv = PULSE_FLOOR + (1 - PULSE_FLOOR) * (0.5 - 0.5 * np.cos(2 * np.pi * t / PULSE_MS))
+                    keys[s["point"]] = keys[s["point"]] * lv
+                if prev is not None and prev["shot"] == s["shot"] and t < FADE_MS:
+                    a = t / FADE_MS
+                    for mp in set(keys) | set(prev["keys_img"]):
+                        z = np.zeros((OH, OW), np.float32)
+                        keys[mp] = prev["keys_img"].get(mp, z) * (1 - a) + keys.get(mp, z) * a
+                    status = [None if x is None and y is None else
+                              (x if x is not None else np.zeros((SH, SW), np.float32)) * (1 - a) +
+                              (y if y is not None else np.zeros((SH, SW), np.float32)) * a
+                              for x, y in zip(prev["status_img"], status)]
+            img = sh.frame(keys, status, ambient, cpu, extra)
+            img = img.resize((width, int(round(width * img.height / img.width / 2)) * 2), Image.LANCZOS)
+            img.save(os.path.join(tmp, f"{n:05d}.png"))
+            n += 1
+        t0 += dur
+        prev = s
+        print(f"scene {s['id']:7s} {s['shot']:9s} {dur:5d} ms  -> {n} frames", flush=True)
+    import subprocess
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-framerate", str(fps), "-i", os.path.join(tmp, "%05d.png"),
+                    "-c:v", "libx264", "-crf", "20", "-pix_fmt", "yuv420p", "-movflags", "+faststart", out], check=True)
+    import shutil
+    shutil.rmtree(tmp, ignore_errors=True)
+    print("wrote", out, n, "frames", round(t0 / 1000, 1), "s")
+
+
 if __name__ == "__main__":
     mode = sys.argv[1]
     if mode == "storyboard":
         storyboard(sys.argv[2], sys.argv[3], sys.argv[4])
+    elif mode == "video":                        # video <layers> <story.npz> <out.mp4> [width] [fps]
+        video(sys.argv[2], sys.argv[3], sys.argv[4], *(int(v) for v in sys.argv[5:7]))
     else:
         raise SystemExit(f"unknown mode {mode}")
