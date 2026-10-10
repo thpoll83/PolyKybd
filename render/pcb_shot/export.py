@@ -42,6 +42,7 @@ pkg.__path__ = [os.path.join(P2B, "pcb2blender_exporter")]
 sys.modules["pcb2blender_exporter"] = pkg
 from pcb2blender_exporter.export import export_pcb3d, get_boarddefs  # noqa: E402
 
+os.makedirs(os.path.dirname(os.path.abspath(sys.argv[2])), exist_ok=True)   # render/out/ is gitignored
 defs, ignored = get_boarddefs(board)
 export_pcb3d(sys.argv[2], defs)
 
