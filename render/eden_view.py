@@ -51,7 +51,8 @@ out, samples, width, PASS = os.path.abspath(a[0]), int(a[1]), int(a[2]), a[3]
 LIGHT_PASSES = ("w", "c1", "s1")
 STATUS_ID = 126                                   # id-pass cells of the status panels (126 left, 127 right)
 MAP_PASSES = ("uv", "id")
-assert PASS in ("preview", "base", "ambient") + LIGHT_PASSES + MAP_PASSES, PASS
+# led: the light of up to three single keys, one per colour channel (PK_LED_KEYS)
+assert PASS in ("preview", "base", "ambient", "led") + LIGHT_PASSES + MAP_PASSES, PASS
 # QMK's CYCLE_LEFT_RIGHT spreads hue = led x (0..224 of 256) across the board
 HUE_SPAN = 224 / 256
 env = os.environ.get
@@ -388,6 +389,72 @@ def unpress():
         me.vertices.foreach_set("co", co.ravel())
         me.update()
 
+
+if PASS == "led":
+    # One key's LED per colour channel, everything else dark: PK_LED_KEYS="r,c;r,c;r,c"
+    # (red;green;blue, "-" for none). The case and keycaps are near-neutral, so a
+    # channel of the result is that key's white light to within their tint; the
+    # tutorial video recolours and sums these per frame (tutorial_video.py).
+    for o in [o for o in sc.objects if o.type == "LIGHT"]:
+        bpy.data.objects.remove(o)
+    chans = env("PK_LED_KEYS", "").split(";")
+    want = {lab: i for i, lab in enumerate(chans) if lab and lab != "-"}
+    centre = {lab: sum(footprint(lab), mathutils.Vector()) / 4 for lab in KEYS}
+    for side, root, board in halves:
+        rgb.emitters(root, board, (0, 0), float(env("PK_EMIT", 6000)), z=float(env("PK_EMIT_Z", 4.4)))
+    kept = 0
+    for o in [o for o in sc.objects if o.name.startswith("led emitter")]:
+        c = o.matrix_world @ (sum((v.co for v in o.data.vertices), mathutils.Vector()) / len(o.data.vertices))
+        lab = min(centre, key=lambda k: (centre[k].x - c.x) ** 2 + (centre[k].y - c.y) ** 2)
+        if lab not in want or (centre[lab].xy - c.xy).length > 0.012:
+            bpy.data.objects.remove(o)
+            continue
+        col = [0.0, 0.0, 0.0, 1.0]
+        col[want[lab]] = 1.0
+        o.active_material.node_tree.nodes["Emission"].inputs["Color"].default_value = col
+        kept += 1
+    print("led pass", want, "emitters kept", kept)
+    # the light trapped in each lit key's clear cap, masked to that key
+    glow = float(env("PK_GLOW", 15))
+    for m in bpy.data.materials:
+        if m.get("pk_role") != "keycap glass" or glow <= 0 or not want:
+            continue
+        nt = m.node_tree
+        out_n = next(n for n in nt.nodes if n.type == "OUTPUT_MATERIAL")
+        pos = nt.nodes.new("ShaderNodeNewGeometry").outputs["Position"]
+        total = None
+        for lab, ch in want.items():
+            d = nt.nodes.new("ShaderNodeVectorMath")
+            d.operation = "DISTANCE"
+            nt.links.new(pos, d.inputs[0])
+            d.inputs[1].default_value = (centre[lab].x, centre[lab].y, 0.0)
+            # distance in xy only: project the position onto the floor plane first
+            flat = nt.nodes.new("ShaderNodeVectorMath")
+            flat.operation = "MULTIPLY"
+            flat.inputs[1].default_value = (1.0, 1.0, 0.0)
+            nt.links.new(pos, flat.inputs[0])
+            nt.links.new(flat.outputs[0], d.inputs[0])
+            lt = nt.nodes.new("ShaderNodeMath")
+            lt.operation = "LESS_THAN"
+            lt.inputs[1].default_value = CAP * 1.05 / 1000
+            nt.links.new(d.outputs["Value"], lt.inputs[0])
+            col = nt.nodes.new("ShaderNodeCombineColor")
+            nt.links.new(lt.outputs[0], col.inputs[ch])
+            if total is None:
+                total = col.outputs[0]
+            else:
+                add = nt.nodes.new("ShaderNodeMix")
+                add.data_type = "RGBA"
+                add.blend_type = "ADD"
+                add.inputs["Factor"].default_value = 1.0
+                a_in, b_in = [i for i in add.inputs if i.type == "RGBA"]
+                nt.links.new(total, a_in)
+                nt.links.new(col.outputs[0], b_in)
+                total = next(o for o in add.outputs if o.type == "RGBA")
+        em = nt.nodes.new("ShaderNodeEmission")
+        em.inputs["Strength"].default_value = glow
+        nt.links.new(total, em.inputs["Color"])
+        nt.links.new(em.outputs[0], out_n.inputs["Volume"])
 
 lo = mathutils.Vector((1e9,) * 3)
 hi = -lo

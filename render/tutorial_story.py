@@ -41,28 +41,32 @@ def only(frame, keep):
 def ringed(frame, mp):
     """The pointing ring on key `mp` (the key the lesson waits for)."""
     fr = frame.copy()
-    base = fr.keys.get(mp, np.zeros((ts.OH, ts.OW), np.float32))
-    fr.keys[mp] = ts.ring(base, ts.OW / 2, ts.OH / 2, 19, 3)
-    fr.point = mp                     # the video pulses this key
+    fr.point = mp                     # the video draws the firmware ring here and pulses the key
     return fr
 
 
-def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=ROOM, note=""):
+def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=ROOM, note="",
+          sweep=None, strike=False, named=()):
+    """One scene. sweep = (origin key, run ms): a board-wide front leaves `origin`, and
+    every key it passes shows this scene's legend instead of the previous one's.
+    strike: the press sends the chapter-1 ripple. named: keys spelling a language name
+    (their LEDs glow faintly)."""
     point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
         fr.status = S.status_line(*status)
     SCENES.append(dict(id=sid, shot=shot, caption=caption, press=press, ambient=ambient,
-                       note=note, status=list(status), point=point, frame=fr))
+                       note=note, status=list(status), point=point, sweep=sweep, strike=strike,
+                       named=list(named), frame=fr))
 
 
 def wait_press(sid, shot, key, status, frame, after, after_status, caption, after_caption,
-               after_shot="full", note=""):
+               after_shot="full", note="", sweep=None):
     """The three beats of every step: the board points at a key, a close-up of the
     press, back to the whole board showing what the press did."""
     scene(sid + "a", "full", caption, ringed(frame, key), status)
     scene(sid + "b", shot, "Close-up: the key goes down", ringed(frame, key), status, press=key)
-    scene(sid + "c", after_shot, after_caption, after, after_status, note=note)
+    scene(sid + "c", after_shot, after_caption, after, after_status, note=note, sweep=sweep)
 
 
 # ---- Eden -------------------------------------------------------------------
@@ -93,42 +97,45 @@ lines = [("Press the", "lit key"), ("And now", "the next"), ("One more", "and do
 for i, (mp, shot) in enumerate(((e, "k_e"), (k, "k_k"), (b, "k_b"))):
     lit = only(BASE, {mp})
     scene(f"C1.{i + 1}a", "full", f"Letter {i + 1}: one key fades in, the rest of the board is dark",
-          lit, lines[i])
+          ringed(lit, mp), lines[i])
     scene(f"C1.{i + 1}b", shot, "Close-up: pressed, a ripple ring leaves the key",
-          ringed(lit, mp), lines[i], press=mp)
+          ringed(lit, mp), lines[i], press=mp, strike=True)
 scene("C1.4", "full", "Good", only(BASE, set()), (None, "Good"))
 
 # ---- chapter 2: Shift, once per hand -------------------------------------------
 lit = set(LETTERS) | {"3,0", "8,7"}
 wait_press("C2.1", "k_lsft", "3,0", ("Press and hold", "SHIFT"), only(BASE, lit),
            only(SHIFTED, lit), ("All keys", "react..."),
-           "The letters reveal; the left Shift pulses", "A wave repaints every letter as a capital")
+           "The letters reveal; the left Shift pulses", "A wave repaints every letter as a capital",
+           sweep=("3,0", 700))
 wait_press("C2.2", "k_rsft", "8,7", ("Try again", "SHIFT"), only(BASE, lit),
            only(SHIFTED, lit), ("Isn't that", "...nice?"),
-           "Now the right Shift", "Capitals again, from the other hand")
+           "Now the right Shift", "Capitals again, from the other hand", sweep=("8,7", 700))
 
 # ---- chapter 3: a layer, and the notation ------------------------------------
 FN = S.layer("_FL")
 wait_press("C3.1", "k_fn", "2,0", ("Now hold", "Fn"), only(BASE, lit | {"2,0"}),
-           FN, (None, "a whole layer"), "Hold Fn", "The whole Fn layer appears")
+           FN, (None, "a whole layer"), "Hold Fn", "The whole Fn layer appears", sweep=("2,0", 700))
 scene("C3.2", "full", "Status panels explain the marks on layer keys", only(BASE, lit),
       ("Layer keys:", "no mark = hold"))
 
 # ---- chapter 3: the board reveal, languages and scripts -------------------------
 scene("C4.1", "full", "Board reveal: a wave from the last Shift lights every key", BASE,
-      ("Every key", "is a screen"))
+      ("Every key", "is a screen"), sweep=("8,7", 2400))
 scene("C4.2", "full", "The whole board, still", BASE, ("72 screens,", "one keyboard"))
 scene("C4.3", "full", "It speaks your language", BASE, ("It speaks", "your language"))
 mid = ["2,1", "2,2", "2,3", "2,4", "2,5", "7,2", "7,3", "7,4", "7,5", "7,6"]
 scene("C4.4", "full", "The name: Latin on the left half, native script on the right",
-      ts.Frame(S.spelled("GREEKΕΛΛΗΝ", mid)), ("How about", "Greek"))
+      ts.Frame(S.spelled("GREEKΕΛΛΗΝ", mid)), ("How about", "Greek"), named=mid)
 greek = ts.Screens("el-GR").layer()
-scene("C4.5", "right", "A ring wipes in from a corner and every key turns Greek", greek, ("How about", "Greek"),
+scene("C4.5", "full", "A ring wipes in from a corner and every key turns Greek", greek, ("How about", "Greek"),
+      sweep=("0,0", 1650))
+scene("C4.5b", "right", "Greek, close enough to read", greek, ("How about", "Greek"),
       note="then Arabic, Hebrew, Hindi, Thai, Japanese, Korean, Elvish, Runes, Aurebesh, Braille; "
            "the video shows 3-4 of them")
 scene("C4.6", "full", "160 LAYOUTS spelled on the keys", ts.Frame(S.spelled("160LAYOUTS", mid)),
-      ("...and many", "more layouts"))
-scene("C4.7", "full", "10 FUN SCRIPTS", ts.Frame(S.spelled("10FUNSCRPT", mid)), ("...plus", "fun scripts"))
+      ("...and many", "more layouts"), named=mid)
+scene("C4.7", "full", "10 FUN SCRIPTS", ts.Frame(S.spelled("10FUNSCRPT", mid)), ("...plus", "fun scripts"), named=mid)
 
 # ---- the key tour: Lang menu ------------------------------------------------------
 wait_press("T1", "k_lang", "9,1", ("Pick yours in", "the Lang menu"), BASE,

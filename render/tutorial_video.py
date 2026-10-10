@@ -133,10 +133,17 @@ def storyboard(layers, story, out, cols=3, pw=640):
     bold = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 14)
     big = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 22)
     pages = [[] for _ in CHAPTERS]
+    sys.path.insert(0, HERE)
+    import tutorial_fx as fx
+    board = fx.Board()
     for s in meta:
         if s["shot"] not in shots:
             shots[s["shot"]] = Shot(layers, s["shot"])
-        img = shots[s["shot"]].frame(s["keys_img"], s["status_img"], s["ambient"], cpu)
+        keys = dict(s["keys_img"])
+        if s.get("point"):                       # the ring 600 ms into its run
+            for mp, m in board.ripple(s["point"], 600).items():
+                keys[mp] = np.maximum(keys.get(mp, np.zeros((OH, OW), np.float32)), m)
+        img = shots[s["shot"]].frame(keys, s["status_img"], s["ambient"], cpu)
         ph = int(pw * img.height / img.width)
         pages[chapter_of(s["id"])].append((s, img.resize((pw, ph), Image.LANCZOS)))
         print("scene", s["id"], s["shot"], flush=True)
@@ -191,7 +198,7 @@ def rainbow(el):
     return np.linalg.lstsq(BASIS, rgb, rcond=None)[0] * rainbow_level(el)
 
 
-PULSE_MS, PULSE_FLOOR = 1400, 24 / 255          # base/tutorial_plan.h TUT_PULSE_*
+RAINBOW_VAL = 20                                 # TRGB_RAINBOW_VAL: the raw LED value eden_view's light passes stand for
 FADE_MS = 300                                    # screens cross-fade within one shot
 PRESS_AT, PRESS_MS = 450, 350                    # a close-up: the key goes down here, this long
 
@@ -215,6 +222,7 @@ def duration(s, sim):
 
 def video(layers, story, out, width=320, fps=25):
     sys.path.insert(0, os.path.join(HERE, "..", "..", "PolyKybdHost", "tools"))
+    sys.path.insert(0, HERE)
     from fw_anim_sim import FwSim, mp_to_half_idx
     sim, half_idx = FwSim(), mp_to_half_idx()
     cpu = agx()
@@ -243,15 +251,55 @@ def video(layers, story, out, width=320, fps=25):
                     keys[mp] = np.asarray(b, np.float32)
         return keys
 
+    import tutorial_fx as fx
+    board, leds = fx.Board(), fx.Leds()
+    # which per-key LED layer (eden_view.py's led pass) carries each key: led_<n>, channel
+    led_of = {}
+    jobs = os.path.join(layers, "led_jobs.txt")
+    if os.path.exists(jobs):
+        for line in open(jobs, encoding="utf-8"):
+            n_, keys_, _ = line.strip().split("|")
+            for ch, mp in enumerate(keys_.split(";")):
+                led_of[mp] = (int(n_), ch)
+
+    def led_light(sh, name, rgbs):
+        """The key LEDs' light in this shot: each key's layer times its colour / the rainbow's 20."""
+        if not hasattr(sh, "led"):
+            sh.led = {}
+        total = None
+        for mp, c in rgbs.items():
+            if mp not in sh.led:
+                sh.led[mp] = None
+                if mp in led_of:
+                    f = os.path.join(layers, f"led_{led_of[mp][0]}", name + ".exr")
+                    if os.path.exists(f):
+                        sh.led[mp] = exr(f)[..., led_of[mp][1]]
+            img = sh.led[mp]
+            if img is None:
+                continue
+            add = img[..., None] * (np.asarray(c, np.float32) / RAINBOW_VAL)
+            total = add if total is None else total + add
+        return total
+
+    def phase_of(sid):
+        for p, v in (("C1", 3), ("C2.1", 7), ("C2.2", 10), ("C3", 11), ("C4", 15), ("T", 21)):
+            if sid.startswith(p):
+                return v
+        return 0
+
     tmp = os.path.join(out + ".frames")
     os.makedirs(tmp, exist_ok=True)
     step, n, prev = 1000 / fps, 0, None
     t0 = 0.0                                     # story time at the start of this scene
+    ripples, fired = [], set()                   # (origin key, start ms); what has been sent
     for s in meta:
         dur = duration(s, sim)
+        phase = phase_of(s["id"])
         for k in range(int(round(dur / step))):
             t = k * step
+            T = t0 + t
             name = s["shot"]
+            pressed = bool(s.get("press")) and t >= PRESS_AT
             if s.get("press") and PRESS_AT <= t < PRESS_AT + PRESS_MS and \
                     os.path.exists(os.path.join(layers, "uv", name + "_dn.exr")):
                 name += "_dn"
@@ -269,10 +317,32 @@ def video(layers, story, out, width=320, fps=25):
                 if s["id"] == "E3":                # Eden's tail; the room light comes up
                     keys = eden_keys(sim.INTRO + sim.HOLD + t)
                     ambient = 0.07 + (0.35 - 0.07) * min(1.0, t / 2000)
-                if s.get("point") in keys and not (s.get("press") and t >= PRESS_AT):
-                    lv = PULSE_FLOOR + (1 - PULSE_FLOOR) * (0.5 - 0.5 * np.cos(2 * np.pi * t / PULSE_MS))
-                    keys[s["point"]] = keys[s["point"]] * lv
-                if prev is not None and prev["shot"] == s["shot"] and t < FADE_MS:
+                point = s.get("point") if not pressed else None
+                # the pointing ring re-fires every TUT_POINT_PERIOD_MS while it waits
+                # (chapter 1's ring only confirms a press)
+                if point and not s["id"].startswith("C1"):
+                    j_ = int(t // fx.P["TUT_POINT_PERIOD_MS"])
+                    if (s["id"], j_) not in fired:
+                        fired.add((s["id"], j_))
+                        ripples.append((point, t0 + j_ * fx.P["TUT_POINT_PERIOD_MS"]))
+                if s.get("strike") and pressed and (s["id"], "strike") not in fired:
+                    fired.add((s["id"], "strike"))
+                    ripples.append((s["press"], t0 + PRESS_AT))
+                band, shue = None, 0
+                sw = s.get("sweep")
+                if sw:
+                    masks, r, dens, band = board.sweep(sw[0], t, sw[1])
+                    if r is not None and prev is not None:
+                        old = prev["keys_img"]
+                        keys = {mp: a for mp, a in keys.items() if board.centre.get(mp) and board.within(sw[0], mp, r)}
+                        for mp, a in old.items():
+                            if mp not in keys and not (board.centre.get(mp) and board.within(sw[0], mp, r)):
+                                keys[mp] = a
+                    for mp, m in masks.items():
+                        keys[mp] = np.maximum(keys.get(mp, np.zeros((OH, OW), np.float32)), m)
+                    ox, oy = board.centre[sw[0]]
+                    shue = fx.K_HUES[(ox * 3 + oy * 5 + phase) % len(fx.K_HUES)]
+                elif prev is not None and prev["shot"] == s["shot"] and t < FADE_MS:
                     a = t / FADE_MS
                     for mp in set(keys) | set(prev["keys_img"]):
                         z = np.zeros((OH, OW), np.float32)
@@ -281,6 +351,16 @@ def video(layers, story, out, width=320, fps=25):
                               (x if x is not None else np.zeros((SH, SW), np.float32)) * (1 - a) +
                               (y if y is not None else np.zeros((SH, SW), np.float32)) * a
                               for x, y in zip(prev["status_img"], status)]
+                ripples = [(o, st) for o, st in ripples if T - st < fx.P["TUT_RIPPLE_MS"]]
+                for o, st in ripples:
+                    for mp, m in board.ripple(o, T - st).items():
+                        keys[mp] = np.maximum(keys.get(mp, np.zeros((OH, OW), np.float32)), m)
+                if point in keys:
+                    keys[point] = keys[point] * (fx.pulse_level(t) / 255)
+                if s["id"] != "E3":
+                    rgbs = leds.step(T, step, board, pointed=point, phase=phase, sweep_band=band,
+                                     sweep_hue=shue, named=s.get("named") or (), name_hue=fx.K_HUES[0])
+                    extra = led_light(sh, name, rgbs)
             img = sh.frame(keys, status, ambient, cpu, extra)
             img = img.resize((width, int(round(width * img.height / img.width / 2)) * 2), Image.LANCZOS)
             img.save(os.path.join(tmp, f"{n:05d}.png"))
