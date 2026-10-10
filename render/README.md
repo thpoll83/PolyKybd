@@ -352,7 +352,8 @@ About 1 hour 50 minutes on 4 CPUs at 2560 wide; the 356 frames take another
 ## The bare PCB shot (pcb2blender)
 
 One split72 half as the fab delivers it, socket side up, for the docs' PCB
-page. It does not come from the hero scene: the VRML route flattens the
+page: the right half, from the angle of the Rev.2 photo it replaced (the
+left half works the same way, with `PK_AZIM=8` for the mirrored view). It does not come from the hero scene: the VRML route flattens the
 board's layers into flat-coloured geometry, so the mask, silkscreen and
 copper never looked like a board. [pcb2blender](https://github.com/30350n/pcb2blender)
 exports the layers as artwork and imports them into its own PCB shaders, so
@@ -373,13 +374,13 @@ curl -sSL -o studio_small_09.hdr https://dl.polyhaven.org/file/ph-assets/HDRIs/h
 Then, from the repo root:
 
 ```bash
-python3 render/pcb_shot/board_copy.py poly_kybd/poly_kybd_split72_left.kicad_pcb poly_kybd/_shot_left.kicad_pcb
-cp poly_kybd/poly_kybd_split72_left.kicad_pro poly_kybd/_shot_left.kicad_pro
-xvfb-run -a python3 render/pcb_shot/export.py poly_kybd/_shot_left.kicad_pcb render/out/left.pcb3d
-rm poly_kybd/_shot_left.*
-$B51/blender -b --python render/pcb_shot/import.py -- render/out/left.pcb3d render/out/pcb_left.blend
+python3 render/pcb_shot/board_copy.py poly_kybd/poly_kybd_split72_right.kicad_pcb poly_kybd/_shot_right.kicad_pcb
+cp poly_kybd/poly_kybd_split72_right.kicad_pro poly_kybd/_shot_right.kicad_pro
+xvfb-run -a python3 render/pcb_shot/export.py poly_kybd/_shot_right.kicad_pcb render/out/right.pcb3d
+rm poly_kybd/_shot_right.*
+$B51/blender -b --python render/pcb_shot/import.py -- render/out/right.pcb3d render/out/pcb_right.blend
 PK_HDRI=$PWD/studio_small_09.hdr $B51/blender -b --python render/pcb_shot/shot.py -- \
-    render/out/pcb_left.png 128 2800 render/out/pcb_left.blend render/out/left.pcb3d
+    render/out/pcb_right.png 128 2800 render/out/pcb_right.blend render/out/right.pcb3d
 ```
 
 The export takes about 1.5 minutes and the import 3. A 32-sample, 900 px
@@ -407,13 +408,21 @@ preview takes about a minute. Traps:
   exact on 1846 joints). Passing the .pcb3d as the fifth argument cuts them.
   pcb2blender's drill shapes are one off from KiCad 9's (1 = circle, 2 =
   oblong), so a round drill reads "OVAL" and a slot "UNKNOWN".
+  ⚠️ The pad rotation goes in as is, the way the importer places its own
+  joints. Negated, it changes nothing at 0 and 90 degrees and crosses every
+  rotated thumb-key slot with a second cut at the mirrored angle (an X).
+  The cutter's faces are wound outward. With the walls facing the hole, a
+  bright mirror-like plating reflects the floor and reads white, so the
+  plating is a deeper gold (`PK_SLOT_COLOR`, `PK_SLOT_ROUGH` 0.5).
 - **Component colours are matched to the Rev.2 photo** in `COLOR_MATCH`,
   keyed on the colour each material imports with: mat4cad reads near-black
   plastics as mid grey, the Kailh contacts' gold as plastic and their tin as
   a mirror that reads as glass. Compare at full resolution, not downscaled:
   render a crop with `PK_BORDER=x0,y0,x1,y1` (fractions, origin bottom left)
   at the final width and put it beside the matching photo crop.
-- No depth of field: the board is sharp to the far corner.
+- No depth of field: the board is sharp to the far corner. The camera
+  (`PK_ELEV` 50, `PK_AZIM` -8, `PK_LENS` 24, `PK_DIST` 0.15 m) is close and
+  wide like the phone photo; it tracks the board's centre.
 - **Part markings are added in shot.py** (`MARKINGS`): the stock models carry
   none, and the RP2040, the flash, the inductors, the crystal and the shift
   registers show theirs clearly. export.py writes `<board>.parts.json` (each

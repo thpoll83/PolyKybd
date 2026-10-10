@@ -29,7 +29,7 @@ import pcb2blender_importer  # noqa: E402
 pcb2blender_importer.register()
 bpy.ops.wm.open_mainfile(filepath=argv[3])
 sc = bpy.context.scene
-pcb = bpy.data.objects["PCB_left"]
+pcb = next(o for o in bpy.data.objects if o.name.startswith("PCB_") and o.parent is None)   # PCB_left / PCB_right
 
 # The stock models' colours, matched to the Rev.2 photo (sRGB samples in the
 # comments; they are lit values, so the albedos sit a little below them).
@@ -153,7 +153,7 @@ if len(argv) > 4:
     bm = bmesh.new()
     for p in slots:
         L, W = (v * 1e-3 for v in p["drill_size"])
-        rot = -p["rotation"]                      # KiCad's y points down, the board's up
+        rot = p["rotation"]                       # radians, as the importer places its own joints
         if W > L:
             L, W = W, L
             rot += math.pi / 2
@@ -175,9 +175,9 @@ if len(argv) > 4:
     plating = bpy.data.materials.new("slot plating"); plating.use_nodes = True
     pb = plating.node_tree.nodes["Principled BSDF"]
     # ENIG over the plated wall: the copper that reads around each slot's edge
-    pb.inputs["Base Color"].default_value = (0.90, 0.62, 0.32, 1)
-    pb.inputs["Metallic"].default_value = 1.0
-    pb.inputs["Roughness"].default_value = float(env("PK_SLOT_ROUGH", 0.3))
+    pb.inputs["Base Color"].default_value = (*(float(v) for v in env("PK_SLOT_COLOR", "0.65,0.38,0.14").split(",")), 1)
+    pb.inputs["Metallic"].default_value = float(env("PK_SLOT_METAL", 1.0))
+    pb.inputs["Roughness"].default_value = float(env("PK_SLOT_ROUGH", 0.5))
     me.materials.append(plating)
     mod = board.modifiers.new("slots", "BOOLEAN")
     mod.operation, mod.object, mod.solver = "DIFFERENCE", cutter, "EXACT"
@@ -407,8 +407,8 @@ key.location = (-0.35, -0.30, 0.45); key.constraints.new("TRACK_TO").target = tg
 
 # camera
 cd = bpy.data.cameras.new("cam"); cam = bpy.data.objects.new("cam", cd); sc.collection.objects.link(cam); sc.camera = cam
-cd.lens = float(env("PK_LENS", 70)); cd.clip_start = 0.01
-elev, azim, dist = math.radians(float(env("PK_ELEV", 42))), math.radians(float(env("PK_AZIM", -20))), float(env("PK_DIST", 0.45))
+cd.lens = float(env("PK_LENS", 24)); cd.clip_start = 0.01
+elev, azim, dist = math.radians(float(env("PK_ELEV", 50))), math.radians(float(env("PK_AZIM", -8))), float(env("PK_DIST", 0.15))
 cam.location = (dist * math.cos(elev) * math.sin(azim), -dist * math.cos(elev) * math.cos(azim), dist * math.sin(elev))
 cam.constraints.new("TRACK_TO").target = tgt
 cd.dof.use_dof = False                    # sharp to the last corner, like a focus-stacked product shot
