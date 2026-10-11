@@ -60,12 +60,14 @@ class Shot:
         assert uv.shape[:2] == (2 * self.H, 2 * self.W), (name, uv.shape, self.base.shape)
         seen = idm[..., 2] > 0.05
         b = np.maximum(idm[..., 2], 1e-6)
-        self.cell = np.where(seen, np.floor(idm[..., 0] / b * 128), -1).astype(int)
+        self.cell = np.where(seen, np.floor(idm[..., 0] / b * 128), -1).astype(np.int16)
         u = uv[..., 0] / np.maximum(uv[..., 2], 1e-6)
         v = uv[..., 1] / np.maximum(uv[..., 2], 1e-6)
-        self.kx, self.ky = np.clip((u * OW).astype(int), 0, OW - 1), np.clip((v * OH).astype(int), 0, OH - 1)
-        self.sx, self.sy = np.clip((u * SW).astype(int), 0, SW - 1), np.clip((v * SH).astype(int), 0, SH - 1)
+        # int16 indices: at 2048 px the maps are 4096 wide, and int64 tables cost 75 MB each
+        self.kx, self.ky = (np.clip(u * OW, 0, OW - 1).astype(np.int16), np.clip(v * OH, 0, OH - 1).astype(np.int16))
+        self.sx, self.sy = (np.clip(u * SW, 0, SW - 1).astype(np.int16), np.clip(v * SH, 0, SH - 1).astype(np.int16))
         self.trans = np.where(seen, uv[..., 2], 0.0).astype(np.float32)
+        del uv, idm, u, v, b, seen
         # per cell, the pixels that show it
         self.where = {c: np.nonzero(self.cell == c) for c in np.unique(self.cell) if c >= 0}
 
@@ -283,10 +285,16 @@ def video(layers, story, out, width=640, fps=25):
     board, leds, casc_row = fx.Board(), fx.Leds(), cascade_rows()
     stars = fx.Stars(sim)
     Z = np.zeros((OH, OW), np.float32)
-    shots = {}
+    from collections import OrderedDict
+    shots = OrderedDict()                        # a few cameras at a time: a 2048 px shot holds ~1 GB
+    keep = int(os.environ.get("PK_SHOT_CACHE", 5))
 
     def shot(name):
-        if name not in shots:
+        if name in shots:
+            shots.move_to_end(name)
+        else:
+            while len(shots) >= keep:
+                shots.popitem(last=False)
             shots[name] = Shot(layers, name)
             sh = shots[name]
             sh.rgb = None
@@ -374,8 +382,9 @@ def video(layers, story, out, width=640, fps=25):
                 ex = ll if ex is None else ex + ll
         return sh.frame(keys, status, ambient, cpu, ex)
 
-    tmp = os.path.join(out + ".frames")
-    os.makedirs(tmp, exist_ok=True)
+    # frames go straight into ffmpeg: at 2048 px a PNG per frame would need ~18 GB of disk
+    import subprocess
+    enc = None
     step, n, prev = 1000 / fps, 0, None
     T = 0.0                                      # the board's own clock
     ripples, sweeps, fired = [], [], set()
@@ -514,15 +523,18 @@ def video(layers, story, out, width=640, fps=25):
             else:
                 img = light_frame(keys, status, ambient, name, rgbs, extra)
             img = img.resize((width, int(round(width * img.height / img.width / 2)) * 2), Image.LANCZOS)
-            img.save(os.path.join(tmp, f"{n:05d}.png"))
+            if enc is None:
+                enc = subprocess.Popen(["ffmpeg", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
+                                        "-s", f"{img.width}x{img.height}", "-r", str(fps), "-i", "-",
+                                        "-c:v", "libx264", "-crf", "18", "-preset", "slow", "-pix_fmt", "yuv420p",
+                                        "-movflags", "+faststart", out], stdin=subprocess.PIPE)
+            enc.stdin.write(img.convert("RGB").tobytes())
             n += 1
         prev = s
         print(f"scene {s['id']:7s} {s['shot']:9s} {dur:5d} ms  -> {n} frames", flush=True)
-    import subprocess
-    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-framerate", str(fps), "-i", os.path.join(tmp, "%05d.png"),
-                    "-c:v", "libx264", "-crf", "20", "-pix_fmt", "yuv420p", "-movflags", "+faststart", out], check=True)
-    import shutil
-    shutil.rmtree(tmp, ignore_errors=True)
+    enc.stdin.close()
+    if enc.wait() != 0:
+        raise SystemExit(f"ffmpeg failed ({enc.returncode})")
     print("wrote", out, n, "frames", round(n / fps, 1), "s")
 
 
