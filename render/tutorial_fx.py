@@ -267,3 +267,81 @@ def slot_of(mp):
         _HALF_IDX = mp_to_half_idx()
     hi = _HALF_IDX.get(mp)
     return ((0x80 if hi[0] == "R" else 0) | hi[1]) if hi else 0
+
+
+# ---- anim/startup_anim.c: the stars of Eden's fade, black stage and welcome tail ----------
+def _hash8(v):
+    v &= 0xFFFFFFFF
+    v ^= v >> 15
+    v = (v * 0x2C1B3C6D) & 0xFFFFFFFF
+    v ^= v >> 12
+    v = (v * 0x297A2D39) & 0xFFFFFFFF
+    v ^= v >> 15
+    return v & 0xFF
+
+
+def _star_pts(shape, stage):
+    """sa_star_pts(): one star's lit offsets at stage 0..4 of its life."""
+    form = 2 if stage == 2 else 1 if stage in (1, 3) else 0
+    p = [(0, 0)]
+    if form == 0:
+        return p
+    if form == 1:
+        return p + ([(-1, -1), (1, -1), (-1, 1), (1, 1)] if shape == 1 else [(-1, 0), (1, 0), (0, -1), (0, 1)])
+    if shape == 0:
+        for d in (1, 2):
+            p += [(-d, 0), (d, 0), (0, -d), (0, d)]
+    elif shape == 1:
+        p += [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, -1), (-1, 1), (1, 1)]
+    elif shape == 2:
+        p += [(-2, 0), (2, 0), (0, -2), (0, 2), (-1, -1), (1, -1), (-1, 1), (1, 1)]
+    elif shape == 3:
+        p += [(-1, -1), (1, -1), (-1, 1), (1, 1)]
+    else:
+        for d in (2, 3):
+            p += [(-d, 0), (d, 0), (0, -d), (0, d)]
+    return p
+
+
+class Stars:
+    """sa_plot_stars(): a pure function of the display index and the time, so the stars of
+    the letters' hold, the fade, the black stage and the welcome tail all agree."""
+    SLOTS, USE, LIFE, SHAPES = 3, 64, 3600, 5
+
+    def __init__(self, sim, tail_ms=2600):
+        d = sim.d
+        self.start = (d["SA_INTRO_MS"] * 165) // 256
+        total = d["SA_INTRO_MS"] + d["SA_HOLD_MS"] + d["SA_FADE_MS"] + d["SA_BLACK_MS"] + tail_ms
+        self.window = total - self.start
+        self.half_idx = mp_to_half_idx()
+
+    def keys(self, el):
+        """{key: mask} of the stars at el ms into the show."""
+        fe = el - self.start
+        out = {}
+        if fe < 0:
+            return out
+        for mp, hi in self.half_idx.items():
+            if hi is None:
+                continue
+            idx = hi[1]
+            m = None
+            for k in range(self.SLOTS):
+                seed = idx * self.SLOTS + k + 1
+                if _hash8(seed * 5 + 3) >= self.USE:
+                    continue
+                t0 = (_hash8(seed * 7 + 1) * (self.window - self.LIFE)) // 255
+                if fe < t0 or fe >= t0 + self.LIFE:
+                    continue
+                sx = 4 + _hash8(seed * 11 + 5) % (OW - 8)
+                sy = 4 + _hash8(seed * 13 + 9) % (OH - 8)
+                shape = _hash8(seed * 17 + 2) % self.SHAPES
+                stage = ((fe - t0) * 5) // self.LIFE
+                if m is None:
+                    m = np.zeros((OH, OW), np.float32)
+                for dx, dy in _star_pts(shape, stage):
+                    if 0 <= sx + dx < OW and 0 <= sy + dy < OH:
+                        m[sy + dy, sx + dx] = 1.0
+            if m is not None:
+                out[mp] = m
+        return out

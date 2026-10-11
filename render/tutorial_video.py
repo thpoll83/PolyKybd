@@ -28,6 +28,8 @@ SCREEN = float(os.environ.get("PK_STRENGTH", 5.0))
 LIT_TINT = np.array([0.70, 0.84, 1.0], np.float32)
 BLOOM = float(os.environ.get("PK_BLOOM", 0.25))
 STATUS_ID = 126
+STATUS_GAIN = float(os.environ.get("PK_STATUS_GAIN", 0.3))
+STATUS_BLOOM = float(os.environ.get("PK_STATUS_BLOOM", 0.05))
 OW, OH, SW, SH = 72, 40, 128, 64
 LABELS = sorted(json.load(open(os.path.join(HERE, "textures", "screens_layer0.json"), encoding="utf-8"))["keys"])
 
@@ -68,23 +70,29 @@ class Shot:
         self.where = {c: np.nonzero(self.cell == c) for c in np.unique(self.cell) if c >= 0}
 
     def screens(self, keys, status):
-        """keys {label: (40, 72)}, status [left, right] (64, 128) -> lit screens at image size."""
+        """keys {label: (40, 72)}, status [left, right] (64, 128) -> (keycaps, status panels)
+        lit at image size."""
         lit = np.zeros(self.cell.shape, np.float32)
+        slit = np.zeros(self.cell.shape, np.float32)
         for c, (yy, xx) in self.where.items():
             if c >= STATUS_ID:
                 s = status[c - STATUS_ID]
                 if s is not None:
-                    lit[yy, xx] = s[self.sy[yy, xx], self.sx[yy, xx]]
+                    slit[yy, xx] = s[self.sy[yy, xx], self.sx[yy, xx]]
             elif c < len(LABELS) and LABELS[c] in keys:
                 lit[yy, xx] = keys[LABELS[c]][self.ky[yy, xx], self.kx[yy, xx]]
-        return (lit * self.trans).reshape(self.H, 2, self.W, 2).mean((1, 3))
+        down = lambda a: (a * self.trans).reshape(self.H, 2, self.W, 2).mean((1, 3))
+        return down(lit), down(slit)
 
     def frame(self, keys, status, ambient, cpu, extra=None):
         lin = self.base + self.ambient * ambient
         if extra is not None:
             lin = lin + extra
-        scr = self.screens(keys, status)
-        lin = lin + (scr + BLOOM * blur(scr, max(1, self.W // 320)))[..., None] * LIT_TINT * SCREEN
+        scr, sscr = self.screens(keys, status)
+        r = max(1, self.W // 320)
+        lin = lin + (scr + BLOOM * blur(scr, r))[..., None] * LIT_TINT * SCREEN
+        # the status panels: an OLED behind no glass, so far less glow than a keycap
+        lin = lin + (sscr + STATUS_BLOOM * blur(sscr, r))[..., None] * LIT_TINT * SCREEN * STATUS_GAIN
         img = np.ascontiguousarray(np.clip(lin, 0, None).astype(np.float32))
         cpu.applyRGB(img)
         return Image.fromarray((np.clip(img, 0, 1) * 255 + 0.5).astype(np.uint8))
@@ -205,6 +213,7 @@ FADE_MS = 300                                    # screens cross-fade within one
 PRESS_AT, PRESS_DOWN, PRESS_HOLD, PRESS_UP = 700, 220, 260, 320
 PRESS_HIT = PRESS_AT + PRESS_DOWN // 2           # the switch actuates halfway down
 DEPTHS = [(0.0, ""), (1.2, "_d1"), (2.4, "_d2"), (3.5, "_dn")]
+REWIND_PRE = 700                                 # the board view after a close-up starts this long before the press
 TAP_AT, TAP_MS = 1300, 120                       # a key pressed in place: inverted this long
 # anim/menu_cascade.c
 CASC_MS, CASC_FADE_MS = 756, 152
@@ -272,6 +281,7 @@ def video(layers, story, out, width=640, fps=25):
     if os.environ.get("PK_SCENES"):              # a subset, for a quick check
         meta = [s for s in meta if s["id"] in os.environ["PK_SCENES"].split(",")]
     board, leds, casc_row = fx.Board(), fx.Leds(), cascade_rows()
+    stars = fx.Stars(sim)
     Z = np.zeros((OH, OW), np.float32)
     shots = {}
 
@@ -313,7 +323,11 @@ def video(layers, story, out, width=640, fps=25):
                 if mp in led_of:
                     f = os.path.join(layers, f"led_{led_of[mp][0]}", name + ".exr")
                     if os.path.exists(f):
-                        sh.led[mp] = exr(f)[..., led_of[mp][1]]
+                        img = exr(f)[..., led_of[mp][1]]
+                        if img.shape != sh.base.shape[:2]:   # rendered at a lower width: soft light
+                            img = np.asarray(Image.fromarray(img.astype(np.float32), "F").resize(
+                                (sh.base.shape[1], sh.base.shape[0]), Image.BILINEAR))
+                        sh.led[mp] = img
             img = sh.led[mp]
             if img is None:
                 continue
@@ -371,8 +385,12 @@ def video(layers, story, out, width=640, fps=25):
         nxt = meta[si + 1] if si + 1 < len(meta) else None
         # after a close-up press, go back to the press: the board view shows the
         # whole reaction (the ripple, the sweep repainting every key) from its start
+        before, hit_at, release_at = None, None, None
         if prev is not None and prev.get("press") and prev.get("_hit") is not None and s["shot"] != "status":
-            T = prev["_hit"]
+            # back to just before the press: the old legends until the key lands, then the change
+            T = prev["_hit"] - REWIND_PRE
+            before, hit_at = prev["keys_img"], prev["_hit"]
+            release_at = None if prev.get("hold") else prev["_hit"] + PRESS_HOLD + (PRESS_DOWN + PRESS_UP) // 2
         T0 = T
         if s.get("sweep") and (s["id"], "sweep") not in fired:
             fired.add((s["id"], "sweep"))
@@ -386,15 +404,18 @@ def video(layers, story, out, width=640, fps=25):
             if s["id"] in ("E1", "E2"):
                 el = t if s["id"] == "E1" else 6500 + t
                 keys, status = eden_keys(el), [None, None]
+                for mp, m in stars.keys(el).items():
+                    keys[mp] = np.maximum(keys.get(mp, Z), m)
                 sh = shot(s["shot"])
                 if sh.rgb is not None:
                     c = rainbow(el)
                     extra = sh.rgb[0] * c[0] + sh.rgb[1] * c[1] + sh.rgb[2] * c[2]
             else:
                 keys, status = dict(s["keys_img"]), list(s["status_img"])
-                if s["id"] == "E3":
-                    keys = {}
-                    ambient = 0.07 + (0.35 - 0.07) * smooth(t / 2000)
+                if s["id"] in ("E3", "E3s"):       # the welcome tail: the stars still falling
+                    tail = t + (1400 if s["id"] == "E3s" else 0)
+                    keys = stars.keys(sim.TOTAL + tail)
+                    ambient = 0.07 + (0.35 - 0.07) * smooth(tail / 2600)
                 pressed = bool(s.get("press")) and t >= PRESS_HIT
                 if s.get("press") and pressed and (s["id"], "hit") not in fired:
                     fired.add((s["id"], "hit"))
@@ -428,6 +449,24 @@ def video(layers, story, out, width=640, fps=25):
                               (x if x is not None else np.zeros((SH, SW), np.float32)) * (1 - a) +
                               (y if y is not None else np.zeros((SH, SW), np.float32)) * a
                               for x, y in zip(prev["status_img"], status)]
+                if before is not None and T < hit_at:
+                    keys = dict(before)
+                if s.get("fadein"):
+                    f_ = min(1.0, t / s["fadein"])
+                    keys = {mp: a * f_ for mp, a in keys.items()}
+                # a pressed key's display inverts while it is down (the firmware's key-down
+                # feedback); a held key (Shift, Intl, the armed Ctrl) stays inverted
+                inv = set(s.get("held") or ())
+                if s.get("press") and t >= PRESS_HIT and (s.get("hold") or t < PRESS_HIT + PRESS_HOLD +
+                                                          (PRESS_DOWN + PRESS_UP) // 2):
+                    inv.add(s["press"])
+                if hit_at is not None and T >= hit_at and (release_at is None or T < release_at):
+                    inv.add(prev["press"])
+                if before is not None and T < hit_at:
+                    inv -= {prev["press"]}
+                for mp in inv:
+                    if mp in board.centre:
+                        keys[mp] = 1.0 - keys.get(mp, Z)
                 band, shue = None, 0
                 for sw in sweeps:
                     el = T - sw["start"]
@@ -457,11 +496,12 @@ def video(layers, story, out, width=640, fps=25):
                     keys[point] = keys[point] * (fx.pulse_level(t) / 255)
                 if s.get("tap") and TAP_AT <= t < TAP_AT + TAP_MS:
                     keys[s["tap"]] = 1.0 - keys.get(s["tap"], Z)
-                if s["id"] != "E3":
+                if s["id"] not in ("E3", "E3s"):
                     rgbs = leds.step(T, step, board, pointed=point, phase=phase, sweep_band=band,
                                      sweep_hue=shue, named=s.get("named") or (), name_hue=fx.K_HUES[0])
             name = s["shot"]
-            depth = press_depth(t) if s.get("press") else 0.0
+            depth = (press_depth(min(t, PRESS_AT + PRESS_DOWN + PRESS_HOLD // 2)) if s.get("hold")
+                     else press_depth(t)) if s.get("press") else 0.0
             if depth > 0 and os.path.exists(os.path.join(layers, "base", name + "_dn.exr")):
                 levels = [(d, a) for d, a in DEPTHS if os.path.exists(os.path.join(layers, "base", name + a + ".exr"))]
                 for (d0, a0), (d1, a1) in zip(levels, levels[1:]):

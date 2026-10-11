@@ -31,6 +31,22 @@ SHIFTED = S.layer("_L0", True)
 LETTERS = [mp for mp, t in zip(ts.MATRICES, ts.ld.parse_base_layer_keycodes(ts.KEYMAP, "_L0"))
            if len(t) == 4 and t.startswith("KC_") and t[3].isalpha()]
 SCENES = []
+# base/tutorial_plan.h timings the story uses
+P_LETTER_IN, P_REVEAL, P_WIPE, P_DARK = 500, 2400, 1650, 200
+# the language names' keys: display rows 1 and 2 of both halves, as tut_name_keys_build() orders them
+NAME_KEYS = [mp for side in ("L", "R") for row in ts._name_keys()[side] for mp in row]
+# the wipe's corners, item by item (tut_corner_slot): the outermost key of display row 0,
+# left half then right half
+_g = ts.FwSim()
+_inv = {hi: mp for mp, hi in ts.mp_to_half_idx().items() if hi}
+CORNERS = []
+for _side, _right in (("L", False), ("R", True)):
+    _best = None
+    for _c in range(8):
+        _gg = _g.GEOM[_side][_c]
+        if int(_gg[3]) and (_side, _c) in _inv and (_best is None or (int(_gg[0]) > _best[0] if _right else int(_gg[0]) < _best[0])):
+            _best = (int(_gg[0]), _inv[(_side, _c)])
+    CORNERS.append(_best[1])
 
 
 def only(frame, keep):
@@ -46,20 +62,25 @@ def ringed(frame, mp):
 
 
 def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=ROOM, note="",
-          sweep=None, strike=False, named=(), tap=None, cascade=0):
+          sweep=None, strike=False, named=(), tap=None, cascade=0, hold=False, held=(),
+          beat=True, fadein=0, dur=0):
     """One scene. sweep = (origin key, run ms): a board-wide front leaves `origin`, and
     every key it passes shows this scene's legend instead of the previous one's.
     strike: the press sends the chapter-1 ripple. named: keys spelling a language name
     (their LEDs glow faintly). tap: a key pressed in place, without a close-up (a menu
     tab). cascade: how many physical rows of this scene's keys appear key by key
-    (anim/menu_cascade.c; 3 for a menu or the Shift reveal, 2 for a name)."""
+    (anim/menu_cascade.c; 3 for a menu or the Shift reveal, 2 for a name). hold: the
+    pressed key stays down (Shift, Intl). held: keys drawn inverted for the whole scene,
+    as the firmware inverts a pressed key's display. beat: may the video cut to the
+    status panels before this scene. fadein: the keys fade in over this many ms."""
     point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
         fr.status = S.status_line(*status)
     SCENES.append(dict(id=sid, shot=shot, caption=caption, press=press, ambient=ambient,
                        note=note, status=list(status), point=point, sweep=sweep, strike=strike,
-                       named=list(named), tap=tap, cascade=cascade, frame=fr))
+                       named=list(named), tap=tap, cascade=cascade, hold=hold, held=list(held),
+                       beat=beat, fadein=fadein, dur=dur, frame=fr))
 
 
 def wait_press(sid, shot, key, status, frame, after, after_status, caption, after_caption,
@@ -90,116 +111,121 @@ def eden(t):
 
 scene("E1", "full", "Eden: sparks stream in, the rainbow wakes", eden(2200), ambient=NIGHT)
 scene("E2", "full", "Eden: POLY KYBD / SPLIT 72 forms", eden(6500), ambient=NIGHT)
-scene("E3", "status", "Eden tail: welcome over falling stars; the room light comes up",
-      eden(sim.TOTAL - 1), ("Welcome", "to PolyKybd"), ambient=(NIGHT + ROOM) / 2,
-      note="room light ramps 0.07 -> 0.35 over ~2 s")
+# the welcome tail (SA_TAIL_MS): the stars keep falling on the dark board while the status
+# panels say the welcome; the room light comes up over it (0.07 -> 0.35)
+scene("E3", "full", "Eden tail: the stars keep falling on the dark board; the room light comes up",
+      eden(sim.TOTAL - 1), ("Welcome", "to PolyKybd"), ambient=(NIGHT + ROOM) / 2, dur=1400, beat=False)
+scene("E3s", "status", "Status panels: Welcome | to PolyKybd", eden(sim.TOTAL - 1), ("Welcome", "to PolyKybd"),
+      ambient=(NIGHT + ROOM) / 2, dur=1800)
 
-# ---- chapter 1: three letters --------------------------------------------------
-e, k, b = "1,3", "7,4", "3,5"
-lines = [("Press the", "lit key"), ("And now", "the next"), ("One more", "and done")]
-for i, (mp, shot) in enumerate(((e, "k_e"), (k, "k_k"), (b, "k_b"))):
+# ---- chapter 1: the lit key (the firmware asks for three; the video shows two) --------
+e, k = "1,3", "7,4"
+lines = [("Press the", "lit key"), ("And now", "the next")]
+for i, (mp, shot) in enumerate(((e, "k_e"), (k, "k_k"))):
     lit = only(BASE, {mp})
     scene(f"C1.{i + 1}a", "full", f"Letter {i + 1}: one key fades in, the rest of the board is dark",
-          ringed(lit, mp), lines[i])
-    scene(f"C1.{i + 1}b", shot, "Close-up: pressed, a ripple ring leaves the key",
+          ringed(lit, mp), lines[i], fadein=P_LETTER_IN)
+    scene(f"C1.{i + 1}b", shot, "Close-up: pressed (its display inverts), a ripple leaves the key",
           ringed(lit, mp), lines[i], press=mp, strike=True)
-scene("C1.4", "full", "Good", only(BASE, set()), (None, "Good"))
+scene("C1.3", "full", "Good", only(BASE, set()), (None, "Good"))
 
-# ---- chapter 2: Shift, once per hand -------------------------------------------
+# ---- chapter 2: Shift, once per hand, HELD ---------------------------------------------
 lit = set(LETTERS) | {"3,0", "8,7"}
-wait_press("C2.1", "k_lsft", "3,0", ("Press and hold", "SHIFT"), only(BASE, lit),
-           only(SHIFTED, lit), ("All keys", "react..."),
-           "The letters reveal; the left Shift pulses", "A wave repaints every letter as a capital",
-           sweep=("3,0", 700), a_cascade=3)
-wait_press("C2.2", "k_rsft", "8,7", ("Try again", "SHIFT"), only(BASE, lit),
-           only(SHIFTED, lit), ("Isn't that", "...nice?"),
-           "Now the right Shift", "Capitals again, from the other hand", sweep=("8,7", 700))
+for n, (sk, shot, ask, said) in enumerate((("3,0", "k_lsft", ("Press and hold", "SHIFT"), ("All keys", "react...")),
+                                           ("8,7", "k_rsft", ("Try again", "SHIFT"), ("Isn't that", "...nice?")))):
+    scene(f"C2.{n + 1}a", "full", "The letters and both Shifts; this Shift pulses", ringed(only(BASE, lit), sk), ask,
+          cascade=3 if n == 0 else 0)
+    scene(f"C2.{n + 1}b", shot, "Close-up: Shift goes down and stays held", ringed(only(BASE, lit), sk), ask,
+          press=sk, hold=True)
+    scene(f"C2.{n + 1}c", "full", "Held: every letter turns capital", only(SHIFTED, lit), said, held=[sk])
 
-# ---- chapter 3: a layer, and the notation ------------------------------------
-FN = S.layer("_FL")
-wait_press("C3.1", "k_fn", "2,0", ("Now hold", "Fn"), only(BASE, lit | {"2,0"}),
-           FN, (None, "a whole layer"), "Hold Fn", "The whole Fn layer appears", sweep=("2,0", 700))
-scene("C3.2", "full", "Status panels explain the marks on layer keys", only(BASE, lit),
-      ("Layer keys:", "no mark = hold"))
-
-# ---- chapter 3: the board reveal, languages and scripts -------------------------
+# ---- the board reveal, then languages and scripts (full view and status panels only) ----
 scene("C4.1", "full", "Board reveal: a wave from the last Shift lights every key", BASE,
-      ("Every key", "is a screen"), sweep=("8,7", 2400))
+      ("Every key", "is a screen"), sweep=("8,7", P_REVEAL))
 scene("C4.2", "full", "The whole board, still", BASE, ("72 screens,", "one keyboard"))
 scene("C4.3", "full", "It speaks your language", BASE, ("It speaks", "your language"))
-mid = ["2,1", "2,2", "2,3", "2,4", "2,5", "7,2", "7,3", "7,4", "7,5", "7,6"]
-# two examples (the firmware shows eleven), each: its name on the keys, Latin on the left
-# half and native on the right, then a ring wipes the layout in from a corner that
-# alternates item by item (tut_corner_slot: top-left, then top-right)
-for n, (code, latin, native, lead, corner) in enumerate((
-        ("el-GR", "GREEK", "ΕΛΛΗΝ", "How about", "0,0"),
-        ("ja-JP", "JAPAN", " 日本語 ", "Or is it", "5,7"))):
-    name = latin + native
-    scene(f"C4.{4 + 2 * n}", "full", f"The name: {latin.title()}, Latin on the left half, native on the right",
-          ts.Frame(S.spelled(name, mid)), (lead, latin.title()), named=mid, cascade=2)
-    scene(f"C4.{5 + 2 * n}", "full", f"A ring wipes in from a corner and every key turns {latin.title()}",
-          ts.Screens(code).layer(), (lead, latin.title()), sweep=(corner, 1650))
-scene("C4.8", "full", "160 LAYOUTS spelled on the keys", ts.Frame(S.spelled("160LAYOUTS", mid)),
-      ("...and many", "more layouts"), named=mid, cascade=2)
-scene("C4.9", "full", "10 FUN SCRIPTS", ts.Frame(S.spelled("10FUNSCRPT", mid)), ("...plus", "fun scripts"),
-      named=mid, cascade=2)
+DARK = ts.Frame({})
+# two of the firmware's eleven items (s_tut_preview_all entries 0 and 5), each: a dark
+# cut, its name on the keys, then a ring wipes the layout in from a corner that takes
+# turns item by item (tut_corner_slot: top-left, then top-right)
+items = (("el-GR", 0, "Greek", "ELLHNIKA", None, "How about"),
+         ("ja-JP", 5, "Japanese", None, "JA", "Or is it"))
+for n, (code, entry, latin, native, tiles, lead) in enumerate(items):
+    corner = CORNERS[n]
+    scene(f"C4.{4 + 3 * n}d", "full", "Every key dark for a moment", DARK, (lead, latin), dur=P_DARK, beat=False)
+    scene(f"C4.{5 + 3 * n}", "full", f"The name: {latin.upper()} in Latin, and its native name on the other half",
+          S.name_frame(entry, latin, native, code, ts.name_tiles(tiles) if tiles else None), (lead, latin),
+          named=NAME_KEYS, cascade=2)
+    scene(f"C4.{6 + 3 * n}", "full", f"A ring wipes in from a corner and every key turns {latin}",
+          ts.Screens(code).layer(), (lead, latin), sweep=(corner, P_WIPE))
+scene("C4.10d", "full", "Dark", DARK, ("...and many", "more layouts"), dur=P_DARK, beat=False)
+scene("C4.11", "full", "160 | LAYOUTS in the heavy splash face", S.more_frame(False), ("...and many", "more layouts"),
+      cascade=2)
+scene("C4.12d", "full", "Dark", DARK, ("...plus", "fun scripts"), dur=P_DARK, beat=False)
+scene("C4.13", "full", "10 FUN | SCRIPTS", S.more_frame(True), ("...plus", "fun scripts"), cascade=2)
 
-# ---- the key tour: Lang menu ------------------------------------------------------
-wait_press("T1", "k_lang", "9,1", ("Pick yours in", "the Lang menu"), BASE,
-           S.lang_menu(0), ("Pick yours in", "the Lang menu"),
-           "Find the Lang key", "The language menu: region tabs on top, flags below", after_shot="left",
-           after_cascade=3)
+# ---- the key tour: Lang menu, all on the menu camera (no status cuts) ------------------
+M = "menu"
+scene("T1a", "full", "Find the Lang key", ringed(BASE, "9,1"), ("Pick yours in", "the Lang menu"))
+scene("T1b", "k_lang", "Close-up: the key goes down", ringed(BASE, "9,1"), ("Pick yours in", "the Lang menu"),
+      press="9,1")
+scene("T1c", M, "The language menu cascades in", S.lang_menu(0), ("Pick yours in", "the Lang menu"),
+      cascade=3, beat=False)
 regions = [("From Canada", "to Chile"), ("All across", "Europe"), ("The Middle", "East"),
            ("Languages of", "Africa"), ("The whole of", "Asia"), ("And down to", "Oceania")]
 REGION = ["America", "Europe", "Middle East", "Africa", "Asia", "Oceania"]
 for r in (1, 2, 3, 4, 5):
-    scene(f"T2.{r}", "left", f"Tab {r}: {REGION[r]} (press the pulsing tab)", ringed(S.lang_menu(r - 1), f"0,{r + 1}"),
-          regions[r], tap=f"0,{r + 1}")
-    scene(f"T2.{r}b", "left", f"{REGION[r]}: the flags cascade in", S.lang_menu(r), regions[r], cascade=3)
-wait_press("T3", "k_base", "4,0", ("Now back", "home"), S.lang_menu(5), BASE, ("Now back", "home"),
-           "Base key, back to the letters", "Home")
+    scene(f"T2.{r}", M, f"Tab {r}: {REGION[r]}, pressed in place", ringed(S.lang_menu(r - 1), f"0,{r + 1}"),
+          regions[r], tap=f"0,{r + 1}", beat=False)
+    scene(f"T2.{r}b", M, f"{REGION[r]}: the flags cascade in", S.lang_menu(r), regions[r], cascade=3, beat=False)
+scene("T3", M, "Base, pressed in place", ringed(S.lang_menu(5), "4,0"), ("Now back", "home"), tap="4,0", beat=False)
+scene("T3b", M, "Home", BASE, ("Now back", "home"), beat=False)
 
-# ---- the key tour: emoji ----------------------------------------------------------
-wait_press("T4", "k_emj", "3,6", ("Now for", "some emoji"), BASE, S.emoji_menu(0), ("Now for", "some emoji"),
-           "The emoji key", "The emoji menu", after_shot="left", after_cascade=3)
-tabs = [(4, "0,5", "left", ("Animals,", "big and small")), (5, "0,6", "left", ("Plants", "and food")),
-        (7, "5,2", "right", ("Travel", "and places")), (8, "5,3", "right", ("Sports", "and games"))]
-prev = 0
-for cat, mp, shot, words in tabs:
-    scene(f"T5.{cat}", shot, f"Emoji tab {cat}: {words[0]} {words[1]}", ringed(S.emoji_menu(prev), mp), words, tap=mp)
-    scene(f"T5.{cat}b", shot, "The category's emoji cascade in", S.emoji_menu(cat), words, cascade=3)
-    prev = cat
-scene("T5.p", "right", "Page arrow, pressed in place", ringed(S.emoji_menu(8), "5,7"), ("Flip to", "the next page"),
-      tap="5,7")
-scene("T5.pb", "right", "The second page cascades in", S.emoji_menu(8, 1), ("Flip to", "the next page"), cascade=3)
-wait_press("T6", "k_base", "4,0", ("And home", "again"), S.emoji_menu(8, 1), BASE, ("And home", "again"),
-           "Base key", "Home")
+# ---- the key tour: emoji ------------------------------------------------------------------
+scene("T4", M, "The emoji key, pressed in place", ringed(BASE, "3,6"), ("Now for", "some emoji"), tap="3,6",
+      beat=False)
+scene("T4b", M, "The emoji menu cascades in", S.emoji_menu(0), ("Now for", "some emoji"), cascade=3, beat=False)
+tabs = [(4, "0,5", ("Animals,", "big and small")), (5, "0,6", ("Plants", "and food")),
+        (7, "5,2", ("Travel", "and places")), (8, "5,3", ("Sports", "and games"))]
+prev_cat = 0
+for cat, mp, words in tabs:
+    scene(f"T5.{cat}", M, f"Emoji tab {cat}, pressed in place", ringed(S.emoji_menu(prev_cat), mp), words, tap=mp,
+          beat=False)
+    scene(f"T5.{cat}b", M, "The category cascades in", S.emoji_menu(cat), words, cascade=3, beat=False)
+    prev_cat = cat
+scene("T6", M, "Base, pressed in place", ringed(S.emoji_menu(prev_cat), "4,0"), ("And home", "again"), tap="4,0",
+      beat=False)
+scene("T6b", M, "Home", BASE, ("And home", "again"), beat=False)
 
-# ---- the key tour: Fn and Num -----------------------------------------------------
-wait_press("T7", "k_fn", "2,0", ("Hold Fn for", "the F-keys"), BASE, FN, ("F1 to F12,", "and more"),
-           "Hold Fn", "The Fn layer, 3 s")
-wait_press("T8", "k_num", "4,7", ("Hold Num for", "a number pad"), BASE, S.layer("_NL"),
-           ("Digits and", "math keys"), "Hold Num", "The number pad, 3 s")
-
-# ---- the key tour: the Intl chapter -------------------------------------------------
+# ---- the key tour: Intl, the accents and the picker ----------------------------------------
 INTL = S.intl()
-wait_press("T9", "k_intl", "7,1", ("Hold Intl", "for accents"), BASE, INTL, ("Each letter's", "chosen accent"),
-           "Hold Intl", "Each letter shows its chosen accent", after_shot="left")
-scene("T10a", "full", "Hold Intl again, keep holding", ringed(INTL, "4,0"), ("Keep holding,", "tap"))
-scene("T10b", "k_base", "Close-up: tap Ctrl", ringed(INTL, "4,0"), ("Keep holding,", "tap"), press="4,0")
-scene("T10c", "numrow", "The picker is open: the number row waits for a letter", INTL, ("The picker", "is open"))
-scene("T11a", "k_e", "Close-up: press e", ringed(INTL, e), ("Pick the", "letter e"), press=e)
+I_ = "7,1"
+scene("T9a", M, "Hold Intl", ringed(BASE, I_), ("Hold Intl", "for accents"), beat=False)
+scene("T9b", "k_intl", "Close-up: Intl goes down and stays held", ringed(BASE, I_), ("Hold Intl", "for accents"),
+      press=I_, hold=True, beat=False)
+scene("T9c", M, "Every letter switches to its chosen accent", INTL, ("Each letter's", "chosen accent"),
+      held=[I_], beat=False)
+scene("T10a", M, "Keep holding Intl, tap Ctrl", ringed(INTL, "4,0"), ("Keep holding,", "tap"), held=[I_], beat=False)
+scene("T10b", "k_base", "Close-up: tap Ctrl", ringed(INTL, "4,0"), ("Keep holding,", "tap"), press="4,0", beat=False)
+scene("T10c", M, "The picker is armed: Ctrl stays inverted", INTL, ("The picker", "is open"),
+      held=[I_, "4,0"], beat=False)
+scene("T11a", M, "Pick the letter e", ringed(INTL, e), ("Pick the", "letter e"), held=[I_, "4,0"], beat=False)
+scene("T11b", "k_e", "Close-up: press e", ringed(INTL, e), ("Pick the", "letter e"), press=e, beat=False)
 PICK = S.intl("e", picker=True)
-scene("T11b", "numrow", "Its accents are on top", PICK, ("Its accents", "are on top"))
-scene("T12a", "k_lat2", "Close-up: take the lit accent", ringed(PICK, "0,3"), ("Now take", "the lit accent"), press="0,3")
-CHOSEN = S.intl("e", picker=True, chosen={"e": 2})
-scene("T12b", "numrow", "Saved for the e", CHOSEN, ("Saved for", "the e"))
-scene("T13a", "k_e", "Hold Intl one last time and press e", ringed(S.intl(chosen={"e": 2}), e),
-      ("And press", "the e"), press=e)
-scene("T13b", "full", "That's how accents work", S.intl(chosen={"e": 2}), ("That's how", "accents work"))
+scene("T11c", M, "Its accents appear on the number row", PICK, ("Its accents", "are on top"), held=[I_, "4,0"],
+      beat=False)
+scene("T12a", M, "Take the lit accent", ringed(PICK, "0,3"), ("Now take", "the lit accent"), held=[I_, "4,0"],
+      beat=False)
+scene("T12b", "k_lat2", "Close-up: take the accent", ringed(PICK, "0,3"), ("Now take", "the lit accent"), press="0,3", beat=False)
+CHOSEN = S.intl(chosen={"e": 2})
+scene("T12c", M, "Saved: the e key now shows its new accent", CHOSEN, ("Saved for", "the e"), held=[I_], beat=False)
+scene("T13a", M, "Press the e", ringed(CHOSEN, e), ("And press", "the e"), held=[I_], beat=False)
+scene("T13b", "k_e", "Close-up: e types its accent", ringed(CHOSEN, e), ("And press", "the e"), press=e, beat=False)
+scene("T13c", M, "That's how accents work", CHOSEN, ("That's how", "accents work"), held=[I_], beat=False)
 
-# ---- finale -------------------------------------------------------------------------
+# ---- finale ----------------------------------------------------------------------------------
 scene("F", "full", "You're ready!", BASE, ("You're", "ready!"))
+
 
 def with_status_beats(scenes, ms=1800):
     """A short cut to the status panels whenever their message changes. It goes BEFORE
@@ -209,9 +235,10 @@ def with_status_beats(scenes, ms=1800):
     out, shown = [], None
     for i, s in enumerate(scenes):
         words = [w for w in s["status"] if w]
-        new = words and s["status"] != shown and s["shot"] != "status"
+        new = words and s["status"] != shown and s["shot"] != "status" and s.get("beat", True)
         beat = dict(s, id=s["id"] + "s", shot="status", caption="Status panels: " + " | ".join(words),
-                    press=None, tap=None, sweep=None, strike=False, cascade=0, dur=ms) if new else None
+                    press=None, tap=None, sweep=None, strike=False, cascade=0, hold=False, fadein=0,
+                    dur=ms) if new else None
         follows = i > 0 and (scenes[i - 1].get("press") or scenes[i - 1].get("tap"))
         if beat and not follows:
             out.append(beat)

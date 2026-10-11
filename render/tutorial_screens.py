@@ -181,6 +181,38 @@ class Screens:
             out.append((np.asarray(img, np.float32) > 110).astype(np.float32))
         return out
 
+    def capital(self, lang, kc):
+        """tutorial_draw_key_letter(): the key's capital at legend size one tier up."""
+        return _arr(op.render_key(self.L, self.R, lang, kc, shift=True, caps=False, size=1))
+
+    def name_frame(self, entry, latin, native, native_lang=None, tiles=None):
+        """TUT_LANG_NAME: the Latin name on one half, the native one on the other (sides
+        swap item by item: native on the RIGHT for an even entry)."""
+        native_side = "L" if entry & 1 else "R"
+        keys = {}
+        for side in ("L", "R"):
+            if side == native_side and tiles is not None:
+                units = tiles
+            elif side == native_side:
+                units = [self.capital(native_lang, "KC_" + ch) for ch in native]
+            else:
+                units = [self.capital("en-US", "KC_" + ch) for ch in latin.upper()]
+            for u, mp in name_slots(side, len(units), name_top(len(units))).items():
+                keys[mp] = units[u]
+        return Frame(keys)
+
+    def more_frame(self, scripts):
+        """TUT_LANG_MORE / MORE2: the number on the left half, the word on the right, in the
+        heavy splash face, on the middle row (tut_more_units)."""
+        left = ("10 FUN" if scripts else str(len(self.L.langs)))
+        right = "SCRIPTS" if scripts else "LAYOUTS"
+        keys = {}
+        for side, text in (("L", left), ("R", right)):
+            for u, mp in name_slots(side, len(text), 0).items():
+                if text[u] != " ":
+                    keys[mp] = heavy(ord(text[u]))
+        return Frame(keys)
+
     def letter_key(self, mp, shift=False):
         """One key's own base legend."""
         return self.layer("_L0", shift).keys.get(mp)
@@ -200,6 +232,90 @@ class Screens:
             d.text(((OW - (tb[2] - tb[0])) / 2 - tb[0], (OH - (tb[3] - tb[1])) / 2 - tb[1]), ch, font=f_, fill=255)
             keys[mp] = (np.asarray(img, np.float32) > 110).astype(np.float32)
         return keys
+
+
+# ---- the language preview's name screens (poly_keymap.c, TUT_LANG_NAME / MORE) ---------
+from fw_anim_sim import FwSim, mp_to_half_idx  # noqa: E402
+
+_SIM = None
+
+
+def _name_keys():
+    """tut_name_keys_build(): per half, display rows 1 and 2, their (up to 7) keys by board x."""
+    global _SIM
+    _SIM = _SIM or FwSim()
+    inv = {hi: mp for mp, hi in mp_to_half_idx().items() if hi}
+    out = {}
+    for side in ("L", "R"):
+        rows = []
+        for drow in (1, 2):
+            ks = []
+            for c in range(8):
+                idx = drow * 8 + c
+                g = _SIM.GEOM[side][idx]
+                if int(g[3]) and (side, idx) in inv:
+                    ks.append((int(g[0]), inv[(side, idx)]))
+            rows.append([mp for _, mp in sorted(ks)][:7])
+        out[side] = rows
+    return out
+
+
+def name_slots(side, n, top):
+    """tut_name_slot_unit(): which key carries unit u (u -> mp), rows centred, the odd
+    spare key toward the outer edge."""
+    rows = _name_keys()[side]
+    out = {}
+    for r in (0, 1):
+        first, count = (0, top) if r == 0 else (top, n - top)
+        avail = len(rows[r])
+        if count == 0 or count > avail:
+            continue
+        slack = avail - count
+        start = (slack + 1) // 2 if side == "L" else slack // 2
+        for k in range(count):
+            out[first + k] = rows[r][start + k]
+    return out
+
+
+def name_top(n):
+    return (n + 1) // 2 if n > 7 else 0
+
+
+def name_tiles(tag):
+    """A pre-rendered native name from anim/tutorial_names_gen.h (72x40 tiles, row-major,
+    9 bytes per row, MSB first)."""
+    import re
+    t = open(os.path.join(PK, "anim", "tutorial_names_gen.h"), encoding="utf-8").read()
+    m = re.search(r"TUT_NAME_TILES_" + tag + r"\[(\d+) \* 360\] = \{(.*?)\};", t, re.S)
+    n = int(m.group(1))
+    b = np.array([int(v, 16) for v in re.findall(r"0x[0-9A-Fa-f]{2}", m.group(2))], np.uint8)
+    bits = np.unpackbits(b).reshape(n, OH, 72)
+    return [bits[i].astype(np.float32) for i in range(n)]
+
+
+_HEAVY = None
+
+
+def heavy(cp):
+    """tut_draw_heavy(): one character in the splash face, centred from its measured box."""
+    global _HEAVY
+    if _HEAVY is None:
+        _HEAVY = lld.load_one_font(os.path.join(PK, "base", "fonts", "FreeSansBold24pt7b.h"), "FreeSansBold24pt7b")
+    f = _HEAVY
+    a = np.zeros((OH, OW), np.float32)
+    if not (f.first <= cp <= f.last):
+        return a
+    g = f.glyphs[cp - f.first]
+    pts = list(lld._glyph_pixels(f, g))
+    if not pts:
+        return a
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    ox = (OW - (max(xs) - min(xs) + 1)) // 2 - min(xs)
+    oy = (OH - (max(ys) - min(ys) + 1)) // 2 - min(ys)
+    for x, y in pts:
+        if 0 <= x + ox < OW and 0 <= y + oy < OH:
+            a[y + oy, x + ox] = 1.0
+    return a
 
 
 def ring(a, cx, cy, r, w):

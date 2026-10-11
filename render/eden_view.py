@@ -381,7 +381,26 @@ KEYS = {}
 for side, root, board in halves:
     for lab, f in key_frames(root, board, side).items():
         KEYS[lab] = (root, f)
-CAP = 9.0                                         # mm: half a keycap, the footprint a press moves
+CAP = 9.0                                         # mm: half a 1U keycap (the camera's footprint)
+
+
+def kle_sizes(path):
+    """{matrix label: (w, h)} in U, from the KLE (keymatch.kle_keys() keeps only centres)."""
+    out = {}
+    for row in json.load(open(path, encoding="utf-8")):
+        if not isinstance(row, list):
+            continue
+        w = h = 1.0
+        for item in row:
+            if isinstance(item, dict):
+                w, h = item.get("w", w), item.get("h", h)
+                continue
+            out[item.split("\n")[0]] = (w, h)
+            w = h = 1.0
+    return out
+
+
+SIZES = kle_sizes(screens.KLE)
 
 
 def footprint(lab):
@@ -397,7 +416,7 @@ _pressed = []                                     # (mesh, original coords) to p
 
 def press(lab, depth_mm):
     """Push key `lab`'s cap stack down by depth_mm: every vertex of its half inside the
-    cap's footprint and no lower than the cap glass's lowest point there."""
+    cap's footprint and no lower than the lowest point of its moving stack there."""
     root, (x, y, r, _dz) = KEYS[lab]
     inv = root.matrix_world.inverted()
     objs = [o for o in root.children_recursive if o.type == "MESH" and not o.hide_render]
@@ -413,10 +432,18 @@ def press(lab, depth_mm):
         a = math.radians(-r)
         u = d[:, 0] * math.cos(a) - d[:, 1] * math.sin(a)
         v = d[:, 0] * math.sin(a) + d[:, 1] * math.cos(a)
-        inside = (abs(u) < CAP) & (abs(v) < CAP)
+        # the whole cap: a 1.25U Shift is wider than CAP, and a press that moved only the
+        # middle left its top face standing over the lowered display
+        w_, h_ = SIZES.get(lab, (1.0, 1.0))
+        inside = (abs(u) < w_ * 19.05 / 2 - 0.4) & (abs(v) < h_ * 19.05 / 2 - 0.4)
         if not inside.any():
             continue
-        if o.active_material and o.active_material.get("pk_role") == "keycap glass":
+        # the key's moving stack: the cap, its stem, the display and its decal. The cap
+        # glass alone starts ABOVE the display (19.3 vs 17.3 mm on the left Shift), so
+        # keying the press to the glass left the display behind and the cap came down
+        # over it.
+        if o.active_material and o.active_material.get("pk_role") in (
+                "keycap glass", "stem", "display face", "display decal"):
             z0 = loc[inside, 2].min()
             zmin = z0 if zmin is None else min(zmin, z0)
         sel.append((o, m, co, loc, inside))
