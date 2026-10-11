@@ -107,6 +107,21 @@ for side, root, board in halves:
     if env("PK_PROFILE"):
         profile.apply(root, board, env("PK_PROFILE"))
 materials.scene_settings(sc)
+if env("PK_GPU", "").upper() not in ("", "NONE", "CPU"):
+    # PK_GPU=OPTIX|CUDA|HIP|ONEAPI|METAL: render on every device of that kind; a machine
+    # without one falls back to the CPU with a note rather than failing
+    _prefs = bpy.context.preferences.addons["cycles"].preferences
+    try:
+        _prefs.compute_device_type = env("PK_GPU").upper()
+        _prefs.get_devices()
+        _gpus = [d for d in _prefs.devices if d.type == env("PK_GPU").upper()]
+        for d in _prefs.devices:
+            d.use = d in _gpus
+        if _gpus:
+            sc.cycles.device = "GPU"
+        print("eden gpu", env("PK_GPU"), [d.name for d in _gpus] or "none found: CPU")
+    except TypeError as e:
+        print("eden gpu", env("PK_GPU"), "unsupported here:", e, "- CPU")
 rgb.night(sc)
 rgb.clear_case()
 if env("PK_FLOOR"):                               # "grey,roughness": the desk the board sits on
