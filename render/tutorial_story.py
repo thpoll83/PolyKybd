@@ -153,9 +153,10 @@ items = (("el-GR", 0, "Greek", "ELLHNIKA", None, "How about"),
 for n, (code, entry, latin, native, tiles, lead) in enumerate(items):
     corner = CORNERS[n]
     scene(f"C4.{4 + 3 * n}d", "full", "Every key dark for a moment", DARK, (lead, latin), dur=P_DARK, beat=False)
+    name = S.name_frame(entry, latin, native, code, ts.name_tiles(tiles) if tiles else None)
+    # only the keys carrying a letter glow (tutorial_is_name_key), not the whole two rows
     scene(f"C4.{5 + 3 * n}", "full", f"The name: {latin.upper()} in Latin, and its native name on the other half",
-          S.name_frame(entry, latin, native, code, ts.name_tiles(tiles) if tiles else None), (lead, latin),
-          named=NAME_KEYS, cascade=2)
+          name, (lead, latin), named=sorted(name.keys), cascade=2)
     scene(f"C4.{6 + 3 * n}", "full", f"A ring wipes in from a corner and every key turns {latin}",
           ts.Screens(code).layer(), (lead, latin), sweep=(corner, P_WIPE))
 scene("C4.10d", "full", "Dark", DARK, ("...and many", "more layouts"), dur=P_DARK, beat=False)
