@@ -44,6 +44,7 @@ op.OVERSHOOT = 0
 OW, OH = 72, 40
 SW, SH = 128, 64
 STATUS_FONT = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf"
+CJK_FONT = "/usr/share/fonts/opentype/ipafont-gothic/ipag.ttf"
 KEYMAP = os.path.join(PK, "split72", "keymaps", "default", "keymap.c")
 MATRICES = ld.parse_layout_matrix(os.path.join(PK, "split72", "keyboard.json"))
 NO_DISPLAY = {"3,7", "8,0"}                        # the encoders
@@ -187,12 +188,16 @@ class Screens:
     def spelled(self, words, row_mps):
         """Big letters, one per key, along `row_mps` (a language name on the keys)."""
         f = ImageFont.truetype(STATUS_FONT, 30)
+        cjk = ImageFont.truetype(CJK_FONT, 30) if os.path.exists(CJK_FONT) else f
         keys = {}
         for mp, ch in zip(row_mps, words):
+            if ch == " ":
+                continue
             img = Image.new("L", (OW, OH), 0)
+            f_ = cjk if ord(ch) >= 0x2E80 else f
             d = ImageDraw.Draw(img)
-            tb = d.textbbox((0, 0), ch, font=f)
-            d.text(((OW - (tb[2] - tb[0])) / 2 - tb[0], (OH - (tb[3] - tb[1])) / 2 - tb[1]), ch, font=f, fill=255)
+            tb = d.textbbox((0, 0), ch, font=f_)
+            d.text(((OW - (tb[2] - tb[0])) / 2 - tb[0], (OH - (tb[3] - tb[1])) / 2 - tb[1]), ch, font=f_, fill=255)
             keys[mp] = (np.asarray(img, np.float32) > 110).astype(np.float32)
         return keys
 

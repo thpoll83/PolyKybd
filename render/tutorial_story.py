@@ -46,27 +46,30 @@ def ringed(frame, mp):
 
 
 def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=ROOM, note="",
-          sweep=None, strike=False, named=()):
+          sweep=None, strike=False, named=(), tap=None, cascade=0):
     """One scene. sweep = (origin key, run ms): a board-wide front leaves `origin`, and
     every key it passes shows this scene's legend instead of the previous one's.
     strike: the press sends the chapter-1 ripple. named: keys spelling a language name
-    (their LEDs glow faintly)."""
+    (their LEDs glow faintly). tap: a key pressed in place, without a close-up (a menu
+    tab). cascade: how many physical rows of this scene's keys appear key by key
+    (anim/menu_cascade.c; 3 for a menu or the Shift reveal, 2 for a name)."""
     point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
         fr.status = S.status_line(*status)
     SCENES.append(dict(id=sid, shot=shot, caption=caption, press=press, ambient=ambient,
                        note=note, status=list(status), point=point, sweep=sweep, strike=strike,
-                       named=list(named), frame=fr))
+                       named=list(named), tap=tap, cascade=cascade, frame=fr))
 
 
 def wait_press(sid, shot, key, status, frame, after, after_status, caption, after_caption,
-               after_shot="full", note="", sweep=None):
+               after_shot="full", note="", sweep=None, a_cascade=0, after_cascade=0):
     """The three beats of every step: the board points at a key, a close-up of the
     press, back to the whole board showing what the press did."""
-    scene(sid + "a", "full", caption, ringed(frame, key), status)
+    scene(sid + "a", "full", caption, ringed(frame, key), status, cascade=a_cascade)
     scene(sid + "b", shot, "Close-up: the key goes down", ringed(frame, key), status, press=key)
-    scene(sid + "c", after_shot, after_caption, after, after_status, note=note, sweep=sweep)
+    scene(sid + "c", after_shot, after_caption, after, after_status, note=note, sweep=sweep,
+          cascade=after_cascade)
 
 
 # ---- Eden -------------------------------------------------------------------
@@ -87,8 +90,8 @@ def eden(t):
 
 scene("E1", "full", "Eden: sparks stream in, the rainbow wakes", eden(2200), ambient=NIGHT)
 scene("E2", "full", "Eden: POLY KYBD / SPLIT 72 forms", eden(6500), ambient=NIGHT)
-scene("E3", "full", "Eden tail: welcome over falling stars; the room light comes up",
-      eden(sim.INTRO + sim.HOLD + 600), ("Welcome", "to PolyKybd"), ambient=(NIGHT + ROOM) / 2,
+scene("E3", "status", "Eden tail: welcome over falling stars; the room light comes up",
+      eden(sim.TOTAL - 1), ("Welcome", "to PolyKybd"), ambient=(NIGHT + ROOM) / 2,
       note="room light ramps 0.07 -> 0.35 over ~2 s")
 
 # ---- chapter 1: three letters --------------------------------------------------
@@ -107,7 +110,7 @@ lit = set(LETTERS) | {"3,0", "8,7"}
 wait_press("C2.1", "k_lsft", "3,0", ("Press and hold", "SHIFT"), only(BASE, lit),
            only(SHIFTED, lit), ("All keys", "react..."),
            "The letters reveal; the left Shift pulses", "A wave repaints every letter as a capital",
-           sweep=("3,0", 700))
+           sweep=("3,0", 700), a_cascade=3)
 wait_press("C2.2", "k_rsft", "8,7", ("Try again", "SHIFT"), only(BASE, lit),
            only(SHIFTED, lit), ("Isn't that", "...nice?"),
            "Now the right Shift", "Capitals again, from the other hand", sweep=("8,7", 700))
@@ -125,44 +128,50 @@ scene("C4.1", "full", "Board reveal: a wave from the last Shift lights every key
 scene("C4.2", "full", "The whole board, still", BASE, ("72 screens,", "one keyboard"))
 scene("C4.3", "full", "It speaks your language", BASE, ("It speaks", "your language"))
 mid = ["2,1", "2,2", "2,3", "2,4", "2,5", "7,2", "7,3", "7,4", "7,5", "7,6"]
-scene("C4.4", "full", "The name: Latin on the left half, native script on the right",
-      ts.Frame(S.spelled("GREEKΕΛΛΗΝ", mid)), ("How about", "Greek"), named=mid)
-greek = ts.Screens("el-GR").layer()
-scene("C4.5", "full", "A ring wipes in from a corner and every key turns Greek", greek, ("How about", "Greek"),
-      sweep=("0,0", 1650))
-scene("C4.5b", "right", "Greek, close enough to read", greek, ("How about", "Greek"),
-      note="then Arabic, Hebrew, Hindi, Thai, Japanese, Korean, Elvish, Runes, Aurebesh, Braille; "
-           "the video shows 3-4 of them")
-scene("C4.6", "full", "160 LAYOUTS spelled on the keys", ts.Frame(S.spelled("160LAYOUTS", mid)),
-      ("...and many", "more layouts"), named=mid)
-scene("C4.7", "full", "10 FUN SCRIPTS", ts.Frame(S.spelled("10FUNSCRPT", mid)), ("...plus", "fun scripts"), named=mid)
+# two examples (the firmware shows eleven), each: its name on the keys, Latin on the left
+# half and native on the right, then a ring wipes the layout in from a corner that
+# alternates item by item (tut_corner_slot: top-left, then top-right)
+for n, (code, latin, native, lead, corner) in enumerate((
+        ("el-GR", "GREEK", "ΕΛΛΗΝ", "How about", "0,0"),
+        ("ja-JP", "JAPAN", " 日本語 ", "Or is it", "5,7"))):
+    name = latin + native
+    scene(f"C4.{4 + 2 * n}", "full", f"The name: {latin.title()}, Latin on the left half, native on the right",
+          ts.Frame(S.spelled(name, mid)), (lead, latin.title()), named=mid, cascade=2)
+    scene(f"C4.{5 + 2 * n}", "full", f"A ring wipes in from a corner and every key turns {latin.title()}",
+          ts.Screens(code).layer(), (lead, latin.title()), sweep=(corner, 1650))
+scene("C4.8", "full", "160 LAYOUTS spelled on the keys", ts.Frame(S.spelled("160LAYOUTS", mid)),
+      ("...and many", "more layouts"), named=mid, cascade=2)
+scene("C4.9", "full", "10 FUN SCRIPTS", ts.Frame(S.spelled("10FUNSCRPT", mid)), ("...plus", "fun scripts"),
+      named=mid, cascade=2)
 
 # ---- the key tour: Lang menu ------------------------------------------------------
 wait_press("T1", "k_lang", "9,1", ("Pick yours in", "the Lang menu"), BASE,
            S.lang_menu(0), ("Pick yours in", "the Lang menu"),
-           "Find the Lang key", "The language menu: region tabs on top, flags below", after_shot="left")
+           "Find the Lang key", "The language menu: region tabs on top, flags below", after_shot="left",
+           after_cascade=3)
 regions = [("From Canada", "to Chile"), ("All across", "Europe"), ("The Middle", "East"),
            ("Languages of", "Africa"), ("The whole of", "Asia"), ("And down to", "Oceania")]
 REGION = ["America", "Europe", "Middle East", "Africa", "Asia", "Oceania"]
 for r in (1, 2, 3, 4, 5):
-    scene(f"T2.{r}", "tabs_l", f"Tab {r}: {REGION[r]} (press the pulsing tab)", ringed(S.lang_menu(r - 1), f"0,{r + 1}"),
-          regions[r], press=f"0,{r + 1}")
-    scene(f"T2.{r}b", "left", f"{REGION[r]}: the flags cascade in", S.lang_menu(r), regions[r])
+    scene(f"T2.{r}", "left", f"Tab {r}: {REGION[r]} (press the pulsing tab)", ringed(S.lang_menu(r - 1), f"0,{r + 1}"),
+          regions[r], tap=f"0,{r + 1}")
+    scene(f"T2.{r}b", "left", f"{REGION[r]}: the flags cascade in", S.lang_menu(r), regions[r], cascade=3)
 wait_press("T3", "k_base", "4,0", ("Now back", "home"), S.lang_menu(5), BASE, ("Now back", "home"),
            "Base key, back to the letters", "Home")
 
 # ---- the key tour: emoji ----------------------------------------------------------
 wait_press("T4", "k_emj", "3,6", ("Now for", "some emoji"), BASE, S.emoji_menu(0), ("Now for", "some emoji"),
-           "The emoji key", "The emoji menu", after_shot="left")
-tabs = [(4, "0,5", "tabs_l", ("Animals,", "big and small")), (5, "0,6", "tabs_l", ("Plants", "and food")),
-        (7, "5,2", "tabs_r", ("Travel", "and places")), (8, "5,3", "tabs_r", ("Sports", "and games"))]
+           "The emoji key", "The emoji menu", after_shot="left", after_cascade=3)
+tabs = [(4, "0,5", "left", ("Animals,", "big and small")), (5, "0,6", "left", ("Plants", "and food")),
+        (7, "5,2", "right", ("Travel", "and places")), (8, "5,3", "right", ("Sports", "and games"))]
 prev = 0
 for cat, mp, shot, words in tabs:
-    scene(f"T5.{cat}", shot, f"Emoji tab {cat}: {words[0]} {words[1]}", ringed(S.emoji_menu(prev), mp), words, press=mp)
-    scene(f"T5.{cat}b", "left" if shot == "tabs_l" else "right", "The category's emoji cascade in", S.emoji_menu(cat), words)
+    scene(f"T5.{cat}", shot, f"Emoji tab {cat}: {words[0]} {words[1]}", ringed(S.emoji_menu(prev), mp), words, tap=mp)
+    scene(f"T5.{cat}b", shot, "The category's emoji cascade in", S.emoji_menu(cat), words, cascade=3)
     prev = cat
-wait_press("T5.p", "k_enext", "5,7", ("Flip to", "the next page"), S.emoji_menu(8), S.emoji_menu(8, 1),
-           ("Flip to", "the next page"), "Page arrow", "The second page", after_shot="right")
+scene("T5.p", "right", "Page arrow, pressed in place", ringed(S.emoji_menu(8), "5,7"), ("Flip to", "the next page"),
+      tap="5,7")
+scene("T5.pb", "right", "The second page cascades in", S.emoji_menu(8, 1), ("Flip to", "the next page"), cascade=3)
 wait_press("T6", "k_base", "4,0", ("And home", "again"), S.emoji_menu(8, 1), BASE, ("And home", "again"),
            "Base key", "Home")
 
@@ -192,7 +201,30 @@ scene("T13b", "full", "That's how accents work", S.intl(chosen={"e": 2}), ("That
 # ---- finale -------------------------------------------------------------------------
 scene("F", "full", "You're ready!", BASE, ("You're", "ready!"))
 
+def with_status_beats(scenes, ms=1800):
+    """A short cut to the status panels whenever their message changes. It goes BEFORE
+    the scene that brings the new message, so the instruction is read first, except
+    when that scene continues an action (it follows a press or a tap: the board's
+    reaction must follow at once), where it goes after."""
+    out, shown = [], None
+    for i, s in enumerate(scenes):
+        words = [w for w in s["status"] if w]
+        new = words and s["status"] != shown and s["shot"] != "status"
+        beat = dict(s, id=s["id"] + "s", shot="status", caption="Status panels: " + " | ".join(words),
+                    press=None, tap=None, sweep=None, strike=False, cascade=0, dur=ms) if new else None
+        follows = i > 0 and (scenes[i - 1].get("press") or scenes[i - 1].get("tap"))
+        if beat and not follows:
+            out.append(beat)
+        out.append(s)
+        if beat and follows:
+            out.append(beat)
+        if s["shot"] == "status" or beat:
+            shown = s["status"]
+    return out
+
+
 if __name__ == "__main__":
+    SCENES[:] = with_status_beats(SCENES)
     out = os.path.abspath(sys.argv[1])
     arrays, meta = {}, []
     for n, s in enumerate(SCENES):

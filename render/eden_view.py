@@ -565,7 +565,14 @@ def shot(path, focus=None, elev=None, azim=0.0, lens=None, margin=None, presses=
     for lab, mm in (presses or {}).items():
         press(lab, mm)
     bpy.context.view_layer.update()
-    if focus:
+    if focus == "status":                          # both status panels
+        pts = []
+        for side, root, board in halves:
+            loc = textured_parts._display_points(root, "status lcd")
+            pts += [root.matrix_world @ mathutils.Vector(tuple(v)) for v in loc]
+        lo = mathutils.Vector([min(p[i] for p in pts) for i in range(3)])
+        hi = mathutils.Vector([max(p[i] for p in pts) for i in range(3)])
+    elif focus:
         pts = [p for lab in focus for p in footprint(lab)]
         lo = mathutils.Vector([min(p[i] for p in pts) for i in range(3)])
         hi = mathutils.Vector([max(p[i] for p in pts) for i in range(3)])
