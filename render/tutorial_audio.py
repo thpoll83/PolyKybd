@@ -98,6 +98,31 @@ def thock(close, rng, up=False, style=None):
     return out * (0.42 if close else 0.32) * rng.uniform(0.85, 1.0) * (0.35 if up else 1.0)
 
 
+KEYS_DIR = __import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)),
+                                     "audio", "keys")
+
+
+def key_strokes(name):
+    """The recorded strokes of one set in audio/keys/ (README.md there credits them)."""
+    import glob
+    out = []
+    for f in sorted(glob.glob(__import__("os").path.join(KEYS_DIR, f"{name}_*.wav"))):
+        with wave.open(f) as w:
+            out.append(np.frombuffer(w.readframes(w.getnframes()), "<i2") / 32768)
+    if not out:
+        raise SystemExit(f"no key strokes '{name}' in {KEYS_DIR}")
+    return out
+
+
+def recorded_key(strokes, close, rng):
+    """One press from real recordings: a random stroke, its pitch moved up to 4 % and
+    its level up to 15 %, so a run of presses never repeats exactly."""
+    x = strokes[rng.integers(len(strokes))]
+    r = rng.uniform(0.96, 1.04)
+    x = np.interp(np.arange(0, len(x) - 1, r), np.arange(len(x)), x)
+    return x * (0.5 if close else 0.36) * rng.uniform(0.85, 1.0)
+
+
 def thock_samples(out_dir):
     """thock_<X>.wav per model: eight presses at a typing pace, each with its upstroke."""
     import os
@@ -257,14 +282,21 @@ def write(events, total_ms, path):
     scenes = [e for e in events if e[0] == "scene"]
     by_id = {e[2]: (e[1], e[3]) for e in scenes}
     buf = pad(total_ms, scenes)
+    # the key presses: recorded strokes (PK_KEYS, a set in audio/keys/; the default) or,
+    # with PK_KEYS=synth, the modal models (PK_THOCK)
+    keys = __import__("os").environ.get("PK_KEYS", "xemptful")
+    strokes = None if keys == "synth" else key_strokes(keys)
     for k, e in enumerate(events):
         kind, ms = e[0], e[1]
         if kind == "hit":
             key, shot = e[2], e[3]
             close = shot.startswith("k_")
             p = -0.35 if int(key.split(",")[0]) < 5 else 0.35
-            _add(buf, ms, _pan(thock(close, rng), p))
-            _add(buf, ms + rng.uniform(260, 340), _pan(thock(close, rng, up=True), p))
+            if strokes is not None:
+                _add(buf, ms, _pan(recorded_key(strokes, close, rng), p))
+            else:
+                _add(buf, ms, _pan(thock(close, rng), p))
+                _add(buf, ms + rng.uniform(260, 340), _pan(thock(close, rng, up=True), p))
         elif kind == "sweep":
             first = e[3] == "C1.2"               # the board reveal: longer, the one to remember
             _add(buf, ms, swoosh(e[2] + 1500 if first else e[2], seed=1000 + k, gain=0.26 if first else 0.22,
