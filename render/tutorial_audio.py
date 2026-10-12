@@ -37,10 +37,11 @@ def _note(n):
 # the pad per chapter: (first scene prefix, chord in semitones from A4, movement). A minor
 # for Eden and the lit key, F for the languages; the Lang menu breathes slowly on D minor 9,
 # the emoji menu has a light, quick tremolo on C add 9, the Intl picker drifts across the
-# stereo field on G sus 2; A minor again at the end
+# stereo field on G sus 2, the app shortcuts breathe on E minor 11; A minor again at the end
 CHORDS = [("E", [-24, -17, -12, -9, -5], None), ("C1", [-24, -17, -12, -9, -5], None),
           ("C4", [-28, -21, -16, -12, -9], None), ("T1", [-31, -24, -19, -14, -10, -7], "breathe"),
           ("T4", [-33, -21, -14, -9, -7, -2], "tremolo"), ("I", [-26, -19, -14, -12, -7], "drift"),
+          ("A", [-29, -22, -17, -14, -10, -5], "breathe"),
           ("F", [-24, -17, -12, -9, -5], None)]
 
 
@@ -331,6 +332,9 @@ def write(events, total_ms, path):
             else:
                 _add(buf, ms, _pan(thock(close, rng), p))
                 _add(buf, ms + rng.uniform(260, 340), _pan(thock(close, rng, up=True), p))
+        elif kind == "release" and strokes is not None and releases:   # a held key let go
+            p = -0.35 if int(e[2].split(",")[0]) < 5 else 0.35
+            _add(buf, ms, _pan(recorded_key(releases, e[3].startswith("k_"), rng) * up_gain, p))
         elif kind == "sweep":
             first = e[3] == "C1.2"               # the board reveal: longer, the one to remember
             _add(buf, ms, swoosh(e[2] + 1500 if first else e[2], seed=1000 + k, gain=0.26 if first else 0.22,

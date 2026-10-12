@@ -132,6 +132,34 @@ class Screens:
                 keys.setdefault(mp, a)
         return Frame(keys)
 
+    def app(self, name, mod="plain"):
+        """An app's shortcut overlay on the base layout, as PolyKybdHost sends it: the
+        cells of res/overlays/<name>_template.mods.png (10 x 9 cells of 72 x 40, one per
+        keycode_to_mapping_idx(); im_converter.py's channels: A plain, R Ctrl, G Alt,
+        B Shift) replace the legend of each key whose cell holds anything; the other
+        keys keep their own legend."""
+        from polyhost.device.keys import KeyCode, keycode_to_mapping_idx
+        a = np.asarray(Image.open(os.path.join(HOST, "polyhost", "res", "overlays",
+                                               f"{name}_template.mods.png")).convert("RGBA"))
+        ch = {"plain": 3, "ctrl": 0, "alt": 1, "shift": 2}[mod]
+        alias = {"KC_ESC": "KC_ESCAPE", "KC_LCTL": "KC_LEFT_CTRL", "KC_LSFT": "KC_LEFT_SHIFT",
+                 "KC_RSFT": "KC_RIGHT_SHIFT", "KC_BSPC": "KC_BACKSPACE", "KC_ENT": "KC_ENTER",
+                 "KC_SPC": "KC_SPACE", "KC_LALT": "KC_LEFT_ALT", "KC_RALT": "KC_RIGHT_ALT",
+                 "KC_LGUI": "KC_LEFT_GUI", "KC_RGUI": "KC_RIGHT_GUI", "KC_RCTL": "KC_RIGHT_CTRL"}
+        fr = self.layer()
+        for mp, tok in zip(MATRICES, ld.parse_base_layer_keycodes(KEYMAP, "_L0")):
+            tok = alias.get(tok, tok)
+            if tok not in KeyCode.__members__ or mp not in fr.keys:
+                continue
+            i = keycode_to_mapping_idx(KeyCode[tok])
+            x, y = (i % 10) * OW, (i // 10) * OH
+            if not 0 <= y <= a.shape[0] - OH:
+                continue
+            cell = (a[y:y + OH, x:x + OW, ch] > 127).astype(np.float32)
+            if cell.any():
+                fr.keys[mp] = cell
+        return fr
+
     def intl(self, letter=None, picker=False, chosen=None):
         """_ADDLANG1 held. Letters show their selected variation; with `picker` the
         number row shows `letter`'s variations (KC_LAT0..11)."""

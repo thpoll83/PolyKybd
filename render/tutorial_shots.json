@@ -26,5 +26,7 @@
 {"name": "k_emj", "focus": ["3,6"], "azim": -10, "elev": 40, "margin": 3.0, "lens": 50},
 {"name": "k_emj_d1", "focus": ["3,6"], "azim": -10, "press": {"3,6": 1.2}, "light": "k_emj", "elev": 40, "margin": 3.0, "lens": 50},
 {"name": "k_emj_d2", "focus": ["3,6"], "azim": -10, "press": {"3,6": 2.4}, "light": "k_emj", "elev": 40, "margin": 3.0, "lens": 50},
-{"name": "k_emj_dn", "focus": ["3,6"], "azim": -10, "press": {"3,6": 3.5}, "light": "k_emj", "elev": 40, "margin": 3.0, "lens": 50}
+{"name": "k_emj_dn", "focus": ["3,6"], "azim": -10, "press": {"3,6": 3.5}, "light": "k_emj", "elev": 40, "margin": 3.0, "lens": 50},
+{"name": "menu_p4_0_dn", "focus": ["0,0", "4,0", "0,6", "5,1", "5,4", "9,1", "8,4"], "elev": 72, "azim": 0, "margin": 1.1, "size": 1.8, "press": {"4,0": 3.5}, "light": "menu"},
+{"name": "menu_p3_0_dn", "focus": ["0,0", "4,0", "0,6", "5,1", "5,4", "9,1", "8,4"], "elev": 72, "azim": 0, "margin": 1.1, "size": 1.8, "press": {"3,0": 3.5}, "light": "menu"}
 ]

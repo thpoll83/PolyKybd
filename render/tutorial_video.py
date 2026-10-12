@@ -179,7 +179,7 @@ def load_story(path):
 CHAPTERS = ["Eden, the lit key and the board reveal", "Shift", "The languages",
             "The Lang menu", "The emoji menu", "The Intl accents, finale, idle"]
 PREFIX = [("E", 0), ("C1", 0), ("C2", 1), ("C3", 1), ("C4", 2), ("T1", 3), ("T2", 3), ("T3", 3),
-          ("T4", 4), ("T5", 4), ("T6", 4), ("I", 5), ("F", 5), ("Z", 5)]
+          ("T4", 4), ("T5", 4), ("T6", 4), ("I", 5), ("A", 5), ("F", 5), ("Z", 5)]
 
 
 def chapter_of(sid):
@@ -487,7 +487,7 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
 
     def phase_of(sid):
         for p, v in (("C1", 3), ("C2.1", 7), ("C2.2", 10), ("C3", 11), ("C4", 15), ("T", 21), ("I", 21),
-                     ("F", 21), ("Z", 21)):
+                     ("A", 21), ("F", 21), ("Z", 21)):
             if sid.startswith(p):
                 return v
         return 0
@@ -572,6 +572,8 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
             release_at = None if prev.get("hold") else prev["_hit"] - PRESS_HIT + PRESS_RELEASE
         T0 = T
         ev.append(("scene", n * step, s["id"], dur))
+        if s.get("release"):                     # a held key comes back up
+            ev.append(("release", n * step + PRESS_UP / 2, s["release"], s["shot"]))
         if s.get("cascade"):
             ev.append(("cascade", n * step, s["cascade"], bool(s.get("named"))))
             for mp in s.get("named") or ():        # each name key's legend arriving
@@ -666,6 +668,8 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                     inv.add(s["press"])
                 if carry and carry[1] + t < PRESS_RELEASE:
                     inv.add(carry[0])
+                if s.get("release") and t < PRESS_UP / 2:   # a held key, coming back up
+                    inv.add(s["release"])
                 if hit_at is not None and T >= hit_at and (release_at is None or T < release_at):
                     inv.add(prev["press"])
                 if before is not None and T < hit_at:
@@ -731,6 +735,8 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 depth = press_depth(min(t, PRESS_AT + PRESS_DOWN + PRESS_HOLD // 2)) if s.get("hold") else press_depth(t)
             elif carry:
                 pkey, depth = carry[0], press_depth(carry[1] + t)
+            elif s.get("release"):
+                pkey, depth = s["release"], 3.5 * (1 - smooth(t / PRESS_UP))
             levels = press_levels(name, pkey) if depth > 0 else []
             if len(levels) > 1:
                 depth = min(depth, levels[-1][0])

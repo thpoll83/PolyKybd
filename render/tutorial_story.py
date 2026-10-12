@@ -62,7 +62,7 @@ def ringed(frame, mp):
 def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=ROOM, note="",
           sweep=None, strike=False, named=(), cascade=0, hold=False, held=(),
           beat=True, fadein=0, dur=0, dim=0, saver=False, glow=(), fadeout=0, title="", pan=None,
-          name_hue=0, light=None, status_fade=False, ambient_to=None):
+          name_hue=0, light=None, status_fade=False, ambient_to=None, release=None):
     """One scene. sweep = (origin key, run ms): a board-wide front leaves `origin`, and
     every key it passes shows this scene's legend instead of the previous one's.
     strike: the press sends the chapter-1 ripple. named: keys spelling a language name
@@ -80,7 +80,8 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
     cropped to the key rows. name_hue: index into k_hues for the named keys. light:
     (where, level) of the room light, 0 = its usual place front left, 1 = front right
     (the video eases towards it). status_fade: the status panels fade out over the scene.
-    ambient_to: the room light falls to this over the scene's first 55 %."""
+    ambient_to: the room light falls to this over the scene's first 55 %. release: a held
+    key coming back up at the scene's start."""
     point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
@@ -91,6 +92,7 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
                        beat=beat, fadein=fadein, dur=dur, dim=dim, saver=saver, glow=[list(g) for g in glow],
                        fadeout=fadeout, title=title, pan=list(pan) if pan else None, name_hue=name_hue,
                        light=list(light) if light else None, status_fade=status_fade, ambient_to=ambient_to,
+                       release=release,
                        frame=fr))
 
 
@@ -244,6 +246,35 @@ scene("I3b", "intl_h", "The accent pressed in place", ringed(PICK, ACC), ("Now t
 # the O key takes the accent's LED light, so the hand-over reads at a glance
 scene("I3c", "intl_h", "Saved: the O key now shows its new accent, lit like the accent was", CHOSEN,
       ("Saved for", "the O"), held=[I_], glow=[(O_, ACC)], beat=False)
+
+# ---- app shortcuts: GIMP's overlay, with Ctrl and Shift held ------------------------------
+# PolyKybdHost follows the window in front and sends its shortcut overlay: GIMP's tools on
+# the letters, its file and edit actions under Ctrl, more tools under Shift, Wilber on Esc.
+# On the close menu camera: the overlay sweeps in from Esc while the camera tracks from the
+# right half to the left, where Ctrl (4,0) and Shift (3,0) are; each is held, then let go.
+CTRL, SHIFT_L, ESC = "4,0", "3,0", "0,0"
+GIMP, GIMP_C, GIMP_S = S.app("gimp"), S.app("gimp", "ctrl"), S.app("gimp", "shift")
+APPS_IN, APPS_HOLD = ("apps_in", 1.0, 0.0), ("apps_hold", 0.0, 0.12)
+scene("A0", M, "The board at home, the menu camera", BASE, ("Every app,", "its own keys"), beat=False,
+      pan=APPS_IN, dur=700)
+scene("A1", M, "GIMP comes to the front: its overlay sweeps in from Esc", GIMP, ("Every app,", "its own keys"),
+      sweep=(ESC, P_REVEAL), beat=False, pan=APPS_IN, dur=4300)
+scene("A2a", M, "Hold Ctrl", ringed(GIMP, CTRL), ("Hold Ctrl", "for more"), beat=False, pan=APPS_HOLD)
+scene("A2b", M, "Ctrl goes down and stays held", ringed(GIMP, CTRL), ("Hold Ctrl", "for more"), press=CTRL,
+      hold=True, beat=False, pan=APPS_HOLD)
+scene("A2c", "menu_p4_0_dn", "Ctrl held: GIMP's file and edit actions", GIMP_C, ("Hold Ctrl", "for more"),
+      held=[CTRL], beat=False, pan=APPS_HOLD)
+scene("A2d", M, "Ctrl comes back up: the tools again", GIMP, ("Or Shift", "for others"), release=CTRL,
+      beat=False, pan=APPS_HOLD)
+scene("A3a", M, "Hold Shift", ringed(GIMP, SHIFT_L), ("Or Shift", "for others"), beat=False, pan=APPS_HOLD)
+scene("A3b", M, "Shift goes down and stays held", ringed(GIMP, SHIFT_L), ("Or Shift", "for others"),
+      press=SHIFT_L, hold=True, beat=False, pan=APPS_HOLD)
+scene("A3c", "menu_p3_0_dn", "Shift held: more of GIMP's tools", GIMP_S, ("Or Shift", "for others"),
+      held=[SHIFT_L], beat=False, pan=APPS_HOLD)
+scene("A3d", M, "Shift comes back up", GIMP, ("Or Shift", "for others"), release=SHIFT_L, beat=False,
+      pan=APPS_HOLD)
+scene("A4", "full", "Back to the board's own legends", BASE, ("You're", "ready!"), sweep=(ESC, P_WIPE),
+      beat=False)
 
 # ---- finale, then idle: the board dims and the Eden screensaver takes over ----------------
 # the status panels fade out slowly while "You're ready!" is up
