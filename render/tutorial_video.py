@@ -788,6 +788,20 @@ if __name__ == "__main__":
     mode = sys.argv[1]
     if mode == "storyboard":
         storyboard(sys.argv[2], sys.argv[3], sys.argv[4])
+    elif mode == "sound":                        # sound <layers> <story.npz> <in.mp4> <out.mp4> [fps]
+        # a new soundtrack on a finished video, the picture copied untouched: the same
+        # scene walk with no frames drawn gives the events' times
+        import subprocess
+        import tutorial_audio
+        fps = int(sys.argv[6]) if len(sys.argv) > 6 else 25
+        events = []
+        total = video_part(sys.argv[2], sys.argv[3], os.devnull, 320, fps, lo=1 << 30, events=events)
+        wav = sys.argv[5][:-4] + ".wav"
+        tutorial_audio.write(events, total * 1000 / fps, wav)
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", sys.argv[4], "-i", wav, "-map", "0:v", "-map", "1:a",
+                        "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart",
+                        sys.argv[5]], check=True)
+        print("wrote", sys.argv[5], "with a new soundtrack")
     elif mode == "video":                        # video <layers> <story.npz> <out.mp4> [width] [fps]
         video(sys.argv[2], sys.argv[3], sys.argv[4], *(int(v) for v in sys.argv[5:7]))
     else:

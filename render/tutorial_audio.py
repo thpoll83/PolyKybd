@@ -339,7 +339,7 @@ def pad(total_ms, scenes):
     return out * level[:, None]
 
 
-WIPES = {"C4.6": "rise", "C4.9": "fall", "C4.12": "whirl"}   # Greek, Japanese, Korean
+WIPES = {"C4.6": "rise", "C4.9": "fall", "C4.12": "breath"}   # Greek, Japanese, Korean (the whirl did not fit)
 
 
 def write(events, total_ms, path):
