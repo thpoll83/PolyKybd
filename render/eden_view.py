@@ -612,8 +612,18 @@ cam.data.dof.use_dof = False
 cam.data.clip_start = 0.005
 # the map passes are exactly twice the light passes in both axes (eden_video.py asserts it)
 scale = 2 if PASS in MAP_PASSES else 1
-W, H = width * scale, int(round(width * 9 / 16)) * scale
-sc.render.resolution_x, sc.render.resolution_y = W, H
+
+
+def set_size(size=1.0):
+    """A shot's resolution: `width` x 16:9, times its own size factor (a shot the video
+    pans across is rendered larger and cropped), times 2 for the map passes."""
+    global W, H
+    w = int(round(width * size))
+    W, H = w * scale, int(round(w * 9 / 16)) * scale
+    sc.render.resolution_x, sc.render.resolution_y = W, H
+
+
+set_size()
 sc.render.resolution_percentage = 100
 EXT = ".png" if PASS == "preview" else ".exr"
 if out.endswith(".exr") or (env("PK_SHOTS") and EXT == ".exr"):
@@ -622,10 +632,11 @@ if out.endswith(".exr") or (env("PK_SHOTS") and EXT == ".exr"):
     sc.render.image_settings.exr_codec = "ZIP"
 
 
-def shot(path, focus=None, elev=None, azim=0.0, lens=None, margin=None, presses=None, fstop=0):
+def shot(path, focus=None, elev=None, azim=0.0, lens=None, margin=None, presses=None, fstop=0, size=1.0):
     """Render one camera. focus = matrix labels to frame (default both halves);
     elev / azim in degrees (azim turns the camera around the target, 0 = from the
-    front); presses = {label: mm}."""
+    front); presses = {label: mm}; size scales the resolution."""
+    set_size(size)
     for lab, mm in (presses or {}).items():
         press(lab, mm)
     bpy.context.view_layer.update()
@@ -671,6 +682,6 @@ if env("PK_SHOTS"):                               # out is a directory: <out>/<s
         if only and s["name"] not in only:
             continue
         shot(os.path.join(out, s["name"] + EXT), s.get("focus"), s.get("elev"), s.get("azim", 0.0),
-             s.get("lens"), s.get("margin"), s.get("press"), s.get("fstop", 0))
+             s.get("lens"), s.get("margin"), s.get("press"), s.get("fstop", 0), s.get("size", 1.0))
 else:
     shot(out)

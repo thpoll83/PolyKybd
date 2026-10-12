@@ -7,9 +7,11 @@ licence to track. The events come from tutorial_video.video_part() at video time
 
 - ("scene", ms, id, dur)   a scene starts; the pad's chord follows the chapter, Eden gets
                            a rising shimmer, a dark cut a soft thump, the title a low boom
-- ("hit", ms, key, shot)   a key lands: a short "blop", rounder and lower in a close-up
-- ("sweep", ms, run)       a ring sweeps the board: a band-passed noise "swoosh"
-- ("cascade", ms, rows)    a menu or a name cascades in: a quiet three-note chime
+- ("hit", ms, key, shot)   a key lands: a mechanical "thock", fuller in a close-up, and
+                           its softer upstroke when the key comes back
+- ("sweep", ms, run)       a ring sweeps the board: a band-passed noise "swoosh", never
+                           the same twice (band, direction, length and pan vary)
+- ("cascade", ms, rows)    a menu or a name cascades in: a short, airy swoosh
 
 The pad is a slow drone of detuned sines that changes chord with the chapter and fades
 out with the picture at the end.
@@ -53,15 +55,19 @@ def _add(buf, at_ms, sig):
     buf[i:i + len(sig)] += sig
 
 
-def blop(close):
-    """A key landing: a sine gliding down, a little click on top."""
-    n = int(0.25 * SR)
+def thock(close, rng, up=False):
+    """A mechanical key: a damped low body (the cap and plate), a short band-passed
+    click on top (the bottom-out), each press slightly different. up: the softer, higher
+    upstroke when the key returns."""
+    n = int(0.18 * SR)
     t = np.arange(n) / SR
-    f0, f1 = (330, 150) if close else (620, 300)
-    f = f1 + (f0 - f1) * np.exp(-t / 0.025)
-    s = np.sin(2 * np.pi * np.cumsum(f) / SR) * _env(n, 0.002, 0.07 if close else 0.05)
-    click = np.random.default_rng(1).standard_normal(n) * _env(n, 0.0005, 0.003) * 0.3
-    return (s + click) * (0.45 if close else 0.3)
+    f = (210 if up else 145 if close else 175) * rng.uniform(0.94, 1.06)
+    body = (np.sin(2 * np.pi * f * t) + 0.5 * np.sin(2 * np.pi * f * 2.3 * t) * np.exp(-t / 0.01)) \
+        * _env(n, 0.0008, 0.018 if up else 0.03)
+    click = _band_noise(n, lambda u: 2600 * rng.uniform(0.85, 1.15), 0.45, int(rng.integers(1 << 30)))
+    click *= _env(n, 0.0003, 0.004 if up else 0.006) * 4
+    g = (0.5 if close else 0.32) * rng.uniform(0.85, 1.0) * (0.45 if up else 1.0)
+    return (body * 0.8 + click) * g
 
 
 def _band_noise(n, centre, width, seed):
@@ -80,34 +86,21 @@ def _band_noise(n, centre, width, seed):
 
 
 def swoosh(run_ms, seed=0, gain=0.22):
-    """A ring sweeping the board: noise whose band rises and falls, left to right."""
-    dur = min(max(run_ms / 1000, 0.6), 2.8)
+    """A ring sweeping the board: noise whose band rises and falls. It outlasts the
+    sweep a little, and the seed varies the band, its peak, the length, the swell and
+    the pan direction, so no two sound alike."""
+    rng = np.random.default_rng(seed)
+    dur = min(max(run_ms / 1000 * rng.uniform(1.3, 1.7), 0.9), 4.2)
     n = int(dur * SR)
-    s = _band_noise(n, lambda u: 350 + 2600 * math.sin(math.pi * min(u * 1.2, 1.0)) ** 2, 0.35, seed)
+    lo, top, peak = rng.uniform(200, 450), rng.uniform(1800, 3600), rng.uniform(0.35, 0.65)
+    s = _band_noise(n, lambda u: lo + top * math.sin(math.pi * min(u / (2 * peak), 1.0)) ** 2
+                    * (1 - 0.5 * max(0.0, u - peak)), rng.uniform(0.25, 0.5), int(rng.integers(1 << 30)))
     t = np.arange(n) / n
-    s *= np.sin(np.pi * np.minimum(t * 1.6, 1.0) ** 0.7) ** 2 * (1 - t) ** 0.5 * gain
-    pan = np.linspace(-0.6, 0.6, n)
+    s *= np.sin(np.pi * np.minimum(t / (2 * peak), 1.0)) ** 2 * (1 - t) ** rng.uniform(0.4, 1.0) * gain
+    d = rng.choice([-1, 1]) * rng.uniform(0.4, 0.8)
+    pan = np.linspace(-d, d, n)
     a = (pan + 1) * math.pi / 4
     return np.stack([s * np.cos(a), s * np.sin(a)], 1)
-
-
-def bell(freq, dur=1.2, gain=0.1):
-    """A soft bell: three inharmonic partials, the high ones dying first."""
-    n = int(dur * SR)
-    t = np.arange(n) / SR
-    s = sum(a * np.sin(2 * np.pi * freq * r * t) * np.exp(-t / d)
-            for r, a, d in ((1.0, 1.0, dur / 2.5), (2.76, 0.4, dur / 6), (5.4, 0.15, dur / 12)))
-    return s * np.minimum(1.0, t / 0.004) * gain
-
-
-def chime(notes=(12, 15, 19), gap=0.11, gain=0.09):
-    n = int((gap * len(notes) + 1.4) * SR)
-    out = np.zeros((n, 2))
-    for k, st in enumerate(notes):
-        b = bell(_note(st), 1.2, gain)
-        i = int(k * gap * SR)
-        out[i:i + len(b)] += _pan(b, -0.4 + 0.4 * k)
-    return out
 
 
 def thump(freq=70, dur=0.5, gain=0.3):
@@ -166,6 +159,7 @@ def pad(total_ms, scenes):
 
 def write(events, total_ms, path):
     n = int(total_ms * SR / 1000)
+    rng = np.random.default_rng(2024)
     scenes = [e for e in events if e[0] == "scene"]
     buf = pad(total_ms, scenes)
     for k, e in enumerate(events):
@@ -173,28 +167,25 @@ def write(events, total_ms, path):
         if kind == "hit":
             key, shot = e[2], e[3]
             close = shot.startswith("k_")
-            _add(buf, ms, _pan(blop(close), -0.35 if int(key.split(",")[0]) < 5 else 0.35))
+            p = -0.35 if int(key.split(",")[0]) < 5 else 0.35
+            _add(buf, ms, _pan(thock(close, rng), p))
+            _add(buf, ms + rng.uniform(260, 340), _pan(thock(close, rng, up=True), p))
         elif kind == "sweep":
-            _add(buf, ms, swoosh(e[2], seed=k))
+            _add(buf, ms, swoosh(e[2], seed=1000 + k))
         elif kind == "cascade":
-            _add(buf, ms, chime((12, 15, 19) if e[2] >= 3 else (7, 12)))
+            _add(buf, ms, swoosh(700, seed=2000 + k, gain=0.07))
         elif kind == "scene":
             sid, dur = e[2], e[3]
             if sid == "E1":                      # the sparks streaming in
-                _add(buf, ms + 300, swoosh(4500, seed=99, gain=0.12))
+                _add(buf, ms + 300, swoosh(3200, seed=99, gain=0.12))
             elif sid == "E2":                    # the name forms
-                _add(buf, ms, chime((0, 7, 12, 16), gap=0.18, gain=0.08))
-            elif sid == "E3":                    # the welcome
-                _add(buf, ms, chime((12, 19), gap=0.25, gain=0.06))
+                _add(buf, ms, swoosh(2200, seed=98, gain=0.1))
             elif sid.startswith("C4.") and sid.endswith("d"):   # the dark cut before each item
                 _add(buf, ms, _pan(thump(), 0.0))
-            elif sid == "F":
-                _add(buf, ms, chime((12, 16, 19, 24), gap=0.12, gain=0.08))
             elif sid == "Z2":                    # the screensaver comes on
-                _add(buf, ms, swoosh(2500, seed=55, gain=0.08))
+                _add(buf, ms, swoosh(2000, seed=55, gain=0.08))
             elif sid == "Z3":                    # the name on black
                 _add(buf, ms + 200, _pan(thump(55, 2.4, 0.18), 0.0))
-                _add(buf, ms + 200, chime((-12, -5, 0, 4), gap=0.04, gain=0.07))
     buf = np.tanh(buf * 1.2) / np.tanh(1.2)      # a soft limit, then 1 dB of headroom
     buf *= 0.89 / max(np.abs(buf).max(), 1e-6)
     pcm = (np.clip(buf[:n], -1, 1) * 32767).astype("<i2")

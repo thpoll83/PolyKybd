@@ -61,7 +61,7 @@ def ringed(frame, mp):
 
 def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=ROOM, note="",
           sweep=None, strike=False, named=(), cascade=0, hold=False, held=(),
-          beat=True, fadein=0, dur=0, dim=0, saver=False, glow=(), fadeout=0, title=""):
+          beat=True, fadein=0, dur=0, dim=0, saver=False, glow=(), fadeout=0, title="", pan=None):
     """One scene. sweep = (origin key, run ms): a board-wide front leaves `origin`, and
     every key it passes shows this scene's legend instead of the previous one's.
     strike: the press sends the chapter-1 ripple. named: keys spelling a language name
@@ -74,7 +74,8 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
     engages, the keys and panels dim over this many ms. saver: the Eden screensaver. glow:
     (key, like) pairs, key's LED pulses as key `like`'s did when it was pointed at.
     fadeout: the whole picture fades to black over the scene's last this many ms. title:
-    a black card with this text in the middle."""
+    a black card with this text in the middle. pan: (from, to) along the board, 0 = left
+    end, 1 = right end; the shot is cropped to the key rows and tracks across."""
     point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
@@ -83,7 +84,7 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
                        note=note, status=list(status), point=point, sweep=sweep, strike=strike,
                        named=list(named), cascade=cascade, hold=hold, held=list(held),
                        beat=beat, fadein=fadein, dur=dur, dim=dim, saver=saver, glow=[list(g) for g in glow],
-                       fadeout=fadeout, title=title, frame=fr))
+                       fadeout=fadeout, title=title, pan=list(pan) if pan else None, frame=fr))
 
 
 def wait_press(sid, shot, key, status, frame, after, after_status, caption, after_caption,
@@ -163,8 +164,9 @@ M = "menu"
 # straight from the status panels to the close-up: no whole-board beat before it
 scene("T1b", "k_lang", "Close-up: the key goes down", ringed(BASE, "9,1"), ("Pick yours in", "the Lang menu"),
       press="9,1")
-scene("T1c", M, "The language menu cascades in", S.lang_menu(0), ("Pick yours in", "the Lang menu"),
-      cascade=3, beat=False)
+# the first look at each menu: closer, the key rows filling the frame, a slow pan left to right
+scene("T1c", M, "The language menu cascades in; the camera tracks slowly across it", S.lang_menu(0),
+      ("Pick yours in", "the Lang menu"), cascade=3, beat=False, pan=(0.0, 1.0), dur=7000)
 regions = [("From Canada", "to Chile"), ("All across", "Europe"), ("The Middle", "East"),
            ("Languages of", "Africa"), ("The whole of", "Asia"), ("And down to", "Oceania")]
 REGION = ["America", "Europe", "Middle East", "Africa", "Asia", "Oceania"]
@@ -181,7 +183,8 @@ scene("T3c", M, "Home", BASE, ("Now back", "home"), beat=False)
 scene("T4a", M, "Find the emoji key", ringed(BASE, "3,6"), ("Now for", "some emoji"), beat=False)
 scene("T4b", "k_emj", "Close-up: the emoji key goes down", ringed(BASE, "3,6"), ("Now for", "some emoji"),
       press="3,6", beat=False)
-scene("T4c", M, "The emoji menu cascades in", S.emoji_menu(0), ("Now for", "some emoji"), cascade=3, beat=False)
+scene("T4c", M, "The emoji menu cascades in; the camera tracks slowly across it", S.emoji_menu(0),
+      ("Now for", "some emoji"), cascade=3, beat=False, pan=(0.0, 1.0), dur=7000)
 tabs = [(4, "0,5", ("Animals,", "big and small")), (5, "0,6", ("Plants", "and food")),
         (7, "5,2", ("Travel", "and places")), (8, "5,3", ("Sports", "and games"))]
 prev_cat = 0

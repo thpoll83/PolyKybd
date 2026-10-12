@@ -74,7 +74,23 @@ class Shot:
         self.trans = np.where(seen, uv[..., 2], 0.0).astype(np.float32)
         del uv, idm, u, v, b, seen
         # per cell, the pixels that show it
-        self.where = {c: np.nonzero(self.cell == c) for c in np.unique(self.cell) if c >= 0}
+        # (int32: at 2048 px a 1.7x menu shot's int64 indices alone would cost ~450 MB)
+        self.where = {c: tuple(i.astype(np.int32) for i in np.nonzero(self.cell == c))
+                      for c in np.unique(self.cell) if c >= 0}
+        ys, xs = np.nonzero(self.cell >= 0)          # every key and status pixel, for a pan
+        self.keys_box = (xs.min() / 2, ys.min() / 2, xs.max() / 2, ys.max() / 2) if len(ys) else None
+
+    def pan_box(self, u, room=1.12):
+        """A 16:9 crop as tall as the key rows (plus `room`), u = 0 at the left end of
+        the board, 1 at the right end."""
+        x0, y0, x1, y1 = self.keys_box
+        h = min(self.H, (y1 - y0) * room)
+        w = min(self.W, h * self.W / self.H)
+        h = w * self.H / self.W
+        cy = min(max((y0 + y1) / 2, h / 2), self.H - h / 2)
+        lo, hi = max(0, x0 - 0.04 * w), min(self.W, x1 + 0.04 * w) - w
+        x = lo + (max(hi, lo) - lo) * u
+        return (int(round(x)), int(round(cy - h / 2)), int(round(x + w)), int(round(cy + h / 2)))
 
     def screens(self, keys, status):
         """keys {label: (40, 72)}, status [left, right] (64, 128) -> (keycaps, status panels)
@@ -478,16 +494,14 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
     # frames go straight into ffmpeg: at 2048 px a PNG per frame would need ~18 GB of disk
     import subprocess
     enc, size = None, [None]
+    out_h = int(round(width * 9 / 16 / 2)) * 2   # every shot is 16:9; a pan crop must not change the size
 
     def title_card(text, t, dur, fade=700):
         """White text on black in the middle, fading in and out."""
-        if size[0] is None:
-            sh = shot("full")
-            size[0] = (width, int(round(width * sh.H / sh.W / 2)) * 2)
-        w, h = size[0]
+        w, h = width, out_h
         img = Image.new("RGB", (w, h), (0, 0, 0))
         d = ImageDraw.Draw(img)
-        f = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSansBold.ttf", max(12, w // 16))
+        f = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSansBoldOblique.ttf", max(12, w // 16))
         box = d.textbbox((0, 0), text, font=f)
         a = min(1.0, t / fade, (dur - t) / fade) if dur > 2 * fade else 1.0
         v = int(235 * smooth(a))
@@ -632,8 +646,11 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 if point in keys:
                     keys[point] = keys[point] * (fx.pulse_level(t) / 255)
                 if s["id"] not in ("E3", "E3s") and not s.get("saver"):
+                    # a name's key lights with its legend: the cascade brings both
+                    named = [mp for mp in s.get("named") or ()
+                             if not s.get("cascade") or t >= due(mp, s["cascade"])]
                     rgbs = leds.step(T, step, board, pointed=point, phase=phase, sweep_band=band,
-                                     sweep_hue=shue, named=s.get("named") or (), name_hue=fx.K_HUES[0],
+                                     sweep_hue=shue, named=named, name_hue=fx.K_HUES[0],
                                      glow=[tuple(g) for g in s.get("glow") or ()])
                 if s.get("dim"):                   # idle engages: the keycaps, the panels and the LEDs dim
                     f_ = 1.0 - (1.0 - IDLE_DIM) * smooth(t / s["dim"])
@@ -646,8 +663,6 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 continue
             if s.get("title"):                     # the closing card: no board at all
                 img = title_card(s["title"], t, dur)
-                img = img.resize((width, int(round(width * img.height / img.width / 2)) * 2), Image.LANCZOS) \
-                    if img.width != width else img
                 if enc is None:
                     enc = encoder(out, img, fps, threads)
                 enc.stdin.write(img.convert("RGB").tobytes())
@@ -670,7 +685,11 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                         break
             else:
                 img = light_frame(keys, status, ambient, name, rgbs, extra)
-            img = img.resize((width, int(round(width * img.height / img.width / 2)) * 2), Image.LANCZOS)
+            if s.get("pan"):                       # a slow track across the board, rows filling the frame
+                a_, b_ = s["pan"]
+                u = smooth(min(max((t - 600) / max(dur - 900, 1), 0), 1))
+                img = img.crop(shot(s["shot"]).pan_box(a_ + (b_ - a_) * u))
+            img = img.resize((width, out_h), Image.LANCZOS)
             if s.get("fadeout") and t > dur - s["fadeout"]:
                 img = Image.eval(img, lambda v, f_=smooth((dur - t) / s["fadeout"]): int(v * f_))
             size[0] = img.size
