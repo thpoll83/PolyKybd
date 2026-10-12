@@ -302,7 +302,7 @@ def write(events, total_ms, path):
         kind, ms = e[0], e[1]
         if kind == "hit":
             key, shot = e[2], e[3]
-            hold, up_ms = (e[4], e[5]) if len(e) > 5 else (False, 530)
+            hold, up_ms = (e[4], e[5]) if len(e) > 5 else (False, 250)
             close = shot.startswith("k_")
             p = -0.35 if int(key.split(",")[0]) < 5 else 0.35
             if strokes is not None:

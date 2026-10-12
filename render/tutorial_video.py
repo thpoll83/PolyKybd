@@ -251,7 +251,7 @@ RAINBOW_VAL = 20                                 # TRGB_RAINBOW_VAL: the raw LED
 FADE_MS = 300                                    # screens cross-fade within one shot
 # a close-up press: the key eases down from PRESS_AT, holds, and comes back up. The
 # depth is sampled from four renders (0, 1.2, 2.4 and 3.5 mm) and blended between them.
-PRESS_AT, PRESS_DOWN, PRESS_HOLD, PRESS_UP = 700, 220, 260, 320
+PRESS_AT, PRESS_DOWN, PRESS_HOLD, PRESS_UP = 700, 160, 80, 180   # a keystroke ~0.25 s down to up
 PRESS_HIT = PRESS_AT + PRESS_DOWN // 2           # the switch actuates halfway down
 DEPTHS = [(0.0, ""), (1.2, "_d1"), (2.4, "_d2"), (3.5, "_dn")]
 PRESS_RELEASE = PRESS_HIT + PRESS_HOLD + (PRESS_DOWN + PRESS_UP) // 2   # the display turns back
