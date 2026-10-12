@@ -47,4 +47,6 @@ root; `--user "$(id -u):$(id -g)"` on `docker run` avoids that.
 
 The image is about 5 GB, most of it KiCad's stock 3D models, which the board export
 needs. At 2048 px the CPU run takes about 7.5 hours on 4 cores; a recent GPU should bring it
-under an hour. The encode at the end runs on the CPU either way (about an hour at 2048).
+under an hour. The encode at the end runs on the CPU either way. It splits the frames over
+one process per core (at most 16; `-e PK_JOBS=N` sets the number), each needing a few GB
+of RAM at 2048 px, and joins the pieces without re-encoding.

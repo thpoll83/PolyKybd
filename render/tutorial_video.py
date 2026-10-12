@@ -288,6 +288,42 @@ def cascade_rows():
 
 
 def video(layers, story, out, width=640, fps=25):
+    """The whole video. With PK_JOBS > 1 (default: one per core, at most 16) the frames
+    are split into that many runs of video_part(), one process each, and the pieces are
+    joined without re-encoding."""
+    jobs = int(os.environ.get("PK_JOBS", min(os.cpu_count() or 1, 16)))
+    if jobs <= 1 or os.environ.get("PK_FRAMES"):
+        lo, hi = (int(v) for v in os.environ.get("PK_FRAMES", "0:-1").split(":"))
+        return video_part(layers, story, out, width, fps, lo, hi, threads=0 if jobs <= 1 else 2)
+    sys.path.insert(0, os.path.join(HERE, "..", "..", "PolyKybdHost", "tools"))
+    from fw_anim_sim import FwSim
+    import subprocess
+    sim, meta = FwSim(), load_story(story)
+    if os.environ.get("PK_SCENES"):
+        meta = [s for s in meta if s["id"] in os.environ["PK_SCENES"].split(",")]
+    total = sum(int(round(duration(s, sim) / (1000 / fps))) for s in meta)
+    cuts = [total * i // jobs for i in range(jobs + 1)]
+    parts = [f"{out}.part{i:02d}.mp4" for i in range(jobs)]
+    print(f"{total} frames in {jobs} parts", flush=True)
+    procs = [subprocess.Popen([sys.executable, os.path.abspath(__file__), "video", layers, story, part, str(width), str(fps)],
+                              env=dict(os.environ, PK_FRAMES=f"{lo}:{hi}"))
+             for part, lo, hi in zip(parts, cuts, cuts[1:])]
+    if any(p.wait() != 0 for p in procs):
+        raise SystemExit("a part failed: " + ", ".join(str(p.returncode) for p in procs))
+    lst = out + ".parts.txt"
+    with open(lst, "w") as f:
+        f.writelines(f"file '{os.path.abspath(p)}'\n" for p in parts)
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy",
+                    "-movflags", "+faststart", out], check=True)
+    for p in parts + [lst]:
+        os.remove(p)
+    print("wrote", out, total, "frames", round(total / fps, 1), "s")
+
+
+def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0):
+    """Frames lo..hi-1 of the video (hi = -1: to the end). Every frame before `lo` is
+    still stepped through, cheaply: the clock, the sweeps, the ripples and the LED fades
+    carry state from frame to frame, so a part must replay them to start in the right place."""
     sys.path.insert(0, os.path.join(HERE, "..", "..", "PolyKybdHost", "tools"))
     sys.path.insert(0, HERE)
     from fw_anim_sim import FwSim, mp_to_half_idx
@@ -439,9 +475,13 @@ def video(layers, story, out, width=640, fps=25):
         for k in range(int(round(dur / step))):
             t = k * step
             T = T0 + t
+            todo = n >= lo and (hi < 0 or n < hi)
             ambient = s["ambient"]
             extra, rgbs = None, None
             if s["id"] in ("E1", "E2"):
+                if not todo:                       # Eden carries no state: nothing to replay
+                    n += 1
+                    continue
                 el = t if s["id"] == "E1" else 6500 + t
                 keys, status = eden_keys(el), [None, None]
                 for mp, m in stars.keys(el).items():
@@ -452,10 +492,10 @@ def video(layers, story, out, width=640, fps=25):
                     extra = sh.rgb[0] * c[0] + sh.rgb[1] * c[1] + sh.rgb[2] * c[2]
             else:
                 keys, status = dict(s["keys_img"]), list(s["status_img"])
-                if s.get("saver"):                 # idle: the comet field, the status panels off
+                if s.get("saver") and todo:        # idle: the comet field, the status panels off
                     keys = {}
-                    for mp, hi in half_idx.items():
-                        b = idle_sim.panel(hi[0], hi[1], int(round(t))) if hi is not None else None
+                    for mp, hx in half_idx.items():
+                        b = idle_sim.panel(hx[0], hx[1], int(round(t))) if hx is not None else None
                         if b is not None:
                             keys[mp] = np.asarray(b, np.float32)
                     status = [None, None]
@@ -549,6 +589,9 @@ def video(layers, story, out, width=640, fps=25):
                     status = [x * f_ if x is not None else None for x in status]
                     if rgbs:
                         rgbs = {mp: c * f_ for mp, c in rgbs.items()}
+            if not todo:
+                n += 1
+                continue
             name, pkey, depth = s["shot"], s.get("press"), 0.0
             if pkey:
                 depth = press_depth(min(t, PRESS_AT + PRESS_DOWN + PRESS_HOLD // 2)) if s.get("hold") else press_depth(t)
@@ -571,15 +614,19 @@ def video(layers, story, out, width=640, fps=25):
                 enc = subprocess.Popen(["ffmpeg", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
                                         "-s", f"{img.width}x{img.height}", "-r", str(fps), "-i", "-",
                                         "-c:v", "libx264", "-crf", "18", "-preset", "slow", "-pix_fmt", "yuv420p",
-                                        "-movflags", "+faststart", out], stdin=subprocess.PIPE)
+                                        "-threads", str(threads), "-movflags", "+faststart", out],
+                                       stdin=subprocess.PIPE)
             enc.stdin.write(img.convert("RGB").tobytes())
             n += 1
         prev = s
-        print(f"scene {s['id']:7s} {s['shot']:9s} {dur:5d} ms  -> {n} frames", flush=True)
+        if enc is not None:
+            print(f"scene {s['id']:7s} {s['shot']:9s} {dur:5d} ms  -> {n} frames", flush=True)
+        if hi >= 0 and n >= hi:
+            break
     enc.stdin.close()
     if enc.wait() != 0:
         raise SystemExit(f"ffmpeg failed ({enc.returncode})")
-    print("wrote", out, n, "frames", round(n / fps, 1), "s")
+    print("wrote", out, n - lo, "frames", round((n - lo) / fps, 1), "s")
 
 
 if __name__ == "__main__":
