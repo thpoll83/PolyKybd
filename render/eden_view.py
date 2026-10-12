@@ -77,16 +77,23 @@ if PASS in MAP_PASSES:
     ref = json.load(open(os.path.join(screens.TEX, "screens_layer0.json"), encoding="utf-8"))
     ref["keys"] = keymatch.code_atlas(ref, screens.KLE)
     (aw, ah), (cw, ch) = ref["size"], ref["cell"]
-    img = np.zeros((ah, aw, 3), np.float32)
+    # ⚠️ the uv atlas is SUPER times finer than the display: with one texel per display
+    # pixel, every point inside a pixel read back that pixel's centre, so the compositor
+    # could not tell where in a pixel it was and drew no pixel grid on the keycaps at all
+    # (the status panels read their quad's own continuous uv and always had it)
+    sup = int(env("PK_UV_SUPER", 8)) if PASS == "uv" else 1
+    img = np.zeros((ah * sup, aw * sup, 3), np.float32)
     labels = sorted(ref["keys"])
     for n, label in enumerate(labels):
         x, y = ref["keys"][label]
+        x, y, w_, h_ = x * sup, y * sup, cw * sup, ch * sup
         if PASS == "uv":
-            img[y:y + ch, x:x + cw, 0] = ((np.arange(cw) + 0.5) / cw)[None, :]
-            img[y:y + ch, x:x + cw, 1] = ((np.arange(ch) + 0.5) / ch)[:, None]
+            img[y:y + h_, x:x + w_, 0] = ((np.arange(w_) + 0.5) / w_)[None, :]
+            img[y:y + h_, x:x + w_, 1] = ((np.arange(h_) + 0.5) / h_)[:, None]
         else:
-            img[y:y + ch, x:x + cw, 0] = (n + 0.5) / 128
-        img[y:y + ch, x:x + cw, 2] = 1.0
+            img[y:y + h_, x:x + w_, 0] = (n + 0.5) / 128
+        img[y:y + h_, x:x + w_, 2] = 1.0
+    aw, ah = aw * sup, ah * sup
     tmp = tempfile.mkdtemp()
     name = f"eden_{PASS}"
     json.dump({**ref, "labels": labels}, open(os.path.join(tmp, name + ".json"), "w"))
