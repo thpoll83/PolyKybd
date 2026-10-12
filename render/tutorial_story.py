@@ -62,7 +62,8 @@ def ringed(frame, mp):
 def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=ROOM, note="",
           sweep=None, strike=False, named=(), cascade=0, hold=False, held=(),
           beat=True, fadein=0, dur=0, dim=0, saver=False, glow=(), fadeout=0, title="", pan=None,
-          name_hue=0, light=None, status_fade=False, ambient_to=None, release=None):
+          name_hue=0, light=None, status_fade=False, ambient_to=None, release=None, rainbow=0.0,
+          rainbow_in=1200):
     """One scene. sweep = (origin key, run ms): a board-wide front leaves `origin`, and
     every key it passes shows this scene's legend instead of the previous one's.
     strike: the press sends the chapter-1 ripple. named: keys spelling a language name
@@ -81,7 +82,8 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
     (where, level) of the room light, 0 = its usual place front left, 1 = front right
     (the video eases towards it). status_fade: the status panels fade out over the scene.
     ambient_to: the room light falls to this over the scene's first 55 %. release: a held
-    key coming back up at the scene's start."""
+    key coming back up at the scene's start. rainbow: the key LEDs' Eden rainbow fading
+    in to this level over rainbow_in ms (full shot only)."""
     point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
@@ -92,7 +94,7 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
                        beat=beat, fadein=fadein, dur=dur, dim=dim, saver=saver, glow=[list(g) for g in glow],
                        fadeout=fadeout, title=title, pan=list(pan) if pan else None, name_hue=name_hue,
                        light=list(light) if light else None, status_fade=status_fade, ambient_to=ambient_to,
-                       release=release,
+                       release=release, rainbow=rainbow, rainbow_in=rainbow_in,
                        frame=fr))
 
 
@@ -190,9 +192,12 @@ scene("T1c", M, "The language menu cascades in; the camera tracks slowly across 
 regions = [("From Canada", "to Chile"), ("All across", "Europe"), ("The Middle", "East"),
            ("Languages of", "Africa"), ("The whole of", "Asia"), ("And down to", "Oceania")]
 REGION = ["America", "Europe", "Middle East", "Africa", "Asia", "Oceania"]
-for r in (1, 2, 3, 4, 5):
-    scene(f"T2.{r}", M, f"Tab {r}: {REGION[r]}, pressed in place", ringed(S.lang_menu(r - 1), f"0,{r + 1}"),
+# every second tab (Europe, Africa, Oceania), to keep the chapter short
+shown = 0
+for r in (1, 3, 5):
+    scene(f"T2.{r}", M, f"Tab {r}: {REGION[r]}, pressed in place", ringed(S.lang_menu(shown), f"0,{r + 1}"),
           regions[r], press=f"0,{r + 1}", beat=False, pan=LANG_PAN)
+    shown = r
     scene(f"T2.{r}b", M, f"{REGION[r]}: the flags cascade in", S.lang_menu(r), regions[r], cascade=3, beat=False,
           pan=LANG_PAN)
 scene("T3a", M, "Find Base", ringed(S.lang_menu(5), "4,0"), ("Now back", "home"), beat=False, pan=LANG_PAN)
@@ -237,10 +242,13 @@ scene("I1c", "intl_h", "Every letter switches to its chosen accent", INTL, ("Eac
 scene("I2a", "intl_h", "Press the O", ringed(INTL, O_), ("Now press", "the O"), held=[I_], beat=False)
 scene("I2b", "intl_h", "O pressed in place", ringed(INTL, O_), ("Now press", "the O"), held=[I_], press=O_,
       beat=False)
+# the picker's number row glows lightly while it offers the accents, so it stands out
+ROW = sorted(mp for mp in PICK.keys if mp.split(",")[0] in ("0", "5") and
+             (mp not in INTL.keys or not np.array_equal(PICK.keys[mp], INTL.keys[mp])))
 scene("I2c", "intl_h", "O's accents appear on the number row", PICK, ("Its accents", "are on top"), held=[I_],
-      beat=False)
+      named=ROW, name_hue=4, beat=False)
 scene("I3a", "intl_h", "Take the lit accent", ringed(PICK, ACC), ("Now take", "the lit accent"), held=[I_],
-      beat=False)
+      named=[mp for mp in ROW if mp != ACC], name_hue=4, beat=False)
 scene("I3b", "intl_h", "The accent pressed in place", ringed(PICK, ACC), ("Now take", "the lit accent"), held=[I_],
       press=ACC, beat=False)
 # the O key takes the accent's LED light, so the hand-over reads at a glance
@@ -278,8 +286,10 @@ scene("A4", "full", "Back to the board's own legends", BASE, ("You're", "ready!"
 
 # ---- finale, then idle: the board dims and the Eden screensaver takes over ----------------
 # the status panels fade out slowly while "You're ready!" is up
-scene("F", "full", "You're ready!", BASE, ("You're", "ready!"), status_fade=True)
-scene("Z1", "full", "Idle: the keycaps dim", BASE, dim=700, dur=1000, beat=False)
+# the board lights up once more on the whole view: the key LEDs' rainbow fades back in
+scene("F", "full", "You're ready!", BASE, ("You're", "ready!"), status_fade=True, rainbow=0.55, dur=4000)
+scene("Z1", "full", "Idle: the keycaps and the LEDs dim", BASE, dim=700, dur=1000, beat=False, rainbow=0.55,
+      rainbow_in=0)
 # the screensaver runs; the room light goes down first, then the picture fades to black
 scene("Z2", "full", "The Eden screensaver, the room light going down, then a fade to black", DARK, ambient=ROOM,
       ambient_to=0.0, saver=True, dur=6000, fadeout=1800, beat=False)

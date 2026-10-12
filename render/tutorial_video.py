@@ -26,7 +26,7 @@ from PIL import Image, ImageDraw, ImageFont
 HERE = os.path.dirname(os.path.abspath(__file__))
 SCREEN = float(os.environ.get("PK_STRENGTH", 5.0))
 LIT_TINT = np.array([0.70, 0.84, 1.0], np.float32)
-BLOOM = float(os.environ.get("PK_BLOOM", 0.14))
+BLOOM = float(os.environ.get("PK_BLOOM", 0.11))
 STATUS_ID = 126
 STATUS_GAIN = float(os.environ.get("PK_STATUS_GAIN", 0.3))
 STATUS_BLOOM = float(os.environ.get("PK_STATUS_BLOOM", 0.14))
@@ -248,7 +248,7 @@ def rainbow_level(el):
     return 1.0 if el <= a else 0.0 if el >= b else 1.0 - (el - a) / (b - a)
 
 
-def rainbow(el):
+def rainbow(el, level=None):
     h6 = ((THETA / (2 * np.pi) - HUE_PER_MS * el) % 1.0) * 6
     i, f = np.floor(h6).astype(int) % 6, h6 - np.floor(h6)
     one, zero, q = np.ones_like(f), np.zeros_like(f), 1 - f
@@ -257,7 +257,7 @@ def rainbow(el):
     for k, (r, g, b) in enumerate(table):
         m = i == k
         rgb[m] = np.stack([r[m], g[m], b[m]], 1)
-    return np.linalg.lstsq(BASIS, rgb, rcond=None)[0] * rainbow_level(el)
+    return np.linalg.lstsq(BASIS, rgb, rcond=None)[0] * (rainbow_level(el) if level is None else level)
 
 
 RAINBOW_VAL = 20                                 # TRGB_RAINBOW_VAL: the raw LED value eden_view's light passes stand for
@@ -714,12 +714,19 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 if s.get("status_fade"):           # the panels fade slowly while the line is up
                     f_ = 1.0 - smooth(t / dur)
                     status = [x * f_ if x is not None else None for x in status]
+                if s.get("rainbow") and todo and shot(s["shot"]).rgb is not None:   # the board lights up once more
+                    sh_ = shot(s["shot"])
+                    fi = smooth(t / s["rainbow_in"]) if s.get("rainbow_in") else 1.0
+                    c = rainbow(T, s["rainbow"] * fi)
+                    extra = sh_.rgb[0] * c[0] + sh_.rgb[1] * c[1] + sh_.rgb[2] * c[2]
                 if s.get("dim"):                   # idle engages: the keycaps, the panels and the LEDs dim
                     f_ = 1.0 - (1.0 - IDLE_DIM) * smooth(t / s["dim"])
                     keys = {mp: a * f_ for mp, a in keys.items()}
                     status = [x * f_ if x is not None else None for x in status]
                     if rgbs:
                         rgbs = {mp: c * f_ for mp, c in rgbs.items()}
+                    if extra is not None:          # the LEDs go out as the keycaps reach their idle level
+                        extra = extra * ((f_ - IDLE_DIM) / (1 - IDLE_DIM))
             if not todo:
                 n += 1
                 continue

@@ -39,8 +39,8 @@ def _note(n):
 # the emoji menu has a light, quick tremolo on C add 9, the Intl picker drifts across the
 # stereo field on G sus 2, the app shortcuts breathe on E minor 11; A minor again at the end
 CHORDS = [("E", [-24, -17, -12, -9, -5], None), ("C1", [-24, -17, -12, -9, -5], None),
-          ("C4", [-28, -21, -16, -12, -9], None), ("T1", [-31, -24, -19, -14, -10, -7], "breathe"),
-          ("T4", [-33, -21, -14, -9, -7, -2], "tremolo"), ("I", [-26, -19, -14, -12, -7], "drift"),
+          ("C4", [-28, -21, -16, -12, -9], None), ("T1", [-43, -31, -24, -19, -14, -10], "breathe"),
+          ("T4", [-33, -21, -14, -9, -5, 3, 7], "tremolo"), ("I", [-26, -19, -14, -12, -7], "drift"),
           ("A", [-29, -22, -17, -14, -10, -5], "breathe"),
           ("F", [-24, -17, -12, -9, -5], None)]
 
@@ -131,12 +131,17 @@ def key_releases(name):
 
 
 def recorded_key(strokes, close, rng):
-    """One press from real recordings: a random stroke, its pitch moved up to 4 % and
-    its level up to 15 %, so a run of presses never repeats exactly."""
+    """One press from real recordings, never twice the same: a random stroke, its pitch
+    moved up to 8 %, its tone darkened by a random amount (a mix with a low-passed copy),
+    its first click softened a little at random, its level up to 30 % down."""
     x = strokes[rng.integers(len(strokes))]
-    r = rng.uniform(0.96, 1.04)
+    r = rng.uniform(0.92, 1.08)
     x = np.interp(np.arange(0, len(x) - 1, r), np.arange(len(x)), x)
-    return x * (0.5 if close else 0.36) * rng.uniform(0.85, 1.0)
+    dark = rng.uniform(0.0, 0.6)
+    x = x * (1 - dark) + _lowpass(x, rng.uniform(1500, 3500)) * dark
+    att = int(0.003 * SR)
+    x[:att] *= rng.uniform(0.7, 1.0)
+    return x * (0.5 if close else 0.36) * rng.uniform(0.7, 1.0)
 
 
 def thock_samples(out_dir):
@@ -226,6 +231,34 @@ def _band_noise(n, centre, width, seed):
     return out[:n] / 3
 
 
+def wipe_whoosh(style, run_ms, seed):
+    """The language wipes, each its own sound: "rise" (a band climbing, left to right),
+    "fall" (high to low, right to left), "whirl" (a band wobbling fast, the stereo
+    flickering) and "breath" (a soft, broad, slow breath with a faint whistle in it)."""
+    rng = np.random.default_rng(seed)
+    dur = min(max(run_ms / 1000 * 1.5, 1.2), 4.0)
+    n = int(dur * SR)
+    t = np.arange(n) / n
+    if style == "rise":
+        s = _band_noise(n, lambda u: 300 + 3200 * u ** 1.4, 0.3, seed)
+        env, pan = np.sin(np.pi * np.minimum(t / 0.7, 1)) ** 2 * (1 - t) ** 0.3, np.linspace(-0.7, 0.7, n)
+    elif style == "fall":
+        s = _band_noise(n, lambda u: 3800 - 3300 * u ** 0.7, 0.3, seed)
+        env, pan = np.sin(np.pi * np.minimum(t / 0.3, 1) / 2) ** 2 * (1 - t) ** 1.2, np.linspace(0.7, -0.7, n)
+    elif style == "whirl":
+        s = _band_noise(n, lambda u: 1400 * (1 + 0.6 * math.sin(2 * math.pi * 7 * u * dur)), 0.25, seed)
+        env = np.sin(np.pi * t) ** 1.5 * (0.7 + 0.3 * np.sin(2 * np.pi * 11 * t * dur))
+        pan = 0.8 * np.sin(2 * np.pi * 1.6 * t * dur)
+    else:                                         # breath
+        s = _band_noise(n, lambda u: 500 + 900 * u, 0.9, seed)
+        f = _note(rng.choice([3, 7, 10]))
+        s = s + 0.25 * np.sin(2 * np.pi * f * np.arange(n) / SR) * np.sin(np.pi * t)
+        env, pan = np.sin(np.pi * t) ** 2, np.zeros(n)
+    s = s * env * 0.24
+    a = (pan + 1) * math.pi / 4
+    return np.stack([s * np.cos(a), s * np.sin(a)], 1)
+
+
 def swoosh(run_ms, seed=0, gain=0.22, longest=4.2):
     """A ring sweeping the board: noise whose band rises and falls. It outlasts the
     sweep a little, and the seed varies the band, its peak, the length, the swell and
@@ -273,11 +306,11 @@ def pad(total_ms, scenes):
         for j, st in enumerate(notes):
             f = _note(st)
             if move == "breathe":                # slow, deep swells, voice by voice
-                lfo = 0.4 + 0.6 * np.sin(2 * np.pi * t / (12 + 3.1 * j) + j) ** 2
+                lfo = 0.3 + 0.7 * np.sin(2 * np.pi * t / (16 + 3.1 * j) + j) ** 2
             else:
                 lfo = 0.6 + 0.4 * np.sin(2 * np.pi * t / (7 + 2.3 * j) + j)
-            if move == "tremolo":                # a light, quick shimmer
-                lfo = lfo * (1 + 0.22 * np.sin(2 * np.pi * (2.0 + 0.3 * j) * t))
+            if move == "tremolo":                # a light, quick, pulsing shimmer, high voices on top
+                lfo = lfo * (1 + 0.45 * np.sin(2 * np.pi * (2.6 + 0.35 * j) * t))
             amp = w * lfo * (0.05 if j else 0.07)
             for side, det in ((0, 0.9985), (1, 1.0015)):
                 ph = 2 * np.pi * f * det * t
@@ -304,6 +337,9 @@ def pad(total_ms, scenes):
         fade = min(1.8, d)
         level *= np.clip((s0 + d - t) / fade, 0, 1)          # out with the picture, silent after
     return out * level[:, None]
+
+
+WIPES = {"C4.6": "rise", "C4.9": "fall", "C4.12": "whirl"}   # Greek, Japanese, Korean
 
 
 def write(events, total_ms, path):
@@ -335,6 +371,8 @@ def write(events, total_ms, path):
         elif kind == "release" and strokes is not None and releases:   # a held key let go
             p = -0.35 if int(e[2].split(",")[0]) < 5 else 0.35
             _add(buf, ms, _pan(recorded_key(releases, e[3].startswith("k_"), rng) * up_gain, p))
+        elif kind == "sweep" and e[3] in WIPES:   # a language wipe: each its own kind of sound
+            _add(buf, ms, wipe_whoosh(WIPES[e[3]], e[2], seed=3000 + k))
         elif kind == "sweep":
             first = e[3] == "C1.2"               # the board reveal: longer, the one to remember
             _add(buf, ms, swoosh(e[2] + 1500 if first else e[2], seed=1000 + k, gain=0.26 if first else 0.22,
@@ -350,7 +388,7 @@ def write(events, total_ms, path):
             elif sid == "E2":                    # the name forms
                 _add(buf, ms, swoosh(2200, seed=98, gain=0.1))
             elif sid == "E3":                    # the room light comes up: a swell, starting just before
-                _add(buf, ms - 800, swell(3.4))
+                _add(buf, ms - 1000, swell(6.0))
             elif sid.startswith("C4.") and sid.endswith("d"):   # the dark cut before each item
                 _add(buf, ms, _pan(thump(), 0.0))
     if "Z1" in by_id and "Z2" in by_id:
