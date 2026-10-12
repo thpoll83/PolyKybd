@@ -284,7 +284,7 @@ def write(events, total_ms, path):
     buf = pad(total_ms, scenes)
     # the key presses: recorded strokes (PK_KEYS, a set in audio/keys/; the default) or,
     # with PK_KEYS=synth, the modal models (PK_THOCK)
-    keys = __import__("os").environ.get("PK_KEYS", "xemptful")
+    keys = __import__("os").environ.get("PK_KEYS", "largekey")
     strokes = None if keys == "synth" else key_strokes(keys)
     for k, e in enumerate(events):
         kind, ms = e[0], e[1]

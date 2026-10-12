@@ -11,7 +11,7 @@ authors are credited here anyway:
 |---|---|---|---|
 | `xemptful` | [Single Key Presses on Mechanical Keyboard](https://freesound.org/people/Xemptful/sounds/660387/) | Xemptful | 6 |
 | `mxbrown` | [Keyboard - Press down](https://freesound.org/people/Foxfire-/sounds/570754/) (Cherry MX Brown) | Foxfire- | 1 |
-| `largekey` | [Single_Key_Stroke_Large_Key](https://freesound.org/people/Capt.Jack/sounds/813210/) | Capt.Jack | 1 |
+| `largekey` (default) | [Single_Key_Stroke_Large_Key](https://freesound.org/people/Capt.Jack/sounds/813210/) | Capt.Jack | 1, the strike only (75–175 ms; the release click at 190–230 ms is cut) |
 | `tactile` | [Keyboard_Tactile_8](https://freesound.org/people/StavSounds/sounds/766639/) | StavSounds | 1 |
 
 They were cut from Freesound's public high-quality MP3 previews.
