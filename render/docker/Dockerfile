@@ -31,6 +31,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends gnupg xvfb xaut
 RUN curl -sSL "https://download.blender.org/release/Blender${BLENDER_VERSION%.*}/blender-${BLENDER_VERSION}-linux-x64.tar.xz" \
         | tar -xJ -C /opt \
     && ln -s "/opt/blender-${BLENDER_VERSION}-linux-x64/blender" /usr/local/bin/blender
+# the compositor (tutorial_video.py) runs on Blender's bundled Python, for its OpenImageIO
+# and OpenColorIO; Pillow is the one module it needs that Blender does not ship
+RUN /opt/blender-${BLENDER_VERSION}-linux-x64/${BLENDER_VERSION%.*}/python/bin/python3.11 -m ensurepip \
+    && /opt/blender-${BLENDER_VERSION}-linux-x64/${BLENDER_VERSION%.*}/python/bin/python3.11 -m pip install \
+        --no-cache-dir pillow==12.3.0
 
 # tutorial_story.py imports PolyKybdHost's preview tools (tools/oled_preview.py and friends)
 RUN python3 -m venv /opt/hostpy \
