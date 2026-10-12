@@ -253,7 +253,9 @@ def wipe_whoosh(style, run_ms, seed):
         s = _band_noise(n, lambda u: 500 + 900 * u, 0.9, seed)
         f = _note(rng.choice([3, 7, 10]))
         s = s + 0.25 * np.sin(2 * np.pi * f * np.arange(n) / SR) * np.sin(np.pi * t)
-        env, pan = np.sin(np.pi * t) ** 2, np.zeros(n)
+        # it peaks early and trails off softly, at the other wipes' level (its broad band
+        # carried three times their energy at the same gain)
+        env, pan = np.sin(np.pi * t ** 0.6) ** 2 * (1 - t) ** 0.8 * 0.38, np.zeros(n)
     s = s * env * 0.24
     a = (pan + 1) * math.pi / 4
     return np.stack([s * np.cos(a), s * np.sin(a)], 1)
