@@ -1,7 +1,8 @@
 # Rendering the tutorial video in a container
 
 The first-run tutorial video takes hours on a CPU. This image holds everything the
-render needs, so it can run on any Linux machine, and on its GPU if it has one.
+render needs, KiCad and Blender included, so the machine needs Docker and nothing else.
+It runs on the machine's GPU if it has one.
 
 ## What you need on the machine
 
@@ -9,14 +10,17 @@ render needs, so it can run on any Linux machine, and on its GPU if it has one.
 - Three checkouts side by side in one folder, on the branch with the video scripts:
   `PolyKybd`, `PolyKybdHost` and `qmk_firmware` (only `keyboards/polykybd/` is read;
   no submodules needed).
-- The scene `PolyKybd/render/out/hero.blend` (367 MB, not in git). Rebuilding it is
-  `render/README.md`, section 2, and needs KiCad; copying an existing one is easier.
+- The scene `PolyKybd/render/out/hero.blend` (367 MB, not in git). The image builds it
+  (below), or copy an existing one there.
 
 ## Build and run
 
 ```bash
 cd <folder with the three checkouts>
 docker build -t polykybd-render PolyKybd/render/docker
+
+# once: export both boards with KiCad and build render/out/hero.blend (~30 min on 4 cores)
+docker run --rm -v "$PWD":/work polykybd-render scene
 
 # CPU only
 docker run --rm -v "$PWD":/work polykybd-render 1024
@@ -41,5 +45,6 @@ root; `--user "$(id -u):$(id -g)"` on `docker run` avoids that.
   with the NVIDIA driver installed.
 - Progress is in `build.log` in the out folder; each Blender run logs beside it.
 
-At 2048 px the CPU run takes about 7.5 hours on 4 cores; a recent GPU should bring it
+The image is about 5 GB, most of it KiCad's stock 3D models, which the board export
+needs. At 2048 px the CPU run takes about 7.5 hours on 4 cores; a recent GPU should bring it
 under an hour. The encode at the end runs on the CPU either way (about an hour at 2048).

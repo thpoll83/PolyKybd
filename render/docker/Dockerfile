@@ -1,6 +1,6 @@
-# The PolyKybd render toolchain: Blender 4.1 (with its bundled Python for the
-# compositor), ffmpeg, the fonts the keycap screens use, and a Python for the
-# PolyKybdHost preview tools. The repos and the scene are MOUNTED, not copied: see
+# The PolyKybd render toolchain: KiCad 9 (exports the boards for the scene), Blender 4.1
+# (with its bundled Python for the compositor), ffmpeg, the fonts the keycap screens
+# use, and a Python for the PolyKybdHost preview tools. The repos and the scene are MOUNTED, not copied: see
 # README.md. Build: docker build -t polykybd-render render/docker
 FROM ubuntu:24.04
 
@@ -16,6 +16,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         fonts-freefont-ttf fonts-dejavu-core fonts-ipafont-gothic \
     && rm -rf /var/lib/apt/lists/*
 
+# KiCad 9 from its release PPA, with the stock 3D models (~3 GB) the boards' parts use;
+# render/export_boards.sh runs kicad-cli under xvfb-run
+ARG KICAD_SERIES=9.0
+RUN apt-get update && apt-get install -y --no-install-recommends gnupg xvfb xauth \
+    && curl -sSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x245D5502FAD7A805" \
+        | gpg --dearmor -o /usr/share/keyrings/kicad.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/kicad.gpg] https://ppa.launchpadcontent.net/kicad/kicad-${KICAD_SERIES}-releases/ubuntu noble main" \
+        > /etc/apt/sources.list.d/kicad.list \
+    && apt-get update && apt-get install -y --no-install-recommends kicad kicad-packages3d \
+    && rm -rf /var/lib/apt/lists/*
+
 # the official Linux build, the same one the renders were made with
 RUN curl -sSL "https://download.blender.org/release/Blender${BLENDER_VERSION%.*}/blender-${BLENDER_VERSION}-linux-x64.tar.xz" \
         | tar -xJ -C /opt \
@@ -28,4 +39,5 @@ RUN python3 -m venv /opt/hostpy \
 ENV BLENDER=blender HOSTPY=/opt/hostpy/bin/python
 # /work holds PolyKybd, PolyKybdHost and qmk_firmware side by side
 WORKDIR /work/PolyKybd
-ENTRYPOINT ["render/tutorial_build.sh"]
+# "scene" builds render/out/hero.blend; anything else goes to render/tutorial_build.sh
+ENTRYPOINT ["render/docker/entry.sh"]
