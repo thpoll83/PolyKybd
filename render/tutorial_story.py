@@ -61,7 +61,8 @@ def ringed(frame, mp):
 
 def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=ROOM, note="",
           sweep=None, strike=False, named=(), cascade=0, hold=False, held=(),
-          beat=True, fadein=0, dur=0, dim=0, saver=False, glow=(), fadeout=0, title="", pan=None):
+          beat=True, fadein=0, dur=0, dim=0, saver=False, glow=(), fadeout=0, title="", pan=None,
+          name_hue=0, light=None, status_fade=False, ambient_to=None):
     """One scene. sweep = (origin key, run ms): a board-wide front leaves `origin`, and
     every key it passes shows this scene's legend instead of the previous one's.
     strike: the press sends the chapter-1 ripple. named: keys spelling a language name
@@ -76,7 +77,10 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
     fadeout: the whole picture fades to black over the scene's last this many ms. title:
     a black card with this text in the middle. pan: (group, from, to): every scene of one
     group is one slow track along the board (0 = left end, 1 = right end), the shot
-    cropped to the key rows."""
+    cropped to the key rows. name_hue: index into k_hues for the named keys. light:
+    (where, level) of the room light, 0 = its usual place front left, 1 = front right
+    (the video eases towards it). status_fade: the status panels fade out over the scene.
+    ambient_to: the room light falls to this over the scene's first 55 %."""
     point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
@@ -85,7 +89,9 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
                        note=note, status=list(status), point=point, sweep=sweep, strike=strike,
                        named=list(named), cascade=cascade, hold=hold, held=list(held),
                        beat=beat, fadein=fadein, dur=dur, dim=dim, saver=saver, glow=[list(g) for g in glow],
-                       fadeout=fadeout, title=title, pan=list(pan) if pan else None, frame=fr))
+                       fadeout=fadeout, title=title, pan=list(pan) if pan else None, name_hue=name_hue,
+                       light=list(light) if light else None, status_fade=status_fade, ambient_to=ambient_to,
+                       frame=fr))
 
 
 def wait_press(sid, shot, key, status, frame, after, after_status, caption, after_caption,
@@ -138,27 +144,35 @@ scene("C4.3", "full", "It speaks your language", BASE, ("It speaks", "your langu
 DARK = ts.Frame({})
 # three of the firmware's eleven items (s_tut_preview_all entries 0, 5 and 6), each: a dark
 # cut, its name on the keys, then a ring wipes the layout in from a corner; the corner
-# takes turns item by item (tut_corner_slot), so entry n starts from corner n % 4
+# takes turns item by item (tut_corner_slot), so entry n starts from corner n % 4. The
+# status panels read as one question: the lead-in on the left, "<name>?" on the right
+# (tutorial_preview_name()). A name's keys glow in the item's own hue, k_hues[entry * 4 % 9]
+# (tutorial_rgb.c), and the room light walks from the left to the right, a little brighter
+# each item.
 items = (("el-GR", 0, "Greek", "ELLHNIKA", None, "How about"),
          ("ja-JP", 5, "Japanese", None, "JA", "Or is it"),
-         ("ko-KR", 6, "Korean", None, "KO", "Maybe"))
+         ("ko-KR", 6, "Korean", None, "KO", "Perhaps even"))
+LIGHTS = [(0.0, 1.0), (0.4, 1.06), (0.7, 1.12), (0.88, 1.17), (1.0, 1.22)]   # (left -> right, level)
 for n, (code, entry, latin, native, tiles, lead) in enumerate(items):
     corner = CORNERS[entry % len(CORNERS)]
-    scene(f"C4.{4 + 3 * n}d", "full", "Every key dark for a moment", DARK, (lead, latin), dur=P_DARK, beat=False)
+    ask = (lead, latin + "?")
+    scene(f"C4.{4 + 3 * n}d", "full", "Every key dark for a moment", DARK, ask, dur=P_DARK, beat=False,
+          light=LIGHTS[n])
     name = S.name_frame(entry, latin, native, code, ts.name_tiles(tiles) if tiles else None)
     # only the keys carrying a letter glow (tutorial_is_name_key), not the whole two rows
     scene(f"C4.{5 + 3 * n}", "full", f"The name: {latin.upper()} in Latin, and its native name on the other half",
-          name, (lead, latin), named=sorted(name.keys), cascade=2, beat=False)
+          name, ask, named=sorted(name.keys), name_hue=entry * 4 % 9, cascade=2, beat=False, light=LIGHTS[n])
     scene(f"C4.{6 + 3 * n}", "full", f"A ring wipes in from a corner and every key turns {latin}",
-          ts.Screens(code).layer(), (lead, latin), sweep=(corner, P_WIPE), beat=False)
-scene("C4.20d", "full", "Dark", DARK, ("...and many", "more layouts"), dur=P_DARK, beat=False)
+          ts.Screens(code).layer(), ask, sweep=(corner, P_WIPE), beat=False, light=LIGHTS[n])
+# the two cards continue the firmware's item count (entries 11 and 12) for their hues
+scene("C4.20d", "full", "Dark", DARK, ("...and many", "more layouts"), dur=P_DARK, beat=False, light=LIGHTS[3])
 MORE = S.more_frame(False)
 scene("C4.21", "full", "160 | LAYOUTS in the heavy splash face", MORE, ("...and many", "more layouts"),
-      cascade=2, beat=False, named=sorted(MORE.keys))
-scene("C4.22d", "full", "Dark", DARK, ("...plus", "fun scripts"), dur=P_DARK, beat=False)
+      cascade=2, beat=False, named=sorted(MORE.keys), name_hue=11 * 4 % 9, light=LIGHTS[3])
+scene("C4.22d", "full", "Dark", DARK, ("...plus", "fun scripts"), dur=P_DARK, beat=False, light=LIGHTS[4])
 FUN = S.more_frame(True)
 scene("C4.23", "full", "10 FUN | SCRIPTS", FUN, ("...plus", "fun scripts"), cascade=2, beat=False,
-      named=sorted(FUN.keys))
+      named=sorted(FUN.keys), name_hue=12 * 4 % 9, light=LIGHTS[4])
 
 # ---- the key tour: Lang menu, on the menu camera; close-ups only for Lang and Base ------
 M = "menu"
@@ -232,12 +246,12 @@ scene("I3c", "intl_h", "Saved: the O key now shows its new accent, lit like the 
       ("Saved for", "the O"), held=[I_], glow=[(O_, ACC)], beat=False)
 
 # ---- finale, then idle: the board dims and the Eden screensaver takes over ----------------
-scene("F", "full", "You're ready!", BASE, ("You're", "ready!"))
-scene("Z1", "full", "Idle: the keycaps and the status panels dim", BASE, ("You're", "ready!"), dim=700, dur=1000,
-      beat=False)
-# the screensaver runs, then the picture fades to black and the name comes up
-scene("Z2", "full", "The Eden screensaver, then a fade to black", DARK, ambient=(NIGHT + ROOM) / 2, saver=True,
-      dur=5500, fadeout=1800, beat=False)
+# the status panels fade out slowly while "You're ready!" is up
+scene("F", "full", "You're ready!", BASE, ("You're", "ready!"), status_fade=True)
+scene("Z1", "full", "Idle: the keycaps dim", BASE, dim=700, dur=1000, beat=False)
+# the screensaver runs; the room light goes down first, then the picture fades to black
+scene("Z2", "full", "The Eden screensaver, the room light going down, then a fade to black", DARK, ambient=ROOM,
+      ambient_to=0.0, saver=True, dur=6000, fadeout=1800, beat=False)
 scene("Z3", "full", "Black, and the name in the middle", DARK, title="PolyKybd Split72", dur=6000, beat=False)
 
 

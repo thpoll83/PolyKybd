@@ -78,6 +78,10 @@ class Shot:
     def __init__(self, layers, name):
         self.base = exr(os.path.join(layers, "base", name + ".exr"))
         self.ambient = exr(os.path.join(layers, "ambient", name + ".exr"))
+        # the room light at its middle and front-right places, where rendered (the full shot)
+        self.ambient_at = [self.ambient] + [exr(p) for p in (os.path.join(layers, d, name + ".exr")
+                                                              for d in ("ambient_m", "ambient_r"))
+                                            if os.path.exists(p)]
         uv, idm = exr(os.path.join(layers, "uv", name + ".exr")), exr(os.path.join(layers, "id", name + ".exr"))
         self.H, self.W = self.base.shape[:2]
         assert uv.shape[:2] == (2 * self.H, 2 * self.W), (name, uv.shape, self.base.shape)
@@ -126,8 +130,17 @@ class Shot:
         down = lambda a: (a * self.trans).reshape(self.H, 2, self.W, 2).mean((1, 3))
         return down(lit), down(slit)
 
-    def frame(self, keys, status, ambient, cpu, extra=None):
-        lin = self.base + self.ambient * ambient
+    def room(self, where):
+        """The room light's picture with the light `where` along its walk, 0 = front left
+        (the usual), 1 = front right: light adds, so a place between two renders is their mix."""
+        if len(self.ambient_at) < 3 or where <= 0:
+            return self.ambient
+        f = min(where, 1.0) * 2
+        i = min(int(f), 1)
+        return self.ambient_at[i] * (1 - (f - i)) + self.ambient_at[i + 1] * (f - i)
+
+    def frame(self, keys, status, ambient, cpu, extra=None, where=0.0):
+        lin = self.base + self.room(where) * ambient
         if extra is not None:
             lin = lin + extra
         scr, sscr = self.screens(keys, status)
@@ -512,18 +525,19 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
             cand = [(0.0, name)] + [(d, f"{name}_p{key.replace(',', '_')}{a}") for d, a in DEPTHS[1:]]
         return [(d, n) for d, n in cand if os.path.exists(os.path.join(layers, "base", n + ".exr"))]
 
-    def light_frame(keys, status, ambient, name, rgbs, extra=None):
+    def light_frame(keys, status, ambient, name, rgbs, extra=None, where=None):
         sh = shot(name)
         ex = extra
         if rgbs is not None:
             ll = led_light(sh, name, rgbs)
             if ll is not None:
                 ex = ll if ex is None else ex + ll
-        return sh.frame(keys, status, ambient, cpu, ex)
+        return sh.frame(keys, status, ambient, cpu, ex, room_at[0] if where is None else where)
 
     # frames go straight into ffmpeg: at 2048 px a PNG per frame would need ~18 GB of disk
     import subprocess
     enc, size = None, [None]
+    room_at = [0.0, 1.0]                         # the room light's place along its walk, and its level
     out_h = int(round(width * 9 / 16 / 2)) * 2   # every shot is 16:9; a pan crop must not change the size
 
     def title_card(text, t, dur, fade=700):
@@ -572,6 +586,14 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
             T = T0 + t
             todo = n >= lo and (hi < 0 or n < hi)
             ambient = s["ambient"]
+            # the room light eases towards the scene's place and level (the languages walk it
+            # left to right, a little brighter each item); everything else brings it home
+            tgt = s.get("light") or (0.0, 1.0)
+            room_at[0] += (tgt[0] - room_at[0]) * min(1.0, step / 900)
+            room_at[1] += (tgt[1] - room_at[1]) * min(1.0, step / 900)
+            ambient *= room_at[1]
+            if s.get("ambient_to") is not None:      # the room light going down
+                ambient += (s["ambient_to"] - ambient) * smooth(t / (0.55 * dur))
             extra, rgbs = None, None
             if s["id"] in ("E1", "E2"):
                 if not todo:                       # Eden carries no state: nothing to replay
@@ -683,8 +705,11 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                     named = [mp for mp in s.get("named") or ()
                              if not s.get("cascade") or t >= due(mp, s["cascade"])]
                     rgbs = leds.step(T, step, board, pointed=point, phase=phase, sweep_band=band,
-                                     sweep_hue=shue, named=named, name_hue=fx.K_HUES[0],
+                                     sweep_hue=shue, named=named, name_hue=fx.K_HUES[s.get("name_hue", 0)],
                                      glow=[tuple(g) for g in s.get("glow") or ()])
+                if s.get("status_fade"):           # the panels fade slowly while the line is up
+                    f_ = 1.0 - smooth(t / dur)
+                    status = [x * f_ if x is not None else None for x in status]
                 if s.get("dim"):                   # idle engages: the keycaps, the panels and the LEDs dim
                     f_ = 1.0 - (1.0 - IDLE_DIM) * smooth(t / s["dim"])
                     keys = {mp: a * f_ for mp, a in keys.items()}

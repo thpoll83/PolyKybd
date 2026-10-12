@@ -34,9 +34,14 @@ def _note(n):
     return A4 * 2 ** (n / 12)
 
 
-# the pad's chord per chapter (semitones from A4): A minor, F, C, G, A minor
-CHORDS = [("E", [-24, -17, -12, -9, -5]), ("C1", [-24, -17, -12, -9, -5]), ("C4", [-28, -21, -16, -12, -9]),
-          ("T", [-33, -21, -14, -9, -5]), ("I", [-26, -19, -14, -10, -7]), ("F", [-24, -17, -12, -9, -5])]
+# the pad per chapter: (first scene prefix, chord in semitones from A4, movement). A minor
+# for Eden and the lit key, F for the languages; the Lang menu breathes slowly on D minor 9,
+# the emoji menu has a light, quick tremolo on C add 9, the Intl picker drifts across the
+# stereo field on G sus 2; A minor again at the end
+CHORDS = [("E", [-24, -17, -12, -9, -5], None), ("C1", [-24, -17, -12, -9, -5], None),
+          ("C4", [-28, -21, -16, -12, -9], None), ("T1", [-31, -24, -19, -14, -10, -7], "breathe"),
+          ("T4", [-33, -21, -14, -9, -7, -2], "tremolo"), ("I", [-26, -19, -14, -12, -7], "drift"),
+          ("F", [-24, -17, -12, -9, -5], None)]
 
 
 def _env(n, attack, decay):
@@ -155,17 +160,23 @@ def tick(rng):
 
 
 def swell(dur, seed=7):
-    """The stage turning bright: a slow breath of noise rising through the low band,
-    over a soft low tone gliding up an octave."""
-    rng = np.random.default_rng(seed)
+    """The stage turning bright: an A major chord swelling up while its tone opens, from a
+    dull hum to a bright, full chord, then settling. Tonal, so it reads apart from the
+    noise swooshes."""
     n = int(dur * SR)
-    t = np.arange(n) / n
-    s = _band_noise(n, lambda u: 160 + 900 * u ** 1.5, 0.5, int(rng.integers(1 << 30)))
-    env = np.sin(np.pi * np.minimum(t / 0.75, 1.0) / 2) ** 2 * np.minimum(1.0, (1 - t) / 0.25)
-    f = 55 * 2 ** t
-    tone = np.sin(2 * np.pi * np.cumsum(f) / SR) * 0.5
-    mono = (s * 0.14 + tone * 0.06) * env
-    return np.stack([mono * 0.95, mono], 1)
+    t = np.arange(n) / SR
+    u = t / dur
+    env = np.sin(np.pi * np.minimum(u / 0.7, 1.0) / 2) ** 2 * np.clip((1 - u) / 0.35, 0, 1)
+    bright = 1.0 + 7.0 * np.clip(u / 0.7, 0, 1) ** 1.5        # harmonics let in as the light comes up
+    out = np.zeros((n, 2))
+    for j, st in enumerate((-24, -17, -12, -8, -5)):
+        f = _note(st)
+        for side, det in ((0, 0.998), (1, 1.002)):
+            ph = 2 * np.pi * f * det * t + j
+            v = sum(np.exp(-(k - 1) / bright) / k * np.sin(k * ph) for k in range(1, 9))
+            out[:, side] += v * (1.0 if j == 0 else 0.6)
+    out *= env[:, None]
+    return out / max(np.abs(out).max(), 1e-6) * 0.16
 
 
 def organ(total_n, start, peak, end):
@@ -187,7 +198,7 @@ def organ(total_n, start, peak, end):
             out[live, side] += v * (1.0 if f < 100 else 0.6)
     out[live, 1] += np.sin(2 * np.pi * 27.5 * tt) * 0.8          # the 32-foot pipe, felt more than heard
     out[live] *= (trem * env[live])[:, None]
-    return out / max(np.abs(out).max(), 1e-6) * 0.4
+    return out / max(np.abs(out).max(), 1e-6) * 0.3
 
 
 def _write_wav(buf, path):
@@ -246,25 +257,33 @@ def pad(total_ms, scenes):
     t = np.arange(n) / SR
     # which chord when: the first scene of each chapter prefix
     marks = []
-    for p, notes in CHORDS:
+    for p, notes, move in CHORDS:
         at = next((ms for _, ms, sid, _ in scenes if sid.startswith(p)), None)
         if at is not None:
-            marks.append((at / 1000, notes))
+            marks.append((at / 1000, notes, move))
     marks.sort()
     out = np.zeros((n, 2))
     xf = 2.0
-    for k, (start, notes) in enumerate(marks):
+    for k, (start, notes, move) in enumerate(marks):
         end = marks[k + 1][0] if k + 1 < len(marks) else t[-1] + 1
         w = np.clip((t - start + xf / 2) / xf, 0, 1) * np.clip((end - t + xf / 2) / xf, 0, 1)
         if not w.any():
             continue
         for j, st in enumerate(notes):
             f = _note(st)
-            lfo = 0.6 + 0.4 * np.sin(2 * np.pi * t / (7 + 2.3 * j) + j)
+            if move == "breathe":                # slow, deep swells, voice by voice
+                lfo = 0.4 + 0.6 * np.sin(2 * np.pi * t / (12 + 3.1 * j) + j) ** 2
+            else:
+                lfo = 0.6 + 0.4 * np.sin(2 * np.pi * t / (7 + 2.3 * j) + j)
+            if move == "tremolo":                # a light, quick shimmer
+                lfo = lfo * (1 + 0.22 * np.sin(2 * np.pi * (2.0 + 0.3 * j) * t))
             amp = w * lfo * (0.05 if j else 0.07)
             for side, det in ((0, 0.9985), (1, 1.0015)):
                 ph = 2 * np.pi * f * det * t
-                out[:, side] += amp * (np.sin(ph) + 0.15 * np.sin(2 * ph))
+                g = 1.0
+                if move == "drift":              # the voices wander across the stereo field
+                    g = 1 + 0.6 * np.sin(2 * np.pi * t / (6 + j) + j) * (1 if side else -1)
+                out[:, side] += amp * g * (np.sin(ph) + 0.15 * np.sin(2 * ph))
     # a little air: noise shaped towards the low end
     rng = np.random.default_rng(7)
     spec = np.fft.rfft(rng.standard_normal(n))
@@ -317,8 +336,7 @@ def write(events, total_ms, path):
             _add(buf, ms, swoosh(e[2] + 1500 if first else e[2], seed=1000 + k, gain=0.26 if first else 0.22,
                                  longest=6.0 if first else 4.2))
         elif kind == "cascade":
-            if not e[3]:                         # a menu; a name has its own ticks instead
-                _add(buf, ms, swoosh(700, seed=2000 + k, gain=0.07))
+            pass                                 # a menu has the pad's own movement; a name its ticks
         elif kind == "appear":
             _add(buf, ms, _pan(tick(rng), -0.4 if int(e[2].split(",")[0]) < 5 else 0.4))
         elif kind == "scene":

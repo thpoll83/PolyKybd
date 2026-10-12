@@ -65,7 +65,7 @@ layer() {
 say "tutorial video: ${WIDTH} px, ${SAMPLES} samples, GPU=${PK_GPU:-none}, out $OUT"
 ALL=$(shots)
 for p in uv id ambient base; do layer "$p" "$ALL" "$OUT/$p" "$WIDTH"; done
-for p in w c1 s1; do layer "$p" full "$OUT/$p" "$WIDTH"; done
+for p in w c1 s1 ambient_m ambient_r; do layer "$p" full "$OUT/$p" "$WIDTH"; done
 
 # the key LEDs' light: three keys per render (one per colour channel), at half width
 # (soft light, upscaled by the compositor); each group renders the shots its keys appear in.

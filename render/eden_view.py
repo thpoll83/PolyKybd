@@ -48,6 +48,11 @@ import textured_parts  # noqa: E402
 
 a = sys.argv[sys.argv.index("--") + 1:]
 out, samples, width, PASS = os.path.abspath(a[0]), int(a[1]), int(a[2]), a[3]
+# the room light at its other places: ambient_m in the middle, ambient_r front right (the
+# tutorial video walks it across during the languages); otherwise exactly the ambient pass
+AMBIENT_X = {"ambient": -0.35, "ambient_m": 0.0, "ambient_r": 0.35}.get(PASS, -0.35)
+if PASS in ("ambient_m", "ambient_r"):
+    PASS = "ambient"
 LIGHT_PASSES = ("w", "c1", "s1")
 STATUS_ID = 126                                   # id-pass cells of the status panels (126 left, 127 right)
 MAP_PASSES = ("uv", "id")
@@ -315,7 +320,7 @@ if PASS == "ambient":                             # a dim room: one soft light, 
     d.color = (0.85, 0.9, 1.0)                     # a cool room light
     o = bpy.data.objects.new("ambient", d)
     sc.collection.objects.link(o)
-    o.location = (-0.35, -0.55, 0.9)               # above, front left: the caps catch it at an angle
+    o.location = (AMBIENT_X, -0.55, 0.9)           # above, front left: the caps catch it at an angle
     o.rotation_euler = (mathutils.Vector((0, 0, 0)) - o.location).to_track_quat("-Z", "Y").to_euler()
 if PASS not in MAP_PASSES and env("PK_SILK"):
     # the plate's Rosetta silkscreen and the board silk (untagged white meshes): PK_SILK =
