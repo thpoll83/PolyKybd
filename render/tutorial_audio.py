@@ -103,14 +103,24 @@ KEYS_DIR = __import__("os").path.join(__import__("os").path.dirname(__import__("
 
 
 def key_strokes(name):
-    """The recorded strokes of one set in audio/keys/ (README.md there credits them)."""
+    """The recorded strokes of one set in audio/keys/ (README.md there credits them):
+    <name>_<n>.wav are the presses, <name>_up_<n>.wav (if any) the releases."""
     import glob
     out = []
-    for f in sorted(glob.glob(__import__("os").path.join(KEYS_DIR, f"{name}_*.wav"))):
+    for f in sorted(glob.glob(__import__("os").path.join(KEYS_DIR, f"{name}_[0-9]*.wav"))):
         with wave.open(f) as w:
             out.append(np.frombuffer(w.readframes(w.getnframes()), "<i2") / 32768)
     if not out:
         raise SystemExit(f"no key strokes '{name}' in {KEYS_DIR}")
+    return out
+
+
+def key_releases(name):
+    import glob
+    out = []
+    for f in sorted(glob.glob(__import__("os").path.join(KEYS_DIR, f"{name}_up_*.wav"))):
+        with wave.open(f) as w:
+            out.append(np.frombuffer(w.readframes(w.getnframes()), "<i2") / 32768)
     return out
 
 
@@ -286,14 +296,19 @@ def write(events, total_ms, path):
     # with PK_KEYS=synth, the modal models (PK_THOCK)
     keys = __import__("os").environ.get("PK_KEYS", "largekey")
     strokes = None if keys == "synth" else key_strokes(keys)
+    releases = key_releases(keys) if strokes is not None else []
+    up_gain = float(__import__("os").environ.get("PK_KEY_UP", 1.6))   # x the recording's own release level
     for k, e in enumerate(events):
         kind, ms = e[0], e[1]
         if kind == "hit":
             key, shot = e[2], e[3]
+            hold, up_ms = (e[4], e[5]) if len(e) > 5 else (False, 530)
             close = shot.startswith("k_")
             p = -0.35 if int(key.split(",")[0]) < 5 else 0.35
             if strokes is not None:
                 _add(buf, ms, _pan(recorded_key(strokes, close, rng), p))
+                if releases and not hold:          # the key comes back up (a held key stays down)
+                    _add(buf, ms + up_ms, _pan(recorded_key(releases, close, rng) * up_gain, p))
             else:
                 _add(buf, ms, _pan(thock(close, rng), p))
                 _add(buf, ms + rng.uniform(260, 340), _pan(thock(close, rng, up=True), p))

@@ -602,7 +602,8 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 if s.get("press") and pressed and (s["id"], "hit") not in fired:
                     fired.add((s["id"], "hit"))
                     s["_hit"] = T0 + PRESS_HIT
-                    ev.append(("hit", n * step, s["press"], s["shot"]))
+                    # the key comes back up PRESS_RELEASE - PRESS_HIT later (a held key never does)
+                    ev.append(("hit", n * step, s["press"], s["shot"], bool(s.get("hold")), PRESS_RELEASE - PRESS_HIT))
                     if s.get("strike"):
                         ripples.append((s["press"], s["_hit"]))
                     if nxt is not None and nxt.get("sweep"):
