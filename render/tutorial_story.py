@@ -27,7 +27,6 @@ NIGHT, ROOM = 0.07, 0.35          # the room light during Eden, and after it (PK
 
 S = ts.Screens()
 BASE = S.layer()
-SHIFTED = S.layer("_L0", True)
 SCENES = []
 # base/tutorial_plan.h timings the story uses
 P_LETTER_IN, P_REVEAL, P_WIPE, P_DARK = 500, 2400, 1650, 200
@@ -62,7 +61,7 @@ def ringed(frame, mp):
 
 def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=ROOM, note="",
           sweep=None, strike=False, named=(), cascade=0, hold=False, held=(),
-          beat=True, fadein=0, dur=0, dim=0, saver=False):
+          beat=True, fadein=0, dur=0, dim=0, saver=False, glow=(), fadeout=0, title=""):
     """One scene. sweep = (origin key, run ms): a board-wide front leaves `origin`, and
     every key it passes shows this scene's legend instead of the previous one's.
     strike: the press sends the chapter-1 ripple. named: keys spelling a language name
@@ -72,7 +71,10 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
     pressed key stays down (Shift, Intl). held: keys drawn inverted for the whole scene,
     as the firmware inverts a pressed key's display. beat: may the video cut to the
     status panels before this scene. fadein: the keys fade in over this many ms. dim: idle
-    engages, the keys and panels dim over this many ms. saver: the Eden screensaver."""
+    engages, the keys and panels dim over this many ms. saver: the Eden screensaver. glow:
+    (key, like) pairs, key's LED pulses as key `like`'s did when it was pointed at.
+    fadeout: the whole picture fades to black over the scene's last this many ms. title:
+    a black card with this text in the middle."""
     point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
@@ -80,7 +82,8 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
     SCENES.append(dict(id=sid, shot=shot, caption=caption, press=press, ambient=ambient,
                        note=note, status=list(status), point=point, sweep=sweep, strike=strike,
                        named=list(named), cascade=cascade, hold=hold, held=list(held),
-                       beat=beat, fadein=fadein, dur=dur, dim=dim, saver=saver, frame=fr))
+                       beat=beat, fadein=fadein, dur=dur, dim=dim, saver=saver, glow=[list(g) for g in glow],
+                       fadeout=fadeout, title=title, frame=fr))
 
 
 def wait_press(sid, shot, key, status, frame, after, after_status, caption, after_caption,
@@ -112,30 +115,21 @@ def eden(t):
 scene("E1", "full", "Eden: sparks stream in, the rainbow wakes", eden(2200), ambient=NIGHT)
 scene("E2", "full", "Eden: POLY KYBD / SPLIT 72 forms", eden(6500), ambient=NIGHT)
 # the welcome tail (SA_TAIL_MS): the stars keep falling on the dark board while the status
-# panels say the welcome; the room light comes up over it (0.07 -> 0.35)
+# panels say the welcome; the room light comes up over it (0.07 -> 0.35). No status close-up:
+# the panels read on the whole board
 scene("E3", "full", "Eden tail: the stars keep falling on the dark board; the room light comes up",
-      eden(sim.TOTAL - 1), ("Welcome", "to PolyKybd"), ambient=(NIGHT + ROOM) / 2, dur=1400, beat=False)
-scene("E3s", "status", "Status panels: Welcome | to PolyKybd", eden(sim.TOTAL - 1), ("Welcome", "to PolyKybd"),
-      ambient=(NIGHT + ROOM) / 2, dur=1800)
+      eden(sim.TOTAL - 1), ("Welcome", "to PolyKybd"), ambient=(NIGHT + ROOM) / 2, dur=3200, beat=False)
 
 # ---- chapter 1: the lit key, then the board reveal ---------------------------------------
-# The firmware asks for three letters and reveals the board after Shift; the video presses
-# one letter in place, on the whole-board view, and the reveal leaves that key.
+# The firmware asks for three letters, then Shift, then reveals the board; the video presses
+# one letter in place, on the whole-board view, the reveal leaves that key, and Shift is skipped.
 e = "1,3"
 lit = only(BASE, {e})
 scene("C1.1a", "full", "One key fades in, the rest of the board is dark", ringed(lit, e), ("Press the", "lit key"),
-      fadein=P_LETTER_IN)
+      fadein=P_LETTER_IN, beat=False)
 scene("C1.1b", "full", "Pressed in place: its display inverts", ringed(lit, e), ("Press the", "lit key"), press=e)
 scene("C1.2", "full", "Board reveal: a ring leaves the key and lights every key", BASE,
       ("Every key", "is a screen"), sweep=(e, P_REVEAL), beat=False)
-
-# ---- chapter 2: Shift, once per hand, HELD -----------------------------------------------
-for n, (sk, shot, ask, said) in enumerate((("3,0", "k_lsft", ("Press and hold", "SHIFT"), ("All keys", "react...")),
-                                           ("8,7", "k_rsft", ("Try again", "SHIFT"), ("Isn't that", "...nice?")))):
-    scene(f"C2.{n + 1}a", "full", "This Shift pulses", ringed(BASE, sk), ask)
-    scene(f"C2.{n + 1}b", shot, "Close-up: Shift goes down and stays held", ringed(BASE, sk), ask,
-          press=sk, hold=True)
-    scene(f"C2.{n + 1}c", "full", "Held: every letter turns capital", SHIFTED, said, held=[sk])
 
 # ---- languages and scripts: the whole board, no status cuts between them -----------------
 scene("C4.3", "full", "It speaks your language", BASE, ("It speaks", "your language"))
@@ -156,14 +150,17 @@ for n, (code, entry, latin, native, tiles, lead) in enumerate(items):
     scene(f"C4.{6 + 3 * n}", "full", f"A ring wipes in from a corner and every key turns {latin}",
           ts.Screens(code).layer(), (lead, latin), sweep=(corner, P_WIPE), beat=False)
 scene("C4.20d", "full", "Dark", DARK, ("...and many", "more layouts"), dur=P_DARK, beat=False)
-scene("C4.21", "full", "160 | LAYOUTS in the heavy splash face", S.more_frame(False), ("...and many", "more layouts"),
-      cascade=2, beat=False)
+MORE = S.more_frame(False)
+scene("C4.21", "full", "160 | LAYOUTS in the heavy splash face", MORE, ("...and many", "more layouts"),
+      cascade=2, beat=False, named=sorted(MORE.keys))
 scene("C4.22d", "full", "Dark", DARK, ("...plus", "fun scripts"), dur=P_DARK, beat=False)
-scene("C4.23", "full", "10 FUN | SCRIPTS", S.more_frame(True), ("...plus", "fun scripts"), cascade=2, beat=False)
+FUN = S.more_frame(True)
+scene("C4.23", "full", "10 FUN | SCRIPTS", FUN, ("...plus", "fun scripts"), cascade=2, beat=False,
+      named=sorted(FUN.keys))
 
 # ---- the key tour: Lang menu, on the menu camera; close-ups only for Lang and Base ------
 M = "menu"
-scene("T1a", "full", "Find the Lang key", ringed(BASE, "9,1"), ("Pick yours in", "the Lang menu"))
+# straight from the status panels to the close-up: no whole-board beat before it
 scene("T1b", "k_lang", "Close-up: the key goes down", ringed(BASE, "9,1"), ("Pick yours in", "the Lang menu"),
       press="9,1")
 scene("T1c", M, "The language menu cascades in", S.lang_menu(0), ("Pick yours in", "the Lang menu"),
@@ -220,14 +217,18 @@ scene("I3a", "intl_h", "Take the lit accent", ringed(PICK, ACC), ("Now take", "t
       beat=False)
 scene("I3b", "intl_h", "The accent pressed in place", ringed(PICK, ACC), ("Now take", "the lit accent"), held=[I_],
       press=ACC, beat=False)
-scene("I3c", "intl_h", "Saved: the U key now shows its new accent", CHOSEN, ("Saved for", "the U"), held=[I_],
-      beat=False)
+# the U key takes the accent's LED light, so the hand-over reads at a glance
+scene("I3c", "intl_h", "Saved: the U key now shows its new accent, lit like the accent was", CHOSEN,
+      ("Saved for", "the U"), held=[I_], glow=[(U_, ACC)], beat=False)
 
 # ---- finale, then idle: the board dims and the Eden screensaver takes over ----------------
 scene("F", "full", "You're ready!", BASE, ("You're", "ready!"))
-scene("Z1", "full", "Idle: the keycaps and the status panels dim", BASE, ("You're", "ready!"), dim=2000, dur=2600,
+scene("Z1", "full", "Idle: the keycaps and the status panels dim", BASE, ("You're", "ready!"), dim=700, dur=1000,
       beat=False)
-scene("Z2", "full", "The Eden screensaver", DARK, ambient=(NIGHT + ROOM) / 2, saver=True, dur=5000, beat=False)
+# the screensaver runs, then the picture fades to black and the name comes up
+scene("Z2", "full", "The Eden screensaver, then a fade to black", DARK, ambient=(NIGHT + ROOM) / 2, saver=True,
+      dur=5500, fadeout=1800, beat=False)
+scene("Z3", "full", "Black, and the name in the middle", DARK, title="PolyKybd Split72", dur=4500, beat=False)
 
 
 def with_status_beats(scenes, ms=1800):

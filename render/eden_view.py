@@ -317,16 +317,25 @@ if PASS == "ambient":                             # a dim room: one soft light, 
     sc.collection.objects.link(o)
     o.location = (-0.35, -0.55, 0.9)               # above, front left: the caps catch it at an angle
     o.rotation_euler = (mathutils.Vector((0, 0, 0)) - o.location).to_track_quat("-Z", "Y").to_euler()
-if PASS == "ambient" and env("PK_SILK_GLOW"):
-    # the plate's Rosetta silkscreen (untagged white meshes) glows a little, so it reads
-    # in the dim room; in the ambient pass it rises and falls with the room light
+if PASS not in MAP_PASSES and env("PK_SILK"):
+    # the plate's Rosetta silkscreen and the board silk (untagged white meshes): PK_SILK =
+    # "value,roughness,glow". A lower value and a rougher, less specular finish keep the
+    # white from flaring in the room light; the glow (ambient pass only, so it rises and
+    # falls with the room light) keeps it readable
+    val, rough, glow = (float(v) for v in env("PK_SILK").split(","))
     for m in {o.active_material for o in sc.objects if o.type == "MESH" and o.active_material}:
         b = next((n for n in m.node_tree.nodes if n.type == "BSDF_PRINCIPLED"), None) if m.use_nodes else None
         if m.get("pk_role") or b is None or min(b.inputs["Base Color"].default_value[:3]) < 0.9:
             continue
-        b.inputs["Emission Color"].default_value = (1, 1, 1, 1)
-        b.inputs["Emission Strength"].default_value = float(env("PK_SILK_GLOW"))
-        print("silk glow", m.name)
+        b.inputs["Base Color"].default_value = (val, val, val, 1)
+        b.inputs["Roughness"].default_value = rough
+        b.inputs["Specular IOR Level"].default_value = 0.15
+        if "Coat Weight" in b.inputs:
+            b.inputs["Coat Weight"].default_value = 0.0
+        if PASS == "ambient" and glow > 0:
+            b.inputs["Emission Color"].default_value = (1, 1, 1, 1)
+            b.inputs["Emission Strength"].default_value = glow
+        print("silk", m.name)
 if PASS in LIGHT_PASSES:                          # the LEDs' light only: no other source
     for o in [o for o in sc.objects if o.type == "LIGHT"]:
         bpy.data.objects.remove(o)

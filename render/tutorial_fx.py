@@ -226,8 +226,10 @@ class Leds:
         self.lvl, self.hue, self.val = {}, {}, {}
 
     def step(self, now, dt, board, pointed=None, phase=0, sweep_band=None, sweep_hue=0,
-             named=(), name_hue=0):
-        """Advance one frame; returns {key: raw rgb 0..255}."""
+             named=(), name_hue=0, glow=()):
+        """Advance one frame; returns {key: raw rgb 0..255}. glow: (key, like) pairs, each
+        key pulsing in the colour key `like` had while it was pointed at."""
+        glow = dict(glow)
         down = dt * 255 / R["TRGB_FALL_MS"]
         wave = pulse_level(now, 255)
         out = {}
@@ -239,8 +241,8 @@ class Leds:
                 d2 = (kx - cx) ** 2 + (ky - cy) ** 2
                 if inner2 <= d2 <= outer2:
                     target, hue, val = dens, sweep_hue, R["TRGB_SWEEP_VAL"]
-            if mp == pointed:
-                hue = K_HUES[(slot_of(mp) * 7 + phase * 3) % len(K_HUES)]
+            if mp == pointed or mp in glow:
+                hue = K_HUES[(slot_of(glow.get(mp, mp)) * 7 + phase * 3) % len(K_HUES)]
                 target, val = pulse_lvl(hue, R["TRGB_PULSE_VAL"], wave), R["TRGB_PULSE_VAL"]
             elif mp in named:
                 k = list(named).index(mp)

@@ -39,7 +39,7 @@ export PK_EMIT=6000 PK_GLOW=15 PK_FLEX=1,0.15 PK_HIDE_ROLES="" \
     PK_PROFILE=stepped PK_DENT=0.3,2.5 PK_CASE_GLOW=80 PK_POWER_LED=0.15 PK_CASE_LEDS=30 \
     PK_INDICATOR_HAZE=200 PK_HAZE_RADIUS=0.02 PK_INDICATOR_RADIUS=0.006 PK_LOOK="AgX - High Contrast" \
     PK_ELEV=65 PK_SPLAY=0 PK_SPLAY_RIGHT=0 PK_GAP=38.5 PK_FLOOR=0.02,0.45 PK_CABLES=bridge+host \
-    PK_DIFFUSER_GLOW=400 PK_SILK_GLOW=0.6
+    PK_DIFFUSER_GLOW=400 PK_SILK=0.55,0.8,0.12
 
 # shot names in the shot list, optionally only those with a press / only "full"
 shots() { "$BPY" -c "import json,sys; print(','.join(s['name'] for s in json.load(open('$SHOTS'))))"; }
@@ -91,11 +91,10 @@ while IFS='|' read -r n keys want; do
     PK_LED_KEYS="$keys" layer led "$want" "$OUT/led_$n" $((WIDTH / 2))
 done < "$OUT/led_jobs.txt"
 
-# the screens, then the frames, straight into ffmpeg
-if [ ! -f "$OUT/story.npz" ]; then
-    say "story"
-    PYTHONPATH=../PolyKybdHost "$HOSTPY" render/tutorial_story.py "$OUT/story.npz" >> "$LOG" 2>&1
-fi
+# the screens (always rebuilt: a few seconds, and a stale story would silently win), then
+# the frames, straight into ffmpeg, then the soundtrack (render/tutorial_audio.py)
+say "story"
+PYTHONPATH=../PolyKybdHost "$HOSTPY" render/tutorial_story.py "$OUT/story.npz" >> "$LOG" 2>&1
 say "encode"
 PK_SHOT_CACHE=${PK_SHOT_CACHE:-4} "$BPY" render/tutorial_video.py video "$OUT" "$OUT/story.npz" \
     "$OUT/tutorial_${WIDTH}.mp4" "$WIDTH" 25 >> "$LOG" 2>&1

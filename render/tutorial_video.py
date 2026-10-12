@@ -292,9 +292,28 @@ def video(layers, story, out, width=640, fps=25):
     are split into that many runs of video_part(), one process each, and the pieces are
     joined without re-encoding."""
     jobs = int(os.environ.get("PK_JOBS", min(os.cpu_count() or 1, 16)))
-    if jobs <= 1 or os.environ.get("PK_FRAMES"):
-        lo, hi = (int(v) for v in os.environ.get("PK_FRAMES", "0:-1").split(":"))
-        return video_part(layers, story, out, width, fps, lo, hi, threads=0 if jobs <= 1 else 2)
+    if os.environ.get("PK_FRAMES"):              # one part of a parallel run
+        lo, hi = (int(v) for v in os.environ["PK_FRAMES"].split(":"))
+        return video_part(layers, story, out, width, fps, lo, hi, threads=2)
+    silent = out[:-4] + ".silent.mp4"
+    if jobs <= 1:
+        video_part(layers, story, silent, width, fps)
+    else:
+        video_parallel(layers, story, silent, width, fps, jobs)
+    # the soundtrack: the same scene walk with no frames drawn, for the events' times
+    events = []
+    total = video_part(layers, story, os.devnull, width, fps, lo=1 << 30, events=events)
+    import subprocess
+    import tutorial_audio
+    wav = out[:-4] + ".wav"
+    tutorial_audio.write(events, total * 1000 / fps, wav)
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", silent, "-i", wav, "-c:v", "copy", "-c:a", "aac",
+                    "-b:a", "192k", "-shortest", "-movflags", "+faststart", out], check=True)
+    os.remove(silent)
+    print("wrote", out, "with sound,", total, "frames", round(total / fps, 1), "s")
+
+
+def video_parallel(layers, story, out, width, fps, jobs):
     sys.path.insert(0, os.path.join(HERE, "..", "..", "PolyKybdHost", "tools"))
     from fw_anim_sim import FwSim
     import subprocess
@@ -317,13 +336,24 @@ def video(layers, story, out, width=640, fps=25):
                     "-movflags", "+faststart", out], check=True)
     for p in parts + [lst]:
         os.remove(p)
-    print("wrote", out, total, "frames", round(total / fps, 1), "s")
 
 
-def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0):
+def encoder(out, img, fps, threads):
+    import subprocess
+    return subprocess.Popen(["ffmpeg", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
+                             "-s", f"{img.width}x{img.height}", "-r", str(fps), "-i", "-",
+                             "-c:v", "libx264", "-crf", "18", "-preset", "slow", "-pix_fmt", "yuv420p",
+                             "-threads", str(threads), "-movflags", "+faststart", out], stdin=subprocess.PIPE)
+
+
+def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=None):
     """Frames lo..hi-1 of the video (hi = -1: to the end). Every frame before `lo` is
     still stepped through, cheaply: the clock, the sweeps, the ripples and the LED fades
-    carry state from frame to frame, so a part must replay them to start in the right place."""
+    carry state from frame to frame, so a part must replay them to start in the right place.
+    events: a list to fill with what the soundtrack follows, at VIDEO time (ms from the first
+    frame; the board's own clock rewinds after a close-up): ("scene", ms, id, dur),
+    ("hit", ms, key, shot), ("sweep", ms, run), ("cascade", ms, rows)."""
+    ev = events if events is not None else []
     sys.path.insert(0, os.path.join(HERE, "..", "..", "PolyKybdHost", "tools"))
     sys.path.insert(0, HERE)
     from fw_anim_sim import FwSim, mp_to_half_idx
@@ -447,7 +477,22 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0):
 
     # frames go straight into ffmpeg: at 2048 px a PNG per frame would need ~18 GB of disk
     import subprocess
-    enc = None
+    enc, size = None, [None]
+
+    def title_card(text, t, dur, fade=700):
+        """White text on black in the middle, fading in and out."""
+        if size[0] is None:
+            sh = shot("full")
+            size[0] = (width, int(round(width * sh.H / sh.W / 2)) * 2)
+        w, h = size[0]
+        img = Image.new("RGB", (w, h), (0, 0, 0))
+        d = ImageDraw.Draw(img)
+        f = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSansBold.ttf", max(12, w // 16))
+        box = d.textbbox((0, 0), text, font=f)
+        a = min(1.0, t / fade, (dur - t) / fade) if dur > 2 * fade else 1.0
+        v = int(235 * smooth(a))
+        d.text(((w - box[2] - box[0]) / 2, (h - box[3] - box[1]) / 2), text, font=f, fill=(v, v, v))
+        return img
     step, n, prev = 1000 / fps, 0, None
     T = 0.0                                      # the board's own clock
     ripples, sweeps, fired = [], [], set()
@@ -468,8 +513,12 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0):
             before, hit_at = prev["keys_img"], prev["_hit"]
             release_at = None if prev.get("hold") else prev["_hit"] - PRESS_HIT + PRESS_RELEASE
         T0 = T
+        ev.append(("scene", n * step, s["id"], dur))
+        if s.get("cascade"):
+            ev.append(("cascade", n * step, s["cascade"]))
         if s.get("sweep") and (s["id"], "sweep") not in fired:
             fired.add((s["id"], "sweep"))
+            ev.append(("sweep", n * step, s["sweep"][1]))
             sweeps.append(dict(origin=s["sweep"][0], start=T0, run=s["sweep"][1], scene=s["id"],
                                old=dict(prev["keys_img"]) if prev else {}, new=s["keys_img"]))
         for k in range(int(round(dur / step))):
@@ -507,10 +556,12 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0):
                 if s.get("press") and pressed and (s["id"], "hit") not in fired:
                     fired.add((s["id"], "hit"))
                     s["_hit"] = T0 + PRESS_HIT
+                    ev.append(("hit", n * step, s["press"], s["shot"]))
                     if s.get("strike"):
                         ripples.append((s["press"], s["_hit"]))
                     if nxt is not None and nxt.get("sweep"):
                         fired.add((nxt["id"], "sweep"))
+                        ev.append(("sweep", n * step, nxt["sweep"][1]))
                         sweeps.append(dict(origin=nxt["sweep"][0], start=s["_hit"], run=nxt["sweep"][1],
                                            scene=s["id"], old=dict(s["keys_img"]), new=nxt["keys_img"]))
                 point = s.get("point") if not pressed else None
@@ -582,7 +633,8 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0):
                     keys[point] = keys[point] * (fx.pulse_level(t) / 255)
                 if s["id"] not in ("E3", "E3s") and not s.get("saver"):
                     rgbs = leds.step(T, step, board, pointed=point, phase=phase, sweep_band=band,
-                                     sweep_hue=shue, named=s.get("named") or (), name_hue=fx.K_HUES[0])
+                                     sweep_hue=shue, named=s.get("named") or (), name_hue=fx.K_HUES[0],
+                                     glow=[tuple(g) for g in s.get("glow") or ()])
                 if s.get("dim"):                   # idle engages: the keycaps, the panels and the LEDs dim
                     f_ = 1.0 - (1.0 - IDLE_DIM) * smooth(t / s["dim"])
                     keys = {mp: a * f_ for mp, a in keys.items()}
@@ -590,6 +642,15 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0):
                     if rgbs:
                         rgbs = {mp: c * f_ for mp, c in rgbs.items()}
             if not todo:
+                n += 1
+                continue
+            if s.get("title"):                     # the closing card: no board at all
+                img = title_card(s["title"], t, dur)
+                img = img.resize((width, int(round(width * img.height / img.width / 2)) * 2), Image.LANCZOS) \
+                    if img.width != width else img
+                if enc is None:
+                    enc = encoder(out, img, fps, threads)
+                enc.stdin.write(img.convert("RGB").tobytes())
                 n += 1
                 continue
             name, pkey, depth = s["shot"], s.get("press"), 0.0
@@ -610,12 +671,11 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0):
             else:
                 img = light_frame(keys, status, ambient, name, rgbs, extra)
             img = img.resize((width, int(round(width * img.height / img.width / 2)) * 2), Image.LANCZOS)
+            if s.get("fadeout") and t > dur - s["fadeout"]:
+                img = Image.eval(img, lambda v, f_=smooth((dur - t) / s["fadeout"]): int(v * f_))
+            size[0] = img.size
             if enc is None:
-                enc = subprocess.Popen(["ffmpeg", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
-                                        "-s", f"{img.width}x{img.height}", "-r", str(fps), "-i", "-",
-                                        "-c:v", "libx264", "-crf", "18", "-preset", "slow", "-pix_fmt", "yuv420p",
-                                        "-threads", str(threads), "-movflags", "+faststart", out],
-                                       stdin=subprocess.PIPE)
+                enc = encoder(out, img, fps, threads)
             enc.stdin.write(img.convert("RGB").tobytes())
             n += 1
         prev = s
@@ -623,10 +683,14 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0):
             print(f"scene {s['id']:7s} {s['shot']:9s} {dur:5d} ms  -> {n} frames", flush=True)
         if hi >= 0 and n >= hi:
             break
+    if enc is None:                              # nothing in range: an events-only pass
+        return n
     enc.stdin.close()
     if enc.wait() != 0:
         raise SystemExit(f"ffmpeg failed ({enc.returncode})")
-    print("wrote", out, n - lo, "frames", round((n - lo) / fps, 1), "s")
+    done = (n if hi < 0 else min(n, hi)) - lo
+    print("wrote", out, done, "frames", round(done / fps, 1), "s")
+    return n
 
 
 if __name__ == "__main__":
