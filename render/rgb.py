@@ -422,10 +422,23 @@ def _haze(loc, colour, strength, radius):
     pw.operation = "POWER"
     pw.inputs[1].default_value = 3.0           # bright core, long soft tail
     nt.links.new(grad.outputs["Fac"], pw.inputs[0])
+    # ⚠️ only BELOW the LED: it sits on the back of the PCB, so the board and the plate
+    # hide everything above it. A full sphere (2 cm against a few mm of PCB and plate)
+    # showed its red glow on top of the plate
+    sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+    nt.links.new(tc.outputs["Object"], sep.inputs[0])
+    below = nt.nodes.new("ShaderNodeMath")
+    below.operation = "LESS_THAN"
+    below.inputs[1].default_value = 0.0004     # the 0805's body height under the board, m
+    nt.links.new(sep.outputs["Z"], below.inputs[0])
+    cut = nt.nodes.new("ShaderNodeMath")
+    cut.operation = "MULTIPLY"
+    nt.links.new(pw.outputs[0], cut.inputs[0])
+    nt.links.new(below.outputs[0], cut.inputs[1])
     k = nt.nodes.new("ShaderNodeMath")
     k.operation = "MULTIPLY"
     k.inputs[1].default_value = strength
-    nt.links.new(pw.outputs[0], k.inputs[0])
+    nt.links.new(cut.outputs[0], k.inputs[0])
     em = nt.nodes.new("ShaderNodeEmission")
     em.inputs["Color"].default_value = (*colour, 1)
     nt.links.new(k.outputs[0], em.inputs["Strength"])
