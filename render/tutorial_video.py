@@ -26,10 +26,12 @@ from PIL import Image, ImageDraw, ImageFont
 HERE = os.path.dirname(os.path.abspath(__file__))
 SCREEN = float(os.environ.get("PK_STRENGTH", 5.0))
 LIT_TINT = np.array([0.70, 0.84, 1.0], np.float32)
-BLOOM = float(os.environ.get("PK_BLOOM", 0.25))
+BLOOM = float(os.environ.get("PK_BLOOM", 0.14))
 STATUS_ID = 126
 STATUS_GAIN = float(os.environ.get("PK_STATUS_GAIN", 0.3))
-STATUS_BLOOM = float(os.environ.get("PK_STATUS_BLOOM", 0.05))
+STATUS_BLOOM = float(os.environ.get("PK_STATUS_BLOOM", 0.14))
+# an OLED pixel is a lit square with a thin dark seam around it: this share of its pitch is lit
+PIXEL_FILL = float(os.environ.get("PK_PIXEL_FILL", 0.86))
 OW, OH, SW, SH = 72, 40, 128, 64
 sys.path.insert(0, HERE)
 import keymatch  # noqa: E402
@@ -55,6 +57,22 @@ def blur(a, r):
     return a
 
 
+def pixel_grid(u, v, status):
+    """Per map pixel: how much of it an OLED pixel's lit square covers, so the seams
+    between the panel's pixels show where the camera resolves them (a close-up) and
+    average out where it cannot (a wide shot, which would otherwise moire). Normalised
+    to a mean of 1, so the grid does not change a screen's overall brightness."""
+    out = np.ones(u.shape, np.float32)
+    for coord, n_key, n_status, axis in ((u, OW, SW, 1), (v, OH, SH, 0)):
+        p = coord * np.where(status, n_status, n_key)
+        f = p - np.floor(p)
+        fp = np.hypot(*np.gradient(p))                # OLED pixels per map pixel
+        sharp = np.clip((PIXEL_FILL / 2 - np.abs(f - 0.5)) / np.maximum(fp, 1e-3) + 0.5, 0, 1)
+        w = np.clip((fp - 0.25) / 0.5, 0, 1)          # unresolved: the average, no pattern
+        out *= (sharp * (1 - w) + PIXEL_FILL * w) / PIXEL_FILL
+    return out
+
+
 class Shot:
     """One camera's layers, with its screen lookup precomputed."""
     def __init__(self, layers, name):
@@ -72,6 +90,7 @@ class Shot:
         self.kx, self.ky = (np.clip(u * OW, 0, OW - 1).astype(np.int16), np.clip(v * OH, 0, OH - 1).astype(np.int16))
         self.sx, self.sy = (np.clip(u * SW, 0, SW - 1).astype(np.int16), np.clip(v * SH, 0, SH - 1).astype(np.int16))
         self.trans = np.where(seen, uv[..., 2], 0.0).astype(np.float32)
+        self.trans *= pixel_grid(u, v, self.cell >= STATUS_ID)
         del uv, idm, u, v, b, seen
         # per cell, the pixels that show it
         # (int32: at 2048 px a 1.7x menu shot's int64 indices alone would cost ~450 MB)
@@ -236,10 +255,10 @@ PRESS_AT, PRESS_DOWN, PRESS_HOLD, PRESS_UP = 700, 220, 260, 320
 PRESS_HIT = PRESS_AT + PRESS_DOWN // 2           # the switch actuates halfway down
 DEPTHS = [(0.0, ""), (1.2, "_d1"), (2.4, "_d2"), (3.5, "_dn")]
 PRESS_RELEASE = PRESS_HIT + PRESS_HOLD + (PRESS_DOWN + PRESS_UP) // 2   # the display turns back
-REWIND_PRE = 700                                 # the board view after a close-up starts this long before the press
+REWIND_PRE = 200                                 # the board view after a close-up starts this long before the press
 # a key pressed in place (no close-up): the scene ends just after the hit and the next
 # one, which shows what the press did, carries the release
-INPLACE_TAIL = 40
+INPLACE_TAIL = 80                                # >= 2 frames past the hit, or no frame lands on it
 IDLE_DIM = 0.2                                   # what the keycaps keep once idle has dimmed them
 SHOT_LIGHT = {s["name"]: s.get("light", s["name"])  # a press variant uses its parent's LED renders
               for s in json.load(open(os.path.join(HERE, "tutorial_shots.json"), encoding="utf-8"))}
@@ -368,7 +387,8 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
     carry state from frame to frame, so a part must replay them to start in the right place.
     events: a list to fill with what the soundtrack follows, at VIDEO time (ms from the first
     frame; the board's own clock rewinds after a close-up): ("scene", ms, id, dur),
-    ("hit", ms, key, shot), ("sweep", ms, run), ("cascade", ms, rows)."""
+    ("hit", ms, key, shot), ("sweep", ms, run, scene), ("cascade", ms, rows, named),
+    ("appear", ms, key): a name key's legend arriving in its cascade."""
     ev = events if events is not None else []
     sys.path.insert(0, os.path.join(HERE, "..", "..", "PolyKybdHost", "tools"))
     sys.path.insert(0, HERE)
@@ -381,6 +401,16 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
     meta = load_story(story)
     if os.environ.get("PK_SCENES"):              # a subset, for a quick check
         meta = [s for s in meta if s["id"] in os.environ["PK_SCENES"].split(",")]
+    # the pan groups: each scene's start within its group's one long track
+    pan_at, pan_span, acc = {}, {}, 0
+    for s_ in meta:
+        if s_.get("pan"):
+            g_ = s_["pan"][0]
+            if g_ not in pan_span:
+                pan_span[g_] = [acc, 0]
+            pan_at[s_["id"]] = acc
+            pan_span[g_][1] = acc + duration(s_, sim) - pan_span[g_][0]
+        acc += duration(s_, sim)
     board, leds, casc_row = fx.Board(), fx.Leds(), cascade_rows()
     stars = fx.Stars(sim)
     Z = np.zeros((OH, OW), np.float32)
@@ -529,10 +559,12 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
         T0 = T
         ev.append(("scene", n * step, s["id"], dur))
         if s.get("cascade"):
-            ev.append(("cascade", n * step, s["cascade"]))
+            ev.append(("cascade", n * step, s["cascade"], bool(s.get("named"))))
+            for mp in s.get("named") or ():        # each name key's legend arriving
+                ev.append(("appear", n * step + due(mp, s["cascade"]), mp))
         if s.get("sweep") and (s["id"], "sweep") not in fired:
             fired.add((s["id"], "sweep"))
-            ev.append(("sweep", n * step, s["sweep"][1]))
+            ev.append(("sweep", n * step, s["sweep"][1], s["id"]))
             sweeps.append(dict(origin=s["sweep"][0], start=T0, run=s["sweep"][1], scene=s["id"],
                                old=dict(prev["keys_img"]) if prev else {}, new=s["keys_img"]))
         for k in range(int(round(dur / step))):
@@ -575,7 +607,7 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                         ripples.append((s["press"], s["_hit"]))
                     if nxt is not None and nxt.get("sweep"):
                         fired.add((nxt["id"], "sweep"))
-                        ev.append(("sweep", n * step, nxt["sweep"][1]))
+                        ev.append(("sweep", n * step, nxt["sweep"][1], nxt["id"]))
                         sweeps.append(dict(origin=nxt["sweep"][0], start=s["_hit"], run=nxt["sweep"][1],
                                            scene=s["id"], old=dict(s["keys_img"]), new=nxt["keys_img"]))
                 point = s.get("point") if not pressed else None
@@ -685,9 +717,10 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                         break
             else:
                 img = light_frame(keys, status, ambient, name, rgbs, extra)
-            if s.get("pan"):                       # a slow track across the board, rows filling the frame
-                a_, b_ = s["pan"]
-                u = smooth(min(max((t - 600) / max(dur - 900, 1), 0), 1))
+            if s.get("pan"):                       # one slow track over the group, rows filling the frame
+                g_, a_, b_ = s["pan"]
+                g0, glen = pan_span[g_]
+                u = smooth(min(max((pan_at[s["id"]] + t - g0) / glen, 0), 1))
                 img = img.crop(shot(s["shot"]).pan_box(a_ + (b_ - a_) * u))
             img = img.resize((width, out_h), Image.LANCZOS)
             if s.get("fadeout") and t > dur - s["fadeout"]:

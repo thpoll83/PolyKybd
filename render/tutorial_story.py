@@ -74,8 +74,9 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
     engages, the keys and panels dim over this many ms. saver: the Eden screensaver. glow:
     (key, like) pairs, key's LED pulses as key `like`'s did when it was pointed at.
     fadeout: the whole picture fades to black over the scene's last this many ms. title:
-    a black card with this text in the middle. pan: (from, to) along the board, 0 = left
-    end, 1 = right end; the shot is cropped to the key rows and tracks across."""
+    a black card with this text in the middle. pan: (group, from, to): every scene of one
+    group is one slow track along the board (0 = left end, 1 = right end), the shot
+    cropped to the key rows."""
     point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
@@ -133,7 +134,7 @@ scene("C1.2", "full", "Board reveal: a ring leaves the key and lights every key"
       ("Every key", "is a screen"), sweep=(e, P_REVEAL), beat=False)
 
 # ---- languages and scripts: the whole board, no status cuts between them -----------------
-scene("C4.3", "full", "It speaks your language", BASE, ("It speaks", "your language"))
+scene("C4.3", "full", "It speaks your language", BASE, ("It speaks", "your language"), beat=False)
 DARK = ts.Frame({})
 # three of the firmware's eleven items (s_tut_preview_all entries 0, 5 and 6), each: a dark
 # cut, its name on the keys, then a ring wipes the layout in from a corner; the corner
@@ -164,17 +165,21 @@ M = "menu"
 # straight from the status panels to the close-up: no whole-board beat before it
 scene("T1b", "k_lang", "Close-up: the key goes down", ringed(BASE, "9,1"), ("Pick yours in", "the Lang menu"),
       press="9,1")
-# the first look at each menu: closer, the key rows filling the frame, a slow pan left to right
+# each menu chapter is one slow track, close, the key rows filling the frame, while the tabs
+# are pressed. The Lang tabs sit on the left half's top row, so its track stops at 0.6 to
+# keep the last tab in view; the emoji tabs move to the right half and so does its track.
+LANG_PAN, EMOJI_PAN = ("lang", 0.0, 0.6), ("emoji", 0.0, 1.0)
 scene("T1c", M, "The language menu cascades in; the camera tracks slowly across it", S.lang_menu(0),
-      ("Pick yours in", "the Lang menu"), cascade=3, beat=False, pan=(0.0, 1.0), dur=7000)
+      ("Pick yours in", "the Lang menu"), cascade=3, beat=False, pan=LANG_PAN, dur=4000)
 regions = [("From Canada", "to Chile"), ("All across", "Europe"), ("The Middle", "East"),
            ("Languages of", "Africa"), ("The whole of", "Asia"), ("And down to", "Oceania")]
 REGION = ["America", "Europe", "Middle East", "Africa", "Asia", "Oceania"]
 for r in (1, 2, 3, 4, 5):
     scene(f"T2.{r}", M, f"Tab {r}: {REGION[r]}, pressed in place", ringed(S.lang_menu(r - 1), f"0,{r + 1}"),
-          regions[r], press=f"0,{r + 1}", beat=False)
-    scene(f"T2.{r}b", M, f"{REGION[r]}: the flags cascade in", S.lang_menu(r), regions[r], cascade=3, beat=False)
-scene("T3a", M, "Find Base", ringed(S.lang_menu(5), "4,0"), ("Now back", "home"), beat=False)
+          regions[r], press=f"0,{r + 1}", beat=False, pan=LANG_PAN)
+    scene(f"T2.{r}b", M, f"{REGION[r]}: the flags cascade in", S.lang_menu(r), regions[r], cascade=3, beat=False,
+          pan=LANG_PAN)
+scene("T3a", M, "Find Base", ringed(S.lang_menu(5), "4,0"), ("Now back", "home"), beat=False, pan=LANG_PAN)
 scene("T3b", "k_base", "Close-up: Base goes down", ringed(S.lang_menu(5), "4,0"), ("Now back", "home"), press="4,0",
       beat=False)
 scene("T3c", M, "Home", BASE, ("Now back", "home"), beat=False)
@@ -184,45 +189,47 @@ scene("T4a", M, "Find the emoji key", ringed(BASE, "3,6"), ("Now for", "some emo
 scene("T4b", "k_emj", "Close-up: the emoji key goes down", ringed(BASE, "3,6"), ("Now for", "some emoji"),
       press="3,6", beat=False)
 scene("T4c", M, "The emoji menu cascades in; the camera tracks slowly across it", S.emoji_menu(0),
-      ("Now for", "some emoji"), cascade=3, beat=False, pan=(0.0, 1.0), dur=7000)
+      ("Now for", "some emoji"), cascade=3, beat=False, pan=EMOJI_PAN, dur=4000)
 tabs = [(4, "0,5", ("Animals,", "big and small")), (5, "0,6", ("Plants", "and food")),
         (7, "5,2", ("Travel", "and places")), (8, "5,3", ("Sports", "and games"))]
 prev_cat = 0
 for cat, mp, words in tabs:
-    scene(f"T5.{cat}", M, f"Emoji tab {cat}, pressed in place", ringed(S.emoji_menu(prev_cat), mp), words, press=mp,
+    scene(f"T5.{cat}", M, f"Emoji tab {cat}, pressed in place", ringed(S.emoji_menu(prev_cat), mp), words, press=mp, pan=EMOJI_PAN,
           beat=False)
-    scene(f"T5.{cat}b", M, "The category cascades in", S.emoji_menu(cat), words, cascade=3, beat=False)
+    scene(f"T5.{cat}b", M, "The category cascades in", S.emoji_menu(cat), words, cascade=3, beat=False,
+          pan=EMOJI_PAN)
     prev_cat = cat
-scene("T6a", M, "Find Base", ringed(S.emoji_menu(prev_cat), "4,0"), ("And home", "again"), beat=False)
+scene("T6a", M, "Find Base", ringed(S.emoji_menu(prev_cat), "4,0"), ("And home", "again"), beat=False,
+      pan=EMOJI_PAN)
 scene("T6b", "k_base", "Close-up: Base goes down", ringed(S.emoji_menu(prev_cat), "4,0"), ("And home", "again"),
       press="4,0", beat=False)
 scene("T6c", M, "Home", BASE, ("And home", "again"), beat=False)
 
 # ---- the accents: close over the right half's top three rows, every press in place -------
-# Hold Intl, press U: the number row shows u's variations; take one from the row on screen
-# (KC_LAT7 at 5,2 is u-ring) and the U key takes it over.
-I_, U_, ACC = "7,1", "6,3", "5,2"
-INTL = S.intl()
-PICK = S.intl("u", picker=True)
-CHOSEN = S.intl("u", picker=True, chosen={"u": 7})
+# Hold Intl, press O: o's chosen variation is ö (KC_LAT4), and the number row shows all of
+# o's variations; take œ (KC_LAT8 at 5,3, on screen) and the O key takes it over.
+I_, O_, ACC = "7,1", "6,5", "5,3"
+INTL = S.intl(chosen={"o": 4})
+PICK = S.intl("o", picker=True, chosen={"o": 4})
+CHOSEN = S.intl("o", picker=True, chosen={"o": 8})
 scene("I1a", "intl", "Hold Intl", ringed(BASE, I_), ("Hold Intl", "for accents"))
 scene("I1b", "intl", "Intl goes down and stays held", ringed(BASE, I_), ("Hold Intl", "for accents"),
       press=I_, hold=True, beat=False)
 # intl_h: the same camera with Intl down
 scene("I1c", "intl_h", "Every letter switches to its chosen accent", INTL, ("Each letter's", "chosen accent"),
       held=[I_], beat=False)
-scene("I2a", "intl_h", "Press the U", ringed(INTL, U_), ("Now press", "the U"), held=[I_], beat=False)
-scene("I2b", "intl_h", "U pressed in place", ringed(INTL, U_), ("Now press", "the U"), held=[I_], press=U_,
+scene("I2a", "intl_h", "Press the O", ringed(INTL, O_), ("Now press", "the O"), held=[I_], beat=False)
+scene("I2b", "intl_h", "O pressed in place", ringed(INTL, O_), ("Now press", "the O"), held=[I_], press=O_,
       beat=False)
-scene("I2c", "intl_h", "U's accents appear on the number row", PICK, ("Its accents", "are on top"), held=[I_],
+scene("I2c", "intl_h", "O's accents appear on the number row", PICK, ("Its accents", "are on top"), held=[I_],
       beat=False)
 scene("I3a", "intl_h", "Take the lit accent", ringed(PICK, ACC), ("Now take", "the lit accent"), held=[I_],
       beat=False)
 scene("I3b", "intl_h", "The accent pressed in place", ringed(PICK, ACC), ("Now take", "the lit accent"), held=[I_],
       press=ACC, beat=False)
-# the U key takes the accent's LED light, so the hand-over reads at a glance
-scene("I3c", "intl_h", "Saved: the U key now shows its new accent, lit like the accent was", CHOSEN,
-      ("Saved for", "the U"), held=[I_], glow=[(U_, ACC)], beat=False)
+# the O key takes the accent's LED light, so the hand-over reads at a glance
+scene("I3c", "intl_h", "Saved: the O key now shows its new accent, lit like the accent was", CHOSEN,
+      ("Saved for", "the O"), held=[I_], glow=[(O_, ACC)], beat=False)
 
 # ---- finale, then idle: the board dims and the Eden screensaver takes over ----------------
 scene("F", "full", "You're ready!", BASE, ("You're", "ready!"))
@@ -231,7 +238,7 @@ scene("Z1", "full", "Idle: the keycaps and the status panels dim", BASE, ("You'r
 # the screensaver runs, then the picture fades to black and the name comes up
 scene("Z2", "full", "The Eden screensaver, then a fade to black", DARK, ambient=(NIGHT + ROOM) / 2, saver=True,
       dur=5500, fadeout=1800, beat=False)
-scene("Z3", "full", "Black, and the name in the middle", DARK, title="PolyKybd Split72", dur=4500, beat=False)
+scene("Z3", "full", "Black, and the name in the middle", DARK, title="PolyKybd Split72", dur=6000, beat=False)
 
 
 def with_status_beats(scenes, ms=1800):
@@ -252,7 +259,7 @@ def with_status_beats(scenes, ms=1800):
         out.append(s)
         if beat and follows:
             out.append(beat)
-        if s["shot"] == "status" or beat:
+        if s["shot"] == "status" or beat or not s.get("beat", True):   # beat=False: read on the board
             shown = s["status"]
     return out
 
