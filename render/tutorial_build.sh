@@ -39,7 +39,7 @@ export PK_EMIT=6000 PK_GLOW=15 PK_FLEX=1,0.15 PK_HIDE_ROLES="" \
     PK_PROFILE=stepped PK_DENT=0.3,2.5 PK_CASE_GLOW=80 PK_POWER_LED=0.15 PK_CASE_LEDS=30 \
     PK_INDICATOR_HAZE=200 PK_HAZE_RADIUS=0.02 PK_INDICATOR_RADIUS=0.006 PK_LOOK="AgX - High Contrast" \
     PK_ELEV=65 PK_SPLAY=0 PK_SPLAY_RIGHT=0 PK_GAP=38.5 PK_FLOOR=0.02,0.45 PK_CABLES=bridge+host \
-    PK_DIFFUSER_GLOW=400
+    PK_DIFFUSER_GLOW=400 PK_SILK_GLOW=0.6
 
 # shot names in the shot list, optionally only those with a press / only "full"
 shots() { "$BPY" -c "import json,sys; print(','.join(s['name'] for s in json.load(open('$SHOTS'))))"; }
@@ -68,12 +68,15 @@ for p in uv id ambient base; do layer "$p" "$ALL" "$OUT/$p" "$WIDTH"; done
 for p in w c1 s1; do layer "$p" full "$OUT/$p" "$WIDTH"; done
 
 # the key LEDs' light: three keys per render (one per colour channel), at half width
-# (soft light, upscaled by the compositor); each group renders the shots its keys appear in
+# (soft light, upscaled by the compositor); each group renders the shots its keys appear in.
+# A press variant (it names a "light" shot) borrows that shot's LED renders: a key 3.5 mm
+# down moves the light by too little to see
 "$BPY" - "$SHOTS" ../PolyKybdHost/polyhost/res/preview/board.json "$OUT/led_jobs.txt" <<'PY'
 import json, sys
 shots = json.load(open(sys.argv[1]))
 keys = sorted({"%d,%d" % tuple(k["matrix"]) for k in json.load(open(sys.argv[2]))["keys"]},
               key=lambda s: tuple(map(int, s.split(","))))
+shots = [s for s in shots if "light" not in s]
 wide = [s["name"] for s in shots if not s["name"].startswith("k_")]
 with open(sys.argv[3], "w") as f:
     n = 0

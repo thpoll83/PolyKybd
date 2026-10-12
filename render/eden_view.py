@@ -70,6 +70,7 @@ if PASS in MAP_PASSES:
     # the code atlas: every cell of screens_layer0.json holds its own pixel
     # coordinates (uv) or its cell number (id)
     ref = json.load(open(os.path.join(screens.TEX, "screens_layer0.json"), encoding="utf-8"))
+    ref["keys"] = keymatch.code_atlas(ref, screens.KLE)
     (aw, ah), (cw, ch) = ref["size"], ref["cell"]
     img = np.zeros((ah, aw, 3), np.float32)
     labels = sorted(ref["keys"])
@@ -157,7 +158,9 @@ if "host" in CABLES:
     bridge_cable.add_host(sc, halves[0][1], halves[0][2])
 bpy.context.view_layer.update()
 for o in sc.objects:
-    if o.active_material and o.active_material.get("pk_role") in env("PK_HIDE_ROLES", "").split(","):
+    # ⚠️ "".split(",") is [""], which matches every UNTAGGED mesh (the desk, the plate's
+    # Rosetta silkscreen): an empty PK_HIDE_ROLES must hide nothing
+    if o.active_material and o.active_material.get("pk_role") in [r for r in env("PK_HIDE_ROLES", "").split(",") if r]:
         o.hide_render = True
 
 # the rainbow's phase runs over both halves' LEDs, left to right
@@ -314,6 +317,16 @@ if PASS == "ambient":                             # a dim room: one soft light, 
     sc.collection.objects.link(o)
     o.location = (-0.35, -0.55, 0.9)               # above, front left: the caps catch it at an angle
     o.rotation_euler = (mathutils.Vector((0, 0, 0)) - o.location).to_track_quat("-Z", "Y").to_euler()
+if PASS == "ambient" and env("PK_SILK_GLOW"):
+    # the plate's Rosetta silkscreen (untagged white meshes) glows a little, so it reads
+    # in the dim room; in the ambient pass it rises and falls with the room light
+    for m in {o.active_material for o in sc.objects if o.type == "MESH" and o.active_material}:
+        b = next((n for n in m.node_tree.nodes if n.type == "BSDF_PRINCIPLED"), None) if m.use_nodes else None
+        if m.get("pk_role") or b is None or min(b.inputs["Base Color"].default_value[:3]) < 0.9:
+            continue
+        b.inputs["Emission Color"].default_value = (1, 1, 1, 1)
+        b.inputs["Emission Strength"].default_value = float(env("PK_SILK_GLOW"))
+        print("silk glow", m.name)
 if PASS in LIGHT_PASSES:                          # the LEDs' light only: no other source
     for o in [o for o in sc.objects if o.type == "LIGHT"]:
         bpy.data.objects.remove(o)

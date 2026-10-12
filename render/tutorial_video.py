@@ -31,7 +31,12 @@ STATUS_ID = 126
 STATUS_GAIN = float(os.environ.get("PK_STATUS_GAIN", 0.3))
 STATUS_BLOOM = float(os.environ.get("PK_STATUS_BLOOM", 0.05))
 OW, OH, SW, SH = 72, 40, 128, 64
-LABELS = sorted(json.load(open(os.path.join(HERE, "textures", "screens_layer0.json"), encoding="utf-8"))["keys"])
+sys.path.insert(0, HERE)
+import keymatch  # noqa: E402
+# the cell numbers eden_view.py's map passes wrote: the exported atlas plus every KLE key it left out
+LABELS = sorted(keymatch.code_atlas(
+    json.load(open(os.path.join(HERE, "textures", "screens_layer0.json"), encoding="utf-8")),
+    os.path.join(HERE, "..", "..", "PolyKybdHost", "polyhost", "res", "polykybd-split72.json")))
 
 
 def exr(path):
@@ -123,11 +128,10 @@ def load_story(path):
     return meta
 
 
-CHAPTERS = ["Eden and the three letters", "Shift and the Fn layer", "The board reveal and the languages",
-            "The Lang menu", "The emoji menu", "Fn, Num, the Intl picker, finale"]
-PREFIX = [("E", 0), ("C1", 0), ("C2", 1), ("C3", 1), ("C4", 2), ("T10", 5), ("T11", 5), ("T12", 5),
-          ("T13", 5), ("T1", 3), ("T2", 3), ("T3", 3), ("T4", 4), ("T5", 4), ("T6", 4), ("T7", 5),
-          ("T8", 5), ("T9", 5), ("F", 5)]
+CHAPTERS = ["Eden, the lit key and the board reveal", "Shift", "The languages",
+            "The Lang menu", "The emoji menu", "The Intl accents, finale, idle"]
+PREFIX = [("E", 0), ("C1", 0), ("C2", 1), ("C3", 1), ("C4", 2), ("T1", 3), ("T2", 3), ("T3", 3),
+          ("T4", 4), ("T5", 4), ("T6", 4), ("I", 5), ("F", 5), ("Z", 5)]
 
 
 def chapter_of(sid):
@@ -215,8 +219,14 @@ FADE_MS = 300                                    # screens cross-fade within one
 PRESS_AT, PRESS_DOWN, PRESS_HOLD, PRESS_UP = 700, 220, 260, 320
 PRESS_HIT = PRESS_AT + PRESS_DOWN // 2           # the switch actuates halfway down
 DEPTHS = [(0.0, ""), (1.2, "_d1"), (2.4, "_d2"), (3.5, "_dn")]
+PRESS_RELEASE = PRESS_HIT + PRESS_HOLD + (PRESS_DOWN + PRESS_UP) // 2   # the display turns back
 REWIND_PRE = 700                                 # the board view after a close-up starts this long before the press
-TAP_AT, TAP_MS = 1300, 120                       # a key pressed in place: inverted this long
+# a key pressed in place (no close-up): the scene ends just after the hit and the next
+# one, which shows what the press did, carries the release
+INPLACE_TAIL = 40
+IDLE_DIM = 0.2                                   # what the keycaps keep once idle has dimmed them
+SHOT_LIGHT = {s["name"]: s.get("light", s["name"])  # a press variant uses its parent's LED renders
+              for s in json.load(open(os.path.join(HERE, "tutorial_shots.json"), encoding="utf-8"))}
 # anim/menu_cascade.c
 CASC_MS, CASC_FADE_MS = 756, 152
 CASC_DOT_MS, CASC_HALF_MS = CASC_FADE_MS // 3, CASC_FADE_MS * 2 // 3
@@ -239,10 +249,17 @@ def press_depth(t):
     return 3.5 * (1 - smooth((u - PRESS_DOWN - PRESS_HOLD) / PRESS_UP))
 
 
+def inplace(s):
+    """A press seen from the scene's own camera, not a close-up."""
+    return bool(s.get("press")) and not s["shot"].startswith("k_")
+
+
 def duration(s, sim):
     """How long a scene holds on screen, ms (the preview's pacing, not the firmware's)."""
     if s.get("dur"):
         return s["dur"]
+    if inplace(s):                               # a held key ends fully down
+        return PRESS_AT + PRESS_DOWN + 100 if s.get("hold") else PRESS_HIT + INPLACE_TAIL
     if s["id"] == "E1":
         return 6500
     if s["id"] == "E2":
@@ -251,8 +268,6 @@ def duration(s, sim):
         return 2600                              # SA_TAIL_MS
     if s.get("press"):
         return PRESS_AT + PRESS_DOWN + PRESS_HOLD + PRESS_UP + 500
-    if s.get("tap"):
-        return TAP_AT + 300
     if s["id"] == "F":
         return 3500
     if s.get("sweep") or s.get("cascade"):
@@ -278,6 +293,8 @@ def video(layers, story, out, width=640, fps=25):
     from fw_anim_sim import FwSim, mp_to_half_idx
     import tutorial_fx as fx
     sim, half_idx = FwSim(), mp_to_half_idx()
+    idle_sim = FwSim()
+    idle_sim.idle = True                         # the Eden screensaver (sa_render_idle_frame)
     cpu = agx()
     meta = load_story(story)
     if os.environ.get("PK_SCENES"):              # a subset, for a quick check
@@ -329,7 +346,7 @@ def video(layers, story, out, width=640, fps=25):
             if mp not in sh.led:
                 sh.led[mp] = None
                 if mp in led_of:
-                    f = os.path.join(layers, f"led_{led_of[mp][0]}", name + ".exr")
+                    f = os.path.join(layers, f"led_{led_of[mp][0]}", SHOT_LIGHT.get(name, name) + ".exr")
                     if os.path.exists(f):
                         img = exr(f)[..., led_of[mp][1]]
                         if img.shape != sh.base.shape[:2]:   # rendered at a lower width: soft light
@@ -344,7 +361,8 @@ def video(layers, story, out, width=640, fps=25):
         return total
 
     def phase_of(sid):
-        for p, v in (("C1", 3), ("C2.1", 7), ("C2.2", 10), ("C3", 11), ("C4", 15), ("T", 21)):
+        for p, v in (("C1", 3), ("C2.1", 7), ("C2.2", 10), ("C3", 11), ("C4", 15), ("T", 21), ("I", 21),
+                     ("F", 21), ("Z", 21)):
             if sid.startswith(p):
                 return v
         return 0
@@ -373,6 +391,15 @@ def video(layers, story, out, width=640, fps=25):
             out = a
         return out * min(1.0, el / CASC_FADE_MS)
 
+    def press_levels(name, key):
+        """(depth mm, shot) renders of `key` going down: a close-up's own depth variants,
+        or the in-place variant <shot>_p<r>_<c>_<depth> of a wide shot"""
+        if name.startswith("k_"):
+            cand = [(d, name + a) for d, a in DEPTHS]
+        else:
+            cand = [(0.0, name)] + [(d, f"{name}_p{key.replace(',', '_')}{a}") for d, a in DEPTHS[1:]]
+        return [(d, n) for d, n in cand if os.path.exists(os.path.join(layers, "base", n + ".exr"))]
+
     def light_frame(keys, status, ambient, name, rgbs, extra=None):
         sh = shot(name)
         ex = extra
@@ -395,11 +422,15 @@ def video(layers, story, out, width=640, fps=25):
         # after a close-up press, go back to the press: the board view shows the
         # whole reaction (the ripple, the sweep repainting every key) from its start
         before, hit_at, release_at = None, None, None
-        if prev is not None and prev.get("press") and prev.get("_hit") is not None and s["shot"] != "status":
+        # an in-place press carries on into this scene: the key comes back up here
+        carry = (prev["press"], duration(prev, sim)) if (prev is not None and inplace(prev) and not prev.get("hold")
+                                                         and prev["shot"] == s["shot"]) else None
+        if prev is not None and prev.get("press") and prev.get("_hit") is not None and s["shot"] != "status" \
+                and prev["shot"].startswith("k_"):
             # back to just before the press: the old legends until the key lands, then the change
             T = prev["_hit"] - REWIND_PRE
             before, hit_at = prev["keys_img"], prev["_hit"]
-            release_at = None if prev.get("hold") else prev["_hit"] + PRESS_HOLD + (PRESS_DOWN + PRESS_UP) // 2
+            release_at = None if prev.get("hold") else prev["_hit"] - PRESS_HIT + PRESS_RELEASE
         T0 = T
         if s.get("sweep") and (s["id"], "sweep") not in fired:
             fired.add((s["id"], "sweep"))
@@ -421,6 +452,13 @@ def video(layers, story, out, width=640, fps=25):
                     extra = sh.rgb[0] * c[0] + sh.rgb[1] * c[1] + sh.rgb[2] * c[2]
             else:
                 keys, status = dict(s["keys_img"]), list(s["status_img"])
+                if s.get("saver"):                 # idle: the comet field, the status panels off
+                    keys = {}
+                    for mp, hi in half_idx.items():
+                        b = idle_sim.panel(hi[0], hi[1], int(round(t))) if hi is not None else None
+                        if b is not None:
+                            keys[mp] = np.asarray(b, np.float32)
+                    status = [None, None]
                 if s["id"] in ("E3", "E3s"):       # the welcome tail: the stars still falling
                     tail = t + (1400 if s["id"] == "E3s" else 0)
                     keys = stars.keys(sim.TOTAL + tail)
@@ -436,8 +474,6 @@ def video(layers, story, out, width=640, fps=25):
                         sweeps.append(dict(origin=nxt["sweep"][0], start=s["_hit"], run=nxt["sweep"][1],
                                            scene=s["id"], old=dict(s["keys_img"]), new=nxt["keys_img"]))
                 point = s.get("point") if not pressed else None
-                if s.get("tap") and t >= TAP_AT:
-                    point = None
                 if point and not s["id"].startswith("C1") and s["shot"] != "status":
                     j_ = int(t // fx.P["TUT_POINT_PERIOD_MS"])
                     if (s["id"], j_) not in fired:
@@ -450,7 +486,7 @@ def video(layers, story, out, width=640, fps=25):
                         if d:
                             keys[mp] = cascaded(keys[mp], t - d) if t >= d else Z
                 elif prev is not None and prev["shot"] == s["shot"] and t < FADE_MS and not s.get("sweep") \
-                        and not prev.get("tap"):
+                        and not prev.get("press") and prev["id"] not in ("E1", "E2") and not s.get("saver"):
                     a = t / FADE_MS
                     for mp in set(keys) | set(prev["keys_img"]):
                         keys[mp] = prev["keys_img"].get(mp, Z) * (1 - a) + keys.get(mp, Z) * a
@@ -466,9 +502,10 @@ def video(layers, story, out, width=640, fps=25):
                 # a pressed key's display inverts while it is down (the firmware's key-down
                 # feedback); a held key (Shift, Intl, the armed Ctrl) stays inverted
                 inv = set(s.get("held") or ())
-                if s.get("press") and t >= PRESS_HIT and (s.get("hold") or t < PRESS_HIT + PRESS_HOLD +
-                                                          (PRESS_DOWN + PRESS_UP) // 2):
+                if s.get("press") and t >= PRESS_HIT and (s.get("hold") or t < PRESS_RELEASE):
                     inv.add(s["press"])
+                if carry and carry[1] + t < PRESS_RELEASE:
+                    inv.add(carry[0])
                 if hit_at is not None and T >= hit_at and (release_at is None or T < release_at):
                     inv.add(prev["press"])
                 if before is not None and T < hit_at:
@@ -503,21 +540,28 @@ def video(layers, story, out, width=640, fps=25):
                         keys[mp] = np.maximum(keys.get(mp, Z), m)
                 if point in keys:
                     keys[point] = keys[point] * (fx.pulse_level(t) / 255)
-                if s.get("tap") and TAP_AT <= t < TAP_AT + TAP_MS:
-                    keys[s["tap"]] = 1.0 - keys.get(s["tap"], Z)
-                if s["id"] not in ("E3", "E3s"):
+                if s["id"] not in ("E3", "E3s") and not s.get("saver"):
                     rgbs = leds.step(T, step, board, pointed=point, phase=phase, sweep_band=band,
                                      sweep_hue=shue, named=s.get("named") or (), name_hue=fx.K_HUES[0])
-            name = s["shot"]
-            depth = (press_depth(min(t, PRESS_AT + PRESS_DOWN + PRESS_HOLD // 2)) if s.get("hold")
-                     else press_depth(t)) if s.get("press") else 0.0
-            if depth > 0 and os.path.exists(os.path.join(layers, "base", name + "_dn.exr")):
-                levels = [(d, a) for d, a in DEPTHS if os.path.exists(os.path.join(layers, "base", name + a + ".exr"))]
+                if s.get("dim"):                   # idle engages: the keycaps, the panels and the LEDs dim
+                    f_ = 1.0 - (1.0 - IDLE_DIM) * smooth(t / s["dim"])
+                    keys = {mp: a * f_ for mp, a in keys.items()}
+                    status = [x * f_ if x is not None else None for x in status]
+                    if rgbs:
+                        rgbs = {mp: c * f_ for mp, c in rgbs.items()}
+            name, pkey, depth = s["shot"], s.get("press"), 0.0
+            if pkey:
+                depth = press_depth(min(t, PRESS_AT + PRESS_DOWN + PRESS_HOLD // 2)) if s.get("hold") else press_depth(t)
+            elif carry:
+                pkey, depth = carry[0], press_depth(carry[1] + t)
+            levels = press_levels(name, pkey) if depth > 0 else []
+            if len(levels) > 1:
+                depth = min(depth, levels[-1][0])
                 for (d0, a0), (d1, a1) in zip(levels, levels[1:]):
                     if depth <= d1:
                         f = (depth - d0) / (d1 - d0)
-                        A = light_frame(keys, status, ambient, name + a0, rgbs, extra)
-                        B = light_frame(keys, status, ambient, name + a1, rgbs, extra) if f > 0.02 else A
+                        A = light_frame(keys, status, ambient, a0, rgbs, extra)
+                        B = light_frame(keys, status, ambient, a1, rgbs, extra) if f > 0.02 else A
                         img = Image.blend(A, B, f)
                         break
             else:
