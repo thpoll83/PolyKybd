@@ -6,7 +6,7 @@ Nothing is sampled: every sound is numpy maths, so there is no third-party audio
 licence to track. The events come from tutorial_video.video_part() at video time:
 
 - ("scene", ms, id, dur)   a scene starts; the pad's chord follows the chapter, Eden gets
-                           a rising shimmer, a dark cut a soft thump, the title a low boom
+                           a rising shimmer, a language name a soft glass bloom (BLOOMS)
 - ("hit", ms, key, shot)   a key lands: a mechanical "thock" (THOCKS, PK_THOCK), fuller
                            in a close-up, and its softer upstroke when the key comes back
 - ("sweep", ms, run)       a ring sweeps the board: a band-passed noise "swoosh", never
@@ -292,6 +292,30 @@ def thump(freq=70, dur=0.5, gain=0.3):
     return np.sin(2 * np.pi * np.cumsum(f) / SR) * _env(n, 0.004, dur / 4) * gain
 
 
+def _reverb(x, secs=1.6, mix=0.4, seed=1):
+    """A small room: x convolved with low-passed, exponentially decaying noise."""
+    r = np.random.default_rng(seed)
+    n = int(secs * SR)
+    ir = _lowpass(r.standard_normal(n) * np.exp(-np.arange(n) / SR / (secs / 5)), 3000)
+    ir /= np.sqrt((ir ** 2).sum())
+    m = len(x) + n - 1
+    size = 1 << (m - 1).bit_length()
+    wet = np.fft.irfft(np.fft.rfft(x, size) * np.fft.rfft(ir, size), size)[:m]
+    return np.pad(x, (0, n - 1)) * (1 - mix) + wet * mix
+
+
+def glass_bloom(semitone, peak=0.12):
+    """A language name appearing: one soft note whose overtones open one after the other
+    over half a second, like a glass harmonica, in a little room. No strike, no click."""
+    f = _note(semitone)
+    t = np.arange(int(3.2 * SR)) / SR
+    y = sum(a * np.sin(2 * np.pi * f * h * t) * np.clip((t - d) / 0.5, 0, 1) ** 2
+            for h, a, d in ((1, 1, 0), (2, 0.25, 0.15), (3, 0.08, 0.3)))
+    y *= np.sin(np.pi / 2 * np.minimum(1, t / 0.3)) ** 2 * np.exp(-np.maximum(0, t - 0.6) / 0.9)
+    y = _reverb(y)
+    return y / np.abs(y).max() * peak
+
+
 def pad(total_ms, scenes):
     """The drone: each chapter's chord, crossfading over 2 s, the level following the
     story (a slow swell in Eden, down at idle, gone by the end of the fade to black)."""
@@ -348,6 +372,9 @@ def pad(total_ms, scenes):
 
 
 WIPES = {"C4.6": "rise", "C4.9": "fall", "C4.12": "breath"}   # Greek, Japanese, Korean (the whirl did not fit)
+# the scenes whose name lights up, and each one's note in the pad's F major (semitones from
+# A4): Greek C5, Japanese A4, Korean D5, then the 160 and 10 cards F5 and G5
+BLOOMS = {"C4.5": 3, "C4.8": 0, "C4.11": 5, "C4.21": 8, "C4.23": 10}
 
 
 def write(events, total_ms, path):
@@ -397,8 +424,8 @@ def write(events, total_ms, path):
                 _add(buf, ms, swoosh(2200, seed=98, gain=0.1))
             elif sid == "E3":                    # the room light comes up: a swell, starting just before
                 _add(buf, ms - 1000, swell(6.0))
-            elif sid.startswith("C4.") and sid.endswith("d"):   # the dark cut before each item
-                _add(buf, ms, _pan(thump(), 0.0))
+            elif sid in BLOOMS:                  # a name lights up (the dark cut before it is silent)
+                _add(buf, ms, _pan(glass_bloom(BLOOMS[sid]), 0.0))
     if "Z1" in by_id and "Z2" in by_id:
         # idle, the screensaver and the fade to black swell into a low organ chord, which
         # peaks as the picture goes black and dies away under the title
