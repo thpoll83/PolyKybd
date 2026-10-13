@@ -302,12 +302,24 @@ def inplace(s):
     return bool(s.get("press")) and not s["shot"].startswith("k_")
 
 
+def warp(s, t):
+    """A press scene's time on the press timeline: a scene with slow=k plays its press k
+    times slower (the first lit key) from PRESS_AT on."""
+    k = s.get("slow") or 1
+    return t if t <= PRESS_AT else PRESS_AT + (t - PRESS_AT) / k
+
+
+def unwarp(s, tw):
+    k = s.get("slow") or 1
+    return tw if tw <= PRESS_AT else PRESS_AT + (tw - PRESS_AT) * k
+
+
 def duration(s, sim):
     """How long a scene holds on screen, ms (the preview's pacing, not the firmware's)."""
     if s.get("dur"):
         return s["dur"]
     if inplace(s):                               # a held key ends fully down
-        return PRESS_AT + PRESS_DOWN + 100 if s.get("hold") else PRESS_HIT + INPLACE_TAIL
+        return int(round(unwarp(s, PRESS_AT + PRESS_DOWN + 100) if s.get("hold") else unwarp(s, PRESS_HIT) + INPLACE_TAIL))
     if s["id"] == "E1":
         return 6500
     if s["id"] == "E2":
@@ -315,7 +327,7 @@ def duration(s, sim):
     if s["id"] == "E3":
         return 2600                              # SA_TAIL_MS
     if s.get("press"):
-        return PRESS_AT + PRESS_DOWN + PRESS_HOLD + PRESS_UP + 500
+        return int(round(unwarp(s, PRESS_AT + PRESS_DOWN + PRESS_HOLD + PRESS_UP))) + 500
     if s["id"] == "F":
         return 3500
     if s.get("sweep") or s.get("cascade"):
@@ -562,7 +574,7 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
         # whole reaction (the ripple, the sweep repainting every key) from its start
         before, hit_at, release_at = None, None, None
         # an in-place press carries on into this scene: the key comes back up here
-        carry = (prev["press"], duration(prev, sim)) if (prev is not None and inplace(prev) and not prev.get("hold")
+        carry = (prev["press"], warp(prev, duration(prev, sim)), prev.get("slow") or 1) if (prev is not None and inplace(prev) and not prev.get("hold")
                                                          and prev["shot"] == s["shot"]) else None
         if prev is not None and prev.get("press") and prev.get("_hit") is not None and s["shot"] != "status" \
                 and prev["shot"].startswith("k_"):
@@ -622,12 +634,14 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                     tail = t + (1400 if s["id"] == "E3s" else 0)
                     keys = stars.keys(sim.TOTAL + tail)
                     ambient = 0.07 + (0.35 - 0.07) * smooth(tail / 2600)
-                pressed = bool(s.get("press")) and t >= PRESS_HIT
+                tw = warp(s, t)                      # the press timeline (slower for the first key)
+                pressed = bool(s.get("press")) and tw >= PRESS_HIT
                 if s.get("press") and pressed and (s["id"], "hit") not in fired:
                     fired.add((s["id"], "hit"))
-                    s["_hit"] = T0 + PRESS_HIT
+                    s["_hit"] = T0 + unwarp(s, PRESS_HIT)
                     # the key comes back up PRESS_RELEASE - PRESS_HIT later (a held key never does)
-                    ev.append(("hit", n * step, s["press"], s["shot"], bool(s.get("hold")), PRESS_RELEASE - PRESS_HIT))
+                    ev.append(("hit", n * step, s["press"], s["shot"], bool(s.get("hold")),
+                               (PRESS_RELEASE - PRESS_HIT) * (s.get("slow") or 1)))
                     if s.get("strike"):
                         ripples.append((s["press"], s["_hit"]))
                     if nxt is not None and nxt.get("sweep"):
@@ -664,9 +678,9 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 # a pressed key's display inverts while it is down (the firmware's key-down
                 # feedback); a held key (Shift, Intl, the armed Ctrl) stays inverted
                 inv = set(s.get("held") or ())
-                if s.get("press") and t >= PRESS_HIT and (s.get("hold") or t < PRESS_RELEASE):
+                if s.get("press") and tw >= PRESS_HIT and (s.get("hold") or tw < PRESS_RELEASE):
                     inv.add(s["press"])
-                if carry and carry[1] + t < PRESS_RELEASE:
+                if carry and carry[1] + t / carry[2] < PRESS_RELEASE:
                     inv.add(carry[0])
                 if s.get("release") and t < PRESS_UP / 2:   # a held key, coming back up
                     inv.add(s["release"])
@@ -739,9 +753,10 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 continue
             name, pkey, depth = s["shot"], s.get("press"), 0.0
             if pkey:
-                depth = press_depth(min(t, PRESS_AT + PRESS_DOWN + PRESS_HOLD // 2)) if s.get("hold") else press_depth(t)
+                tw = warp(s, t)
+                depth = press_depth(min(tw, PRESS_AT + PRESS_DOWN + PRESS_HOLD // 2)) if s.get("hold") else press_depth(tw)
             elif carry:
-                pkey, depth = carry[0], press_depth(carry[1] + t)
+                pkey, depth = carry[0], press_depth(carry[1] + t / carry[2])
             elif s.get("release"):
                 pkey, depth = s["release"], 3.5 * (1 - smooth(t / PRESS_UP))
             levels = press_levels(name, pkey) if depth > 0 else []
@@ -757,10 +772,11 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
             else:
                 img = light_frame(keys, status, ambient, name, rgbs, extra)
             if s.get("pan"):                       # one slow track over the group, rows filling the frame
-                g_, a_, b_ = s["pan"]
+                g_, a_, b_ = s["pan"][:3]
+                zoom = s["pan"][3] if len(s["pan"]) > 3 else 1.0
                 g0, glen = pan_span[g_]
                 u = smooth(min(max((pan_at[s["id"]] + t - g0) / glen, 0), 1))
-                img = img.crop(shot(s["shot"]).pan_box(a_ + (b_ - a_) * u))
+                img = img.crop(shot(s["shot"]).pan_box(a_ + (b_ - a_) * u, room=1.12 * (1 + (zoom - 1) * u)))
             img = img.resize((width, out_h), Image.LANCZOS)
             if s.get("fadeout") and t > dur - s["fadeout"]:
                 img = Image.eval(img, lambda v, f_=smooth((dur - t) / s["fadeout"]): int(v * f_))

@@ -133,11 +133,13 @@ class Screens:
         return Frame(keys)
 
     def app(self, name, mod="plain"):
-        """An app's shortcut overlay on the base layout, as PolyKybdHost sends it: the
-        cells of res/overlays/<name>_template.mods.png (10 x 9 cells of 72 x 40, one per
-        keycode_to_mapping_idx(); im_converter.py's channels: A plain, R Ctrl, G Alt,
-        B Shift) replace the legend of each key whose cell holds anything; the other
-        keys keep their own legend."""
+        """An app's shortcut overlay on the base layout, as PolyKybdHost sends it and the
+        firmware draws it: the cells of res/overlays/<name>_template.mods.png (10 x 9
+        cells of 72 x 40, one per keycode_to_mapping_idx(); im_converter.py's channels:
+        A plain, R Ctrl, G Alt, B Shift) go OVER the key's own legend. update_displays()
+        draws the legend, then copy_overlay_to_buffer() clears a courtyard around the
+        icon (kdisp_clear_rowmajor_courtyard: every lit run grown by KDISP_CY_DEFAULT = 3
+        px each way) and draws the icon, so letter and icon show together."""
         from polyhost.device.keys import KeyCode, keycode_to_mapping_idx
         a = np.asarray(Image.open(os.path.join(HOST, "polyhost", "res", "overlays",
                                                f"{name}_template.mods.png")).convert("RGBA"))
@@ -157,7 +159,10 @@ class Screens:
                 continue
             cell = (a[y:y + OH, x:x + OW, ch] > 127).astype(np.float32)
             if cell.any():
-                fr.keys[mp] = cell
+                court = cell.copy()                    # the 3 px square courtyard around the icon
+                for ax in (0, 1):
+                    court = np.maximum.reduce([np.roll(court, d, ax) for d in range(-3, 4)])
+                fr.keys[mp] = np.maximum(fr.keys[mp] * (1 - court), cell)
         return fr
 
     def intl(self, letter=None, picker=False, chosen=None):

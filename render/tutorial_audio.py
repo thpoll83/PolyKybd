@@ -12,7 +12,7 @@ licence to track. The events come from tutorial_video.video_part() at video time
 - ("sweep", ms, run)       a ring sweeps the board: a band-passed noise "swoosh", never
                            the same twice (band, direction, length and pan vary)
 - ("cascade", ms, rows, named)  a menu cascades in: a short, airy swoosh
-- ("appear", ms, key)      a name key's legend arrives: a very soft high tick
+- ("appear", ms, key)      a name key's legend arrives (silent)
 
 The stage turning bright after Eden gets a slow swell, and the ending (idle, the
 screensaver, the fade to black) swells into a low organ chord that dies under the title.
@@ -135,12 +135,15 @@ def recorded_key(strokes, close, rng):
     moved up to 8 %, its tone darkened by a random amount (a mix with a low-passed copy),
     its first click softened a little at random, its level up to 30 % down."""
     x = strokes[rng.integers(len(strokes))]
-    r = rng.uniform(0.92, 1.08)
+    # about one press in four is a deeper one: played slower, so lower and fuller
+    r = rng.uniform(0.80, 0.90) if rng.random() < 0.25 else rng.uniform(0.92, 1.08)
     x = np.interp(np.arange(0, len(x) - 1, r), np.arange(len(x)), x)
     dark = rng.uniform(0.0, 0.6)
     x = x * (1 - dark) + _lowpass(x, rng.uniform(1500, 3500)) * dark
     att = int(0.003 * SR)
     x[:att] *= rng.uniform(0.7, 1.0)
+    if r < 0.9:                                   # and a little more body below
+        x = x + _lowpass(x, 600) * rng.uniform(0.2, 0.5)
     return x * (0.5 if close else 0.36) * rng.uniform(0.7, 1.0)
 
 
@@ -166,23 +169,26 @@ def tick(rng):
 
 
 def swell(dur, seed=7):
-    """The stage turning bright: an A major chord swelling up while its tone opens, from a
-    dull hum to a bright, full chord, then settling. Tonal, so it reads apart from the
-    noise swooshes."""
+    """The stage turning bright, like a sunrise: a low open fifth fades in, then the notes
+    of an A major chord rise into it one after another (A3, E4, A4, C#5, E5), each a soft
+    voice with a slow vibrato and no attack, over a breath of air that opens upwards."""
+    rng = np.random.default_rng(seed)
     n = int(dur * SR)
     t = np.arange(n) / SR
     u = t / dur
-    env = np.sin(np.pi * np.minimum(u / 0.7, 1.0) / 2) ** 2 * np.clip((1 - u) / 0.35, 0, 1)
-    bright = 1.0 + 7.0 * np.clip(u / 0.7, 0, 1) ** 1.5        # harmonics let in as the light comes up
     out = np.zeros((n, 2))
-    for j, st in enumerate((-24, -17, -12, -8, -5)):
+    fade_out = np.clip((1 - u) / 0.3, 0, 1)
+    for st, start, g in ((-36, 0.0, 0.9), (-29, 0.05, 0.6),                 # A1 + E2: the ground
+                         (-12, 0.18, 0.5), (-5, 0.30, 0.45), (0, 0.42, 0.4), (4, 0.54, 0.35), (7, 0.66, 0.3)):
         f = _note(st)
+        env = np.clip((u - start) / 0.22, 0, 1) ** 2 * fade_out
+        vib = 1 + 0.004 * np.sin(2 * np.pi * (4.5 + rng.uniform(-0.5, 0.5)) * t)
         for side, det in ((0, 0.998), (1, 1.002)):
-            ph = 2 * np.pi * f * det * t + j
-            v = sum(np.exp(-(k - 1) / bright) / k * np.sin(k * ph) for k in range(1, 9))
-            out[:, side] += v * (1.0 if j == 0 else 0.6)
-    out *= env[:, None]
-    return out / max(np.abs(out).max(), 1e-6) * 0.16
+            ph = 2 * np.pi * f * det * np.cumsum(vib) / SR
+            out[:, side] += g * env * (np.sin(ph) + 0.2 * np.sin(2 * ph) + 0.06 * np.sin(3 * ph))
+    air = _band_noise(n, lambda v: 250 + 2500 * v ** 2, 0.6, int(rng.integers(1 << 30)))
+    out += (air * np.clip(u / 0.6, 0, 1) * fade_out * 1.2)[:, None]
+    return out / max(np.abs(out).max(), 1e-6) * 0.15
 
 
 def organ(total_n, start, peak, end):
@@ -382,7 +388,7 @@ def write(events, total_ms, path):
         elif kind == "cascade":
             pass                                 # a menu has the pad's own movement; a name its ticks
         elif kind == "appear":
-            _add(buf, ms, _pan(tick(rng), -0.4 if int(e[2].split(",")[0]) < 5 else 0.4))
+            pass                                 # a name's keys arrive silently
         elif kind == "scene":
             sid, dur = e[2], e[3]
             if sid == "E1":                      # the sparks streaming in

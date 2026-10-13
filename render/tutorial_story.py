@@ -63,7 +63,7 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
           sweep=None, strike=False, named=(), cascade=0, hold=False, held=(),
           beat=True, fadein=0, dur=0, dim=0, saver=False, glow=(), fadeout=0, title="", pan=None,
           name_hue=0, light=None, status_fade=False, ambient_to=None, release=None, rainbow=0.0,
-          rainbow_in=1200):
+          rainbow_in=1200, slow=0):
     """One scene. sweep = (origin key, run ms): a board-wide front leaves `origin`, and
     every key it passes shows this scene's legend instead of the previous one's.
     strike: the press sends the chapter-1 ripple. named: keys spelling a language name
@@ -83,7 +83,8 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
     (the video eases towards it). status_fade: the status panels fade out over the scene.
     ambient_to: the room light falls to this over the scene's first 55 %. release: a held
     key coming back up at the scene's start. rainbow: the key LEDs' Eden rainbow fading
-    in to this level over rainbow_in ms (full shot only)."""
+    in to this level over rainbow_in ms (full shot only). slow: the press plays this many
+    times slower."""
     point = getattr(frame, "point", None)
     fr = frame.copy()
     if status != (None, None):
@@ -94,7 +95,7 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
                        beat=beat, fadein=fadein, dur=dur, dim=dim, saver=saver, glow=[list(g) for g in glow],
                        fadeout=fadeout, title=title, pan=list(pan) if pan else None, name_hue=name_hue,
                        light=list(light) if light else None, status_fade=status_fade, ambient_to=ambient_to,
-                       release=release, rainbow=rainbow, rainbow_in=rainbow_in,
+                       release=release, rainbow=rainbow, rainbow_in=rainbow_in, slow=slow,
                        frame=fr))
 
 
@@ -139,7 +140,8 @@ e = "1,3"
 lit = only(BASE, {e})
 scene("C1.1a", "full", "One key fades in, the rest of the board is dark", ringed(lit, e), ("Press the", "lit key"),
       fadein=P_LETTER_IN, beat=False)
-scene("C1.1b", "full", "Pressed in place: its display inverts", ringed(lit, e), ("Press the", "lit key"), press=e)
+scene("C1.1b", "full", "Pressed in place, slowly: its display inverts", ringed(lit, e), ("Press the", "lit key"),
+      press=e, slow=2.2)
 scene("C1.2", "full", "Board reveal: a ring leaves the key and lights every key", BASE,
       ("Every key", "is a screen"), sweep=(e, P_REVEAL), beat=False)
 
@@ -184,9 +186,9 @@ M = "menu"
 scene("T1b", "k_lang", "Close-up: the key goes down", ringed(BASE, "9,1"), ("Pick yours in", "the Lang menu"),
       press="9,1")
 # each menu chapter is one slow track, close, the key rows filling the frame, while the tabs
-# are pressed. The Lang tabs sit on the left half's top row, so its track stops at 0.6 to
-# keep the last tab in view; the emoji tabs move to the right half and so does its track.
-LANG_PAN, EMOJI_PAN = ("lang", 0.0, 0.6), ("emoji", 0.0, 1.0)
+# are pressed. The Lang tabs sit on the left half's top row, so its track runs to 0.85 and
+# closes in a little (the crop 18 % tighter by its end), the last tab still in view; the emoji tabs move to the right half and so does its track.
+LANG_PAN, EMOJI_PAN = ("lang", 0.0, 0.85, 0.82), ("emoji", 0.0, 1.0)   # (group, from, to[, zoom at the end])
 scene("T1c", M, "The language menu cascades in; the camera tracks slowly across it", S.lang_menu(0),
       ("Pick yours in", "the Lang menu"), cascade=3, beat=False, pan=LANG_PAN, dur=4000)
 regions = [("From Canada", "to Chile"), ("All across", "Europe"), ("The Middle", "East"),
@@ -255,39 +257,23 @@ scene("I3b", "intl_h", "The accent pressed in place", ringed(PICK, ACC), ("Now t
 scene("I3c", "intl_h", "Saved: the O key now shows its new accent, lit like the accent was", CHOSEN,
       ("Saved for", "the O"), held=[I_], glow=[(O_, ACC)], beat=False)
 
-# ---- app shortcuts: GIMP's overlay, with Ctrl and Shift held ------------------------------
-# PolyKybdHost follows the window in front and sends its shortcut overlay: GIMP's tools on
-# the letters, its file and edit actions under Ctrl, more tools under Shift, Wilber on Esc.
-# On the close menu camera: the overlay sweeps in from Esc while the camera tracks from the
-# right half to the left, where Ctrl (4,0) and Shift (3,0) are; each is held, then let go.
-CTRL, SHIFT_L, ESC = "4,0", "3,0", "0,0"
-GIMP, GIMP_C, GIMP_S = S.app("gimp"), S.app("gimp", "ctrl"), S.app("gimp", "shift")
-APPS_IN, APPS_HOLD = ("apps_in", 1.0, 0.0), ("apps_hold", 0.0, 0.12)
-scene("A0", M, "The board at home, the menu camera", BASE, ("Every app,", "its own keys"), beat=False,
-      pan=APPS_IN, dur=700)
+# ---- app shortcuts: GIMP's overlay ---------------------------------------------------------
+# PolyKybdHost follows the window in front and sends its shortcut overlay. The close menu
+# camera first tracks from the right half to the left; there GIMP's overlay sweeps in from
+# Esc, drawn over the en-US legends as the firmware does (Screens.app), and the video goes
+# back to the whole board for the finale.
+ESC = "0,0"
+GIMP = S.app("gimp")
+scene("A0", M, "The board at home; the camera tracks to the left", BASE, ("Every app,", "its own keys"),
+      beat=False, pan=("apps_in", 1.0, 0.0), dur=4200)
 scene("A1", M, "GIMP comes to the front: its overlay sweeps in from Esc", GIMP, ("Every app,", "its own keys"),
-      sweep=(ESC, P_REVEAL), beat=False, pan=APPS_IN, dur=4300)
-scene("A2a", M, "Hold Ctrl", ringed(GIMP, CTRL), ("Hold Ctrl", "for more"), beat=False, pan=APPS_HOLD)
-scene("A2b", M, "Ctrl goes down and stays held", ringed(GIMP, CTRL), ("Hold Ctrl", "for more"), press=CTRL,
-      hold=True, beat=False, pan=APPS_HOLD)
-scene("A2c", "menu_p4_0_dn", "Ctrl held: GIMP's file and edit actions", GIMP_C, ("Hold Ctrl", "for more"),
-      held=[CTRL], beat=False, pan=APPS_HOLD)
-scene("A2d", M, "Ctrl comes back up: the tools again", GIMP, ("Or Shift", "for others"), release=CTRL,
-      beat=False, pan=APPS_HOLD)
-scene("A3a", M, "Hold Shift", ringed(GIMP, SHIFT_L), ("Or Shift", "for others"), beat=False, pan=APPS_HOLD)
-scene("A3b", M, "Shift goes down and stays held", ringed(GIMP, SHIFT_L), ("Or Shift", "for others"),
-      press=SHIFT_L, hold=True, beat=False, pan=APPS_HOLD)
-scene("A3c", "menu_p3_0_dn", "Shift held: more of GIMP's tools", GIMP_S, ("Or Shift", "for others"),
-      held=[SHIFT_L], beat=False, pan=APPS_HOLD)
-scene("A3d", M, "Shift comes back up", GIMP, ("Or Shift", "for others"), release=SHIFT_L, beat=False,
-      pan=APPS_HOLD)
-scene("A4", "full", "Back to the board's own legends", BASE, ("You're", "ready!"), sweep=(ESC, P_WIPE),
-      beat=False)
+      sweep=(ESC, P_REVEAL), beat=False, pan=("apps_hold", 0.0, 0.1), dur=5200)
 
 # ---- finale, then idle: the board dims and the Eden screensaver takes over ----------------
 # the status panels fade out slowly while "You're ready!" is up
 # the board lights up once more on the whole view: the key LEDs' rainbow fades back in
-scene("F", "full", "You're ready!", BASE, ("You're", "ready!"), status_fade=True, rainbow=0.55, dur=4000)
+scene("F", "full", "You're ready!", BASE, ("You're", "ready!"), status_fade=True, rainbow=0.55, dur=4600,
+      sweep=(ESC, P_WIPE), beat=False)
 scene("Z1", "full", "Idle: the keycaps and the LEDs dim", BASE, dim=700, dur=1000, beat=False, rainbow=0.55,
       rainbow_in=0)
 # the screensaver runs; the room light goes down first, then the picture fades to black
