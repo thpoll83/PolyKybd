@@ -35,6 +35,13 @@ sys.path.insert(0, os.path.join(HOST, "tools"))
 import oled_preview as op  # noqa: E402
 import lang_demo as ld  # noqa: E402
 import lang_layer_demo as lld  # noqa: E402
+# ⚠️ PolyKybdHost's lang_layer_demo draws the firmware's column-native glyphs correctly only
+# on the branch fix/lang-layer-demo-column-glyphs (until it is merged): on main the Lang
+# menu's flags come out as diagonal "snowflakes", and the 160 / 10 cards cannot be drawn
+if not hasattr(lld, "_glyph_pixels"):
+    raise SystemExit("PolyKybdHost is on a branch without the column-native glyph fix: run "
+                     "'git -C ../PolyKybdHost checkout fix/lang-layer-demo-column-glyphs' "
+                     "(see render/docker/README.md)")
 import emoji_demo as ed  # noqa: E402
 import intl_picker_demo as ipd  # noqa: E402
 from gfx_font import load_all_fonts  # noqa: E402

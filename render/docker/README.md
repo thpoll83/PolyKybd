@@ -7,9 +7,10 @@ It runs on the machine's GPU if it has one.
 ## What you need on the machine
 
 - Docker.
-- Three checkouts side by side in one folder, on the branch with the video scripts:
-  `PolyKybd`, `PolyKybdHost` and `qmk_firmware` (only `keyboards/polykybd/` is read;
-  no submodules needed).
+- Three checkouts side by side in one folder: `PolyKybd` on `video/eden-tutorial`,
+  `PolyKybdHost` on `fix/lang-layer-demo-column-glyphs` (its `main` draws the Lang menu's
+  flags wrongly; the story stops with a message if the branch is wrong) and `qmk_firmware`
+  on `PolyKybd` (only `keyboards/polykybd/` is read; no submodules needed).
 - The scene `PolyKybd/render/out/hero.blend` (367 MB, not in git). The image builds it
   (below), or copy an existing one there.
 
