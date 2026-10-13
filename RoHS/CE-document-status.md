@@ -166,4 +166,73 @@ replacement and rejected (its datasheet carries no RoHS statement), so
 3. Ask Winbond for a current declaration (§3a); correct the matrix either way
 4. Resolve JUSHUO vs Hirose for J1–J36 (§3c)
 5. **After A6** (v3.3 gerbers): `pcb_render.py` → `pcb_merge.py` → `PolyKybd-PCB-Layers.pdf`
-6. **After the GmbH exists** and the EMC report is issued: fill in the DoC (§1)
+6. **Before the EMC sample ships** (§6a): fix `device_version` → `3.3.0` in the
+   firmware repo and re-flash, so the EUT does not report HW v3.2
+7. **After the GmbH exists** and the EMC report is issued: fill in the DoC (§1)
+
+---
+
+## 6. EMC test sample — EUT identification
+
+The block below is what goes on the lab's test-request form and into the test
+report's EUT table. Recorded here so it is not only in a conversation — the test
+report has to name the same revision the DoC eventually names (§1).
+
+| Field | Value |
+|---|---|
+| Manufacturer | PolyTasten GmbH — address `[TO CONFIRM]` (same placeholder as the DoC) |
+| Product | PolyKybd Split72 |
+| Model / type designation | `POLYKYBD-SPLIT72-01` |
+| Hardware revision | **v3.3** |
+| Firmware under test | **`PolyKybd-fw-v1.7.3`** (tagged 2026-10-05, `PROTOCOL_VERSION 22`) |
+| USB VID / PID | `0x2021` / `0x2007` |
+| USB descriptor strings | Manufacturer `PolyTasten`, Product `PolyKybd Split72` |
+| Sample serial | **`POLYKYBD-SPLIT72-01/3.3/EMC-001`** |
+
+### a. ⚠️ The firmware reports the WRONG hardware revision
+
+`keyboards/polykybd/split72/keyboard.json` still carries
+`"device_version": "3.2.0"`, so QMK generates `DEVICE_VER 0x3200` and **both**
+places the keyboard states its revision report v3.2:
+
+- the USB `bcdDevice` field, which the lab will read off the descriptor, and
+- the HID `GET_ID` reply, `"Split72 1.7.3 P22 HW0x3200 "` (`hid_com.c`
+  `POLY_GET_ID_STR`), which is what the host app and the status OLED show.
+
+On a v3.3 board that is simply wrong, and it is wrong in the one field a test
+report quotes verbatim. **Fix `device_version` → `3.3.0` and re-flash the sample
+before it ships**; otherwise the report documents a revision that does not exist
+and the DoC cannot reference it. The fix is one line in `keyboard.json` in the
+firmware repo — still open as of 2026-10-13, and still `3.2.0` on
+`origin/PolyKybd` (which is at `FW_VERSION 1.9.1`).
+
+### b. The USB serial number is NOT this serial
+
+`SERIAL_NUMBER_USE_HARDWARE_ID` defaults on for ChibiOS, and RP2040's
+`get_hardware_id()` returns `flash_get_unique_id()` — the external QSPI flash
+chip's 0x4B unique id, since the RP2040 itself has none. So the serial string in
+the USB descriptor is a 16-hex-digit flash id with no relationship to
+`POLYKYBD-SPLIT72-01/3.3/EMC-001`, which is a chassis/label serial. Tell the lab
+which one they are recording, or the report will carry two unexplained serials.
+
+### c. The EUT is both halves plus the interconnect
+
+Not one device: the left half (USB host connection) **and** the right half,
+joined by the split cable. That cable carries a 460800-baud full-duplex UART and
+is a radiating structure, so **record both cable lengths** (split cable and
+USB-C host cable) in the EUT description — a radiated-emissions result is not
+reproducible without them.
+
+### d. Ask for three operating modes
+
+The switching regulators (TLV62569, nominal 1.5 MHz) use DCS-Control, which drops
+into Power Save Mode at light load — the switching frequency falls and the
+spectrum spreads, so the quiet state is not the benign one. Specify:
+
+1. **Idle / screensaver** — bucks in Power Save Mode, displays in the idle style
+2. **Typing, RGB at full brightness** — peak current, bucks in continuous PWM
+3. **Overlay burst** — a host-driven overlay transfer, i.e. sustained USB traffic
+   plus the split UART at full rate plus 72 SPI display writes
+
+Mode 3 is the worst case for both conducted and radiated and is the one a bench
+test will not reach by itself; it needs the host app driving an app switch.
