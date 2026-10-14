@@ -378,18 +378,18 @@ def _intensity(t, start, end, hits, base=0.35, step=0.22, fade=2.5):
 def lang_texture(start, end, hits):
     """The Lang menu ("Pick yours in the Lang menu" to the emoji menu): a slow, soft
     arpeggio on the pad's D minor 9, travelling up and down. Each tab pressed makes it
-    louder, quicker (0.34 -> 0.22 s a note), brighter, and adds the octave above. The
+    a little louder, quicker and brighter: from level 0.18 to 0.45 after three tabs. The
     result starts at `start`."""
     n = int((end - start + 4) * SR)
     out = np.zeros((n, 2))
-    level = _intensity(start + np.arange(n) / SR, start, end, hits)
+    level = _intensity(start + np.arange(n) / SR, start, end, hits, base=0.18, step=0.09)
     pattern = [-7, 0, 3, 7, 12, 7, 3, 0]          # D4 A4 C5 E5 A5 ... (semitones from A4)
     at, k = start, 0
     while at < end:
         lv = level[min(int((at - start) * SR), n - 1)]
         if lv > 0.01:
             m = pattern[k % len(pattern)]
-            y = _bell(_note(m), 1.6, 0.3 + 0.7 * lv, seed=k) * 0.035 * lv
+            y = _bell(_note(m), 1.6, 0.3 + 0.7 * lv, seed=k) * 0.025 * lv
             if lv > 0.6:                          # the octave above joins in
                 hi = _bell(_note(m + 12), 1.2, 0.5, seed=k + 999) * 0.02 * (lv - 0.6) / 0.4
                 y[:len(hi)] += hi
@@ -504,6 +504,7 @@ def pad(total_ms, scenes):
 
 
 REVEALS = {"A1"}                                  # sweeps that bring an app overlay
+BLOOM_SWEEPS = {"F": 0}                           # sweeps with a glass bloom (A4) instead of wind
 STAR_START = 4.3                                  # the Eden stars: silent before 4.3 s,
 STAR_FADE, STAR_THIN = (9.0, 3.0), 3              # thinning out and fading after 9 s
 WIPES = {"C4.6": "rise", "C4.9": "fall", "C4.12": "breath"}   # Greek, Japanese, Korean (the whirl did not fit)
@@ -549,6 +550,8 @@ def write(events, total_ms, path):
             _add(buf, ms, wipe_whoosh(WIPES[e[3]], e[2], seed=3000 + k))
         elif kind == "sweep" and e[3] in REVEALS:   # an app overlay comes in: bells, not wind
             _add(buf, ms, reveal_run(e[2]))
+        elif kind == "sweep" and e[3] in BLOOM_SWEEPS:   # "You're ready!": one glass bloom, no wind
+            _add(buf, ms, _pan(glass_bloom(BLOOM_SWEEPS[e[3]]), 0.0))
         elif kind == "sweep":
             first = e[3] == "C1.2"               # the board reveal: longer, the one to remember
             _add(buf, ms, swoosh(e[2] + 1500 if first else e[2], seed=1000 + k, gain=0.26 if first else 0.22,
