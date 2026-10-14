@@ -15,7 +15,9 @@ licence to track. The events come from tutorial_video.video_part() at video time
 - ("appear", ms, key)      a name key's legend arrives (silent)
 - ("star", ms, key)        a star appears on a key in Eden: a soft sound (PK_STARS)
 
-The stage turning bright after Eden gets a slow swell, and the ending (idle, the
+The Lang menu and the Intl picker each get a texture of their own over the pad, rising
+with each press (lang_texture, intl_texture); GIMP's overlay arrives on a run of soft
+bells (reveal_run). The stage turning bright after Eden gets a slow swell, and the ending (idle, the
 screensaver, the fade to black) swells into a low organ chord that dies under the title.
 
 The pad is a slow drone of detuned sines that changes chord with the chapter and fades
@@ -354,6 +356,98 @@ def star_sound(style, rng):
     return y / np.abs(y).max()
 
 
+def _bell(f, dur, bright, seed):
+    """A soft struck tone: the fundamental, `bright` of the 2nd and 3rd partials dying
+    faster, a 15 ms rise and no click."""
+    t = np.arange(int(dur * SR)) / SR
+    ph = np.random.default_rng(seed).uniform(0, 6, 3)
+    y = np.sin(2 * np.pi * f * t + ph[0]) + bright * (0.5 * np.sin(2 * np.pi * 2 * f * t + ph[1])
+                                                      + 0.25 * np.sin(2 * np.pi * 3 * f * t + ph[2])) * np.exp(-t / 0.25)
+    return y * np.sin(np.pi / 2 * np.minimum(1, t / 0.015)) ** 2 * np.exp(-t / (dur / 3.5))
+
+
+def _intensity(t, start, end, hits, base=0.35, step=0.22, fade=2.5):
+    """A chapter's rising level: `base` once it has faded in, up by `step` at each hit
+    (eased over a second), back to nothing over the last `fade` s before `end`."""
+    lev = np.where(t >= start, base * np.clip((t - start) / 2.0, 0, 1), 0.0)
+    for h in hits:
+        lev = lev + step * np.clip((t - h) / 1.0, 0, 1) ** 2
+    return np.minimum(lev, 1.0) * np.clip((end - t) / fade, 0, 1) * (t < end)
+
+
+def lang_texture(start, end, hits):
+    """The Lang menu ("Pick yours in the Lang menu" to the emoji menu): a slow, soft
+    arpeggio on the pad's D minor 9, travelling up and down. Each tab pressed makes it
+    louder, quicker (0.34 -> 0.22 s a note), brighter, and adds the octave above. The
+    result starts at `start`."""
+    n = int((end - start + 4) * SR)
+    out = np.zeros((n, 2))
+    level = _intensity(start + np.arange(n) / SR, start, end, hits)
+    pattern = [-7, 0, 3, 7, 12, 7, 3, 0]          # D4 A4 C5 E5 A5 ... (semitones from A4)
+    at, k = start, 0
+    while at < end:
+        lv = level[min(int((at - start) * SR), n - 1)]
+        if lv > 0.01:
+            m = pattern[k % len(pattern)]
+            y = _bell(_note(m), 1.6, 0.3 + 0.7 * lv, seed=k) * 0.035 * lv
+            if lv > 0.6:                          # the octave above joins in
+                hi = _bell(_note(m + 12), 1.2, 0.5, seed=k + 999) * 0.02 * (lv - 0.6) / 0.4
+                y[:len(hi)] += hi
+            p = -0.5 + (k % len(pattern)) / (len(pattern) - 1)
+            _add(out, (at - start) * 1000, _pan(y, p))
+        at += 0.34 - 0.12 * lv
+        k += 1
+    for c in (0, 1):
+        out[:, c] = _reverb(out[:, c], secs=2.2, mix=0.45, seed=11 + c)[:n]
+    return out
+
+
+def intl_texture(start, end, hits):
+    """The Intl picker: singing glasses on the pad's G sus 2, each voice a detuned pair
+    that beats slowly and swells on its own, and now and then a soft high glint. Each
+    step of the picker brings in another voice and more glints. The result starts at
+    `start`."""
+    n = int((end - start + 4) * SR)
+    out = np.zeros((n, 2))
+    t = start + np.arange(n) / SR
+    level = _intensity(t, start, end, hits, base=0.4, step=0.2)
+    rng = np.random.default_rng(23)
+    for j, m in enumerate([-2, 5, 10, 12, 17]):   # G4 D5 G5 A5 D6
+        f = _note(m)
+        gate = np.clip((level - 0.15 * j) / 0.25, 0, 1)   # voice j joins as the level climbs
+        if not gate.any():
+            continue
+        swell = 0.5 + 0.5 * np.sin(2 * np.pi * t / (5.5 + 1.7 * j) + j) ** 2
+        y = (np.sin(2 * np.pi * f * t) + np.sin(2 * np.pi * (f + 0.35 + 0.1 * j) * t)) * 0.5
+        out += _pan(y * swell * gate * 0.016, -0.6 + 0.3 * j)
+    at = start + 1.0
+    while at < end:
+        lv = level[min(int((at - start) * SR), n - 1)]
+        if lv > 0.05:
+            m = int(rng.choice([10, 12, 17, 22, 24]))
+            _add(out, (at - start) * 1000, _pan(_bell(_note(m), 1.4, 0.4, seed=int(at * 100)) * 0.02 * lv,
+                                      rng.uniform(-0.6, 0.6)))
+        at += rng.uniform(1.0, 2.4) / (0.5 + lv)
+    for c in (0, 1):
+        out[:, c] = _reverb(out[:, c], secs=2.6, mix=0.5, seed=31 + c)[:n]
+    return out
+
+
+def reveal_run(run_ms, seed=5):
+    """An app overlay sweeping in from Esc: a soft run of bell notes up E minor pentatonic,
+    left to right, following the sweep. It replaces the swoosh there."""
+    notes = [7, 10, 12, 14, 17, 19, 22, 24, 26, 29]   # E5 .. D7
+    dur = run_ms / 1000
+    out = np.zeros((int((dur + 2.5) * SR), 2))
+    for k, m in enumerate(notes):
+        u = k / (len(notes) - 1)
+        y = _bell(_note(m), 1.8, 0.4, seed=seed + k) * 0.045 * (1 - 0.35 * u)
+        _add(out, dur * u ** 1.3 * 1000, _pan(y, -0.7 + 1.4 * u))
+    for c in (0, 1):
+        out[:, c] = _reverb(out[:, c], secs=2.0, mix=0.4, seed=41 + c)[:len(out)]
+    return out
+
+
 def pad(total_ms, scenes):
     """The drone: each chapter's chord, crossfading over 2 s, the level following the
     story (a slow swell in Eden, down at idle, gone by the end of the fade to black)."""
@@ -409,7 +503,9 @@ def pad(total_ms, scenes):
     return out * level[:, None]
 
 
-STAR_FADE, STAR_THIN = (9.0, 3.0), 3              # the Eden stars thin out and fade after 9 s
+REVEALS = {"A1"}                                  # sweeps that bring an app overlay
+STAR_START = 4.3                                  # the Eden stars: silent before 4.3 s,
+STAR_FADE, STAR_THIN = (9.0, 3.0), 3              # thinning out and fading after 9 s
 WIPES = {"C4.6": "rise", "C4.9": "fall", "C4.12": "breath"}   # Greek, Japanese, Korean (the whirl did not fit)
 # the scenes whose name lights up, and each one's note in the pad's F major (semitones from
 # A4): Greek C5, Japanese A4, Korean D5, then the 160 and 10 cards F5 and G5
@@ -430,7 +526,7 @@ def write(events, total_ms, path):
     up_gain = float(__import__("os").environ.get("PK_KEY_UP", 1.6))   # x the recording's own release level
     # the Eden stars (PK_STARS: off, glint, twinkle, dust, celesta, whisper) and their peak level
     star_style = __import__("os").environ.get("PK_STARS", "celesta")
-    star_gain = float(__import__("os").environ.get("PK_STAR_GAIN", 0.03))
+    star_gain = float(__import__("os").environ.get("PK_STAR_GAIN", 0.02))
     stars_seen = 0
     for k, e in enumerate(events):
         kind, ms = e[0], e[1]
@@ -451,6 +547,8 @@ def write(events, total_ms, path):
             _add(buf, ms, _pan(recorded_key(releases, e[3].startswith("k_"), rng) * up_gain, p))
         elif kind == "sweep" and e[3] in WIPES:   # a language wipe: each its own kind of sound
             _add(buf, ms, wipe_whoosh(WIPES[e[3]], e[2], seed=3000 + k))
+        elif kind == "sweep" and e[3] in REVEALS:   # an app overlay comes in: bells, not wind
+            _add(buf, ms, reveal_run(e[2]))
         elif kind == "sweep":
             first = e[3] == "C1.2"               # the board reveal: longer, the one to remember
             _add(buf, ms, swoosh(e[2] + 1500 if first else e[2], seed=1000 + k, gain=0.26 if first else 0.22,
@@ -463,6 +561,8 @@ def write(events, total_ms, path):
             # every star until STAR_FADE[0] s; then only every STAR_THIN-th, fading out over
             # STAR_FADE[1] s
             stars_seen += 1
+            if ms / 1000 < STAR_START:
+                continue
             late = ms / 1000 - STAR_FADE[0]
             if late > 0 and stars_seen % STAR_THIN:
                 continue
@@ -480,6 +580,18 @@ def write(events, total_ms, path):
                 _add(buf, ms - 1000, swell(6.0))
             elif sid in BLOOMS:                  # a name lights up (the dark cut before it is silent)
                 _add(buf, ms, _pan(glass_bloom(BLOOMS[sid]), 0.0))
+    # the two menus with a texture of their own over the pad, rising with each press:
+    # the Lang menu from "Pick yours" to the emoji menu, the Intl picker up to the apps
+    def span(first, nxt):
+        a = next((e[1] for e in scenes if e[2].startswith(first)), None)
+        b = next((e[1] for e in scenes if e[2].startswith(nxt)), None)
+        return (a / 1000, b / 1000) if a is not None and b is not None else None
+    for (first, nxt, shots, texture) in (("T1", "T4", ("menu",), lang_texture),
+                                         ("I1", "A", ("intl", "intl_h"), intl_texture)):
+        sp = span(first, nxt)
+        if sp:
+            hits = [e[1] / 1000 for e in events if e[0] == "hit" and e[3] in shots and sp[0] <= e[1] / 1000 < sp[1]]
+            _add(buf, sp[0] * 1000, texture(sp[0], sp[1], hits))
     if "Z1" in by_id and "Z2" in by_id:
         # idle, the screensaver and the fade to black swell into a low organ chord, which
         # peaks as the picture goes black and dies away under the title
