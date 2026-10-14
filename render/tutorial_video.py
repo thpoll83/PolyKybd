@@ -115,6 +115,17 @@ class Shot:
         x = lo + (max(hi, lo) - lo) * u
         return (int(round(x)), int(round(cy - h / 2)), int(round(x + w)), int(round(cy + h / 2)))
 
+    def span_box(self, f, room=1.12):
+        """A 16:9 crop from the left end of the board to `f` of its width (0.5: the left
+        half, 0.67: the left half and the first third of the right), at least as tall as
+        the key rows (plus `room`), inside the image."""
+        x0, y0, x1, y1 = self.keys_box
+        w = min(self.W, max((x1 - x0) * f + 0.08 * (x1 - x0) * f, (y1 - y0) * room * self.W / self.H))
+        h = w * self.H / self.W
+        x = min(max(0, x0 - 0.04 * w), self.W - w)
+        cy = min(max((y0 + y1) / 2, h / 2), self.H - h / 2)
+        return (int(round(x)), int(round(cy - h / 2)), int(round(x + w)), int(round(cy + h / 2)))
+
     def screens(self, keys, status):
         """keys {label: (40, 72)}, status [left, right] (64, 128) -> (keycaps, status panels)
         lit at image size."""
@@ -776,12 +787,16 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 zoom = s["pan"][3] if len(s["pan"]) > 3 else 1.0
                 g0, glen = pan_span[g_]
                 u = smooth(min(max((pan_at[s["id"]] + t - g0) / glen, 0), 1))
-                if a_ == "all":                    # from the whole frame, closing in on the crop at b_
-                    W_, H_ = img.size
-                    x0_, y0_, x1_, y1_ = shot(s["shot"]).pan_box(b_, room=1.12 * zoom)
-                    w_ = W_ * ((x1_ - x0_) / W_) ** u   # the size shrinks at an even rate
-                    cx_ = W_ / 2 + ((x0_ + x1_) / 2 - W_ / 2) * u
-                    cy_ = H_ / 2 + ((y0_ + y1_) / 2 - H_ / 2) * u
+                if a_ == "all" or isinstance(b_, (list, tuple)):
+                    # one box to another: from the whole frame ("all") or the crop at a_, to
+                    # the crop at b_ or to ("span", f), the board's left end to f of its width
+                    sh_, (W_, H_) = shot(s["shot"]), img.size
+                    p0 = (0, 0, W_, H_) if a_ == "all" else sh_.pan_box(a_)
+                    p1 = sh_.span_box(b_[1]) if isinstance(b_, (list, tuple)) else sh_.pan_box(b_, room=1.12 * zoom)
+                    w0_, w1_ = p0[2] - p0[0], p1[2] - p1[0]
+                    w_ = w0_ * (w1_ / w0_) ** u        # the size changes at an even rate
+                    cx_ = (p0[0] + p0[2]) / 2 * (1 - u) + (p1[0] + p1[2]) / 2 * u
+                    cy_ = (p0[1] + p0[3]) / 2 * (1 - u) + (p1[1] + p1[3]) / 2 * u
                     h_ = w_ * H_ / W_
                     img = img.crop(tuple(int(round(v)) for v in (cx_ - w_ / 2, cy_ - h_ / 2, cx_ + w_ / 2, cy_ + h_ / 2)))
                 else:

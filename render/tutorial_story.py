@@ -79,7 +79,8 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
     a black card with this text in the middle. pan: (group, from, to): every scene of one
     group is one slow track along the board (0 = left end, 1 = right end), the shot
     cropped to the key rows; from = "all" starts on the whole shot and closes in on `to`
-    instead. name_hue: index into k_hues for the named keys. light:
+    instead, and to = ("span", f) ends on the board's left end to f of its width (A1 opens
+    out to the right status panel). name_hue: index into k_hues for the named keys. light:
     (where, level) of the room light, 0 = its usual place front left, 1 = front right
     (the video eases towards it). status_fade: the status panels fade out over the scene.
     ambient_to: the room light falls to this over the scene's first 55 %. release: a held
@@ -263,14 +264,15 @@ scene("I3c", "intl_h", "Saved: the O key now shows its new accent, lit like the 
 # ---- app shortcuts: GIMP's overlay ---------------------------------------------------------
 # PolyKybdHost follows the window in front and sends its shortcut overlay. The close menu
 # camera first tracks from the right half to the left; there GIMP's overlay sweeps in from
-# Esc, drawn over the en-US legends as the firmware does (Screens.app), and the video goes
-# back to the whole board for the finale.
+# Esc, drawn over the en-US legends as the firmware does (Screens.app). From the reveal on the
+# camera opens out until the right status panel and the first third of the right half are in
+# view, so both panels read, and the video goes back to the whole board for the finale.
 ESC = "0,0"
 GIMP = S.app("gimp")
 scene("A0", M, "The board at home; the camera tracks to the left", BASE, ("Every app,", "its own keys"),
       beat=False, pan=("apps_in", 1.0, 0.0), dur=4200)
 scene("A1", M, "GIMP comes to the front: its overlay sweeps in from Esc", GIMP, ("Every app,", "its own keys"),
-      sweep=(ESC, P_REVEAL), beat=False, pan=("apps_hold", 0.0, 0.1), dur=5200)
+      sweep=(ESC, P_REVEAL), beat=False, pan=("apps_hold", 0.0, ("span", 0.68)), dur=5200)
 
 # ---- finale, then idle: the board dims and the Eden screensaver takes over ----------------
 # the status panels fade out slowly while "You're ready!" is up
