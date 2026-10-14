@@ -78,7 +78,8 @@ def scene(sid, shot, caption, frame, status=(None, None), press=None, ambient=RO
     fadeout: the whole picture fades to black over the scene's last this many ms. title:
     a black card with this text in the middle. pan: (group, from, to): every scene of one
     group is one slow track along the board (0 = left end, 1 = right end), the shot
-    cropped to the key rows. name_hue: index into k_hues for the named keys. light:
+    cropped to the key rows; from = "all" starts on the whole shot and closes in on `to`
+    instead. name_hue: index into k_hues for the named keys. light:
     (where, level) of the room light, 0 = its usual place front left, 1 = front right
     (the video eases towards it). status_fade: the status panels fade out over the scene.
     ambient_to: the room light falls to this over the scene's first 55 %. release: a held
@@ -185,10 +186,12 @@ M = "menu"
 # straight from the status panels to the close-up: no whole-board beat before it
 scene("T1b", "k_lang", "Close-up: the key goes down", ringed(BASE, "9,1"), ("Pick yours in", "the Lang menu"),
       press="9,1")
-# each menu chapter is one slow track, close, the key rows filling the frame, while the tabs
-# are pressed. The Lang tabs sit on the left half's top row, so its track runs to 0.85 and
-# closes in a little (the crop 18 % tighter by its end), the last tab still in view; the emoji tabs move to the right half and so does its track.
-LANG_PAN, EMOJI_PAN = ("lang", 0.0, 0.85, 0.82), ("emoji", 0.0, 1.0)   # (group, from, to[, zoom at the end])
+# each menu chapter is one slow track while the tabs are pressed. The Lang menu starts on the
+# whole board ("all") and closes in, over the whole chapter, on its left end, where the tabs
+# sit on the left half's top row (the crop as tall as the key rows, 15 % tighter). The emoji
+# track runs close, the rows filling the frame, from the left end to the right one, where its
+# tabs move to.
+LANG_PAN, EMOJI_PAN = ("lang", "all", 0.0, 0.85), ("emoji", 0.0, 1.0)   # (group, from, to[, zoom at the end])
 scene("T1c", M, "The language menu cascades in; the camera tracks slowly across it", S.lang_menu(0),
       ("Pick yours in", "the Lang menu"), cascade=3, beat=False, pan=LANG_PAN, dur=4000)
 regions = [("From Canada", "to Chile"), ("All across", "Europe"), ("The Middle", "East"),

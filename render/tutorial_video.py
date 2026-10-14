@@ -776,7 +776,16 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 zoom = s["pan"][3] if len(s["pan"]) > 3 else 1.0
                 g0, glen = pan_span[g_]
                 u = smooth(min(max((pan_at[s["id"]] + t - g0) / glen, 0), 1))
-                img = img.crop(shot(s["shot"]).pan_box(a_ + (b_ - a_) * u, room=1.12 * (1 + (zoom - 1) * u)))
+                if a_ == "all":                    # from the whole frame, closing in on the crop at b_
+                    W_, H_ = img.size
+                    x0_, y0_, x1_, y1_ = shot(s["shot"]).pan_box(b_, room=1.12 * zoom)
+                    w_ = W_ * ((x1_ - x0_) / W_) ** u   # the size shrinks at an even rate
+                    cx_ = W_ / 2 + ((x0_ + x1_) / 2 - W_ / 2) * u
+                    cy_ = H_ / 2 + ((y0_ + y1_) / 2 - H_ / 2) * u
+                    h_ = w_ * H_ / W_
+                    img = img.crop(tuple(int(round(v)) for v in (cx_ - w_ / 2, cy_ - h_ / 2, cx_ + w_ / 2, cy_ + h_ / 2)))
+                else:
+                    img = img.crop(shot(s["shot"]).pan_box(a_ + (b_ - a_) * u, room=1.12 * (1 + (zoom - 1) * u)))
             img = img.resize((width, out_h), Image.LANCZOS)
             if s.get("fadeout") and t > dur - s["fadeout"]:
                 img = Image.eval(img, lambda v, f_=smooth((dur - t) / s["fadeout"]): int(v * f_))
