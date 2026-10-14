@@ -424,7 +424,8 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
     events: a list to fill with what the soundtrack follows, at VIDEO time (ms from the first
     frame; the board's own clock rewinds after a close-up): ("scene", ms, id, dur),
     ("hit", ms, key, shot), ("sweep", ms, run, scene), ("cascade", ms, rows, named),
-    ("appear", ms, key): a name key's legend arriving in its cascade."""
+    ("appear", ms, key): a name key's legend arriving in its cascade, ("star", ms, key): a
+    star appearing on a key in Eden."""
     ev = events if events is not None else []
     sys.path.insert(0, os.path.join(HERE, "..", "..", "PolyKybdHost", "tools"))
     sys.path.insert(0, HERE)
@@ -448,7 +449,7 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
             pan_span[g_][1] = acc + duration(s_, sim) - pan_span[g_][0]
         acc += duration(s_, sim)
     board, leds, casc_row = fx.Board(), fx.Leds(), cascade_rows()
-    stars = fx.Stars(sim)
+    stars, star_on = fx.Stars(sim), set()
     Z = np.zeros((OH, OW), np.float32)
     from collections import OrderedDict
     shots = OrderedDict()                        # a few cameras at a time: a 2048 px shot holds ~1 GB
@@ -621,12 +622,17 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 ambient += (s["ambient_to"] - ambient) * smooth(t / (0.55 * dur))
             extra, rgbs = None, None
             if s["id"] in ("E1", "E2"):
+                el = t if s["id"] == "E1" else 6500 + t
+                lit = stars.keys(el)
+                on = {mp for mp, m in lit.items() if m.any()}
+                for mp in sorted(on - star_on):    # a star appears on a key: the soundtrack's cue
+                    ev.append(("star", n * step, mp))
+                star_on = on
                 if not todo:                       # Eden carries no state: nothing to replay
                     n += 1
                     continue
-                el = t if s["id"] == "E1" else 6500 + t
                 keys, status = eden_keys(el), [None, None]
-                for mp, m in stars.keys(el).items():
+                for mp, m in lit.items():
                     keys[mp] = np.maximum(keys.get(mp, Z), m)
                 sh = shot(s["shot"])
                 if sh.rgb is not None:
@@ -680,7 +686,9 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                     status = [None if x is None and y is None else
                               (x if x is not None else np.zeros((SH, SW), np.float32)) * (1 - a) +
                               (y if y is not None else np.zeros((SH, SW), np.float32)) * a
-                              for x, y in zip(prev["status_img"], status)]
+                              # a scene that faded its panels out ended on dark panels
+                              for x, y in zip([None, None] if prev.get("status_fade") else prev["status_img"],
+                                              status)]
                 if before is not None and T < hit_at:
                     keys = dict(before)
                 if s.get("fadein"):

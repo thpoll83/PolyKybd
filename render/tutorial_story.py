@@ -265,14 +265,15 @@ scene("I3c", "intl_h", "Saved: the O key now shows its new accent, lit like the 
 # PolyKybdHost follows the window in front and sends its shortcut overlay. The close menu
 # camera first tracks from the right half to the left; there GIMP's overlay sweeps in from
 # Esc, drawn over the en-US legends as the firmware does (Screens.app). From the reveal on the
-# camera opens out until the right status panel and the first third of the right half are in
-# view, so both panels read, and the video goes back to the whole board for the finale.
+# camera opens out until the right status panel and most of the right half are in view
+# (85 % of the board's width), so both panels read, and the video goes back to the whole
+# board for the finale.
 ESC = "0,0"
 GIMP = S.app("gimp")
 scene("A0", M, "The board at home; the camera tracks to the left", BASE, ("Every app,", "its own keys"),
       beat=False, pan=("apps_in", 1.0, 0.0), dur=4200)
 scene("A1", M, "GIMP comes to the front: its overlay sweeps in from Esc", GIMP, ("Every app,", "its own keys"),
-      sweep=(ESC, P_REVEAL), beat=False, pan=("apps_hold", 0.0, ("span", 0.68)), dur=5200)
+      sweep=(ESC, P_REVEAL), beat=False, pan=("apps_hold", 0.0, ("span", 0.85)), dur=5200)
 
 # ---- finale, then idle: the board dims and the Eden screensaver takes over ----------------
 # the status panels fade out slowly while "You're ready!" is up

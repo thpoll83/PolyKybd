@@ -13,6 +13,7 @@ licence to track. The events come from tutorial_video.video_part() at video time
                            the same twice (band, direction, length and pan vary)
 - ("cascade", ms, rows, named)  a menu cascades in: a short, airy swoosh
 - ("appear", ms, key)      a name key's legend arrives (silent)
+- ("star", ms, key)        a star appears on a key in Eden: a soft sound (PK_STARS)
 
 The stage turning bright after Eden gets a slow swell, and the ending (idle, the
 screensaver, the fade to black) swells into a low organ chord that dies under the title.
@@ -316,6 +317,43 @@ def glass_bloom(semitone, peak=0.12):
     return y / np.abs(y).max() * peak
 
 
+# A minor pentatonic, high (semitones from A4): A5 C6 D6 E6 G6 A6 C7
+STAR_NOTES = [12, 15, 17, 19, 22, 24, 27]
+
+
+def star_sound(style, rng):
+    """A star appearing on a key in Eden, very soft (PK_STARS picks the style):
+    "glint" a tiny glass ping, "twinkle" a short tone gliding up a little, "dust" a pinch
+    of very short high grains, "celesta" a soft bell note, "whisper" a faint high hiss."""
+    f = _note(STAR_NOTES[rng.integers(len(STAR_NOTES))])
+    if style == "glint":
+        t = np.arange(int(0.7 * SR)) / SR
+        y = (np.sin(2 * np.pi * f * t) + 0.2 * np.sin(2 * np.pi * f * 2.76 * t) * np.exp(-t / 0.05)) \
+            * np.exp(-t / 0.18)
+        y *= np.sin(np.pi / 2 * np.minimum(1, t / 0.004)) ** 2
+    elif style == "twinkle":
+        t = np.arange(int(0.45 * SR)) / SR
+        ph = 2 * np.pi * np.cumsum(f * (1 + 0.19 * np.minimum(1, t / 0.06))) / SR
+        y = np.sin(ph) * np.sin(np.pi / 2 * np.minimum(1, t / 0.012)) ** 2 * np.exp(-t / 0.12)
+    elif style == "dust":
+        y = np.zeros(int(0.5 * SR))
+        for _ in range(int(rng.integers(5, 10))):
+            at, fg = int(rng.uniform(0, 0.18) * SR), rng.uniform(4000, 9000)
+            tg = np.arange(int(0.03 * SR)) / SR
+            g = np.sin(2 * np.pi * fg * tg) * np.sin(np.pi * tg / tg[-1]) ** 2 * rng.uniform(0.3, 1)
+            y[at:at + len(g)] += g
+    elif style == "celesta":
+        t = np.arange(int(1.4 * SR)) / SR
+        y = (np.sin(2 * np.pi * f * t) + 0.3 * np.sin(2 * np.pi * f * 4 * t) * np.exp(-t / 0.04)) \
+            * np.exp(-t / 0.35) * np.sin(np.pi / 2 * np.minimum(1, t / 0.006)) ** 2
+    else:                                         # whisper
+        n = int(0.3 * SR)
+        t = np.arange(n) / n
+        y = _band_noise(n, lambda u: 6500, 0.4, int(rng.integers(1 << 30))) * np.sin(np.pi * t ** 0.5) ** 2
+    y = _reverb(y, secs=1.8, mix=0.45, seed=int(rng.integers(1 << 30)))
+    return y / np.abs(y).max()
+
+
 def pad(total_ms, scenes):
     """The drone: each chapter's chord, crossfading over 2 s, the level following the
     story (a slow swell in Eden, down at idle, gone by the end of the fade to black)."""
@@ -389,6 +427,9 @@ def write(events, total_ms, path):
     strokes = None if keys == "synth" else key_strokes(keys)
     releases = key_releases(keys) if strokes is not None else []
     up_gain = float(__import__("os").environ.get("PK_KEY_UP", 1.6))   # x the recording's own release level
+    # the Eden stars (PK_STARS: off, glint, twinkle, dust, celesta, whisper) and their peak level
+    star_style = __import__("os").environ.get("PK_STARS", "off")
+    star_gain = float(__import__("os").environ.get("PK_STAR_GAIN", 0.05))
     for k, e in enumerate(events):
         kind, ms = e[0], e[1]
         if kind == "hit":
@@ -416,12 +457,15 @@ def write(events, total_ms, path):
             pass                                 # a menu has the pad's own movement; a name its ticks
         elif kind == "appear":
             pass                                 # a name's keys arrive silently
+        elif kind == "star" and star_style != "off":   # a star appears in Eden: left or right half
+            p = (-0.6 if int(e[2].split(",")[0]) < 5 else 0.6) + rng.uniform(-0.25, 0.25)
+            _add(buf, ms, _pan(star_sound(star_style, rng) * star_gain, p))
         elif kind == "scene":
             sid, dur = e[2], e[3]
             if sid == "E1":                      # the sparks streaming in
-                _add(buf, ms + 300, swoosh(3200, seed=99, gain=0.12))
+                _add(buf, ms + 300, swoosh(3200, seed=99, gain=0.05))
             elif sid == "E2":                    # the name forms
-                _add(buf, ms, swoosh(2200, seed=98, gain=0.1))
+                _add(buf, ms, swoosh(2200, seed=98, gain=0.05))
             elif sid == "E3":                    # the room light comes up: a swell, starting just before
                 _add(buf, ms - 1000, swell(6.0))
             elif sid in BLOOMS:                  # a name lights up (the dark cut before it is silent)
