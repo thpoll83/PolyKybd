@@ -409,6 +409,7 @@ def pad(total_ms, scenes):
     return out * level[:, None]
 
 
+STAR_FADE, STAR_THIN = (9.0, 3.0), 3              # the Eden stars thin out and fade after 9 s
 WIPES = {"C4.6": "rise", "C4.9": "fall", "C4.12": "breath"}   # Greek, Japanese, Korean (the whirl did not fit)
 # the scenes whose name lights up, and each one's note in the pad's F major (semitones from
 # A4): Greek C5, Japanese A4, Korean D5, then the 160 and 10 cards F5 and G5
@@ -428,8 +429,9 @@ def write(events, total_ms, path):
     releases = key_releases(keys) if strokes is not None else []
     up_gain = float(__import__("os").environ.get("PK_KEY_UP", 1.6))   # x the recording's own release level
     # the Eden stars (PK_STARS: off, glint, twinkle, dust, celesta, whisper) and their peak level
-    star_style = __import__("os").environ.get("PK_STARS", "off")
-    star_gain = float(__import__("os").environ.get("PK_STAR_GAIN", 0.05))
+    star_style = __import__("os").environ.get("PK_STARS", "celesta")
+    star_gain = float(__import__("os").environ.get("PK_STAR_GAIN", 0.03))
+    stars_seen = 0
     for k, e in enumerate(events):
         kind, ms = e[0], e[1]
         if kind == "hit":
@@ -458,14 +460,22 @@ def write(events, total_ms, path):
         elif kind == "appear":
             pass                                 # a name's keys arrive silently
         elif kind == "star" and star_style != "off":   # a star appears in Eden: left or right half
-            p = (-0.6 if int(e[2].split(",")[0]) < 5 else 0.6) + rng.uniform(-0.25, 0.25)
-            _add(buf, ms, _pan(star_sound(star_style, rng) * star_gain, p))
+            # every star until STAR_FADE[0] s; then only every STAR_THIN-th, fading out over
+            # STAR_FADE[1] s
+            stars_seen += 1
+            late = ms / 1000 - STAR_FADE[0]
+            if late > 0 and stars_seen % STAR_THIN:
+                continue
+            g = star_gain * (1 - min(1.0, late / STAR_FADE[1]) if late > 0 else 1.0)
+            if g > 0:
+                p = (-0.6 if int(e[2].split(",")[0]) < 5 else 0.6) + rng.uniform(-0.25, 0.25)
+                _add(buf, ms, _pan(star_sound(star_style, rng) * g, p))
         elif kind == "scene":
             sid, dur = e[2], e[3]
             if sid == "E1":                      # the sparks streaming in
-                _add(buf, ms + 300, swoosh(3200, seed=99, gain=0.05))
+                _add(buf, ms + 300, swoosh(3200, seed=99, gain=0.02))
             elif sid == "E2":                    # the name forms
-                _add(buf, ms, swoosh(2200, seed=98, gain=0.05))
+                _add(buf, ms, swoosh(2200, seed=98, gain=0.02))
             elif sid == "E3":                    # the room light comes up: a swell, starting just before
                 _add(buf, ms - 1000, swell(6.0))
             elif sid in BLOOMS:                  # a name lights up (the dark cut before it is silent)
