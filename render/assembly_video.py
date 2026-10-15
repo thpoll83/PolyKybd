@@ -297,6 +297,9 @@ if os.environ.get("PK_GPU", "").upper() not in ("", "NONE", "CPU"):
         print("assembly gpu", os.environ["PK_GPU"], [d.name for d in gpus] or "none found: CPU")
     except TypeError as e:
         print("assembly gpu", os.environ["PK_GPU"], "unsupported here:", e, "- CPU")
+# keep the scene's geometry between frames: only what moved is rebuilt. Same pixels
+# (8 frames compared), 8.8 instead of 12 s a frame at 640 px on 4 threads
+sc.render.use_persistent_data = True
 sc.render.fps = FPS
 sc.frame_start, sc.frame_end = 1, f(END)
 sc.cycles.samples = SAMPLES
