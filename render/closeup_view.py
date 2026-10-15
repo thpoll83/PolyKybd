@@ -97,7 +97,7 @@ if RGB:
         rgb.glow_from_leds(root, board, "keycap glass", hues, r_mm / 1000, fs,
                            z=float(os.environ.get("PK_LED_Z", 8.0)))
     for o in root.children_recursive:                # debugging: PK_HIDE_ROLES="plate aluminium,diffuser resin"
-        if o.active_material and o.active_material.get("pk_role") in os.environ.get("PK_HIDE_ROLES", "").split(","):
+        if o.active_material and o.active_material.get("pk_role") in [r for r in os.environ.get("PK_HIDE_ROLES", "").split(",") if r]:
             o.hide_render = True
     if os.environ.get("PK_EMIT"):                 # physically lit: emissive LED squares
         print("emitters", rgb.emitters(root, board, hues, float(os.environ["PK_EMIT"]),

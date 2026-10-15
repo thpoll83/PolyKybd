@@ -25,6 +25,13 @@ filtered() {
 for side in left right; do
     pcb="$boards/poly_kybd_split72_$side.kicad_pcb"
     filtered 'not found|could not' kicad-cli pcb export vrml -f --units mm -o "$out/split72_$side.wrl" "$pcb"
+    # ⚠️ kicad-cli succeeds with NO 3D models when it cannot write its config directory
+    # (an unwritable HOME): the board alone is ~10 shapes, with its models several thousand
+    shapes=$(grep -c ' Shape {' "$out/split72_$side.wrl" || true)
+    if [ "$shapes" -lt 1000 ]; then
+        echo "split72_$side.wrl has only $shapes shapes: the 3D models are missing (is \$HOME writable?)" >&2
+        exit 1
+    fi
     if [ "${1:-}" = "--png" ]; then
         filtered 'error' kicad-cli pcb render -o "$out/split72_${side}_kicad.png" -w 1600 -h 900 \
             --rotate '-40,0,0' --perspective --quality high --floor "$pcb"
