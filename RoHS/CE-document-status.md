@@ -644,10 +644,41 @@ value, not cost:
    territory (they publish the *Trilogy of Magnetics*), and we are buying their
    part. Shield-termination and suppression-component selection is exactly what
    they support customers on. Costs an email.
-3. **tinySA Ultra, ~$140** — 100 kHz–800 MHz in its low mode, which covers the
-   whole band of interest, standalone with a screen. The sensible buy if bench
-   capability is wanted for v3.4 anyway. ⚠️ **Counterfeits and clones are
-   rampant**; buy from a seller listed on the project's own wiki.
+3. **A tinySA.** ⚠️ **The basic model at ~$70 covers the entire band of
+   interest** (100 kHz–960 MHz); our peaks are in 30–300 MHz, so the Ultra+ at
+   ~$187 and the 7.3 GHz ZS407 at ~$279 are buying headroom we will never use.
+   The Ultra's better dynamic range, noise floor and 4″ screen are real, so it is
+   the better buy *if* one instrument is wanted for future bring-up — but not for
+   this measurement.
+   ⚠️ **Clones are rampant and indistinguishable** ("How to recognize a cloned
+   tinySA — simple answer is: you can't"), so buy from the project wiki's own
+   list. For Austria the EU entries avoid import and warranty friction:
+   **Eleshop** (Europe), **GOTRONIK** (Poland), **Neven** (Central/Eastern
+   Europe), **astroradio** (Spain). AURSINC is authorised, but the wiki names
+   specifically **"Aursinc on Amazon"** rather than their own webshop.
+   ⚠️ **TinyRFEquip and TinyRFLab are named on that page as claiming
+   authorisation without having it** — a search summary asserted the opposite,
+   i.e. that those two *were* the official sources. Read the wiki, not a summary
+   of it.
+
+   **⚠️ None of the bundles contain what this job needs, and one item would make
+   the measurement worse:**
+   - **An LNA is harmful here.** A current or near-field probe on an emitting
+     cable delivers a strong signal; a 20 dB preamp in front of it drives the
+     input into compression, and a compressed reading corrupts the *dB delta* —
+     the only quantity we care about. LNAs are for weak distant signals.
+   - **The "50 W DC–3 GHz 50 dB N-type attenuator" is the wrong part** — a
+     transmitter power attenuator. What is wanted is a set of small **SMA step
+     attenuators** (3 / 6 / 10 / 20 dB, ~€10–15 anywhere).
+   - **The 400 MHz–8 GHz log-periodic antenna is the wrong band** and the wrong
+     method (far-field).
+   - A protective case is a few dollars and harmless.
+
+   So: instrument + SMA step attenuators + an SMA pigtail for the home-made
+   current probe below. ✅ **The step attenuators also buy the linearity check:**
+   insert 10 dB and the reading must drop by exactly 10 dB. If it does not, the
+   front end is compressing and every delta measured is understated. Run that
+   once before trusting any A/B/C number.
 4. **RTL-SDR dongle, ~€30** — ~24 MHz–1.7 GHz. 8-bit, limited dynamic range,
    overloads easily (add attenuation), but it will show a 10 dB change in a
    known peak perfectly well. Enough to decide whether the lead is worth
