@@ -14,7 +14,7 @@
 #   PK_JOBS   Blender processes rendering frames side by side (default: one per 8 cores;
 #             1 with PK_GPU). Each holds the scene, about 5.2 GB.
 #   PK_GPU    OPTIX | CUDA | HIP | ONEAPI to render on a GPU (default: CPU)
-#   PK_FRAMES "first last" to render only those frames (default: all 1176)
+#   PK_FRAMES "first last" to render only those frames (default: all 1351)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 WIDTH=${1:-1920}
@@ -57,7 +57,7 @@ fi
 CORES=$(nproc)
 if [ -n "${PK_GPU:-}" ]; then JOBS=${PK_JOBS:-1}; else JOBS=${PK_JOBS:-$(( CORES / 8 > 0 ? CORES / 8 : 1 ))}; fi
 THREADS=$(( CORES / JOBS > 0 ? CORES / JOBS : 1 ))
-read -r FIRST LAST <<< "${PK_FRAMES:-1 1176}"
+read -r FIRST LAST <<< "${PK_FRAMES:-1 1351}"
 say "assembly video: ${WIDTH} px, ${SAMPLES} samples, frames ${FIRST}-${LAST}, ${JOBS} jobs x ${THREADS} threads, GPU=${PK_GPU:-none}, out $OUT"
 pids=()
 for j in $(seq 0 $(( JOBS - 1 ))); do
@@ -76,10 +76,10 @@ n=$(ls "$OUT/frames" | wc -l)
 say "rendered $n frames"
 
 # 5. the video (silent for now), from the whole run's frames
-if [ "$n" -ge 1176 ]; then
+if [ "$n" -ge 1351 ]; then
     ffmpeg -loglevel error -y -framerate 25 -i "$OUT/frames/frame_%04d.png" \
         -c:v libx264 -crf 16 -preset slow -pix_fmt yuv420p -movflags +faststart "$OUT/assembly_${WIDTH}.mp4"
     say "done: $OUT/assembly_${WIDTH}.mp4"
 else
-    say "$n of 1176 frames: run again to finish, the video is made once all are there"
+    say "$n of 1351 frames: run again to finish, the video is made once all are there"
 fi

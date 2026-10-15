@@ -55,7 +55,7 @@ of RAM at 2048 px, and joins the pieces without re-encoding.
 ## The assembly video
 
 The left half built part by part on a white desk, then both halves and the USB cables
-(47 s, `render/assembly_video.py`). It needs `PolyKybd` on `video/assembly` and the same
+(54 s, `render/assembly_video.py`). It needs `PolyKybd` on `video/assembly` and the same
 `render/out/hero.blend`; PolyKybdHost and qmk_firmware are not read.
 
 ```bash
@@ -66,7 +66,7 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$PWD":/work polykybd-render assem
 The arguments are `width samples outdir` (defaults `1920 32 render/out/assembly_<width>`).
 The first run builds three scenes in `render/out/` and keeps them: `assembly.blend` (the
 left half as one object per part, ~15 min), `pcb_left.blend` (pcb2blender's board, ~5 min)
-and `assembly_pcb.blend` (both put together). Then it renders 1176 frames into
+and `assembly_pcb.blend` (both put together). Then it renders 1351 frames into
 `<outdir>/frames/`, `PK_JOBS` Blender processes side by side (default one per 8 cores, each
 holding about 5 GB), and encodes `<outdir>/assembly_<width>.mp4` once all are there.
 
