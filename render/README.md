@@ -97,7 +97,7 @@ blender -b render/out/hero.blend --python render/rerender.py -- render/out/hero2
 
 Arguments: output, samples, width, light scale, exposure (stops). It re-applies
 `materials.py` and renders: about 2 minutes for the full keyboard instead of
-the ~25 the import and merge take. Every material remembers its role
+the ~25 the import and merge take (about 50 in a 4-CPU cloud container). Every material remembers its role
 (`pk_role`), so this works on a scene whose colours were already changed.
 
 ### White studio and the bridge cable
@@ -148,6 +148,36 @@ builds carry OpenImageDenoise. The Ubuntu/Debian package lacks the denoiser,
 so its images stay grainy at any sample count you would wait for. The scripts
 switch denoising on whenever the build has it.
 
+### Setting up a fresh cloud container
+
+Neither KiCad nor Blender is installed there. These steps assume Ubuntu 24.04
+(noble), which the container ran on 2026-10-15; on another release, change the
+PPA suite. Both downloads together take about 5 minutes:
+
+```bash
+curl -sSLO https://download.blender.org/release/Blender4.1/blender-4.1.1-linux-x64.tar.xz
+tar -xf blender-4.1.1-linux-x64.tar.xz -C /tmp       # /tmp/blender-4.1.1-linux-x64/blender
+export PATH="/tmp/blender-4.1.1-linux-x64:$PATH"            # the commands below call plain `blender`
+# KiCad 9: add-apt-repository fails here (python3 has no apt_pkg), so add the PPA by hand
+fp=$(curl -fsS https://api.launchpad.net/1.0/~kicad/+archive/ubuntu/kicad-9.0-releases \
+     | python3 -c 'import json,sys;print(json.load(sys.stdin)["signing_key_fingerprint"])')
+mkdir -p /etc/apt/keyrings          # a keyring of its own, trusted for this source only
+curl -fsS "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x$fp" | gpg --dearmor > /etc/apt/keyrings/kicad9.gpg
+test -s /etc/apt/keyrings/kicad9.gpg && echo "deb [signed-by=/etc/apt/keyrings/kicad9.gpg] https://ppa.launchpadcontent.net/kicad/kicad-9.0-releases/ubuntu noble main" \
+    > /etc/apt/sources.list.d/kicad9.list
+apt-get update && apt-get install -y --no-install-recommends kicad kicad-packages3d kicad-footprints \
+    kicad-symbols xvfb xauth libegl1 libgl1 libxi6 libxkbcommon0 libsm6 libxrender1 libxxf86vm1 libxfixes3
+```
+
+⚠️ **Building `hero.blend` from scratch took about 52 minutes on 4 CPUs**
+(2026-10-15, Blender 4.1.1, KiCad 9.0.9): 3 minutes of export, then per half
+about 16.5 minutes of import and 4 to 12 of merging (the script's "merged in
+N s" counts from the start of that half's import). Run it in the background
+and only once per container. Every view script loads the saved scene, so wait
+until `render/out/hero.blend` is written before starting one.
+Typical timings after that: a 48-sample, 900 px preview takes 1 to 2.5
+minutes, a 256-sample, 1400 px final 30 to 35.
+
 ### Editing an imported mesh (bmesh)
 
 `profile.dent()` and `rgb.clear_case()` rebuild geometry that came in from
@@ -182,7 +212,8 @@ every `.wrl` model. The keycaps, stems, displays, cables and switches are all
 `.wrl`, so a GLB comes out as a bare populated PCB. The VRML exporter uses the
 3D viewer's own loader and keeps everything.
 
-The Blender 4.0 import of one half takes about 7 minutes and creates about
+The Blender 4.0 import of one half took about 7 minutes on the machine
+the scripts were written on (17 in a 4-CPU cloud container, above) and creates about
 87k objects. Blender 4.2 and later ship the X3D/VRML importer as an extension
 ("Web3D X3D/VRML2 format"), so install that first there.
 

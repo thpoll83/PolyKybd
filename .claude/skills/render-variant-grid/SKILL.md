@@ -12,6 +12,30 @@ session for the RGB close-up (rim glow, edge glow, glow strength, flex
 material). Every time, the script was rebuilt by hand from the previous one,
 which left a stray render running once (see Pitfalls).
 
+## 0. Before the first variant
+
+Four checks that each cost hours when skipped (2026-10-15, the Idle close-up
+took about 12 rounds):
+
+- **Ask what "match" means.** A 1:1 match of a photo (same keys, framing,
+  angle, colours) and "a better picture of the same thing" call for
+  different renders. Ask before the first preview, not after the third.
+- **Match the camera before the look.** A phone close-up is about 29 mm from
+  10 cm, not the 50 mm from 17 cm the 2026-10-15 session started with
+  (`closeup_view.py` has no default; every call passes distance and lens). Take the lens and
+  distance from the photo's perspective (how far the cap walls fan out, how
+  much bigger the front row is), then the tilt, then the framing. Tune
+  colour and light only after that; they read differently at another
+  distance.
+- **Compare the first preview with the last merged render of the same
+  scene**, not only with the photo. A part that vanished (the plate's
+  silkscreen, the diffuser frame) is a regression, not a look setting.
+  `PK_HIDE_ROLES` hid the silkscreen whenever it was unset until #55.
+- ⚠️ **AgX shifts colour.** Saturated blue (240 deg) renders purple; about
+  225 deg reads blue. Bright tinted emission bleaches towards white, so a
+  saturated legend needs a low `PK_STRENGTH` (1.6 for the Idle close-up)
+  rather than a more saturated `PK_TINT`.
+
 ## 1. Write the base file
 
 One bash file with two arrays: the look being tuned, and the view arguments
