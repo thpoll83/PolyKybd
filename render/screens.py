@@ -26,6 +26,10 @@ LIFT = 0.008                            # mm above the decal (which is 0.004 abo
 # The lit pixels' colour: the panels' white has a faint blue cast, kept just short
 # of noticeable. Multiplies the atlas colour, so black stays black.
 LIT_TINT = (0.70, 0.84, 1.0, 1.0)
+# PK_TINT="r,g,b" overrides it, e.g. the stronger blue a phone photo shows
+import os as _os
+if _os.environ.get("PK_TINT"):
+    LIT_TINT = (*[float(c) for c in _os.environ["PK_TINT"].split(",")], 1.0)
 
 
 def _material(name, image, strength):
