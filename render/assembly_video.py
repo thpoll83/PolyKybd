@@ -4,8 +4,9 @@ then the camera pulls back to both halves and the USB cables plug in.
     blender -b render/out/assembly.blend --python render/assembly_video.py -- \
         out_dir width samples [first last | stills f1,f2,...]
 
-assembly.blend comes from assembly_scene.py: the left half as one object per part,
-each with pk_kind and pk_side. This keyframes everything and renders frames as
+assembly_pcb.blend comes from assembly_scene.py, then assembly_pcb.py: the left half
+as one object per part, each with pk_kind and pk_side, its board and soldered parts
+pcb2blender's (render with PCB2BLENDER set, in Blender 5.1). This keyframes everything and renders frames as
 PNG into out_dir (frame_0001.png ...); ffmpeg makes the video. The plan, in
 seconds at 25 fps (STAGES below):
 
@@ -46,11 +47,25 @@ argv = sys.argv[sys.argv.index("--") + 1:]
 OUT, WIDTH, SAMPLES = argv[0], int(argv[1]), int(argv[2])
 FPS = 25
 END = 47.0
+if os.environ.get("PCB2BLENDER"):                  # assembly_pcb.py's scene: its board materials need the add-on
+    sys.path.insert(0, os.environ["PCB2BLENDER"])
+    import pcb2blender_importer
+    pcb2blender_importer.register()
+    bpy.ops.wm.open_mainfile(filepath=bpy.data.filepath)
 sc = bpy.context.scene
 root = bpy.data.objects["split72_left.wrl"]
 right = bpy.data.objects["split72_right.wrl"]
-parts = [o for o in root.children if o.get("pk_kind")]
+parts = [o for o in root.children_recursive if o.get("pk_kind")]   # pcb2blender parts sit under the board
 rng = np.random.default_rng(7)
+
+
+def fcurves(o):
+    """o's F-curves: the action's own in Blender 4.1, its slot's channel bag in 5.x."""
+    act = o.animation_data.action
+    if hasattr(act, "fcurves"):
+        return act.fcurves
+    from bpy_extras import anim_utils
+    return anim_utils.action_get_channelbag_for_slot(act, o.animation_data.action_slot).fcurves
 
 
 def f(sec):
@@ -122,6 +137,7 @@ def fly(o, t):
     home = o.location.copy()
     off = mathutils.Vector((rng.uniform(-20, 20), rng.uniform(-20, 20), side * dist)) if not big \
         else mathutils.Vector((0, 0, side * dist))
+    off *= o.get("pk_unit", 1.0)                   # a pcb2blender part moves in metres
     turn = mathutils.Vector((rng.uniform(-0.4, 0.4), rng.uniform(-0.4, 0.4), rng.uniform(-0.8, 0.8))) \
         if not big else mathutils.Vector((0, 0, 0))
     if f(t) > 1:                                   # one already on its way at frame 1 stays visible
@@ -137,7 +153,7 @@ def fly(o, t):
         o.rotation_euler = (turn * (1 - e)).to_tuple()
         o.keyframe_insert("location", frame=f(t) + i)
         o.keyframe_insert("rotation_euler", frame=f(t) + i)
-    for fc in o.animation_data.action.fcurves:
+    for fc in fcurves(o):
         if fc.data_path == "hide_render":
             for k in fc.keyframe_points:
                 k.interpolation = "CONSTANT"
@@ -155,7 +171,7 @@ home_r = piv_r.location.copy()
 for sec, away in ((0, 1), (RIGHT_IN[0], 1), (RIGHT_IN[1], 0)):
     piv_r.location = home_r + mathutils.Vector((0.45 * away, 0, 0))
     piv_r.keyframe_insert("location", frame=f(sec))
-for k in piv_r.animation_data.action.fcurves[0].keyframe_points:
+for k in fcurves(piv_r)[0].keyframe_points:
     k.interpolation = "BEZIER"
 piv_r.location = home_r
 
@@ -167,14 +183,15 @@ for sec, flip, lifted in ((0, 1, 1), (FLIP[0], 1, 1), (FLIP[1], 0, 1), (SETTLE[0
     root.location = base_loc + lift * lifted
     root.keyframe_insert("rotation_euler", frame=f(sec))
     root.keyframe_insert("location", frame=f(sec))
-for fc in root.animation_data.action.fcurves:
+for fc in fcurves(root):
     for k in fc.keyframe_points:
         k.interpolation = "BEZIER"
         k.easing = "AUTO"
 
 # ---- studio, cables, camera -----------------------------------------------------
 materials.scene_settings(sc)
-PCB_COLOUR = (0.16, 0.03, 0.30, 1)                # purple solder mask (both halves share the material)
+# the right half keeps the VRML board: its mask in pcb_shot/look.py's purple (9a55b0)
+PCB_COLOUR = (0.323, 0.091, 0.434, 1)
 for m in bpy.data.materials:
     if m.get("pk_role") == "solder mask":
         m.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = PCB_COLOUR
@@ -207,7 +224,7 @@ for objs, t, world in ((bridge, CABLE_IN, DROP), (host, HOST_IN, PULL)):
             o.location = home + d * e
             o.keyframe_insert("location", frame=f(t + u))
         o.location = home
-        for fc in o.animation_data.action.fcurves:
+        for fc in fcurves(o):
             if fc.data_path == "hide_render":
                 for k in fc.keyframe_points:
                     k.interpolation = "CONSTANT"
@@ -260,7 +277,7 @@ for s, c, w, el, az, fill in SHOTS:
     tgt.keyframe_insert("location", frame=f(s))
     cam.keyframe_insert("location", frame=f(s))
 for o in (tgt, cam):
-    for fc in o.animation_data.action.fcurves:
+    for fc in fcurves(o):
         for k in fc.keyframe_points:
             k.interpolation = "BEZIER"
             k.handle_left_type = k.handle_right_type = "AUTO_CLAMPED"
