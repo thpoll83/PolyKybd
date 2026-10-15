@@ -467,6 +467,24 @@ preview takes about a minute. Traps:
   a background command's default limit: run it detached and watch its log
   (see `polykybd-claude/docs/web-session.md`).
 
+## A printed part on its own
+
+The docs' Case & Spacer page shows each case half and the spacer alone, in
+the same white studio and case material as the keyboard renders. No KiCad
+export or saved scene is needed; the script imports the STL directly:
+
+```bash
+blender -b --python render/case_parts.py -- parts/export/case/case_polykybd_split72_left_r7.stl \
+    render/out/case_l.png 256 1400 35 -20 50 0.8
+```
+
+The arguments after the width are the camera elevation and bearing (deg,
+negative = from the left), the lens (mm) and the share of the frame the part
+fills. The docs used bearing -20 for the left case and the spacer (elevation
+45), +20 for the right case. About 1.5 minutes each at 256 samples on 4 CPUs.
+The camera fits the part's bounding box, so the frame keeps empty floor where
+the box is empty (the cut corner); the docs images are cropped to the part.
+
 ## Top view for PolyKybdHost's layout editor
 
 ```bash
