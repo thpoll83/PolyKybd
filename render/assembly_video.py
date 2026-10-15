@@ -9,7 +9,7 @@ each with pk_kind and pk_side. This keyframes everything and renders frames as
 PNG into out_dir (frame_0001.png ...); ffmpeg makes the video. The plan, in
 seconds at 25 fps (STAGES below):
 
-  0.0  the bare PCB comes down, bottom side up
+  0.0  the bare PCB comes down, bottom side up (already on its way at frame 1)
   2.5  the bottom side, in waves left to right: passives, then the chips and
        connectors, then the 36 hot-swap sockets
  12.5  the board turns over
@@ -18,7 +18,8 @@ seconds at 25 fps (STAGES below):
  21.5  the switches, row by row; the keycap stems; the displays with their
        flex cables; the keycaps
  34.0  the case comes up from below, the lids drop in, the board settles
- 39.0  the camera pulls back to both halves; the bridge cable drops into place,
+ 39.0  the camera pulls back to both halves, the right half sliding in beside the
+       left one; the bridge cable drops into place,
        the host cable plugs in; hold until 47 s
 
 Every part comes from its own side of the board (pk_side), from 40 to 110 mm
@@ -82,7 +83,7 @@ below = [o for o in parts if kind(o) == "comp" and o["pk_side"] < 0]
 above = [o for o in parts if kind(o) == "comp" and o["pk_side"] > 0]
 row = lambda o: -o["pk_y"] * 10 + o["pk_x"] * 0.01        # top row first, then left to right
 start = {}
-start.update(wave([o for o in parts if kind(o) == "pcb"], 0.0, 0.0, jitter=0))
+start.update(wave([o for o in parts if kind(o) == "pcb"], -0.6, -0.6, jitter=0))   # coming in at frame 1
 start.update(wave([o for o in below if lib(o).startswith(PASSIVE)], 2.5, 7.0))
 start.update(wave([o for o in below if not lib(o).startswith(PASSIVE)], 7.3, 9.5))
 start.update(wave([o for o in parts if kind(o) == "socket"], 9.6, 11.6, key=row))
@@ -123,10 +124,11 @@ def fly(o, t):
         else mathutils.Vector((0, 0, side * dist))
     turn = mathutils.Vector((rng.uniform(-0.4, 0.4), rng.uniform(-0.4, 0.4), rng.uniform(-0.8, 0.8))) \
         if not big else mathutils.Vector((0, 0, 0))
-    o.hide_render = True
-    o.keyframe_insert("hide_render", frame=1)
-    o.hide_render = False
-    o.keyframe_insert("hide_render", frame=f(t))
+    if f(t) > 1:                                   # one already on its way at frame 1 stays visible
+        o.hide_render = True
+        o.keyframe_insert("hide_render", frame=1)
+        o.hide_render = False
+        o.keyframe_insert("hide_render", frame=f(t))
     n = max(2, int(dur * FPS))
     for i in range(n + 1):
         u = i / n
@@ -144,6 +146,18 @@ def fly(o, t):
 
 for o, t in start.items():
     fly(o, t)
+
+# the right half, built already, waits 0.45 m off to the side (out of every close
+# view) and slides in beside the left one while the camera pulls back
+RIGHT_IN = (38.8, 41.4)
+piv_r = right.parent
+home_r = piv_r.location.copy()
+for sec, away in ((0, 1), (RIGHT_IN[0], 1), (RIGHT_IN[1], 0)):
+    piv_r.location = home_r + mathutils.Vector((0.45 * away, 0, 0))
+    piv_r.keyframe_insert("location", frame=f(sec))
+for k in piv_r.animation_data.action.fcurves[0].keyframe_points:
+    k.interpolation = "BEZIER"
+piv_r.location = home_r
 
 # the board: bottom side up and lifted, turned over, then down into its case
 base_loc, base_rot = root.location.copy(), root.rotation_euler.copy()
@@ -165,9 +179,9 @@ lighting.studio(sc, tgt)
 studio.cove(sc)
 studio.white_look(sc)
 bridge_cable.remove()
-sc.frame_set(f(SETTLE[1]) + 1)                     # the cables fit the half where it ends up
-halves = [(root, os.path.join(textured_parts.REPO, "poly_kybd", f"poly_kybd_split72_{s}.kicad_pcb"))
-          for s in ("left", "right")]
+sc.frame_set(f(END))                               # the cables fit the halves where they end up
+halves = [(r, os.path.join(textured_parts.REPO, "poly_kybd", f"poly_kybd_split72_{s}.kicad_pcb"))
+          for r, s in ((root, "left"), (right, "right"))]
 before = set(bpy.data.objects)
 bridge_cable.add(sc, halves, depth=0.036, lean=0.004, toward=-1.0, spread=0.012, clear=0.022)
 bridge = [o for o in bpy.data.objects if o not in before]
@@ -211,7 +225,7 @@ def box(objs):
     return lo, hi
 
 
-sc.frame_set(f(SETTLE[1]) + 1)                     # everything in place, on the desk
+sc.frame_set(f(END))                               # everything in place, on the desk
 lo, hi = box(parts)
 left_c = (lo + hi) / 2
 llo, lhi = lo, hi
@@ -236,7 +250,7 @@ SHOTS = [(0.0, lift_c, lw, 48, -18, 0.80), (2.5, lift_c, lw * 0.55, 52, -10, 0.8
          (14.5, lift_c, lw * 0.75, 50, 14, 0.85), (18.0, lift_c, lw, 40, 6, 0.80),
          (21.5, lift_c, lw, 36, -6, 0.82), (30.0, lift_c, lw, 32, -12, 0.82),
          (34.0, lift_c, lw, 30, -16, 0.78), (37.8, left_c, lw, 30, -12, 0.80),
-         (39.0, left_c, lw, 30, -8, 0.82), (41.2, both_c, both_w, 33, 0, 0.88), (END, both_c, both_w, 33, 3, 0.88)]
+         (39.0, left_c, lw, 30, -8, 0.82), (41.2, both_c, both_w, 33, 0, 0.95), (END, both_c, both_w, 33, 3, 0.95)]
 for s, c, w, el, az, fill in SHOTS:
     tgt.location = c
     cam.location = view(c, w, el, az, fill)
