@@ -148,6 +148,30 @@ builds carry OpenImageDenoise. The Ubuntu/Debian package lacks the denoiser,
 so its images stay grainy at any sample count you would wait for. The scripts
 switch denoising on whenever the build has it.
 
+### Setting up a fresh cloud container
+
+Neither KiCad nor Blender is installed there. Both downloads together take
+about 5 minutes:
+
+```bash
+curl -sSLO https://download.blender.org/release/Blender4.1/blender-4.1.1-linux-x64.tar.xz
+tar -xf blender-4.1.1-linux-x64.tar.xz -C /tmp       # /tmp/blender-4.1.1-linux-x64/blender
+# KiCad 9: add-apt-repository fails here (python3 has no apt_pkg), so add the PPA by hand
+fp=$(curl -sS https://api.launchpad.net/1.0/~kicad/+archive/ubuntu/kicad-9.0-releases \
+     | python3 -c 'import json,sys;print(json.load(sys.stdin)["signing_key_fingerprint"])')
+curl -sS "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x$fp" | gpg --dearmor > /etc/apt/trusted.gpg.d/kicad9.gpg
+echo "deb https://ppa.launchpadcontent.net/kicad/kicad-9.0-releases/ubuntu noble main" > /etc/apt/sources.list.d/kicad9.list
+apt-get update && apt-get install -y --no-install-recommends kicad kicad-packages3d kicad-footprints \
+    kicad-symbols xvfb xauth libegl1 libgl1 libxi6 libxkbcommon0 libsm6 libxrender1 libxxf86vm1 libxfixes3
+```
+
+⚠️ **Building `hero.blend` from scratch took about 70 minutes on 4 CPUs**
+(2026-10-15, Blender 4.1.1, KiCad 9.0.9): 2 minutes of export, then per half
+about 17 minutes of import and 20 to 28 of merging. Run it in the background
+and only once per container; every view script loads the saved scene.
+Typical timings after that: a 48-sample, 900 px preview takes 1 to 2.5
+minutes, a 256-sample, 1400 px final 30 to 35.
+
 ### Editing an imported mesh (bmesh)
 
 `profile.dent()` and `rgb.clear_case()` rebuild geometry that came in from
@@ -182,7 +206,8 @@ every `.wrl` model. The keycaps, stems, displays, cables and switches are all
 `.wrl`, so a GLB comes out as a bare populated PCB. The VRML exporter uses the
 3D viewer's own loader and keeps everything.
 
-The Blender 4.0 import of one half takes about 7 minutes and creates about
+The Blender 4.0 import of one half took about 7 minutes on the machine
+the scripts were written on (17 in a 4-CPU cloud container, above) and creates about
 87k objects. Blender 4.2 and later ship the X3D/VRML importer as an extension
 ("Web3D X3D/VRML2 format"), so install that first there.
 
