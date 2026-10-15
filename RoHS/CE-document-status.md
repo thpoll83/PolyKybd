@@ -626,7 +626,67 @@ Whatever wins, **the answer is then a property of this board rather than of an
 internet argument**, and it can be written into the v3.4 schematic with a
 reason attached.
 
-### h. Other board-revision options
+### h. How to measure the A/B/C comparison without owning a lab
+
+The comparison above needs only **relative** evidence at two already-known
+frequencies, which is a far weaker requirement than pre-compliance and opens up
+options that would be useless for an absolute measurement. In rough order of
+value, not cost:
+
+1. **Ask the lab for a short engineering / open-chamber slot — this is the one
+   to try first.** They already hold our configuration and the baseline scan, so
+   their A/B/C is apples-to-apples in a way no bench measurement can be, the
+   result is *citable* toward an equivalence argument, and the same conversation
+   answers what they would accept for a cable change (§7e). One or two hours of
+   engineering time competes directly with buying and learning an instrument,
+   and it ends with an answer rather than an indication.
+2. **Ask Würth's application engineering.** Free, expert, squarely their
+   territory (they publish the *Trilogy of Magnetics*), and we are buying their
+   part. Shield-termination and suppression-component selection is exactly what
+   they support customers on. Costs an email.
+3. **tinySA Ultra, ~$140** — 100 kHz–800 MHz in its low mode, which covers the
+   whole band of interest, standalone with a screen. The sensible buy if bench
+   capability is wanted for v3.4 anyway. ⚠️ **Counterfeits and clones are
+   rampant**; buy from a seller listed on the project's own wiki.
+4. **RTL-SDR dongle, ~€30** — ~24 MHz–1.7 GHz. 8-bit, limited dynamic range,
+   overloads easily (add attenuation), but it will show a 10 dB change in a
+   known peak perfectly well. Enough to decide whether the lead is worth
+   pursuing at all.
+5. **A university EMC lab.** The Austrian and German FH/TU labs do industry
+   cooperation cheaply, sometimes free for an interesting project.
+
+#### Measure CURRENT, not field — and the probe can be made from a spare ferrite
+
+Common-mode current on the cable is what drives the radiated field (that is the
+basis of the arithmetic in §7e), so measuring the current is both more directly
+relevant and **far less geometry-sensitive** than a near-field field probe.
+
+A clamp-on RF current probe is the standard tool and costs four figures new —
+but a relative one can be made from **a spare `74271111`**: pass ~10 turns of
+wire through the snap core, terminate in 50 Ω, feed the analyser, and clamp it
+round the cable. Transfer impedance is roughly `50/N` ≈ 5 Ω, so ~10 µA of
+common-mode current gives about −73 dBm, comfortably inside a tinySA's floor and
+workable on an SDR.
+⚠️ **Valid for relative comparison at a fixed frequency only** — the core's
+permeability rolls off, so the response is not flat and the reading is not a
+calibrated current. Leave the probe clamped in the same place for all three
+variants so its own added impedance is a constant rather than a variable.
+
+#### ⚠️ The dominant error source is geometry, not the instrument
+
+A near-field reading moves many dB if the probe shifts a millimetre or the cable
+is coiled differently, which is larger than the difference between a $30 dongle
+and a real analyser. So:
+
+- Tape the probe down and tape the cable route down. Do not hold either.
+- **Measure A, then B, then A again.** If the second A does not reproduce the
+  first, the measurement is worthless and no amount of instrument quality saves
+  it. That single check is what makes a cheap setup trustworthy, and skipping it
+  is how a cheap setup produces a confident wrong answer.
+- Rework in place and re-measure rather than comparing two different boards;
+  board-to-board variation is its own confounder.
+
+### i. Other board-revision options
 
 **Sanity-check the report's frequencies against the plausible sources** before
 assuming the cable is the only lever — several are firmware-side:
