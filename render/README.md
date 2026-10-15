@@ -156,6 +156,7 @@ about 5 minutes:
 ```bash
 curl -sSLO https://download.blender.org/release/Blender4.1/blender-4.1.1-linux-x64.tar.xz
 tar -xf blender-4.1.1-linux-x64.tar.xz -C /tmp       # /tmp/blender-4.1.1-linux-x64/blender
+export PATH="/tmp/blender-4.1.1-linux-x64:$PATH"            # the commands below call plain `blender`
 # KiCad 9: add-apt-repository fails here (python3 has no apt_pkg), so add the PPA by hand
 fp=$(curl -sS https://api.launchpad.net/1.0/~kicad/+archive/ubuntu/kicad-9.0-releases \
      | python3 -c 'import json,sys;print(json.load(sys.stdin)["signing_key_fingerprint"])')
