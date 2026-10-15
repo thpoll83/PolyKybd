@@ -531,7 +531,102 @@ pair it with **common-mode choke footprints on both pairs** — the host D+/D−
 (460800 baud, trivial) — fitted or linked out as the measurements dictate. A
 footprint carried and not populated costs nothing.
 
-### g. Other board-revision options
+### g. Should a cable shield float? — why the advice conflicts, and the rule
+
+Searching this returns both answers with equal confidence, which is not because
+the topic is unsettled but because **three different questions all get called
+"should the shield float"**, and almost no source says which one it is
+answering.
+
+| The real question | Regime it assumes | Its answer |
+|---|---|---|
+| Ground loops, hum, chassis potential difference | DC to audio; cable electrically *short* | float one end |
+| Radiated emissions and immunity | RF; cable electrically *long* | bond both ends, **locally** |
+| Both at once | — | bond at RF, isolate at DC → **a capacitor** |
+
+**What decides which regime you are in is cable length against wavelength**, and
+that is arithmetic rather than opinion. λ/4 is 1.5 m at 50 MHz, 75 cm at
+100 MHz, 37.5 cm at 200 MHz. A ~1 m cable is therefore electrically **long**
+from roughly 50 MHz upward, and a shield bonded at one end only presents a
+high-impedance open at the other: a resonant monopole, fed by whatever
+common-mode voltage sits on the board. The "float one end" rule comes from audio
+and instrumentation, where the frequencies of concern are tens of kHz and the
+same 1 m cable is a ten-thousandth of a wavelength — electrically a lump, with no
+antenna to speak of, so the loop genuinely is the only problem. **Repeating that
+rule into a 30–300 MHz emissions problem applies the right answer to the wrong
+regime, and that is the whole source of the disagreement.**
+
+A second resolver is specific to this connector: in USB the shield is *intended*
+as the common-mode return path, terminated to the plug shell at the cable end.
+The differential pair returns on GND; containing the common mode is the shield's
+job. Bonded is the designed-in state and floating is the deviation.
+
+#### ⚠️ Our network is the INVERSE of the usual compromise
+
+This is the part worth internalising, because it is not a question of camps:
+
+| Network | At DC | At 100 MHz | Effect |
+|---|---|---|---|
+| Classic 1 MΩ ∥ 4.7 nF | ~1 MΩ | ~0.3 Ω | blocks the loop, **bonds** the RF |
+| **Ours: `GZ2012D601TF` bead** | **~0.3 Ω** | **~600 Ω** | **permits the loop, blocks the RF** |
+
+So the board is not using the float camp's answer or the bond camp's answer — it
+is using the opposite of the compromise. It does have a coherent purpose: a bead
+treats the shield as an *incoming* noise source and keeps the host's cable-borne
+RF out of our ground. That is an **immunity**-oriented choice, and we have an
+**emissions** problem. Same part, opposite direction. That reframes the question
+from "which camp is right" into "which direction am I optimising", which is
+answerable.
+
+#### The bridge port is unambiguous — decide it without measuring
+
+Every ground-loop argument needs **two independently grounded chassis**. The
+bridge joins two halves of one product, from one supply, with no third chassis
+anywhere. **There is no loop to break, so the float argument has no premise at
+all there.** Bond `USB2`'s shield directly and locally. That one needs no
+experiment.
+
+The host port (`USB1`) is the genuinely two-sided case, because a PC chassis is
+involved — so that is the one to settle by measurement, and the cap is the
+compromise that serves both directions.
+
+#### ⚠️ Position matters as much as value
+
+From the layout: both shield nets run **~19–20 mm of 0.3–0.6 mm trace** from the
+shell to the bead, with **no via on either net** (the shell's through-hole pads
+are the only layer transition), and the nearest GND via is 2.5–3.5 mm beyond the
+bead. That is roughly 6–8 nH, about 5 Ω at 100 MHz — **negligible against
+600 Ω, so it is not a confounder for the measurement now.** But it becomes the
+limiting term the moment the bead is addressed: a perfect bond 19 mm away down a
+0.3 mm trace is not a bond.
+
+So the two are different jobs:
+- **The rework is an experiment.** Tack the cap straight across the bead; it
+  answers the question. ⚠️ But expect it to under-read the available
+  improvement, and do not conclude "the cap did not help" from a weak result.
+- **The production fix is placement.** Bond the shell to the ground plane with
+  multiple vias **at the shell pads**, and if DC isolation is wanted, put the
+  capacitor there too — not 19 mm downstream.
+
+#### Stop deciding, measure — three variants on one board
+
+Consistent with the project's own rule that when the clever theories conflict
+you do the mechanical, auditable thing and let the hardware decide:
+
+| Variant | FB1 / FB2 | Tests |
+|---|---|---|
+| **A** | as built (bead only) | the baseline, already measured |
+| **B** | bead ∥ 4.7 nF | RF bond with DC isolation kept |
+| **C** | 0 Ω link | hard bond, the upper bound on what bonding buys |
+
+Relative measurements are enough to choose (near-field probe and a spectrum
+analyser, or a short pre-compliance slot). Run the bridge side first — it is
+the unambiguous case and the cable whose UART made the ferrite necessary.
+Whatever wins, **the answer is then a property of this board rather than of an
+internet argument**, and it can be written into the v3.4 schematic with a
+reason attached.
+
+### h. Other board-revision options
 
 **Sanity-check the report's frequencies against the plausible sources** before
 assuming the cable is the only lever — several are firmware-side:
