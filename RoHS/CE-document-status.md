@@ -169,8 +169,11 @@ replacement and rejected (its datasheet carries no RoHS statement), so
 4. Resolve JUSHUO vs Hirose for J1–J36 (§3c)
 5. **After A6** (v3.3 gerbers): `pcb_render.py` → `pcb_merge.py` → `PolyKybd-PCB-Layers.pdf`
 6. ✅ **EMC test done 2026-10-13** — passed with two snap ferrites added (§7)
-7. **When the report arrives** (§6b): check which hardware revision it names; the
-   sample reported `HW0x3200` while the boards are v3.3
+7. **When the report arrives**: check which hardware revision it names (§6b — the
+   sample reported `HW0x3200` while the boards are v3.3), and extract the
+   **pre- and post-mitigation emission scans**. The pre-mitigation scan is what
+   defines the frequencies any replacement core must hold (§7e); without it a
+   replacement can re-expose a peak the Würth was suppressing
 8. **Record the ferrite placement** from the report before it is needed for a
    production fitting instruction (§7c) — unrecoverable later
 9. **Wire the ferrite datasheet into the appendix** (§7d.3) — add the `.xls` row
@@ -312,9 +315,113 @@ detail that is cheapest to capture now and impossible to recover later.
 4. **Name it in the DoC's EUT description**, so the declaration covers the
    configuration that was actually tested.
 
-### e. For a future board revision
+### e. Open decision: a cable with the core built in
+
+Preferred direction as of 2026-10-15, **not yet decided**. A clip-on the user
+must fit, on the right cable, in the right place, is a compliance dependency on
+the user performing a step correctly. A cable supplied with the core integrated
+removes that. It also removes the 3.5–5.0 mm clamping window in §7b entirely,
+since there is nothing to clamp.
+
+**The two cables are not the same case.** Each half has two USB-C receptacles
+(`poly_kybd_split72_{left,right}.kicad_sch`): the **host** port on net `USB`
+(real D+/D−) and the **bridge** port on `USB2`, which carries `SERIAL_COM1` /
+`SERIAL_COM2` — the 460800-baud UART, not USB at all.
+
+- **Bridge cable: integrate it.** We supply this cable, the link is not USB (two
+  signal pins plus ground, no USB-IF cable requirement to satisfy), and it is
+  the cable whose UART made the ferrite necessary. A custom assembly with a
+  moulded core is straightforward here.
+- **Host cable: integration does not close the substitution hole.** Users bring
+  their own USB-C cables, and a core moulded into ours does not travel to
+  theirs. It closes the *forgot-to-fit-it* hole, which is a different and also
+  real one. That is acceptable — a DoC covers the product as placed on the
+  market with its supplied accessories — but do not buy it believing otherwise.
+
+#### The equivalence criterion is narrow, and that is what makes it buyable
+
+The suppression only has to hold **at the frequencies where this product is
+actually marginal**, which the report's emission scans name. So the purchase
+specification is a floor at two (or a few) stated frequencies, not a matched
+curve — a specification a vendor can actually meet and evidence.
+
+⚠️ **Take the frequency set from the PRE-mitigation scan, not the
+post-mitigation one.** The peaks that are *close to the limit now* are the ones
+the Würth did not fully fix; the peaks that are *comfortable now* may be
+comfortable **because** the Würth is suppressing them hard. A core chosen to
+match only where the final scan is marginal can re-expose a peak the Würth was
+quietly holding down, and the first evidence of that is a failed retest. The
+set to protect is **every frequency that was at or over the limit before the
+ferrites went on**. Ask the lab for both scans.
+
+⚠️ **Specify a floor from Würth's MINIMUM, not its typical.** The datasheet
+figures carry ±25 %, so its guaranteed floor is 131 Ω @ 25 MHz and 237 Ω
+@ 100 MHz. Worse, the *tested* unit could have been anywhere in that band: a
+part at +25 % (219 Ω @ 25 MHz) against a replacement at −25 % (131 Ω) is a 40 %
+unit-to-unit shortfall while both datasheets read "175 Ω typ". Write the
+requirement as "≥ *Z* Ω at *f*, minimum over tolerance", and set *Z* from what
+was tested rather than from a typical figure.
+
+Two smaller points: equal **|Z|** is not equal attenuation if one core is
+inductive at *f* and the other past resonance — ask for the R and X split, or at
+least the curve, since dissipation is what suppresses; and the important
+frequencies may **differ between the two cables**, because different sources
+dominate each, so expect two acceptance criteria rather than one.
+
+⚠️ **Ask the vendor for the core's PART NUMBER, not its description.** Cable
+makers write "with ferrite core / EMI suppression" and publish nothing
+measurable. Assembly houses commonly use Würth, Fair-Rite or Laird cores and
+will name them if asked, and the core's own datasheet is where the curve lives.
+**A vendor who will not name the core makes equivalence undocumentable**, and an
+equivalence that cannot be documented is worth nothing in a technical file.
+
+⚠️ **The cable is part of the EUT, not just the core.** Shield construction,
+shield termination (360° vs pigtail vs none), length and geometry all change the
+radiating structure. Matching the core while changing the cable holds one
+variable and moves several.
+
+#### The zero-EMC-risk version of the same idea
+
+Have the **cable assembly house fit the Würth `74271111` itself**, in a position
+given on the drawing. The suppressor is then literally the tested part: no
+equivalence argument, no new uncertainty, nothing to retest, and the safety-key
+fixation means the user cannot remove it. That buys nearly everything
+integration is for — cannot be forgotten, lost or misfitted, no packaging item,
+no manual step — and costs only the cosmetics of a clip-on lump instead of a
+moulded bulge. Weigh it honestly against a delta retest.
+
+#### Sequence this before the DoC is issued
+
+The DoC is blocked on the GmbH anyway (§1), so the window is free, the report is
+fresh and the lab still holds the setup data. Changing the supplied cable after
+declaring means amending the declaration. **The question that decides it is one
+for the lab**: what they would accept as an equivalence assessment for a
+cable-plus-core change, and what a delta retest would cost (radiated only,
+worst-case mode) rather than a full repeat.
+
+### f. For a future board revision
 
 A common-mode choke at the split connector, on the board, would remove the
-dependency on a part the user has to fit correctly. The ferrite is a fix at the
-cable, not at the source. Recording that as an option for a later revision, not
-as a decision — the shipped v3.3 answer is the ferrites, and they work.
+dependency on a supplied cable at all. The ferrite is a fix at the cable, not at
+the source. Recorded as an option for a later revision, not a decision.
+
+**Sanity-check the report's frequencies against the plausible sources** before
+assuming the cable is the only lever — several are firmware-side:
+
+| Source | Expect |
+|---|---|
+| `clk_sys` | 200 MHz and harmonics (400, 600 …) |
+| XIP flash clock | `clk_sys / PICO_FLASH_SPI_CLKDIV` = **50 MHz** and harmonics (100, 150 …) |
+| Per-key OLED SPI | derived from `clk_sys` via `SPI_DIVISOR` |
+| Split UART | 460800 baud, broadband at low MHz |
+| TLV62569 bucks | 1.5 MHz nominal and harmonics; **spreads and drops in Power Save Mode** |
+| USB full-speed | 12 MHz |
+| WS2812 data | ~800 kHz |
+
+⚠️ If the marginal peaks turn out to be `clk_sys`-related, note that
+**`-e POLYKYBD_SYS_CLK=125` is a documented, verified build-time lever** — it
+produces an image byte-identical to the pre-200 MHz builds (see the firmware
+repo's CLAUDE.md). It moves every derived clock with it, costs performance, and
+would itself be a change to the tested configuration, so it is a last resort
+rather than a free one. But it is worth knowing it exists before redesigning a
+board.
