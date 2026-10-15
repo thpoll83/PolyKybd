@@ -458,7 +458,17 @@ for the lab**: what they would accept as an equivalence assessment for a
 cable-plus-core change, and what a delta retest would cost (radiated only,
 worst-case mode) rather than a full repeat.
 
-### f. ⚠️ Cable substitution, and the lead that would make the cable not matter
+### f. ⚠️ Cable substitution, and a LEAD — unverified — that would make the cable not matter
+
+> ⚠️ **Gate for §7f, §7g and §7h: all three rest on one unproven premise** — that
+> the marginal peaks are common-mode current on the cables. **The report settles
+> that before any of it is actionable**, from the per-peak pre/post delta (§7e):
+> a peak the ferrites moved ~10 dB is cable common-mode and these sections apply;
+> a peak they barely moved is board or enclosure radiation, and none of them do.
+> The shield *finding* is a measured fact about the schematic either way; its
+> *relevance* is not. Written up ahead of the report so the analysis is ready,
+> **not because the diagnosis is made.**
+
 
 **The user-substitution problem does not have a cable-side answer, so this is
 where it has to be solved.** Three layers, because the first two bound the
@@ -686,10 +696,17 @@ value, not cost:
 5. **A university EMC lab.** The Austrian and German FH/TU labs do industry
    cooperation cheaply, sometimes free for an interesting project.
 
-#### The self-measured procedure (chosen route, 2026-10-15)
+#### The self-measured procedure — PREPARED, NOT STARTED
 
-Doing it in-house to **decide**, and spending the lab on the **chosen** design
-once rather than on exploring three. What this setup can answer: which variant
+⚠️ **Nothing below is committed, and none of it should begin before the report
+is read.** Preference as of 2026-10-15 is to measure in-house rather than book a
+lab slot, so the method is written down ready — but the report decides whether
+there is anything here worth measuring at all (see the gate at the head of §7f).
+If the peaks turn out not to be cable common-mode, this whole subsection is moot
+and no instrument needs buying.
+
+The intent, if it goes ahead: measure in-house to **decide**, and spend the lab
+on the **chosen** design once rather than on exploring three. What this setup can answer: which variant
 reduces common-mode current at the named frequencies, and roughly by how much —
 enough to commit a v3.4 schematic. What it cannot answer: an absolute level, a
 margin, or anything citable. Keep that line clear and the DIY result is sound.
