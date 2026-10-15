@@ -21,7 +21,8 @@ took about 12 rounds):
   angle, colours) and "a better picture of the same thing" call for
   different renders. Ask before the first preview, not after the third.
 - **Match the camera before the look.** A phone close-up is about 29 mm from
-  10 cm, not the 50 mm from 17 cm the scripts default to. Take the lens and
+  10 cm, not the 50 mm from 17 cm the 2026-10-15 session started with
+  (`closeup_view.py` has no default; every call passes distance and lens). Take the lens and
   distance from the photo's perspective (how far the cap walls fan out, how
   much bigger the front row is), then the tilt, then the framing. Tune
   colour and light only after that; they read differently at another
