@@ -308,6 +308,32 @@ skill (`.claude/skills/render-variant-grid/`).
 has re-posed the displays drifts by 3.5 mm of height, which once put the LED
 emitters inside the plate.
 
+### The idle close-up
+
+The docs' Idle page (`oled-keycaps-render.jpg`) matches an old phone photo:
+the left half's q to b block in a dark room, the backlight red at the left
+edge, purple, then blue, and deep blue legends. About 35 minutes on 4 CPUs:
+
+```bash
+PK_SPLAY=0 PK_BLOOM=0.5,-0.2 PK_RGB_EASE=0.15 PK_WORLD=0.1 PK_RGB=360,228 PK_EMIT=10 PK_GLOW=6 \
+PK_FLEX=1,0.15 PK_LED=0 PK_POWER_LED=0.15 "PK_LOOK=AgX - High Contrast" PK_STRENGTH=1.6 \
+PK_STATUS=_l1 PK_TINT=0.0,0.2,1.0 \
+blender -b render/out/hero.blend --python render/closeup_view.py -- \
+    out.png 256 1400 screens_idle_photo 0.45 0.58 0.10 81 0 29
+```
+
+- `screens_idle_photo` is layer 1 with the key left of z showing `# ~`, as
+  on the photographed board.
+- 10 cm away with a 29 mm lens, like a phone close-up, tilted 9 degrees from
+  straight down; `PK_SPLAY=0` squares the columns to the frame.
+- `PK_RGB_EASE` bends the hue gradient so the change from red to blue
+  happens near the left edge. ⚠️ AgX pushes saturated blue (240 deg) towards
+  purple: the photo's blue is about 225 deg here.
+- ⚠️ The legends' blue needs a low `PK_STRENGTH` (1.6). At 4, AgX bleaches
+  the tint to a pale blue-white.
+- The diffuser frame stays in (no `PK_HIDE_ROLES`), so the plate keeps its
+  silkscreen and the LED light reaches the gaps.
+
 ### The Eden intro video
 
 The docs' First run video plays the Eden boot animation on both halves seen
@@ -466,6 +492,24 @@ preview takes about a minute. Traps:
   default close camera (45 with the earlier 70 mm, 0.45 m view), longer than
   a background command's default limit: run it detached and watch its log
   (see `polykybd-claude/docs/web-session.md`).
+
+## A printed part on its own
+
+The docs' Case & Spacer page shows each case half and the spacer alone, in
+the same white studio and case material as the keyboard renders. No KiCad
+export or saved scene is needed; the script imports the STL directly:
+
+```bash
+blender -b --python render/case_parts.py -- parts/export/case/case_polykybd_split72_left_r7.stl \
+    render/out/case_l.png 256 1400 35 -20 50 0.8
+```
+
+The arguments after the width are the camera elevation and bearing (deg,
+negative = from the left), the lens (mm) and the share of the frame the part
+fills. The docs used bearing -20 for the left case and the spacer (elevation
+45), +20 for the right case. About 1.5 minutes each at 256 samples on 4 CPUs.
+The camera fits the part's bounding box, so the frame keeps empty floor where
+the box is empty (the cut corner); the docs images are cropped to the part.
 
 ## Top view for PolyKybdHost's layout editor
 

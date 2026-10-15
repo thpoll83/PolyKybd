@@ -26,6 +26,10 @@ LIFT = 0.008                            # mm above the decal (which is 0.004 abo
 # The lit pixels' colour: the panels' white has a faint blue cast, kept just short
 # of noticeable. Multiplies the atlas colour, so black stays black.
 LIT_TINT = (0.70, 0.84, 1.0, 1.0)
+# PK_TINT="r,g,b" overrides it, e.g. the stronger blue a phone photo shows
+import os as _os
+if _os.environ.get("PK_TINT"):
+    LIT_TINT = (*[float(c) for c in _os.environ["PK_TINT"].split(",")], 1.0)
 
 
 def _material(name, image, strength):
@@ -51,7 +55,19 @@ def _material(name, image, strength):
     a, b_in = [i for i in tint.inputs if i.type == "RGBA"]
     b_in.default_value = LIT_TINT
     nt.links.new(tex.outputs["Color"], a)
-    nt.links.new(next(o for o in tint.outputs if o.type == "RGBA"), b.inputs["Emission Color"])
+    lit = next(o for o in tint.outputs if o.type == "RGBA")
+    # PK_PANEL_FLOOR="r,g,b": every panel pixel, lit or not, adds this colour, a
+    # lit OLED's faint glow (the docs' idle close-up); off by default
+    floor = os.environ.get("PK_PANEL_FLOOR")
+    if floor:
+        add = nt.nodes.new("ShaderNodeMix")
+        add.data_type, add.blend_type = "RGBA", "ADD"
+        add.inputs["Factor"].default_value = 1.0
+        a2, b2 = [i for i in add.inputs if i.type == "RGBA"]
+        b2.default_value = (*[float(c) for c in floor.split(",")], 1.0)
+        nt.links.new(lit, a2)
+        lit = next(o for o in add.outputs if o.type == "RGBA")
+    nt.links.new(lit, b.inputs["Emission Color"])
     b.inputs["Emission Strength"].default_value = strength
     return m
 
