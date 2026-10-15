@@ -171,9 +171,10 @@ replacement and rejected (its datasheet carries no RoHS statement), so
 6. ✅ **EMC test done 2026-10-13** — passed with two snap ferrites added (§7)
 7. **When the report arrives**: check which hardware revision it names (§6b — the
    sample reported `HW0x3200` while the boards are v3.3), and extract the
-   **pre- and post-mitigation emission scans**. The pre-mitigation scan is what
-   defines the frequencies any replacement core must hold (§7e); without it a
-   replacement can re-expose a peak the Würth was suppressing
+   **pre- and post-mitigation emission scans** plus the declared measurement
+   uncertainty — four numbers per peak. The peaks are still visible with the
+   ferrites fitted, so the attenuation they deliver is measurable per frequency,
+   which is what sizes any replacement core (§7e)
 8. **Record the ferrite placement** from the report before it is needed for a
    production fitting instruction (§7c) — unrecoverable later
 9. **Wire the ferrite datasheet into the appendix** (§7d.3) — add the `.xls` row
@@ -345,14 +346,72 @@ actually marginal**, which the report's emission scans name. So the purchase
 specification is a floor at two (or a few) stated frequencies, not a matched
 curve — a specification a vendor can actually meet and evidence.
 
-⚠️ **Take the frequency set from the PRE-mitigation scan, not the
-post-mitigation one.** The peaks that are *close to the limit now* are the ones
-the Würth did not fully fix; the peaks that are *comfortable now* may be
-comfortable **because** the Würth is suppressing them hard. A core chosen to
-match only where the final scan is marginal can re-expose a peak the Würth was
-quietly holding down, and the first evidence of that is a failed retest. The
-set to protect is **every frequency that was at or over the limit before the
-ferrites went on**. Ask the lab for both scans.
+⚠️ **Needs BOTH scans — the pre-mitigation one as well as the final one.** The
+peaks that are *close to the limit now* are the ones the Würth did not fully
+fix; the peaks that are *comfortable now* may be comfortable **because** the
+Würth is suppressing them hard. Matching only where the final scan is marginal
+can re-expose a peak the core was quietly holding down, and the first evidence
+of that is a failed retest.
+
+✅ **The peaks are still visible with the mitigation fitted** (reported
+2026-10-15, before the written report arrived). That is the good case: a level
+at both ends means the attenuation the Würth delivered is *measurable* per
+frequency, rather than something to be assumed. Had a peak been pushed under the
+noise floor, its margin would have been unknowable and the only safe
+substitution would have been an identical core.
+
+#### When the report arrives: deriving the impedance floor from the measured dB
+
+Pull four numbers **per peak**: pre-mitigation level, post-mitigation level, the
+limit, and the lab's **declared measurement uncertainty**. They answer three
+questions in order.
+
+**1. Which peaks does the cable even own?** The per-peak delta says so. A peak
+that dropped ~10 dB when the ferrites went on is common-mode current on the
+cable. A peak that dropped ~1 dB is not — it is board or enclosure radiation,
+no core will improve it, and equally **no core change can make it worse**. Those
+drop out of the vendor specification entirely, which usually shrinks the problem
+a long way.
+
+**2. How much attenuation can be given back?** The post-mitigation margin to the
+limit, *after* accounting for uncertainty. ⚠️ **Check whether the report's
+margin is quoted before or after the declared uncertainty** (radiated at 3 m is
+typically ~5–6 dB). If the pass was achieved on a margin smaller than the
+uncertainty, there is effectively nothing to trade and the answer is to keep the
+tested core.
+
+**3. What impedance does that require?** Common-mode current is `V_cm / Z_cm`,
+so adding a series core impedance `Z_f` attenuates by
+`A = 20·log₁₀(|Z_cm + Z_f| / |Z_cm|)`, and radiated field tracks the current.
+Measuring `A` with a known `Z_f` therefore **backs out the cable's own
+common-mode impedance** — the term that is otherwise unknown:
+
+```
+k      = 10^(A/20)                    # measured, from the two scan levels
+Z_cm   = Z_würth / (k - 1)            # the cable's common-mode impedance at f
+Z_req  = Z_cm · (10^(A'/20) - 1)      # for the attenuation A' you must keep
+
+  i.e.   Z_req = Z_würth · (10^(A'/20) - 1) / (10^(A/20) - 1)
+```
+
+Worked, with plausible numbers at 100 MHz (`Z_würth` = 316 Ω): a measured
+`A` = 12 dB gives `k` = 3.98 and `Z_cm` ≈ 106 Ω. If 4 dB of the margin can be
+spent, `A'` = 8 dB, and `Z_req` ≈ **160 Ω** — about half the Würth's impedance
+is enough. That is the difference between a specialised core and an ordinary
+one.
+
+⚠️ **This is a sizing estimate, not an exact answer.** It adds magnitudes as if
+both terms were in phase (fair where the core is lossy, which is the point of
+4W620 at these frequencies, but not exact), and `Z_cm` is itself strongly
+frequency-dependent — it is a resonant antenna impedance, not a constant. Apply
+it with margin, and keep the floor expressed as a minimum over tolerance.
+
+**The non-obvious consequence, worth knowing before negotiating with a vendor:**
+attenuation saturates in `Z_f`, so **the peaks where the ferrite helped most are
+the ones where there is most freedom to substitute a weaker core.** Where it
+barely helped, `k − 1` is small and almost all of the original impedance is
+needed to hold even a little attenuation — but those are also the peaks the
+cable does not own, so they are not a core-selection problem in the first place.
 
 ⚠️ **Specify a floor from Würth's MINIMUM, not its typical.** The datasheet
 figures carry ±25 %, so its guaranteed floor is 131 Ω @ 25 MHz and 237 Ω
