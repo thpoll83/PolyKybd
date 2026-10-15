@@ -283,6 +283,20 @@ for o in (tgt, cam):
             k.handle_left_type = k.handle_right_type = "AUTO_CLAMPED"
 studio.flag(sc)                                    # the caps' mirror card, for the closing view
 
+if os.environ.get("PK_GPU", "").upper() not in ("", "NONE", "CPU"):
+    # PK_GPU=OPTIX|CUDA|HIP|ONEAPI: every device of that kind (as eden_view.py); none found: the CPU
+    prefs = bpy.context.preferences.addons["cycles"].preferences
+    try:
+        prefs.compute_device_type = os.environ["PK_GPU"].upper()
+        prefs.get_devices()
+        gpus = [d for d in prefs.devices if d.type == os.environ["PK_GPU"].upper()]
+        for d in prefs.devices:
+            d.use = d in gpus
+        if gpus:
+            sc.cycles.device = "GPU"
+        print("assembly gpu", os.environ["PK_GPU"], [d.name for d in gpus] or "none found: CPU")
+    except TypeError as e:
+        print("assembly gpu", os.environ["PK_GPU"], "unsupported here:", e, "- CPU")
 sc.render.fps = FPS
 sc.frame_start, sc.frame_end = 1, f(END)
 sc.cycles.samples = SAMPLES

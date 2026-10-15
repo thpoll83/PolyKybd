@@ -2,6 +2,7 @@
 # The image's entry point, run from the PolyKybd checkout.
 #
 #   scene                 export both boards (KiCad) and build render/out/hero.blend
+#   assembly [width] [samples] [out dir]   the assembly video (render/assembly_build.sh)
 #   [width] [samples] [out dir]   the tutorial video (render/tutorial_build.sh)
 set -euo pipefail
 # ⚠️ with docker run --user, HOME is / and not writable. kicad-cli then has no config
@@ -18,5 +19,9 @@ if [ "${1:-}" = "scene" ]; then
     [ -f render/out/hero.blend ] || { echo "blender_scene.py failed: no render/out/hero.blend" >&2; exit 1; }
     ls -la render/out/hero.blend
     exit 0
+fi
+if [ "${1:-}" = "assembly" ]; then
+    shift
+    exec render/assembly_build.sh "$@"
 fi
 exec render/tutorial_build.sh "$@"

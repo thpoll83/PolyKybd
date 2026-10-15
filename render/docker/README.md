@@ -51,3 +51,27 @@ needs. At 2048 px the CPU run takes about 7.5 hours on 4 cores; a recent GPU sho
 under an hour. The encode at the end runs on the CPU either way. It splits the frames over
 one process per core (at most 16; `-e PK_JOBS=N` sets the number), each needing a few GB
 of RAM at 2048 px, and joins the pieces without re-encoding.
+
+## The assembly video
+
+The left half built part by part on a white desk, then both halves and the USB cables
+(47 s, `render/assembly_video.py`). It needs `PolyKybd` on `video/assembly` and the same
+`render/out/hero.blend`; PolyKybdHost and qmk_firmware are not read.
+
+```bash
+docker build -t polykybd-render PolyKybd/render/docker        # again: the image gained Blender 5.1 and pcb2blender
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD":/work polykybd-render assembly 1920 32
+```
+
+The arguments are `width samples outdir` (defaults `1920 32 render/out/assembly_<width>`).
+The first run builds three scenes in `render/out/` and keeps them: `assembly.blend` (the
+left half as one object per part, ~15 min), `pcb_left.blend` (pcb2blender's board, ~5 min)
+and `assembly_pcb.blend` (both put together). Then it renders 1176 frames into
+`<outdir>/frames/`, `PK_JOBS` Blender processes side by side (default one per 8 cores, each
+holding about 4 GB), and encodes `<outdir>/assembly_<width>.mp4` once all are there.
+
+- It resumes: a frame on disk is skipped, so stop it and run the same command again.
+- `-e PK_FRAMES="1 300"` renders only those frames, for a first look.
+- `-e PK_GPU=OPTIX` (with `--gpus all`) renders on the GPU, one job by default.
+- After a board change, delete `render/out/assembly*.blend`, `render/out/left.pcb3d`
+  and `render/out/pcb_left.blend`; they are rebuilt on the next run.
