@@ -458,11 +458,80 @@ for the lab**: what they would accept as an equivalence assessment for a
 cable-plus-core change, and what a delta retest would cost (radiated only,
 worst-case mode) rather than a full repeat.
 
-### f. For a future board revision
+### f. ⚠️ Cable substitution, and the lead that would make the cable not matter
 
-A common-mode choke at the split connector, on the board, would remove the
-dependency on a supplied cable at all. The ferrite is a fix at the cable, not at
-the source. Recorded as an option for a later revision, not a decision.
+**The user-substitution problem does not have a cable-side answer, so this is
+where it has to be solved.** Three layers, because the first two bound the
+problem and only the third removes it.
+
+**1. The obligation is narrower than it looks.** 2014/30/EU requires the
+apparatus to comply when properly installed and used for its intended purpose,
+*per the instructions supplied*, and the DoC covers the product as placed on the
+market with its own accessories. "Use the supplied cable" is a standard,
+long-established clause. Three conditions make it legitimate rather than a
+figleaf: a conforming cable is actually supplied, the requirement is stated
+plainly in the instructions rather than buried, and it is reasonable to follow.
+A user fitting their own non-conforming cable is operating outside the
+documented configuration, which is their deviation. **This is the normal
+situation for every USB peripheral on the market** — it is not a gap to feel bad
+about.
+
+**2. The two cables differ, and the bridge one is closable by construction.**
+- **Bridge (`USB2`).** The user has no reason to own a spare, and the link is
+  **not USB** — a UART on USB-C pins. So the decisive fix is **not to use USB-C
+  for the bridge**: a keyed or locking 4-pin connector means no generic
+  substitute exists, the supplied cable is the only cable, the core can be
+  moulded in permanently, and it also removes the "bridge port plugged into a
+  charger or a PC" class of problem. The cost is that a lost cable becomes a
+  support ticket instead of a trip to any drawer. A v3.4 decision, but it is the
+  real answer for this cable.
+- **Host (`USB1`).** Cannot be closed. It is a USB-C peripheral and people use
+  their own cables; that is the point of the connector. Only layer 3 helps here.
+
+**3. The lead: BOTH cable shields are RF-floating.** Traced from the
+schematics — `USB1` pin 13 (`SHIELD`) → **FB1** → GND, and `USB2` pin 13 →
+**FB2** → GND, on every half of both boards. Both beads are
+`GZ2012D601TF`, **600 Ω @ 100 MHz ±25 %**, and **nothing else sits on either
+net — there is no parallel capacitor.** So at the frequencies in question each
+cable shield is tied to board ground through roughly 600 Ω, i.e. not grounded at
+RF at all. A shield that cannot carry common-mode return current back to the
+board does not shield; it floats and is driven as an antenna. That is consistent
+with a cable needing a clip-on core to pass.
+
+⚠️ **The bead is deliberate, and the fix is not simply to remove it.** Grounding
+a USB shield through a bead breaks ground loops and keeps host-side noise out —
+it is in many reference designs. But the usual form of that trade-off carries a
+**parallel capacitor** (typically 1–10 nF) exactly so the shield is isolated at
+DC and audio while still bonded at RF. That capacitor is what is missing here.
+
+**This is testable on existing v3.3 hardware for the price of a rework.** FB1 and
+FB2 are 0805. In increasing aggression:
+1. Tack **1–10 nF across the bead** — restores the RF bond, keeps the DC
+   isolation. Try this first, and try it on the **bridge** first: that shield
+   joins two halves of one product, so there is no third-party chassis in the
+   loop and it is the cable whose UART made the ferrite necessary.
+2. Replace the bead with a **0 Ω link** — a hard bond. ⚠️ On the **host** side
+   this ties the PC chassis to keyboard ground and, with two cables, can form a
+   host → left → bridge → right loop; it may trade radiated emissions for
+   conducted emissions or susceptibility. That is presumably why the bead is
+   there, so this is the second experiment, not the first.
+
+Measuring the change needs only *relative* evidence to decide whether to pursue
+it: a near-field sniffer probe and a spectrum analyser will show it, or ask the
+lab for a short pre-compliance session, which is far cheaper than a retest.
+
+⚠️ **This is a hypothesis to test, not a diagnosis.** The report's per-peak
+deltas (§7e) decide it first: a peak that barely moved when the ferrites went on
+is not cable common-mode, so the shield bond is not its lever either.
+
+**If it holds, the dependency on a user-fitted part largely goes away**, which
+is the only outcome that actually answers the substitution question. For v3.4,
+pair it with **common-mode choke footprints on both pairs** — the host D+/D−
+(full-speed USB at 12 Mbit/s has ample margin for one) and the bridge UART
+(460800 baud, trivial) — fitted or linked out as the measurements dictate. A
+footprint carried and not populated costs nothing.
+
+### g. Other board-revision options
 
 **Sanity-check the report's frequencies against the plausible sources** before
 assuming the cable is the only lever — several are firmware-side:
