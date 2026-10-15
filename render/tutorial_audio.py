@@ -542,10 +542,15 @@ def write(events, total_ms, path):
                     _add(buf, ms + up_ms, _pan(recorded_key(releases, close, rng) * up_gain, p))
             else:
                 _add(buf, ms, _pan(thock(close, rng), p))
-                _add(buf, ms + rng.uniform(260, 340), _pan(thock(close, rng, up=True), p))
-        elif kind == "release" and strokes is not None and releases:   # a held key let go
+                if not hold:                       # the same timing as the recorded strokes
+                    _add(buf, ms + up_ms, _pan(thock(close, rng, up=True), p))
+        elif kind == "release":                    # a held key let go
             p = -0.35 if int(e[2].split(",")[0]) < 5 else 0.35
-            _add(buf, ms, _pan(recorded_key(releases, e[3].startswith("k_"), rng) * up_gain, p))
+            close = e[3].startswith("k_")
+            if strokes is not None and releases:
+                _add(buf, ms, _pan(recorded_key(releases, close, rng) * up_gain, p))
+            elif strokes is None:
+                _add(buf, ms, _pan(thock(close, rng, up=True), p))
         elif kind == "sweep" and e[3] in WIPES:   # a language wipe: each its own kind of sound
             _add(buf, ms, wipe_whoosh(WIPES[e[3]], e[2], seed=3000 + k))
         elif kind == "sweep" and e[3] in REVEALS:   # an app overlay comes in: bells, not wind

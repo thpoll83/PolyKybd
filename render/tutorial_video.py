@@ -694,22 +694,6 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                 if s.get("fadein"):
                     f_ = min(1.0, t / s["fadein"])
                     keys = {mp: a * f_ for mp, a in keys.items()}
-                # a pressed key's display inverts while it is down (the firmware's key-down
-                # feedback); a held key (Shift, Intl, the armed Ctrl) stays inverted
-                inv = set(s.get("held") or ())
-                if s.get("press") and tw >= PRESS_HIT and (s.get("hold") or tw < PRESS_RELEASE):
-                    inv.add(s["press"])
-                if carry and carry[1] + t / carry[2] < PRESS_RELEASE:
-                    inv.add(carry[0])
-                if s.get("release") and t < PRESS_UP / 2:   # a held key, coming back up
-                    inv.add(s["release"])
-                if hit_at is not None and T >= hit_at and (release_at is None or T < release_at):
-                    inv.add(prev["press"])
-                if before is not None and T < hit_at:
-                    inv -= {prev["press"]}
-                for mp in inv:
-                    if mp in board.centre:
-                        keys[mp] = 1.0 - keys.get(mp, Z)
                 band, shue = None, 0
                 for sw in sweeps:
                     el = T - sw["start"]
@@ -730,6 +714,23 @@ def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=No
                     band = bnd
                     ox, oy = board.centre[sw["origin"]]
                     shue = fx.K_HUES[(ox * 3 + oy * 5 + phase) % len(fx.K_HUES)]
+                # a pressed key's display inverts while it is down (the firmware's key-down
+                # feedback); a held key (Shift, Intl, the armed Ctrl) stays inverted. After the
+                # sweeps: a sweep rebuilds the legends, and a press can start one (C1.1b -> C1.2)
+                inv = set(s.get("held") or ())
+                if s.get("press") and tw >= PRESS_HIT and (s.get("hold") or tw < PRESS_RELEASE):
+                    inv.add(s["press"])
+                if carry and carry[1] + t / carry[2] < PRESS_RELEASE:
+                    inv.add(carry[0])
+                if s.get("release") and t < PRESS_UP / 2:   # a held key, coming back up
+                    inv.add(s["release"])
+                if hit_at is not None and T >= hit_at and (release_at is None or T < release_at):
+                    inv.add(prev["press"])
+                if before is not None and T < hit_at:
+                    inv -= {prev["press"]}
+                for mp in inv:
+                    if mp in board.centre:
+                        keys[mp] = 1.0 - keys.get(mp, Z)
                 sweeps = [sw for sw in sweeps if T - sw["start"] < sw["run"] + 5000]
                 ripples = [(o, st) for o, st in ripples if 0 <= T - st < fx.P["TUT_RIPPLE_MS"] or T < st]
                 for o, st in ripples:
