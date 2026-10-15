@@ -23,7 +23,8 @@ The camera looks straight down (PK_ELEV, degrees above the horizon, default
 90) through PK_LENS mm (default 50) and frames both halves' displays with
 PK_MARGIN room (default 1.15). The look is the docs' RGB close-up: PK_PROFILE,
 PK_DENT, PK_GLOW, PK_CASE_GLOW="strength", PK_FLEX, PK_EMIT, PK_POWER_LED,
-PK_CASE_LEDS, PK_HIDE_ROLES as in closeup_view.py.
+PK_CASE_LEDS, PK_HIDE_ROLES as in closeup_view.py. PK_CASE=opaque renders the case as
+dark matte print instead of clear resin.
 """
 import json
 import math
@@ -136,7 +137,11 @@ if env("PK_GPU", "").upper() not in ("", "NONE", "CPU"):
     except TypeError as e:
         print("eden gpu", env("PK_GPU"), "unsupported here:", e, "- CPU")
 rgb.night(sc)
-rgb.clear_case()
+# PK_CASE=opaque keeps the printed case as it comes from materials.py (dark, matte print):
+# no clear resin, no light trapped in it, no indicator glow in its edges
+OPAQUE_CASE = env("PK_CASE", "clear") == "opaque"
+if not OPAQUE_CASE:
+    rgb.clear_case()
 if env("PK_FLOOR"):                               # "grey,roughness": the desk the board sits on
     _g, _r = (float(v) for v in env("PK_FLOOR").split(","))
     _b = bpy.data.materials["floor"].node_tree.nodes["Principled BSDF"]
@@ -309,12 +314,12 @@ if PASS in ("preview",) + LIGHT_PASSES:
             o.active_material.node_tree.nodes["Emission"].inputs["Color"].default_value = (*weight(x), 1)
     if float(env("PK_GLOW", 15)) > 0:
         volume_glow("keycap glass", float(env("PK_GLOW", 15)))
-    if env("PK_CASE_GLOW"):
+    if env("PK_CASE_GLOW") and not OPAQUE_CASE:
         volume_glow("case PLA", float(env("PK_CASE_GLOW")))
 if PASS in ("preview", "base") and env("PK_POWER_LED"):
     for side, root, board in halves:
         rgb.indicator_leds(root, board, float(env("PK_POWER_LED")))
-        if env("PK_CASE_LEDS"):
+        if env("PK_CASE_LEDS") and not OPAQUE_CASE:
             rgb.case_indicator_glow(root, board, float(env("PK_CASE_LEDS")))
 if env("PK_FLEX"):
     rgb.clear_flex(*[float(v) for v in env("PK_FLEX").split(",")])

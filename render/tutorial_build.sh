@@ -13,11 +13,13 @@
 #             (default: ../PolyKybdHost/.venv/bin/python, else python3)
 #   PK_GPU    OPTIX | CUDA | HIP | ONEAPI to render on a GPU (default: CPU)
 #   SCENE     the saved scene (default: render/out/hero.blend)
+#   PK_CASE   opaque: the case as dark matte print (default: clear resin), out dir gets _opaque
 set -euo pipefail
 cd "$(dirname "$0")/.."
 WIDTH=${1:-1024}
 SAMPLES=${2:-32}
-OUT=${3:-render/out/tutorial_${WIDTH}}
+# PK_CASE=opaque: the case as dark matte print, in its own folder (every layer differs)
+OUT=${3:-render/out/tutorial_${WIDTH}${PK_CASE:+_$PK_CASE}}
 BLENDER=${BLENDER:-blender}
 BLENDER_BIN=$(readlink -f "$(command -v "$BLENDER")")
 BPY=$(ls "$(dirname "$BLENDER_BIN")"/4.1/python/bin/python3.* 2>/dev/null | head -1)
