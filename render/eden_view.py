@@ -128,7 +128,7 @@ if env("PK_GAP"):                 # mm between the halves' facing edges: move bo
     bpy.context.view_layer.update()
     print("eden gap", round(gap * 1000, 1), "->", round((half_box(halves[1][1])[0] - half_box(halves[0][1])[1]) * 1000, 1), "mm")
 for o in sc.objects:
-    if o.active_material and o.active_material.get("pk_role") in env("PK_HIDE_ROLES", "").split(","):
+    if o.active_material and o.active_material.get("pk_role") in [r for r in env("PK_HIDE_ROLES", "").split(",") if r]:
         o.hide_render = True
 
 # the rainbow's phase runs over both halves' LEDs, left to right
