@@ -686,6 +686,77 @@ value, not cost:
 5. **A university EMC lab.** The Austrian and German FH/TU labs do industry
    cooperation cheaply, sometimes free for an interesting project.
 
+#### The self-measured procedure (chosen route, 2026-10-15)
+
+Doing it in-house to **decide**, and spending the lab on the **chosen** design
+once rather than on exploring three. What this setup can answer: which variant
+reduces common-mode current at the named frequencies, and roughly by how much —
+enough to commit a v3.4 schematic. What it cannot answer: an absolute level, a
+margin, or anything citable. Keep that line clear and the DIY result is sound.
+
+**Shopping list** (beyond a spare `74271111`, which we have):
+
+| Item | ~Cost | Why |
+|---|---|---|
+| tinySA basic (or Ultra) | $70 / $187 | 100 kHz–960 MHz covers 30–300 MHz |
+| SMA step attenuators 3/6/10/20 dB | €12 | input protection **and** the linearity check |
+| SMA pigtail + thin enamelled wire | €5 | the current probe |
+
+⚠️ **Leave an attenuator permanently in line as a sacrificial part** — the tinySA
+input is easy to destroy with static or overload.
+
+**Build the current probe.** Wind **10 turns** of thin insulated wire through one
+half of a spare snap core, spread evenly; solder the ends to an SMA pigtail
+(centre and shield). Clamp it round the cable under test — the snap core makes it
+genuinely clamp-on.
+
+⚠️ **Why this does not disturb what it measures, which is counter-intuitive and
+worth understanding before trusting it:** the same core bolted on a cable with
+*no* winding is a suppressor presenting its full ~316 Ω. Wound and **terminated
+in 50 Ω**, the secondary current opposes the flux and it reflects only
+`50/N²` = **0.5 Ω** into the cable — negligible. Transfer impedance is
+`50/N` = 5 Ω, so 10 µA of common-mode current reads ≈ −73 dBm, comfortably above
+even the basic unit's floor.
+⚠️ **Therefore never take a reading with the SMA disconnected**: an open winding
+turns the probe back into a suppressor, and the measurement silently becomes a
+measurement of the probe.
+
+**Stimulus — it must be repeatable, or nothing else matters.** Emissions depend
+on what the firmware is doing, so use a deterministic, continuous, hands-off
+activity:
+- **`KC_DEMO`** (settings layer, behind More) plays a 15-minute showroom loop
+  until Esc — self-driving and identical every run. Good general case.
+- For the **bridge** cable specifically, hammer the split link: a shell loop
+  around `polyctl overlay send <files>` drives USB, the 460800-baud UART and 72
+  SPI display writes together. That is the worst case and the one a bench test
+  will not reach by itself.
+
+**Procedure.** Tape the probe down, tape the cable route down, do not hold
+anything, and do not disturb the geometry between variants — rework in place
+rather than swapping boards.
+
+1. **A** (as built) — record both peak levels.
+2. **A again** — must reproduce within ~1 dB, or stop and fix the setup.
+3. **B** (bead ∥ 4.7 nF) — record.
+4. **A again** — the strongest form of the check: if A no longer reproduces, B's
+   number is worthless.
+5. **C** (0 Ω link) — record.
+
+**Four validity checks, each of which has to pass:**
+
+| Check | How | What a failure means |
+|---|---|---|
+| Linearity | insert 10 dB; reading must fall **exactly** 10 dB | front end compressing — every delta understated |
+| Noise floor | unclamp the probe, keep it terminated | the measurement is instrument noise |
+| It is ours | power the keyboard **off** | any peak that survives is ambient, not emission |
+| Repeatability | the A → B → A sequence above | geometry drift; the deltas are noise |
+
+⚠️ **The ambient check is not optional here, because FM broadcast occupies
+88–108 MHz** and is strong in any city — right where a 50 MHz XIP-clock second
+harmonic would sit. A probe on a cable will happily pick up a local transmitter
+and present it as a beautiful stable peak. Power-off is the one-command
+discriminator.
+
 #### Measure CURRENT, not field — and the probe can be made from a spare ferrite
 
 Common-mode current on the cable is what drives the radiated field (that is the
