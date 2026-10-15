@@ -68,7 +68,7 @@ The first run builds three scenes in `render/out/` and keeps them: `assembly.ble
 left half as one object per part, ~15 min), `pcb_left.blend` (pcb2blender's board, ~5 min)
 and `assembly_pcb.blend` (both put together). Then it renders 1176 frames into
 `<outdir>/frames/`, `PK_JOBS` Blender processes side by side (default one per 8 cores, each
-holding about 4 GB), and encodes `<outdir>/assembly_<width>.mp4` once all are there.
+holding about 5 GB), and encodes `<outdir>/assembly_<width>.mp4` once all are there.
 
 - It resumes: a frame on disk is skipped, so stop it and run the same command again.
 - `-e PK_FRAMES="1 300"` renders only those frames, for a first look.

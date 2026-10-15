@@ -12,7 +12,7 @@
 # to rebuild the scene after a board change.
 #
 #   PK_JOBS   Blender processes rendering frames side by side (default: one per 8 cores;
-#             1 with PK_GPU). Each holds the scene, about 4 GB.
+#             1 with PK_GPU). Each holds the scene, about 5.2 GB.
 #   PK_GPU    OPTIX | CUDA | HIP | ONEAPI to render on a GPU (default: CPU)
 #   PK_FRAMES "first last" to render only those frames (default: all 1176)
 set -euo pipefail
