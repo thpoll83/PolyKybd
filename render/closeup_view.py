@@ -8,7 +8,8 @@ fx, fy place the camera target as fractions of the left half's display decals'
 bounding box (x from the left, y from the front); dist is in metres, elev and
 yaw in degrees, lens in mm, fstop > 0 turns on depth of field. PK_STRENGTH sets
 the legends' emission (6 saturates to white at close range; 3 keeps the
-LIT_TINT visible), PK_STATUS the status-panel suffix (_l1), PK_BORDER a crop.
+LIT_TINT visible), PK_STATUS the status-panel suffix (_l1), PK_BORDER a crop, PK_LIGHT scales
+the studio lights (0.15 is a dim room, for the docs' idle close-up).
 PK_RGB="h0,h1" is the night shot: the studio off, the case clear, and every
 per-key LED lit along a hue gradient from h0 (left) to h1 (right), in degrees;
 PK_LED sets each LED's power in W, PK_GLOW the caps' glow and
@@ -55,7 +56,7 @@ if RGB:
     rgb.night(sc)
     rgb.clear_case()
 else:
-    lighting.studio(sc, tgt, 1.0)
+    lighting.studio(sc, tgt, float(os.environ.get("PK_LIGHT", 1.0)))
 studio.splay(-2, right=-9)
 right = bpy.data.objects["split72_right.wrl"]
 for o in [right] + list(right.children_recursive):
