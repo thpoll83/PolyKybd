@@ -12,7 +12,7 @@ seconds at 25 fps (STAGES below):
   0.0  the bare PCB comes down, bottom side up (already on its way at frame 1)
   2.5  the bottom side, in waves left to right: passives, then the chips and
        connectors, then the 36 hot-swap sockets
- 12.5  the board turns over
+ 12.5  the board turns over, about its short axis (its front edge stays in front)
  14.5  the top side: the key LEDs and the rest of the parts
  18.0  the plate with its diffuser, the status display, the screws
  21.5  the switches, row by row; the keycap stems; the displays with their
@@ -163,7 +163,7 @@ piv_r.location = home_r
 base_loc, base_rot = root.location.copy(), root.rotation_euler.copy()
 lift = mathutils.Vector((0, 0, LIFT / 1000))       # root is in the pivot's frame (metres)
 for sec, flip, lifted in ((0, 1, 1), (FLIP[0], 1, 1), (FLIP[1], 0, 1), (SETTLE[0], 0, 1), (SETTLE[1], 0, 0)):
-    root.rotation_euler = (base_rot.x + math.pi * flip, base_rot.y, base_rot.z)
+    root.rotation_euler = (base_rot.x, base_rot.y + math.pi * flip, base_rot.z)   # about the short axis: the front stays in front
     root.location = base_loc + lift * lifted
     root.keyframe_insert("rotation_euler", frame=f(sec))
     root.keyframe_insert("location", frame=f(sec))
@@ -174,6 +174,10 @@ for fc in root.animation_data.action.fcurves:
 
 # ---- studio, cables, camera -----------------------------------------------------
 materials.scene_settings(sc)
+PCB_COLOUR = (0.16, 0.03, 0.30, 1)                # purple solder mask (both halves share the material)
+for m in bpy.data.materials:
+    if m.get("pk_role") == "solder mask":
+        m.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = PCB_COLOUR
 tgt = bpy.data.objects.get("target")
 lighting.studio(sc, tgt)
 studio.cove(sc)
@@ -245,12 +249,11 @@ def view(centre, width, elev, azim, fill):
 lw = lhi.x - llo.x
 lift_c = left_c + mathutils.Vector((0, 0, LIFT / 1000))
 # (s, target, width, elevation, azimuth, fill)
-SHOTS = [(0.0, lift_c, lw, 48, -18, 0.80), (2.5, lift_c, lw * 0.55, 52, -10, 0.85),
-         (7.0, lift_c + mathutils.Vector((0.03, 0, 0)), lw * 0.55, 50, 4, 0.85), (11.8, lift_c, lw, 46, 10, 0.85),
-         (14.5, lift_c, lw * 0.75, 50, 14, 0.85), (18.0, lift_c, lw, 40, 6, 0.80),
-         (21.5, lift_c, lw, 36, -6, 0.82), (30.0, lift_c, lw, 32, -12, 0.82),
-         (34.0, lift_c, lw, 30, -16, 0.78), (37.8, left_c, lw, 30, -12, 0.80),
-         (39.0, left_c, lw, 30, -8, 0.82), (41.2, both_c, both_w, 33, 0, 0.95), (END, both_c, both_w, 33, 3, 0.95)]
+# (s, target, width, elevation, azimuth, fill): one framing for the whole build (the
+# 20 s view of the first draft), drifting a few degrees; then the pull-back to both halves
+SHOTS = [(0.0, lift_c, lw, 40, -4, 0.74), (18.0, lift_c, lw, 40, 6, 0.74), (34.0, lift_c, lw, 38, 2, 0.74),
+         (37.8, left_c, lw, 36, -2, 0.76), (39.0, left_c, lw, 35, -4, 0.80),
+         (41.2, both_c, both_w, 33, 0, 0.95), (END, both_c, both_w, 33, 3, 0.95)]
 for s, c, w, el, az, fill in SHOTS:
     tgt.location = c
     cam.location = view(c, w, el, az, fill)
