@@ -8,7 +8,10 @@ fx, fy place the camera target as fractions of the left half's display decals'
 bounding box (x from the left, y from the front); dist is in metres, elev and
 yaw in degrees, lens in mm, fstop > 0 turns on depth of field. PK_STRENGTH sets
 the legends' emission (6 saturates to white at close range; 3 keeps the
-LIT_TINT visible), PK_STATUS the status-panel suffix (_l1), PK_BORDER a crop, PK_LIGHT scales
+LIT_TINT visible), PK_STATUS the status-panel suffix (_l1), PK_BORDER a crop, PK_SPLAY the left
+half's turn (default -2; 0 squares its columns to the frame), PK_BLOOM="threshold,mix"
+a compositor fog glow around bright pixels, PK_PANEL_FLOOR="r,g,b"
+(screens.py) gives every key panel a faint glow of that colour, PK_LIGHT scales
 the studio lights (0.15 is a dim room, for the docs' idle close-up).
 PK_RGB="h0,h1" is the night shot: the studio off, the case clear, and every
 per-key LED lit along a hue gradient from h0 (left) to h1 (right), in degrees;
@@ -57,7 +60,7 @@ if RGB:
     rgb.clear_case()
 else:
     lighting.studio(sc, tgt, float(os.environ.get("PK_LIGHT", 1.0)))
-studio.splay(-2, right=-9)
+studio.splay(float(os.environ.get("PK_SPLAY", -2)), right=-9)   # PK_SPLAY=0: columns square to the frame
 right = bpy.data.objects["split72_right.wrl"]
 for o in [right] + list(right.children_recursive):
     o.hide_render = True
@@ -134,4 +137,15 @@ if border:
     sc.render.use_border, sc.render.use_crop_to_border = True, True
     sc.render.border_min_x, sc.render.border_max_x = x0, x1
     sc.render.border_min_y, sc.render.border_max_y = 1 - y1, 1 - y0
+bloom = os.environ.get("PK_BLOOM")               # "threshold,mix": a soft glow around the lit legends
+if bloom:
+    th, mix = (float(v) for v in bloom.split(","))
+    sc.use_nodes = True
+    nt = sc.node_tree
+    rl = nt.nodes.get("Render Layers") or nt.nodes.new("CompositorNodeRLayers")
+    comp = nt.nodes.get("Composite") or nt.nodes.new("CompositorNodeComposite")
+    g = nt.nodes.new("CompositorNodeGlare")
+    g.glare_type, g.quality, g.threshold, g.mix, g.size = "FOG_GLOW", "HIGH", th, mix, 8
+    nt.links.new(rl.outputs["Image"], g.inputs["Image"])
+    nt.links.new(g.outputs["Image"], comp.inputs["Image"])
 bpy.ops.render.render(write_still=True)
