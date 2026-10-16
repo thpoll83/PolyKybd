@@ -14,8 +14,9 @@ Props are (asset, part, x, y, turn deg, height m or None, lie flat):
   lamp: its origin is the desk top, the clamp hangs below), at_back=True measures y
   from the desk's back edge, towards the viewer, z lifts it (a cup onto its saucer),
   on=True leaves it out of the overlap check (it stands on another prop).
-"@tablet", "@ruler" (300 mm steel) and "@set_square" (45 deg acrylic) are built in
-workspace_scene.py; desk "@black_desk" is a gaming desk. desk_mat: an extended mat under
+"@tablet", "@ruler" (300 mm steel), "@set_square" (45 deg acrylic), "@mug",
+"@mug_dark", "@puzzle_cube" and "@clips" are built in workspace_scene.py; tint=(r, g, b)
+in the last dict multiplies a prop's colours, scale=k resizes it; desk "@black_desk" is a gaming desk. desk_mat: an extended mat under
 keyboard and mouse in color at rough, glow=(r, g, b) lights its edge. wall: the desk
 stands against a painted wall (color), with an LED strip (led=(r, g, b)) and a poster.
 desk_height, desk_depth and desk_width stretch a desk's height, depth or width only (WoodenTable_01 is a
@@ -29,23 +30,25 @@ there.
 """
 SCENES = {
     "office": dict(
-        hdri="blender_institute", hdri_turn=140, hdri_strength=0.8,
+        hdri="poly_haven_studio", hdri_turn=0, hdri_strength=1.0,
         desk="metal_office_desk", desk_height=None,
         kb_from_front=0.26,                       # m from the desk's front edge to the keyboard's centre
         props=[("potted_plant_02", None, -0.90, 0.40, 0, 0.40, False),
-               ("office_notepads", "office_notepads_yellow_pad", 0.58, 0.02, 12, None, False),
-               ("stationery_supplies", "stationery_supplies_pen_blue", 0.56, 0.0, 74, None, True, dict(z=0.011, on=True)),
-               ("stationery_supplies", "stationery_supplies_pencilcup", -0.52, 0.24, 0, None, False),
-               ("@mug_dark", None, -0.42, 0.04, 140, None, False),
-               ("round_spectacles", None, 0.50, -0.13, -24, None, False),
-               ("vintage_stapler", None, -0.62, -0.02, 20, None, False),
-               ("stationery_supplies", "stationery_supplies_pencil_new_b", 0.72, -0.10, 82, None, True),
-               ("stationery_supplies", "stationery_supplies_eraser", 0.64, -0.18, 30, None, False)],
+               ("office_notepads", "office_notepads_a4_stack", 0.56, 0.08, 10, None, False, dict(tint=(1.0, 0.93, 0.78))),
+               ("stationery_supplies", "stationery_supplies_pen_fancy", 0.54, 0.06, 70, None, True, dict(z=0.011, on=True)),
+               ("stationery_supplies", "stationery_supplies_pencil_new_a", 0.47, -0.15, 75, None, True),
+               ("stationery_supplies", "stationery_supplies_pencil_used", 0.52, -0.19, 88, None, True),
+               ("stationery_supplies", "stationery_supplies_pen_red", -0.36, -0.16, 30, None, True),
+               ("@clips", None, 0.62, -0.12, 0, None, False),
+               ("@puzzle_cube", None, -0.58, 0.10, 22, None, False),
+               ("@mug_dark", None, -0.42, -0.02, 140, None, False),
+               ("vintage_stapler", None, -0.56, -0.13, 20, None, False, dict(scale=0.62)),
+               ("stationery_supplies", "stationery_supplies_eraser", 0.60, -0.21, 30, None, False)],
         desk_mat=dict(w=0.76, d=0.34, x=0.06, y=0.0, color=(0.08, 0.085, 0.09), rough=0.95),
         monitor=dict(style="dual", y=0.42, inches=27, finish="black",
-                     screens=["screen_code.jpg", "screen_polykybd_org.jpg"], gap=0.16),
+                     screens=["screen_code.jpg", "screen_polykybd_org.jpg"], gap=0.20),
         mouse=dict(x=0.32, y=0.0, turn=-6, wired=True),
-        camera=dict(distance=1.65, elev=15, azim=-10, lens=40, fstop=4.0, aim_y=0.14, aim_z=0.17)),
+        camera=dict(distance=1.75, elev=15, azim=-10, lens=40, fstop=4.0, aim_y=0.14, aim_z=0.17)),
     "front_desk": dict(
         hdri="entrance_hall", hdri_turn=90, hdri_strength=1.2,
         desk="@counter", desk_height=None,

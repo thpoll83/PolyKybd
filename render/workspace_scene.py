@@ -364,7 +364,109 @@ def mug(glaze=(0.85, 0.84, 0.80)):
     return g, [body, handle, coffee]
 
 
-BUILT = {"@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
+def puzzle_cube(seed=5):
+    """A 57 mm puzzle cube, scrambled: a black body with 9 stickers a face, 16 mm
+    squares 0.6 mm proud, in the six usual colours drawn at random (seeded)."""
+    import random
+    rnd = random.Random(seed)
+    body_m = principled("cube body", (0.01, 0.01, 0.011), 0.35)
+    cols = [(0.9, 0.9, 0.88), (0.95, 0.80, 0.05), (0.75, 0.05, 0.04), (0.95, 0.35, 0.02), (0.02, 0.20, 0.75), (0.02, 0.55, 0.15)]
+    mats = [principled(f"cube sticker {i}", c, 0.25, coat=0.3) for i, c in enumerate(cols)]
+    a, st, pitch = 0.0285, 0.0080, 0.019
+    parts = [cube("puzzle cube", (-a, -a, 0.0), (a, a, 2 * a), body_m, 0.003)]
+    for axis in range(3):
+        for sign in (-1, 1):
+            for i in (-1, 0, 1):
+                for j in (-1, 0, 1):
+                    c = [0.0, 0.0, a]
+                    u, v = [k for k in range(3) if k != axis]
+                    c[axis] += sign * (a + 0.0003)
+                    c[u] += i * pitch
+                    c[v] += j * pitch
+                    lo, hi = list(c), list(c)
+                    for k in (u, v):
+                        lo[k] -= st
+                        hi[k] += st
+                    lo[axis] -= 0.0003
+                    hi[axis] += 0.0003
+                    parts.append(cube("sticker", lo, hi, rnd.choice(mats), 0.0012))
+    g = bpy.data.objects.new("@puzzle_cube", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def paper_clips():
+    """Three 32 mm gem clips, 0.9 mm steel wire, scattered at angles."""
+    steel = principled("clip steel", (0.7, 0.71, 0.73), 0.25)
+    steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+
+    def clip_path():
+        pts = []
+
+        def line(a, b, n=6):
+            for k in range(n):
+                t = k / n
+                pts.append((a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t))
+
+        def arc(cx, cy, rr, a0, a1, n=10):
+            for k in range(n):
+                t = a0 + (a1 - a0) * k / n
+                pts.append((cx + rr * math.cos(t), cy + rr * math.sin(t)))
+        line((0.0, 0.006), (0.0, 0.026))
+        arc(0.004, 0.026, 0.004, math.pi, 0.0)
+        line((0.008, 0.026), (0.008, 0.003))
+        arc(0.0045, 0.003, 0.0035, 0.0, -math.pi)
+        line((0.001, 0.003), (0.001, 0.022))
+        arc(0.0035, 0.022, 0.0025, math.pi, 0.0)
+        line((0.006, 0.022), (0.006, 0.008))
+        pts.append((0.006, 0.008))
+        return pts
+    parts = []
+    for k, (dx, dy, turn) in enumerate(((0.0, 0.0, 20), (0.028, 0.012, -35), (0.012, 0.034, 70))):
+        c, s_ = math.cos(math.radians(turn)), math.sin(math.radians(turn))
+        pts = [(dx + x * c - y * s_, dy + x * s_ + y * c, 0.00045) for x, y in clip_path()]
+        parts.append(bridge_cable._tube(f"paper clip {k}", pts, [0.00045] * len(pts), steel, ring=8))
+    g = bpy.data.objects.new("@clips", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def tint(objs, rgb):
+    """Multiply every material of objs (copies) by rgb: the yellow pad made ivory."""
+    done = {}
+    for o in objs:
+        if o.type != "MESH":
+            continue
+        for slot in o.material_slots:
+            m = slot.material
+            if m is None:
+                continue
+            if m.name not in done:
+                c = m.copy()
+                nt2 = c.node_tree
+                b = next((n for n in nt2.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
+                if b is not None:
+                    inp = b.inputs["Base Color"]
+                    mix = nt2.nodes.new("ShaderNodeMix")
+                    mix.data_type = "RGBA"
+                    mix.blend_type = "MULTIPLY"
+                    mix.inputs["Factor"].default_value = 1.0
+                    mix.inputs[7].default_value = (*rgb, 1)
+                    if inp.is_linked:
+                        nt2.links.new(inp.links[0].from_socket, mix.inputs[6])
+                    else:
+                        mix.inputs[6].default_value = inp.default_value
+                    nt2.links.new(mix.outputs[2], inp)
+                done[m.name] = c
+            slot.material = done[m.name]
+
+
+BUILT = {"@puzzle_cube": lambda: puzzle_cube(), "@clips": lambda: paper_clips(),
+"@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
          "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
 
 
@@ -658,10 +760,12 @@ def cable_exit(rects, xs):
     return min(cands, key=lambda c: sum(abs(c - x) for x in xs))
 
 
-def desk_cable(name, start, d0, x_exit, y_front, y_edge, z_desk, r, mat, v_scale=None):
+def desk_cable(name, start, d0, x_exit, y_front, y_edge, z_desk, r, mat, v_scale=None, wobble=(0.006, 0.17, 0.0)):
     """A cable from start (its plug or the mouse's nose) along d0, across in front of
-    the screens at y_front to x_exit, straight back to the desk's back edge and over it.
-    It settles from the start's height onto the desk within 30 mm."""
+    the screens at y_front to x_exit, back to the desk's back edge and over it. It
+    settles from the start's height onto the desk within 30 mm, and meanders sideways
+    by wobble = (amplitude m, wavelength m, phase), faded in after the plug and out
+    before the edge, so no two cables lie like rails."""
     d0 = mathutils.Vector((d0.x, d0.y, 0)).normalized()
     p1 = start + d0 * 0.03
     q = mathutils.Vector((x_exit, max(y_front, p1.y + 0.05), z_desk))
@@ -673,12 +777,20 @@ def desk_cable(name, start, d0, x_exit, y_front, y_edge, z_desk, r, mat, v_scale
         plan.append((1 - t) ** 3 * c[0] + 3 * (1 - t) ** 2 * t * c[1] + 3 * (1 - t) * t ** 2 * c[2] + t ** 3 * c[3])
     n = max(2, int((y_edge - 0.01 - q.y) / 0.01))
     plan += [mathutils.Vector((x_exit, q.y + (y_edge - 0.01 - q.y) * i / n, z_desk)) for i in range(1, n + 1)]
-    pts, run = [], 0.0
-    for i, p in enumerate(plan):
-        if i:
-            run += (mathutils.Vector((p.x, p.y)) - mathutils.Vector((plan[i - 1].x, plan[i - 1].y))).length
+    runs = [0.0]
+    for i in range(1, len(plan)):
+        runs.append(runs[-1] + (mathutils.Vector((plan[i].x, plan[i].y)) - mathutils.Vector((plan[i - 1].x, plan[i - 1].y))).length)
+    total = runs[-1]
+    amp, lam, ph = wobble
+    pts = []
+    for i, (p, run) in enumerate(zip(plan, runs)):
+        a, b = plan[max(i - 1, 0)], plan[min(i + 1, len(plan) - 1)]
+        t = mathutils.Vector((b.x - a.x, b.y - a.y))
+        nrm = mathutils.Vector((-t.y, t.x)).normalized() if t.length > 1e-9 else mathutils.Vector((0, 0))
+        fade = min(1.0, max(0.0, (run - 0.04) / 0.06), max(0.0, (total - run - 0.02) / 0.08))
+        off = nrm * (amp * fade * math.sin(2 * math.pi * run / lam + ph))
         kk = min(1.0, run / 0.03)
-        pts.append((p.x, p.y, z_desk + r + (start.z - z_desk - r) * (1 - (3 * kk * kk - 2 * kk ** 3))))
+        pts.append((p.x + off.x, p.y + off.y, z_desk + r + (start.z - z_desk - r) * (1 - (3 * kk * kk - 2 * kk ** 3))))
     o = bridge_cable._tube(name, pts, [r] * len(pts), mat, ring=16, v_scale=v_scale)
     over_edge(name + " drop", x_exit, y_edge, z_desk, z_desk, r, mat, v_scale)
     return o
@@ -741,19 +853,23 @@ if x_exit is None:
     xk, xm = start_k.x - 0.10, (nose.x + 0.06 if wired else 0.0)
 else:
     side = 1 if (wired and nose.x > start_k.x) else -1     # the mouse's cable on its own side of the pair
-    xk, xm = x_exit - side * 0.008, x_exit + side * 0.008
+    xk, xm = x_exit - side * 0.026, x_exit + side * 0.026     # side by side, apart
 host = desk_cable("host cable", start_k, dir_k, xk, y_front, ye, top, bridge_cable.CABLE_R / 1000,
                   bridge_cable._braid_material(), v_scale=bridge_cable.BRAID_MM / 1000)
 host["pk_host"] = True
 if wired:
     fwd = mouse_g.matrix_world.to_3x3() @ mathutils.Vector((0, 1, 0))
-    desk_cable("mouse cable", nose, fwd, xm, y_front, ye, top, 0.0016,
-               principled("mouse cable", (0.02, 0.02, 0.022), 0.5))
+    desk_cable("mouse cable", nose, fwd, xm, y_front + 0.05, ye, top, 0.0016,
+               principled("mouse cable", (0.02, 0.02, 0.022), 0.5), wobble=(0.009, 0.23, 1.9))
 print(f"cables: exit {x_exit if x_exit is None else round(x_exit, 3)}, in front of the screens at y {y_front:.3f}")
 placed = []                                        # (name, plan box) of what stands on the desk
 for aid, part, x, y, turn, height, flat, *more in S["props"]:
     g, objs = BUILT[aid]() if aid in BUILT else gltf(aid, part)
     extra = more[0] if more else {}
+    if extra.get("tint"):
+        tint(objs, extra["tint"])
+    if extra.get("scale"):
+        g.scale = [extra["scale"]] * 3
     if extra.get("at_back"):                         # y from the desk's back edge instead
         y = back_rel - y
     on_mat = mat_rect and mat_rect[0] < x < mat_rect[1] and mat_rect[2] < kb_y + y < mat_rect[3]
