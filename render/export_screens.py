@@ -36,6 +36,9 @@ COLS, ROWS, LAYERS = 8, 10, 8           # the split72 matrix; the editor reads 8
 CELL_W, CELL_H, ATLAS_COLS = 72, 40, 10
 # the export could not resolve this token to a number; HYPR(KC_NO) is QK_MODS | 0x0F << 8
 UNRESOLVED = {"KC_HYPR": 0x0F00}
+# Keys the editor preview draws nothing for, drawn from the firmware's own legend
+# (keycode_helper.c): KC_HYPR is " " PRIVATE_HYPER, the dizzy glyph U+1F4AB.
+FIRMWARE_CPS = {0x0F00: [0x20, 0x1F4AB]}
 
 BOARD = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HOST, "polyhost", "res", "preview", "board.json")
 LAYER = int(sys.argv[3]) if len(sys.argv) > 3 else 0
@@ -101,6 +104,8 @@ cells, blank = {}, []
 p = QPainter(atlas)
 for i, ((r, c), code) in enumerate(keys):
     img = d._preview.render(code, names.get(code)) if code else None
+    if img is None and code in FIRMWARE_CPS:
+        img = d._preview._to_qimage(d._preview._ld.render_static_cps(d._preview._R, FIRMWARE_CPS[code]))
     if img is None:
         blank.append(f"{r},{c}")
         continue

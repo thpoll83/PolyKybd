@@ -11,7 +11,8 @@ the legends' emission (6 saturates to white at close range; 3 keeps the
 LIT_TINT visible), PK_STATUS the status-panel suffix (_l1), PK_BORDER a crop, PK_SIDE=right
 frames the right half, PK_CLEAR_CASE=1 makes the case clear in the studio,
 PK_COVE_RGB="r,g,b" colours the studio floor, PK_SPLAY the left
-half's turn (default -2; 0 squares its columns to the frame), PK_BLOOM="threshold,mix"
+half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
+the right half's (default -9), PK_BLOOM="threshold,mix"
 a compositor fog glow around bright pixels, PK_PANEL_FLOOR="r,g,b"
 (screens.py) gives every key panel a faint glow of that colour, PK_LIGHT scales
 the studio lights (0.15 is a dim room, for the docs' idle close-up).
@@ -66,7 +67,8 @@ else:
     lighting.studio(sc, tgt, float(os.environ.get("PK_LIGHT", 1.0)))
     if os.environ.get("PK_CLEAR_CASE"):             # the clear printed case of the docs' language photos
         rgb.clear_case()
-studio.splay(float(os.environ.get("PK_SPLAY", -2)), right=-9)   # PK_SPLAY=0: columns square to the frame
+studio.splay(float(os.environ.get("PK_SPLAY", -2)),          # PK_SPLAY=0: columns square to the frame
+             right=float(os.environ.get("PK_SPLAY_RIGHT", -9)))  # the same for the right half
 other = bpy.data.objects[f"split72_{OTHER}.wrl"]
 for o in [other] + list(other.children_recursive):
     o.hide_render = True
