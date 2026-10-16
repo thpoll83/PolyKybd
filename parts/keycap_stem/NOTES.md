@@ -88,6 +88,13 @@ table of its own, so **adding a plate is adding a file**.
     a difference in elevation reads as a difference in profile. That is the
     entire reason `render_profiles.sh` exists rather than a note about which
     camera to use.
+- ⚠️ **fontconfig has no family "Noto".** `text_font = "Noto:style=Bold"`
+  resolves to a Noto face only where a package aliases it; with only Noto Sans
+  installed (`build_stems.sh --fetch-font`) OpenSCAD silently uses another
+  face (Inter in the cloud container, 2026-10-16), and `build_stems.sh`'s
+  `fc-match "Noto:style=Bold" | grep -i noto` check warns but cannot fix it.
+  `render_profiles.sh` writes a one-run fontconfig alias Noto → Noto Sans when
+  that is the case; the plate exports do not.
 - **Judge a regenerated plate by bbox + volume, not by facet count.** Text
   tessellation depends on the installed font *version*, so the triangle count
   moves between machines while the part is unchanged: regenerating the committed
