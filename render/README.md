@@ -365,6 +365,33 @@ blender -b render/out/hero.blend --python render/closeup_view.py -- \
 - The diffuser frame stays in (no `PK_HIDE_ROLES`), so the plate keeps its
   silkscreen and the LED light reaches the gaps.
 
+### The language close-ups
+
+The docs' Languages page shows the left half on Greek and the right half on
+French AZERTY, matched 1:1 to two old phone photos: the clear case on a purple
+mat, the columns square to the frame. About 35 minutes each:
+
+```bash
+H=../PolyKybdHost/.venv/bin/python
+QT_QPA_PLATFORM=offscreen $H render/board_layer.py _L1 /tmp/board_L1.json
+for L in el-GR fr-FR; do
+  PK_LANG=$L QT_QPA_PLATFORM=offscreen $H render/export_screens.py ../PolyKybdHost /tmp/board_L1.json 1
+done
+LOOK="PK_SPLAY=0 PK_SPLAY_RIGHT=0 PK_CLEAR_CASE=1 PK_COVE_RGB=0.19,0.045,0.22 PK_STRENGTH=1.6 PK_TINT=0.2,0.55,1.0 PK_STATUS=_l1"
+env $LOOK blender -b render/out/hero.blend --python render/closeup_view.py -- \
+    greek.png 256 1400 screens_layer1_el-GR 0.6 0.76 0.15 66 0 50
+env $LOOK PK_SIDE=right blender -b render/out/hero.blend --python render/closeup_view.py -- \
+    altgr.png 256 1400 screens_layer1_fr-FR 0.74 0.8 0.165 66 0 50
+```
+
+- `PK_LANG` draws a language in the layout editor's preview code; the atlas
+  is named `screens_layer<N>_<lang>`. The host venv needs PyQt5.
+- `KC_HYPR` is drawn from the firmware's own legend (U+1F4AB in its 18 pt
+  Hyper font): the editor preview leaves it blank.
+- ⚠️ The right half is turned 9 degrees for the hero shot. Without
+  `PK_SPLAY_RIGHT=0` its rows slope across the frame.
+- The status panel shows today's firmware screen, not the photo's older one.
+
 ### The Eden intro video
 
 The docs' First run video plays the Eden boot animation on both halves seen
