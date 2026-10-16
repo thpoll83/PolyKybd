@@ -48,6 +48,13 @@ for mat in bpy.data.materials:
         b = mat.node_tree.nodes.get("Principled BSDF")
         if b:
             b.inputs["Base Color"].default_value = (*stem_rgb, 1)
+# the cap glass refracts the stem differently at each cap angle, so identical
+# stems read orange in one cap and pink in the next; a lower IOR evens that out
+for mat in bpy.data.materials:
+    if mat.get("pk_role") == "keycap glass" and mat.use_nodes:
+        b = mat.node_tree.nodes.get("Principled BSDF")
+        if b:
+            b.inputs["IOR"].default_value = float(os.environ.get("PK_GLASS_IOR", 1.2))
 if prof != "flat":
     profile.apply(root, board, prof)
 materials.scene_settings(sc)
