@@ -323,7 +323,49 @@ def set_square():
     return g, [o]
 
 
-BUILT = {"@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square()}
+def mug(glaze=(0.85, 0.84, 0.80)):
+    """A ceramic coffee mug, 82 mm across, 95 mm tall, 4 mm wall, coffee 20 mm below
+    the rim, a D handle; glazed glaze."""
+    import bmesh
+    cer = principled(f"mug glaze {glaze}", glaze, 0.18, coat=0.4)
+    cof = principled("coffee", (0.06, 0.025, 0.01), 0.05, coat=0.0)
+    R, r, H = 0.041, 0.037, 0.095
+    bm = bmesh.new()
+    n = 48
+    rings = []
+    for (rad, z) in ((R * 0.94, 0.0), (R, 0.004), (R, H), (r, H), (r, 0.008), (0.0, 0.008)):
+        rings.append([bm.verts.new((rad * math.cos(2 * math.pi * i / n), rad * math.sin(2 * math.pi * i / n), z))
+                      for i in range(n)])
+    for a, c in zip(rings, rings[1:]):                 # the lathe: base edge, wall, rim, inside, floor
+        for i in range(n):
+            j = (i + 1) % n
+            bm.faces.new((a[i], a[j], c[j], c[i]))
+    bm.faces.new(list(reversed(rings[0])))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    me = bpy.data.meshes.new("mug")
+    bm.to_mesh(me)
+    bm.free()
+    me.materials.append(cer)
+    for p in me.polygons:
+        p.use_smooth = True
+    body = bpy.data.objects.new("mug", me)
+    sc.collection.objects.link(body)
+    body.modifiers.new("smooth", "SUBSURF").levels = 1
+    pts = [(R - 0.002 + 0.024 * math.sin(math.pi * t), 0.0, 0.022 + 0.055 * t) for t in [i / 24 for i in range(25)]]
+    handle = bridge_cable._tube("mug handle", pts, [0.0055] * len(pts), cer, ring=16)
+    bpy.ops.mesh.primitive_circle_add(vertices=48, radius=r - 0.0004, fill_type="NGON", location=(0, 0, H - 0.02))
+    coffee = bpy.context.active_object
+    coffee.name = "coffee"
+    coffee.data.materials.append(cof)
+    g = bpy.data.objects.new("@mug", None)
+    sc.collection.objects.link(g)
+    for o in (body, handle, coffee):
+        o.parent = g
+    return g, [body, handle, coffee]
+
+
+BUILT = {"@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
+         "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
 
 
 def wall(spec, y_wall, x_mid, top):
@@ -414,20 +456,29 @@ def bent_grid(name, w, h, z0, curve, y_off, mat, nx=64):
     return o
 
 
-def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6):
+FINISH = {    # bezel at the sides and top, chin, shell depth (m); shell and stand colours
+    "silver": dict(bezel=0.006, chin=0.020, depth=0.015, shell=(0.015, 0.015, 0.017), stand=(0.55, 0.56, 0.58), metal=1.0),
+    "black": dict(bezel=0.013, chin=0.024, depth=0.024, shell=(0.008, 0.008, 0.009), stand=(0.012, 0.012, 0.013), metal=0.3),
+}
+
+
+def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6, finish="silver"):
     """One display head, its screen's centre at the origin facing -y: the screen, a
-    6 mm bezel and 20 mm chin around it (a 14 mm deep shell), a box behind for the
-    electronics. Returns (head empty, objects, screen width, screen height)."""
+    bezel and chin around it (FINISH: thin and silver-stood, or a black office monitor
+    with a 13 mm bezel), a box behind for the electronics. Returns (head empty,
+    objects, screen width, screen height)."""
+    fin = FINISH[finish]
     diag = inches * 0.0254
     sw, sh = diag * aspect[0] / math.hypot(*aspect), diag * aspect[1] / math.hypot(*aspect)
-    shell = bpy.data.materials.get("monitor shell") or principled("monitor shell", (0.015, 0.015, 0.017), 0.4)
+    shell = bpy.data.materials.get(f"monitor shell {finish}") or principled(f"monitor shell {finish}", fin["shell"], 0.55)
     head = bpy.data.objects.new("monitor head", None)
     sc.collection.objects.link(head)
     scr = bent_grid("monitor screen", sw, sh, -sh / 2, curve, -0.0008, screen_material(screen, glow))
-    frame = bent_grid("monitor frame", sw + 0.012, sh + 0.026, -sh / 2 - 0.02, curve, 0.0072, shell)
+    b, ch, dp = fin["bezel"], fin["chin"], fin["depth"]
+    frame = bent_grid("monitor frame", sw + 2 * b, sh + b + ch, -sh / 2 - ch, curve, dp / 2 - 0.0003, shell)
     sol = frame.modifiers.new("depth", "SOLIDIFY")
-    sol.thickness, sol.offset = 0.015, 0.0
-    back = cube("monitor back", (-sw * 0.3, 0.014, -sh * 0.32), (sw * 0.3, 0.042, sh * 0.28), shell, 0.01)
+    sol.thickness, sol.offset = dp, 0.0
+    back = cube("monitor back", (-sw * 0.3, dp - 0.001, -sh * 0.32), (sw * 0.3, dp + 0.03, sh * 0.28), shell, 0.01)
     parts = [scr, frame, back]
     for o in parts:
         o.parent = head
@@ -448,8 +499,10 @@ def monitors(spec):
     style = spec.get("style", "stand")
     screens = spec.get("screens") or [spec["screen"]]
     glow = spec.get("glow", 1.6)
-    alu = bpy.data.materials.get("monitor aluminium") or principled("monitor aluminium", (0.55, 0.56, 0.58), 0.35)
-    alu.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    finish = spec.get("finish", "silver")
+    fin = FINISH[finish]
+    alu = principled(f"monitor stand {finish}", fin["stand"], 0.35 if finish == "silver" else 0.5)
+    alu.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = fin["metal"]
     g = bpy.data.objects.new("monitor", None)
     sc.collection.objects.link(g)
     objs, blocks, feet = [], [], []
@@ -462,10 +515,10 @@ def monitors(spec):
         st.parent = g
         st.location = (x, 0, 0)
         st.rotation_euler.z = math.radians(turn)
-        head, parts, sw, sh = panel(screen, inches, aspect, curve, glow)
+        head, parts, sw, sh = panel(screen, inches, aspect, curve, glow, finish)
         zc = lift + 0.02 + sh / 2
         head.parent = st
-        head.location = (0, 0.012, zc)
+        head.location = (0, 0.012 - (fin["depth"] - 0.015), zc)
         head.rotation_euler.x = -tilt              # the top leans back
         neck = cube("monitor neck", (-0.03, 0.045, 0.006), (0.03, 0.065, zc + 0.02), alu, 0.004)
         base = cube("monitor base", (-base_w / 2, -base_d / 2 + 0.02, 0.0), (base_w / 2, base_d / 2 + 0.02, 0.006), alu, 0.003)
@@ -489,7 +542,7 @@ def monitors(spec):
         on_stand(screens[0], spec.get("inches", 34), (21, 9), 1.5, 0.0, 0.0, base_w=0.30, base_d=0.20)
     elif style == "arm":
         reach = spec.get("reach", 0.24)
-        head, parts, sw, sh = panel(screens[0], spec.get("inches", 27), (16, 9), None, glow)
+        head, parts, sw, sh = panel(screens[0], spec.get("inches", 27), (16, 9), None, glow, finish)
         zc = spec.get("height", 0.32)              # the screen's centre above the desk
         head.parent = g
         head.location = (0, 0.0, zc)
