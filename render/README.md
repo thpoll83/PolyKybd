@@ -223,6 +223,22 @@ the scripts were written on (17 in a 4-CPU cloud container, above) and creates a
   library ships none, and inside the case only the plug shows
 - the key displays are unlit in the hero and top views; only the product
   photo's viewpoint (below) turns them on (`screens.py`)
+- the roller encoder (Panasonic EVQWGD001, footprint `poly_kb:PolyJog`) has no
+  model. Panasonic and the part libraries offer none, and the part is out of
+  production. The closest is `models/EVQWGD001.step` in
+  [crides/kleeb](https://github.com/crides/kleeb) (MIT), a copy of
+  [this GrabCAD model](https://grabcad.com/library/panasonic-evqwgd001-encoder-1).
+  It is simplified: the frame, roller and five pins are there, the holes and
+  pads on the back are not, and kleeb notes it does not match the footprint.
+  It is not committed here. To look at it, put it on a one-footprint board
+  (`(footprint "x:enc" (at 100 100) (model "<path>/EVQWGD001.step"))` plus an
+  `Edge.Cuts` rectangle) and run `kicad-cli pcb export vrml --units mm`;
+  the GLB export of the same board comes out empty. In Blender, import with
+  `axis_forward='Y', axis_up='Z'` and drop the two board meshes. The face with
+  the pins (the side `parts-list` shows) is the model's bottom: rotate by
+  (-90°, 90°, 0) and view from about 25° left and 20° up to match that photo.
+- the switches (`SW_Cherry_MX_PCB.wrl`) have no LED slit, so the docs' photos
+  of the plastic bar across the slit cannot be rendered
 
 ## The product photo's viewpoint
 

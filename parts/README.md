@@ -114,7 +114,10 @@ renders the four profile views into `images/` for the top-level README.  Render
 them with that script rather than framing them in the GUI: they only compare if
 they share one camera, and the previous set did not — a difference in elevation
 reads as a difference in profile.  (Rendering needs a display even though
-exporting does not, hence the `xvfb-run` inside it.)
+exporting does not, hence the `xvfb-run` inside it.)  `render_profiles.sh --blender <blender>`
+renders the same rows, camera and axes with Blender's shading instead of
+OpenSCAD's flat preview colours (`render_profiles_blender.py`); the pictures in
+`images/` and on the docs' Keycap stems page come from that.
 
 ⚠️ **The renders draw the coordinate AXES on purpose, and `profile_row()` must
 not rotate the row.**  The horizontal axis line is the reference a reader
