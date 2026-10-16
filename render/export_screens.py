@@ -88,6 +88,11 @@ def unlit(img):
 
 
 d = kb.KbLayoutDialog(Core(), Settings())
+# PK_LANG=xx-YY draws the legends in that language (the editor's "Preview
+# language"), for close-ups of a language layout; the atlas name gets the code
+LANG = os.environ.get("PK_LANG")
+if LANG and not d._preview.set_language(LANG):
+    sys.exit(f"preview has no language {LANG}; it knows {', '.join(d._preview.languages)}")
 names = d.keycode_browser.get_keycode_to_name_mapping()
 n_rows = (len(keys) + ATLAS_COLS - 1) // ATLAS_COLS
 atlas = QImage(ATLAS_COLS * CELL_W, n_rows * CELL_H, QImage.Format_RGB32)
@@ -104,8 +109,9 @@ for i, ((r, c), code) in enumerate(keys):
     cells[f"{r},{c}"] = [x, y]
 p.end()
 out = os.path.join(HERE, "textures")
-atlas.save(os.path.join(out, f"screens_layer{LAYER}.png"))
-with open(os.path.join(out, f"screens_layer{LAYER}.json"), "w", encoding="utf-8") as f:
+name = f"screens_layer{LAYER}" + (f"_{LANG}" if LANG else "")
+atlas.save(os.path.join(out, name + ".png"))
+with open(os.path.join(out, name + ".json"), "w", encoding="utf-8") as f:
     json.dump({"cell": [CELL_W, CELL_H], "size": [atlas.width(), atlas.height()],
                "fw_version": board.get("fw_version"), "keys": cells}, f, indent=1)
 sr = kb.StatusScreenRenderer(d._preview.status_faces())
