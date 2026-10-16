@@ -566,6 +566,10 @@ The arguments after the width are the camera elevation and bearing (deg,
 negative = from the left), the lens (mm) and the share of the frame the part
 fills. The docs used bearing -20 for the left case and the spacer (elevation
 45), +20 for the right case. About 1.5 minutes each at 256 samples on 4 CPUs.
+The docs' images are false-coloured (`PK_PART_RGB`: left 0.55,0.06,0.70,
+right 0.03,0.15,0.75, spacer 0.70,0.13,0.03) and use `PK_FILL=0.1
+PK_EXPOSURE=-0.2 "PK_LOOK=AgX - High Contrast"`. ⚠️ At the defaults the side
+fills light floor, walls and ribs evenly and the colours read pastel.
 The camera fits the part's bounding box, so the frame keeps empty floor where
 the box is empty (the cut corner); the docs images are cropped to the part.
 
