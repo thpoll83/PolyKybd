@@ -8,7 +8,8 @@ Drawn with Pillow at 2560 x 1440, generic on purpose (no product's look or name)
 - screen_calendar.jpg: a reception's day planner, five rooms by the hour,
 - screen_plan.jpg: a CAD floor plan, walls, doors, rooms with their areas, dimensions,
 - screen_design.jpg: a vector illustration app with a poster in progress,
-- screen_game.jpg: a made-up synthwave racing game with its HUD.
+- screen_game.jpg: a made-up synthwave racing game with its HUD,
+- ruler.jpg: a steel rule's millimetre scale, poster_road.jpg: the game's road as a poster.
 screen_polykybd_org.jpg is the docs site's front page (a Chromium screenshot of
 polykybd-docs/dist, served locally) and is not made here.
 """
@@ -251,9 +252,34 @@ def game():
     return im
 
 
+def ruler():
+    """A 300 mm steel rule's face, 3000 x 280 px (10 px a mm): brushed steel, a tick a
+    millimetre (longer each 5 and 10), the centimetres numbered."""
+    import random
+    rnd = random.Random(3)
+    im = Image.new("RGB", (3000, 280), (176, 178, 182))
+    d = ImageDraw.Draw(im)
+    for y in range(280):                                 # the brushing, along the rule
+        v = 168 + rnd.randint(-10, 10)
+        d.line((0, y, 3000, y), fill=(v, v + 2, v + 6))
+    for mm in range(0, 301):
+        x = 10 + mm * 9.93
+        h = 120 if mm % 10 == 0 else 80 if mm % 5 == 0 else 50
+        d.line((x, 0, x, h), fill=(25, 25, 28), width=3)
+        if mm % 10 == 0 and mm:
+            d.text((x - 14, 130), str(mm // 10), font=font(BOLD, 56), fill=(25, 25, 28))
+    return im
+
+
+def poster():
+    """The gamer wall's poster: the racing game's road and sun, its HUD cropped off."""
+    return game().crop((720, 0, 1840, 1440))
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in (("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_plan.jpg", plan),
-                     ("screen_design.jpg", design), ("screen_game.jpg", game)):
+                     ("screen_design.jpg", design), ("screen_game.jpg", game), ("ruler.jpg", ruler),
+                     ("poster_road.jpg", poster)):
         fn().save(os.path.join(OUT, name), quality=88)
         print("wrote", os.path.join("render", "textures", "workspace", name))

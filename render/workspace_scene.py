@@ -225,9 +225,11 @@ def black_desk():
 
 
 def desk_mat(spec):
-    """An extended desk mat under keyboard and mouse, 3 mm felt, with a light strip
-    around its edge glowing spec["glow"] (an RGB gamer's mat)."""
-    felt = principled("desk mat", (0.02, 0.02, 0.024), 0.9)
+    """An extended desk mat under keyboard and mouse, 3 mm thick, in spec["color"] at
+    spec["rough"] (felt 0.9, leather about 0.45), with a light strip around its edge
+    glowing spec["glow"] if given (an RGB gamer's mat)."""
+    felt = principled("desk mat", spec.get("color", (0.02, 0.02, 0.024)), spec.get("rough", 0.9),
+                      coat=spec.get("coat", 0.0))
     w, d, t = spec.get("w", 0.9), spec.get("d", 0.38), 0.003
     parts = [cube("desk mat", (-w / 2, -d / 2, 0.0), (w / 2, d / 2, t), felt, 0.002)]
     if spec.get("glow"):
@@ -247,6 +249,121 @@ def desk_mat(spec):
     for o in parts:
         o.parent = g
     return g, parts, t
+
+
+def image_material(name, image, rough=0.4, metal=0.0, tint=None):
+    """A material showing render/textures/workspace/<image> as its colour."""
+    m = bpy.data.materials.new(name)
+    m.use_nodes = True
+    nt2 = m.node_tree
+    b = nt2.nodes["Principled BSDF"]
+    tex = nt2.nodes.new("ShaderNodeTexImage")
+    tex.image = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", image), check_existing=True)
+    nt2.links.new(tex.outputs["Color"], b.inputs["Base Color"])
+    b.inputs["Roughness"].default_value = rough
+    b.inputs["Metallic"].default_value = metal
+    return m
+
+
+def uv_plane(name, lo, hi, z, mat):
+    """A horizontal quad from lo to hi (x, y) at height z, its uv the whole image."""
+    me = bpy.data.meshes.new(name)
+    me.from_pydata([(lo[0], lo[1], z), (hi[0], lo[1], z), (hi[0], hi[1], z), (lo[0], hi[1], z)], [], [(0, 1, 2, 3)])
+    lay = me.uv_layers.new(name="uv")
+    for li, uv in zip(me.polygons[0].loop_indices, [(0, 0), (1, 0), (1, 1), (0, 1)]):
+        lay.data[li].uv = uv
+    me.materials.append(mat)
+    o = bpy.data.objects.new(name, me)
+    sc.collection.objects.link(o)
+    return o
+
+
+def ruler():
+    """A 300 mm steel rule, 28 mm wide and 1 mm thick, its scale on the top face."""
+    steel = principled("ruler steel", (0.62, 0.63, 0.65), 0.3)
+    steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    face = image_material("ruler face", "ruler.jpg", rough=0.32, metal=1.0)
+    parts = [cube("ruler", (-0.155, -0.014, 0.0), (0.155, 0.014, 0.001), steel, 0.0003),
+             uv_plane("ruler scale", (-0.155, -0.014), (0.155, 0.014), 0.00102, face)]
+    g = bpy.data.objects.new("@ruler", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def set_square():
+    """A 45 deg set square, 200 mm legs, 2.5 mm clear acrylic tinted green, with the
+    triangular cut-out inside."""
+    import bmesh
+    acr = principled("set square", (0.75, 0.95, 0.85), 0.05)
+    b = acr.node_tree.nodes["Principled BSDF"]
+    b.inputs["Transmission Weight"].default_value = 1.0
+    b.inputs["IOR"].default_value = 1.49
+    L, Li, t = 0.20, 0.11, 0.0025
+    bm = bmesh.new()
+    outer = [bm.verts.new(p) for p in ((0, 0, 0), (L, 0, 0), (0, L, 0))]
+    off = 0.025
+    inner = [bm.verts.new(p) for p in ((off, off, 0), (off + Li, off, 0), (off, off + Li, 0))]
+    for i in range(3):                              # the band between the two triangles
+        j = (i + 1) % 3
+        bm.faces.new((outer[i], outer[j], inner[j], inner[i]))
+    ext = bmesh.ops.extrude_face_region(bm, geom=bm.faces[:])
+    bmesh.ops.translate(bm, verts=[v for v in ext["geom"] if isinstance(v, bmesh.types.BMVert)], vec=(0, 0, t))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    me = bpy.data.meshes.new("set square")
+    bm.to_mesh(me)
+    bm.free()
+    me.materials.append(acr)
+    o = bpy.data.objects.new("set square", me)
+    sc.collection.objects.link(o)
+    g = bpy.data.objects.new("@set_square", None)
+    sc.collection.objects.link(g)
+    o.parent = g
+    return g, [o]
+
+
+BUILT = {"@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square()}
+
+
+def wall(spec, y_wall, x_mid, top):
+    """A painted wall behind the desk at y_wall: 3.6 x 2.6 m with a 60 mm skirting; an
+    LED strip on it behind the screen (bias light, it lights the wall); a framed poster.
+    Real geometry, so it takes the room's light and throws the strip's back onto the
+    desk, which an HDRI behind the desk cannot."""
+    paint = principled("wall paint", spec.get("color", (0.05, 0.055, 0.07)), 0.85)
+    skirt = principled("wall skirting", (0.03, 0.03, 0.035), 0.5)
+    parts = [cube("wall", (x_mid - 1.8, y_wall, 0.0), (x_mid + 1.8, y_wall + 0.1, 2.6), paint, 0.0),
+             cube("wall skirting", (x_mid - 1.8, y_wall - 0.012, 0.0), (x_mid + 1.8, y_wall, 0.06), skirt, 0.002)]
+    if spec.get("led"):
+        lit = bpy.data.materials.new("led strip")
+        lit.use_nodes = True
+        b = lit.node_tree.nodes["Principled BSDF"]
+        b.inputs["Base Color"].default_value = (0, 0, 0, 1)
+        b.inputs["Emission Color"].default_value = (*spec["led"], 1)
+        b.inputs["Emission Strength"].default_value = spec.get("led_strength", 30.0)
+        zl = top + spec.get("led_z", 0.62)
+        w = spec.get("led_w", 1.2)
+        parts.append(cube("led strip", (x_mid - w / 2, y_wall - 0.006, zl), (x_mid + w / 2, y_wall, zl + 0.008), lit, 0.001))
+    if spec.get("poster"):
+        px, pz, pw = spec.get("poster_x", -0.85), top + spec.get("poster_z", 0.5), spec.get("poster_w", 0.5)
+        ph = pw * 1440 / 1120
+        frame = principled("poster frame", (0.015, 0.015, 0.017), 0.4)
+        art = image_material("poster", spec["poster"], rough=0.5)
+        parts.append(cube("poster frame", (x_mid + px - pw / 2 - 0.02, y_wall - 0.02, pz - 0.02),
+                          (x_mid + px + pw / 2 + 0.02, y_wall, pz + ph + 0.02), frame, 0.003))
+        me = bpy.data.meshes.new("poster")
+        y = y_wall - 0.0205
+        me.from_pydata([(x_mid + px - pw / 2, y, pz), (x_mid + px + pw / 2, y, pz),
+                        (x_mid + px + pw / 2, y, pz + ph), (x_mid + px - pw / 2, y, pz + ph)], [], [(0, 1, 2, 3)])
+        lay = me.uv_layers.new(name="uv")
+        for li, uv in zip(me.polygons[0].loop_indices, [(0, 0), (1, 0), (1, 1), (0, 1)]):
+            lay.data[li].uv = uv
+        me.materials.append(art)
+        po = bpy.data.objects.new("poster", me)
+        sc.collection.objects.link(po)
+        parts.append(po)
+    return parts
 
 
 def screen_material(screen, glow):
@@ -437,6 +554,7 @@ lo, hi = box(desk_objs)
 desk.location += mathutils.Vector((-(lo.x + hi.x) / 2, -(lo.y + hi.y) / 2, -lo.z))
 dlo, dhi = box(desk_objs)
 top = dhi.z
+
 kb_y = dlo.y + S["kb_from_front"]                 # the keyboard's centre on the desk
 back_rel = dhi.y - kb_y                           # the desk's back edge, from the keyboard
 bridge_cable.remove()
@@ -534,12 +652,16 @@ for o in [o for o in sc.objects if o.parent is None and o not in [kb, floor, des
     mw = o.matrix_world.copy()
     o.parent = kb
     o.matrix_world = mw
-mat_t = 0.0
-if S.get("desk_mat"):                              # the mat first; keyboard and mouse stand on it
+mat_t, mat_rect = 0.0, None
+if S.get("desk_mat"):                              # the mat first; keyboard, mouse and what is on it stand on it
     g, objs, mat_t = desk_mat(S["desk_mat"])
     place(g, objs, (S["desk_mat"].get("x", 0.0), kb_y + S["desk_mat"].get("y", 0.0)), 0, base_z=top)
+    lo2, hi2 = box(objs[:1])
+    mat_rect = (lo2.x, hi2.x, lo2.y, hi2.y)
 kb.location = (0.0, kb_y, top + mat_t)
 bpy.context.view_layer.update()
+if S.get("wall"):            # the desk against a wall, 40 mm behind its back edge (built after the keyboard
+    wall(S["wall"], dhi.y + 0.04, (dlo.x + dhi.x) / 2, top)   # group took the loose objects)
 mouse_g = None
 if S.get("mouse"):
     mouse_g, objs = mouse(dict(S["mouse"], pad=S["mouse"].get("pad", not S.get("desk_mat"))))
@@ -577,11 +699,12 @@ if wired:
 print(f"cables: exit {x_exit if x_exit is None else round(x_exit, 3)}, in front of the screens at y {y_front:.3f}")
 placed = []                                        # (name, plan box) of what stands on the desk
 for aid, part, x, y, turn, height, flat, *more in S["props"]:
-    g, objs = tablet() if aid == "@tablet" else gltf(aid, part)
+    g, objs = BUILT[aid]() if aid in BUILT else gltf(aid, part)
     extra = more[0] if more else {}
     if extra.get("at_back"):                         # y from the desk's back edge instead
         y = back_rel - y
-    place(g, objs, (x, kb_y + y), turn, height, flat, base_z=top + extra.get("z", 0.0),
+    on_mat = mat_rect and mat_rect[0] < x < mat_rect[1] and mat_rect[2] < kb_y + y < mat_rect[3]
+    place(g, objs, (x, kb_y + y), turn, height, flat, base_z=top + (mat_t if on_mat else 0.0) + extra.get("z", 0.0),
           origin=extra.get("origin", False))
     if not extra.get("on"):                          # a cup on its saucer may overlap the saucer
         lo2, hi2 = box(objs)

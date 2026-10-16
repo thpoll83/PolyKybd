@@ -14,8 +14,10 @@ Props are (asset, part, x, y, turn deg, height m or None, lie flat):
   lamp: its origin is the desk top, the clamp hangs below), at_back=True measures y
   from the desk's back edge, towards the viewer, z lifts it (a cup onto its saucer),
   on=True leaves it out of the overlap check (it stands on another prop).
-"@tablet" is a pen tablet built in workspace_scene.py; desk "@black_desk" a gaming
-desk. desk_mat: an extended mat under keyboard and mouse, glow=(r, g, b) lights its edge.
+"@tablet", "@ruler" (300 mm steel) and "@set_square" (45 deg acrylic) are built in
+workspace_scene.py; desk "@black_desk" is a gaming desk. desk_mat: an extended mat under
+keyboard and mouse in color at rough, glow=(r, g, b) lights its edge. wall: the desk
+stands against a painted wall (color), with an LED strip (led=(r, g, b)) and a poster.
 desk_height, desk_depth and desk_width stretch a desk's height, depth or width only (WoodenTable_01 is a
 0.55 m low table, 0.66 m deep). mouse: a built mouse on a pad, x, y from the keyboard; wired=True gives it a cable
 over the desk's back edge.
@@ -38,7 +40,10 @@ SCENES = {
                ("tea_set_01", "tea_set_01_saucer_circular_04", -0.36, -0.06, 0, None, False),
                ("tea_set_01", "tea_set_01_cup_small_01", -0.36, -0.056, 35, None, False, dict(z=0.009, on=True)),
                ("round_spectacles", None, 0.50, -0.17, -30, None, False),
-               ("vintage_stapler", None, -0.56, 0.02, 20, None, False)],
+               ("vintage_stapler", None, -0.56, 0.02, 20, None, False),
+               ("stationery_supplies", "stationery_supplies_pencil_new_b", 0.66, -0.04, 82, None, True),
+               ("stationery_supplies", "stationery_supplies_eraser", 0.72, -0.12, 30, None, False)],
+        desk_mat=dict(w=0.86, d=0.34, x=0.1, y=0.0, color=(0.08, 0.085, 0.09), rough=0.95),
         monitor=dict(style="dual", y=0.40, inches=24, screens=["screen_code.jpg", "screen_polykybd_org.jpg"], gap=0.16),
         mouse=dict(x=0.34, y=0.0, turn=-6, wired=True),
         camera=dict(distance=1.3, elev=15, azim=-12, lens=40, fstop=4.0, aim_y=0.14, aim_z=0.19)),
@@ -67,7 +72,12 @@ SCENES = {
                ("stationery_supplies", "stationery_supplies_pencilcup", 0.56, 0.38, 0, None, False),
                ("potted_plant_02", None, -0.76, 0.34, 0, 0.36, False),
                ("measuring_tape_01", None, -0.30, -0.14, 60, None, False),
-               ("round_spectacles", None, 0.40, -0.18, 20, None, False)],
+               ("round_spectacles", None, 0.40, -0.24, 20, None, False),
+               ("@ruler", None, 0.70, 0.02, 84, None, False),
+               ("@set_square", None, -0.62, -0.16, 15, None, False),
+               ("stationery_supplies", "stationery_supplies_pencil_used", -0.44, -0.20, 40, None, True),
+               ("stationery_supplies", "stationery_supplies_eraser", -0.36, -0.24, -10, None, False)],
+        desk_mat=dict(w=0.9, d=0.36, x=0.1, y=0.0, color=(0.16, 0.08, 0.035), rough=0.45, coat=0.15),
         monitor=dict(style="ultrawide", y=0.42, x=-0.06, inches=34, screen="screen_plan.jpg", turn=4, glow=1.0),
         mouse=dict(x=0.34, y=0.02, turn=-8, wired=True),
         camera=dict(distance=1.25, elev=14, azim=18, lens=40, fstop=4.0, aim_y=0.14, aim_z=0.17)),
@@ -81,7 +91,10 @@ SCENES = {
                ("tea_set_01", "tea_set_01_cup_small_01", -0.44, 0.044, 50, None, False, dict(z=0.009, on=True)),
                ("croissant", None, -0.52, 0.24, 30, None, False),
                ("office_notepads", "office_notepads_sticky_stack", -0.26, -0.16, -15, None, False),
-               ("stationery_supplies", "stationery_supplies_pencil_used", 0.30, -0.18, 50, None, True)],
+               ("stationery_supplies", "stationery_supplies_pencil_used", 0.30, -0.22, 50, None, True),
+               ("@ruler", None, -0.30, 0.30, 6, None, False),
+               ("stationery_supplies", "stationery_supplies_pencil_old", -0.24, -0.22, 20, None, True)],
+        desk_mat=dict(w=1.0, d=0.38, x=0.2, y=0.0, color=(0.42, 0.38, 0.32), rough=0.95),
         monitor=dict(style="stand", y=0.42, inches=27, screen="screen_design.jpg", glow=1.4),
         mouse=None,
         camera=dict(distance=1.25, elev=15, azim=-14, lens=40, fstop=4.0, aim_y=0.15, aim_z=0.18)),
@@ -96,4 +109,17 @@ SCENES = {
         mouse=dict(x=0.36, y=0.0, turn=-6, wired=True),
         legend_glow=14.0,
         camera=dict(distance=1.55, elev=15, azim=12, lens=40, fstop=4.0, aim_y=0.14, aim_z=0.17)),
+    "gamer_wall": dict(
+        hdri="neon_photostudio", hdri_turn=210, hdri_strength=0.6,
+        desk="@black_desk", desk_height=None,
+        kb_from_front=0.25,
+        wall=dict(color=(0.13, 0.14, 0.18), led=(0.25, 0.35, 1.0), led_strength=300.0, led_z=0.30, led_w=0.9,
+                  poster="poster_road.jpg", poster_x=-0.68, poster_z=0.36, poster_w=0.36),
+        desk_mat=dict(w=0.92, d=0.38, x=0.12, y=0.0, glow=(1.0, 0.15, 0.85), strength=8.0),
+        props=[("gamepad", None, -0.60, -0.08, 25, None, False),
+               ("digital_wrist_watch", None, 0.70, -0.12, 70, None, False)],
+        monitor=dict(style="ultrawide", y=0.40, inches=34, screen="screen_game.jpg", glow=1.8),
+        mouse=dict(x=0.36, y=0.0, turn=-6, wired=True),
+        legend_glow=14.0,
+        camera=dict(distance=1.6, elev=14, azim=14, lens=40, fstop=4.0, aim_y=0.16, aim_z=0.22)),
 }
