@@ -6,7 +6,9 @@ Drawn with Pillow at 2560 x 1440, generic on purpose (no product's look or name)
 - screen_code.jpg: a dark code editor on the firmware's process_record_user()
   (../qmk_firmware/keyboards/polykybd/poly_keymap.c), coloured by token,
 - screen_calendar.jpg: a reception's day planner, five rooms by the hour,
-- screen_plan.jpg: a CAD floor plan, walls, doors, rooms with their areas, dimensions.
+- screen_plan.jpg: a CAD floor plan, walls, doors, rooms with their areas, dimensions,
+- screen_design.jpg: a vector illustration app with a poster in progress,
+- screen_game.jpg: a made-up synthwave racing game with its HUD.
 screen_polykybd_org.jpg is the docs site's front page (a Chromium screenshot of
 polykybd-docs/dist, served locally) and is not made here.
 """
@@ -154,8 +156,104 @@ def plan():
     return im
 
 
+def design():
+    """A vector illustration app: a dark frame, a canvas with a poster in progress (sun,
+    hills, type), a layers list and a colour palette."""
+    import math
+    im = Image.new("RGB", (W, H), (38, 38, 42))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, W, 60), fill=(28, 28, 31))
+    d.text((24, 16), "File  Edit  Object  Type  Select  Effect  View  Window", font=font(SANS, 26), fill=(200, 200, 208))
+    d.rectangle((0, 60, 84, H), fill=(30, 30, 34))
+    for i in range(12):
+        d.rounded_rectangle((18, 84 + i * 66, 66, 132 + i * 66), radius=8, fill=(52, 52, 58))
+    d.rectangle((W - 460, 60, W, H), fill=(30, 30, 34))
+    cx0, cy0, cx1, cy1 = 300, 140, W - 640, H - 120     # the artboard
+    d.rectangle((cx0, cy0, cx1, cy1), fill=(250, 236, 214))
+    sky = [(255, 196, 140), (250, 160, 130), (230, 120, 140)]
+    hgt = (cy1 - cy0) * 0.62
+    for i in range(int(hgt)):
+        t = i / hgt
+        c = tuple(int(sky[0][k] + (sky[2][k] - sky[0][k]) * t) for k in range(3))
+        d.line((cx0, cy0 + i, cx1, cy0 + i), fill=c)
+    sx, sy, r = (cx0 + cx1) // 2, int(cy0 + hgt * 0.62), 210
+    d.ellipse((sx - r, sy - r, sx + r, sy + r), fill=(255, 238, 170))
+    for j, (col, amp, base) in enumerate([((120, 80, 140), 60, 0.60), ((80, 60, 120), 80, 0.70), ((50, 40, 90), 50, 0.82)]):
+        pts = [(cx0, cy1)]
+        for x in range(cx0, cx1 + 1, 20):
+            pts.append((x, cy0 + (cy1 - cy0) * base - amp * math.sin((x - cx0) / (170 + 40 * j) + j)))
+        pts.append((cx1, cy1))
+        d.polygon(pts, fill=col)
+    d.text((cx0 + 90, cy1 - 230), "SUMMER", font=font(BOLD, 150), fill=(250, 236, 214))
+    d.text((cx0 + 96, cy1 - 70), "open air  ·  friday", font=font(SANS, 44), fill=(250, 236, 214))
+    d.rectangle((sx - r - 6, sy - r - 6, sx + r + 6, sy + r + 6), outline=(60, 140, 255), width=3)   # selection
+    for qx, qy in ((sx - r - 6, sy - r - 6), (sx + r + 6, sy - r - 6), (sx - r - 6, sy + r + 6), (sx + r + 6, sy + r + 6)):
+        d.rectangle((qx - 8, qy - 8, qx + 8, qy + 8), fill=(255, 255, 255), outline=(60, 140, 255), width=3)
+    d.text((W - 430, 84), "Layers", font=font(BOLD, 30), fill=(220, 220, 228))
+    for i, name in enumerate(["Type", "Sun", "Hills front", "Hills middle", "Hills back", "Sky", "Paper"]):
+        y = 140 + i * 58
+        d.rectangle((W - 440, y, W - 20, y + 50), fill=(52, 52, 60) if name == "Sun" else (36, 36, 40))
+        d.text((W - 410, y + 10), name, font=font(SANS, 28), fill=(220, 220, 228))
+    d.text((W - 430, 600), "Swatches", font=font(BOLD, 30), fill=(220, 220, 228))
+    sw = [(255, 196, 140), (250, 160, 130), (230, 120, 140), (255, 238, 170), (120, 80, 140), (80, 60, 120),
+          (50, 40, 90), (250, 236, 214), (60, 140, 255), (40, 40, 44), (120, 200, 160), (240, 90, 80)]
+    for i, c in enumerate(sw):
+        x, y = W - 430 + (i % 6) * 68, 660 + (i // 6) * 68
+        d.rounded_rectangle((x, y, x + 56, y + 56), radius=8, fill=c)
+    return im
+
+
+def game():
+    """A made-up racing game: a synthwave road to a striped sun, a neon grid, a speed
+    gauge and a lap counter (no real game's look or name)."""
+    import math
+    im = Image.new("RGB", (W, H), (10, 6, 30))
+    d = ImageDraw.Draw(im)
+    hz = int(H * 0.52)
+    for i in range(hz):                                  # the sky
+        t = i / hz
+        d.line((0, i, W, i), fill=(int(20 + 120 * t), int(8 + 20 * t), int(60 + 70 * t)))
+    sx, sy, r = W // 2, hz - 40, 330
+    for i in range(r * 2):                               # the striped sun
+        y = sy - r + i
+        if y > hz or (i > r * 0.9 and (i // 22) % 2):
+            continue
+        w = math.sqrt(max(0, r * r - (i - r) ** 2))
+        t = i / (2 * r)
+        d.line((sx - w, y, sx + w, y), fill=(255, int(220 - 140 * t), int(80 + 60 * t)))
+    for k in range(9):                                   # mountains
+        x0 = k * W / 8 - 160
+        d.polygon([(x0, hz), (x0 + 160, hz - 90 - 50 * (k % 3)), (x0 + 320, hz)], fill=(40, 10, 70))
+    d.rectangle((0, hz, W, H), fill=(14, 4, 34))
+    for j in range(1, 24):                               # the grid, in perspective
+        y = hz + (H - hz) * (j / 24) ** 1.8
+        d.line((0, y, W, y), fill=(255, 40, 200), width=2)
+    for k in range(-20, 21):
+        d.line((sx + k * 30, hz, sx + k * 260, H), fill=(255, 40, 200), width=2)
+    d.polygon([(sx - 40, hz), (sx + 40, hz), (sx + 700, H), (sx - 700, H)], fill=(24, 10, 44))
+    for j in range(12):                                  # the road's centre line
+        t0, t1 = j / 12, (j + 0.5) / 12
+        y0, y1 = hz + (H - hz) * t0 ** 1.6, hz + (H - hz) * t1 ** 1.6
+        d.polygon([(sx - 2 - 20 * t0, y0), (sx + 2 + 20 * t0, y0), (sx + 2 + 20 * t1, y1), (sx - 2 - 20 * t1, y1)],
+                  fill=(255, 230, 120))
+    car = [(sx - 230, H - 120), (sx + 230, H - 120), (sx + 190, H - 260), (sx - 190, H - 260)]
+    d.polygon(car, fill=(30, 230, 255))
+    d.rectangle((sx - 150, H - 330, sx + 150, H - 260), fill=(20, 140, 200))
+    d.rectangle((sx - 220, H - 150, sx - 140, H - 120), fill=(255, 60, 90))
+    d.rectangle((sx + 140, H - 150, sx + 220, H - 120), fill=(255, 60, 90))
+    d.arc((W - 420, H - 420, W - 60, H - 60), 140, 400, fill=(80, 80, 120), width=24)        # gauge
+    d.arc((W - 420, H - 420, W - 60, H - 60), 140, 330, fill=(30, 230, 255), width=24)
+    d.text((W - 330, H - 280), "248", font=font(BOLD, 110), fill=(255, 255, 255))
+    d.text((W - 300, H - 160), "km/h", font=font(SANS, 40), fill=(180, 180, 220))
+    d.text((60, 50), "LAP 2/3", font=font(BOLD, 64), fill=(255, 255, 255))
+    d.text((60, 130), "POS 1", font=font(BOLD, 64), fill=(255, 230, 120))
+    d.text((W - 380, 50), "01:12.48", font=font(BOLD, 64), fill=(255, 255, 255))
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for name, fn in (("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_plan.jpg", plan)):
+    for name, fn in (("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_plan.jpg", plan),
+                     ("screen_design.jpg", design), ("screen_game.jpg", game)):
         fn().save(os.path.join(OUT, name), quality=88)
         print("wrote", os.path.join("render", "textures", "workspace", name))

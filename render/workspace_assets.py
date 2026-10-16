@@ -60,7 +60,7 @@ def main():
         p = fetch_hdri(sc["hdri"])
         used[sc["hdri"]] = p
         print(f"{name}: room {os.path.relpath(p, HERE)}")
-        for aid in [sc["desk"]] + [pr[0] for pr in sc["props"]]:
+        for aid in [sc["desk"]] + [pr[0] for pr in sc["props"]] + sc.get("fetch", []):
             if aid.startswith("@"):                   # built in the scene script, not fetched
                 continue
             if aid not in used:

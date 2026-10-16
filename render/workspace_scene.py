@@ -183,6 +183,72 @@ def mouse(spec):
     return g, parts
 
 
+def tablet():
+    """A pen tablet, 320 x 210 x 8 mm: a black slate with a matte active area and its
+    pen lying across it."""
+    slate = principled("tablet slate", (0.012, 0.012, 0.014), 0.35, coat=0.3)
+    area = principled("tablet area", (0.03, 0.03, 0.034), 0.7)
+    pen_m = principled("tablet pen", (0.02, 0.02, 0.022), 0.3)
+    parts = [cube("tablet", (-0.16, -0.105, 0.0), (0.16, 0.105, 0.008), slate, 0.004),
+             cube("tablet area", (-0.13, -0.085, 0.008), (0.14, 0.085, 0.0084), area, 0.0005)]
+    bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.0055, depth=0.155)
+    pen = bpy.context.active_object
+    pen.name = "tablet pen"
+    pen.rotation_euler = (0, math.radians(90), math.radians(28))
+    pen.location = (0.02, -0.02, 0.0084 + 0.0055)
+    pen.data.materials.append(pen_m)
+    parts.append(pen)
+    g = bpy.data.objects.new("@tablet", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def black_desk():
+    """A gaming desk, 1.6 x 0.8 m, top at 0.75 m: a black 25 mm top on a black steel
+    frame with two T legs."""
+    top_m = principled("desk black top", (0.018, 0.018, 0.02), 0.5, coat=0.1)
+    steel = principled("desk black steel", (0.03, 0.03, 0.032), 0.4)
+    steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.8
+    parts = [cube("desk top", (-0.8, -0.4, 0.725), (0.8, 0.4, 0.75), top_m, 0.004)]
+    for sx in (-1, 1):
+        x = sx * 0.68
+        parts += [cube("desk leg", (x - 0.03, -0.03, 0.04), (x + 0.03, 0.03, 0.725), steel, 0.004),
+                  cube("desk foot", (x - 0.035, -0.36, 0.0), (x + 0.035, 0.36, 0.04), steel, 0.004)]
+    parts.append(cube("desk rail", (-0.68, -0.025, 0.66), (0.68, 0.025, 0.71), steel, 0.004))
+    g = bpy.data.objects.new("@black_desk", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def desk_mat(spec):
+    """An extended desk mat under keyboard and mouse, 3 mm felt, with a light strip
+    around its edge glowing spec["glow"] (an RGB gamer's mat)."""
+    felt = principled("desk mat", (0.02, 0.02, 0.024), 0.9)
+    w, d, t = spec.get("w", 0.9), spec.get("d", 0.38), 0.003
+    parts = [cube("desk mat", (-w / 2, -d / 2, 0.0), (w / 2, d / 2, t), felt, 0.002)]
+    if spec.get("glow"):
+        lit = bpy.data.materials.new("desk mat glow")
+        lit.use_nodes = True
+        b = lit.node_tree.nodes["Principled BSDF"]
+        b.inputs["Base Color"].default_value = (0, 0, 0, 1)
+        b.inputs["Emission Color"].default_value = (*spec["glow"], 1)
+        b.inputs["Emission Strength"].default_value = spec.get("strength", 6.0)
+        e = 0.004
+        parts += [cube("mat glow", (-w / 2, -d / 2 - e, 0.0), (w / 2, -d / 2, t * 0.9), lit, 0.0008),
+                  cube("mat glow", (-w / 2, d / 2, 0.0), (w / 2, d / 2 + e, t * 0.9), lit, 0.0008),
+                  cube("mat glow", (-w / 2 - e, -d / 2 - e, 0.0), (-w / 2, d / 2 + e, t * 0.9), lit, 0.0008),
+                  cube("mat glow", (w / 2, -d / 2 - e, 0.0), (w / 2 + e, d / 2 + e, t * 0.9), lit, 0.0008)]
+    g = bpy.data.objects.new("desk mat", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts, t
+
+
 def screen_material(screen, glow):
     """A matte screen whose picture is light: black base colour and an anti-glare coat,
     so the room shows on it only as a soft sheen, and the picture
@@ -259,8 +325,9 @@ def monitors(spec):
       ultrawide  one 34-inch 21:9 panel curved on a 1.5 m radius, a 300 x 200 mm base,
       arm        one panel on an arm from a pole clamped to the desk's back edge (the
                  pole stands `reach` m behind the screen; nothing else on the desk).
-    Returns (group, objects, footprints): the footprints are what stands on the desk
-    (bases, the pole), for the cables to go round."""
+    Returns (group, objects, blocks): one object list per screen and what holds it
+    (panel and stand, or panel and arm), whose plan the cables go round, and the
+    bases."""
     style = spec.get("style", "stand")
     screens = spec.get("screens") or [spec["screen"]]
     glow = spec.get("glow", 1.6)
@@ -268,7 +335,7 @@ def monitors(spec):
     alu.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
     g = bpy.data.objects.new("monitor", None)
     sc.collection.objects.link(g)
-    objs, feet = [], []
+    objs, blocks, feet = [], [], []
     tilt = math.radians(spec.get("tilt", 8))
     lift = spec.get("lift", 0.11)
 
@@ -288,6 +355,7 @@ def monitors(spec):
         for o in (neck, base):
             o.parent = st
         objs.extend(parts + [neck, base])
+        blocks.append(parts + [neck, base])
         feet.append(base)
         return sw
 
@@ -296,7 +364,7 @@ def monitors(spec):
     elif style == "dual":
         inches = spec.get("inches", 24)
         sw = inches * 0.0254 * 16 / math.hypot(16, 9)
-        gap = sw / 2 + 0.012
+        gap = sw / 2 + spec.get("gap", 0.012) / 2 + 0.006     # from the middle to each screen's centre
         for k, side in enumerate((-1, 1)):
             on_stand(screens[k % len(screens)], inches, (16, 9), None,
                      side * gap * math.cos(math.radians(12)), -side * 12, base_w=0.2, base_d=0.16)
@@ -326,8 +394,8 @@ def monitors(spec):
         for o in (pole, clamp, jaw, arm, plate):
             o.parent = g
         objs.extend(parts + [pole, clamp, jaw, arm, plate])
-        feet.append(clamp)
-    return g, objs, feet
+        blocks.append(parts + [pole, clamp, jaw, arm, plate])
+    return g, objs, blocks, feet
 
 
 # ---- the room ------------------------------------------------------------------
@@ -354,6 +422,8 @@ floor.is_shadow_catcher = True                   # the room's own floor, with th
 # ---- the cables, while the keyboard still stands on z = 0 ----------------------------
 if S["desk"] == "@counter":
     desk, desk_objs = counter()
+elif S["desk"] == "@black_desk":
+    desk, desk_objs = black_desk()
 else:
     desk, desk_objs = gltf(S["desk"])
     lo, hi = box(desk_objs)
@@ -361,6 +431,8 @@ else:
         desk.scale.z = S["desk_height"] / (hi.z - lo.z)
     if S.get("desk_depth"):
         desk.scale.y = S["desk_depth"] / (hi.y - lo.y)
+    if S.get("desk_width"):
+        desk.scale.x = S["desk_width"] / (hi.x - lo.x)
 lo, hi = box(desk_objs)
 desk.location += mathutils.Vector((-(lo.x + hi.x) / 2, -(lo.y + hi.y) / 2, -lo.z))
 dlo, dhi = box(desk_objs)
@@ -380,7 +452,7 @@ avoid = []
 mon = None
 if S.get("monitor"):
     spec = S["monitor"]
-    mon, mon_objs, feet = monitors(spec)
+    mon, mon_objs, blocks, feet = monitors(spec)
     if spec.get("style") == "arm":                 # the pole's clamp on the desk's back edge
         mon.location = (spec.get("x", 0.0), dhi.y - spec.get("reach", 0.24) - 0.035, top)
         mon.rotation_euler.z = math.radians(spec.get("turn", 0))
@@ -391,16 +463,54 @@ if S.get("monitor"):
         if fhi.y > dhi.y - 0.06:                   # every base wholly on the desk, 60 mm inside the back edge
             mon.location.y -= fhi.y - (dhi.y - 0.06)
             print("monitor moved forward to keep its base 60 mm inside the desk's back edge")
-    m = 0.02                                       # clearance around each base
-    for ft in feet:
-        lo2, hi2 = box([ft])
+    m = 0.02                                       # clearance around each screen and its stand, in plan
+    for bl in blocks:
+        lo2, hi2 = box(bl)
         avoid.append((lo2.x - m, hi2.x + m, lo2.y - m, hi2.y + m))   # world
 
 
-def crosses(cable, rects, dy=0.0):
-    """Does the cable's plan (shifted by dy in y) pass over any of rects (x0, x1, y0, y1)?"""
-    return any(x0 < v.co.x < x1 and y0 < v.co.y + dy < y1
-               for v in cable.data.vertices for x0, x1, y0, y1 in rects)
+def cable_exit(rects, xs):
+    """Where the cables leave over the back edge: in the widest gap between the screens
+    (60 mm at least) or beside them, whichever the cables' starts xs reach with the
+    least sideways run. No screens: None."""
+    if not rects:
+        return None
+    iv = sorted((x0, x1) for x0, x1, _, _ in rects)
+    merged = [list(iv[0])]
+    for x0, x1 in iv[1:]:
+        if x0 <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], x1)
+        else:
+            merged.append([x0, x1])
+    cands = [merged[0][0] - 0.03, merged[-1][1] + 0.03]
+    cands += [(a1 + b0) / 2 for (_, a1), (b0, _) in zip(merged, merged[1:]) if b0 - a1 >= 0.06]
+    return min(cands, key=lambda c: sum(abs(c - x) for x in xs))
+
+
+def desk_cable(name, start, d0, x_exit, y_front, y_edge, z_desk, r, mat, v_scale=None):
+    """A cable from start (its plug or the mouse's nose) along d0, across in front of
+    the screens at y_front to x_exit, straight back to the desk's back edge and over it.
+    It settles from the start's height onto the desk within 30 mm."""
+    d0 = mathutils.Vector((d0.x, d0.y, 0)).normalized()
+    p1 = start + d0 * 0.03
+    q = mathutils.Vector((x_exit, max(y_front, p1.y + 0.05), z_desk))
+    k = (q.y - p1.y) * 0.55
+    c = [p1, p1 + d0 * k, q - mathutils.Vector((0, k, 0)), q]
+    plan = [start + d0 * (0.03 * i / 8) for i in range(8)]
+    for i in range(80):
+        t = i / 79
+        plan.append((1 - t) ** 3 * c[0] + 3 * (1 - t) ** 2 * t * c[1] + 3 * (1 - t) * t ** 2 * c[2] + t ** 3 * c[3])
+    n = max(2, int((y_edge - 0.01 - q.y) / 0.01))
+    plan += [mathutils.Vector((x_exit, q.y + (y_edge - 0.01 - q.y) * i / n, z_desk)) for i in range(1, n + 1)]
+    pts, run = [], 0.0
+    for i, p in enumerate(plan):
+        if i:
+            run += (mathutils.Vector((p.x, p.y)) - mathutils.Vector((plan[i - 1].x, plan[i - 1].y))).length
+        kk = min(1.0, run / 0.03)
+        pts.append((p.x, p.y, z_desk + r + (start.z - z_desk - r) * (1 - (3 * kk * kk - 2 * kk ** 3))))
+    o = bridge_cable._tube(name, pts, [r] * len(pts), mat, ring=16, v_scale=v_scale)
+    over_edge(name + " drop", x_exit, y_edge, z_desk, z_desk, r, mat, v_scale)
+    return o
 
 
 def over_edge(name, x, y_edge, z_desk, drop, r, mat, v_scale=None):
@@ -415,19 +525,6 @@ def over_edge(name, x, y_edge, z_desk, drop, r, mat, v_scale=None):
     return bridge_cable._tube(name, pts, [r] * len(pts), mat, ring=16, v_scale=v_scale)
 
 
-# the host cable: straight back from the port, then left of the monitor's base if it is
-# in the way: swing further left in 30 mm steps until the plan is clear
-for drift in [-0.10 - 0.03 * i for i in range(14)]:
-    host = bridge_cable.add_host(sc, root_l, halves[0][1], end_y=back_rel - 0.004, drift=drift, turn=0.0)
-    if not crosses(host, avoid, dy=kb_y):          # the cable is built in the keyboard's frame
-        break
-print(f"host cable: drift {drift:+.2f} m", "(clear of the monitor base)" if avoid else "")
-# over the back edge and down to the floor
-end = max((v.co for v in host.data.vertices), key=lambda c: c.y)
-drop = over_edge("host cable drop", end.x, back_rel - 0.004, 0.0, top, bridge_cable.CABLE_R / 1000,
-                 host.data.materials[0], v_scale=bridge_cable.BRAID_MM / 1000)
-drop["pk_host"] = True
-
 # ---- the keyboard onto the desk top, the props around it ----------------------
 kb = bpy.data.objects.new("keyboard", None)
 sc.collection.objects.link(kb)
@@ -437,38 +534,68 @@ for o in [o for o in sc.objects if o.parent is None and o not in [kb, floor, des
     mw = o.matrix_world.copy()
     o.parent = kb
     o.matrix_world = mw
-kb.location = (0.0, kb_y, top)
+mat_t = 0.0
+if S.get("desk_mat"):                              # the mat first; keyboard and mouse stand on it
+    g, objs, mat_t = desk_mat(S["desk_mat"])
+    place(g, objs, (S["desk_mat"].get("x", 0.0), kb_y + S["desk_mat"].get("y", 0.0)), 0, base_z=top)
+kb.location = (0.0, kb_y, top + mat_t)
 bpy.context.view_layer.update()
+mouse_g = None
 if S.get("mouse"):
-    g, objs = mouse(S["mouse"])
-    place(g, objs, (S["mouse"]["x"], kb_y + S["mouse"]["y"]), S["mouse"].get("turn", 0), base_z=top)
-    if S["mouse"].get("wired"):
-        # its cable from the nose, a little forward, then back across the desk to the
-        # back edge, right of whatever stands there, and down over the edge
-        nose = g.matrix_world @ mathutils.Vector((0, 0.0575, 0.006))
-        fwd = (g.matrix_world.to_3x3() @ mathutils.Vector((0, 1, 0))).normalized()
-        xe = nose.x + 0.06
-        for x0, x1, y0, y1 in avoid:
-            if x0 - 0.03 < xe < x1 + 0.03:
-                xe = x1 + 0.03
-        ye = dhi.y - 0.004
-        c = [nose, nose + fwd * 0.06, mathutils.Vector((xe, ye - 0.16, top)), mathutils.Vector((xe, ye - 0.01, top))]
-        rm = 0.0016
-        pts = []
-        for i in range(120):
-            t = i / 119
-            p = (1 - t) ** 3 * c[0] + 3 * (1 - t) ** 2 * t * c[1] + 3 * (1 - t) * t ** 2 * c[2] + t ** 3 * c[3]
-            k = min(1.0, (p - nose).length / 0.03)
-            pts.append((p.x, p.y, top + rm + (nose.z - top - rm) * (1 - (3 * k * k - 2 * k ** 3))))
-        rub = principled("mouse cable", (0.02, 0.02, 0.022), 0.5)
-        bridge_cable._tube("mouse cable", pts, [rm] * len(pts), rub, ring=12)
-        over_edge("mouse cable drop", xe, ye, top, top, rm, rub)
+    mouse_g, objs = mouse(dict(S["mouse"], pad=S["mouse"].get("pad", not S.get("desk_mat"))))
+    place(mouse_g, objs, (S["mouse"]["x"], kb_y + S["mouse"]["y"]), S["mouse"].get("turn", 0), base_z=top + mat_t)
+
+# both cables leave the same way: across in front of the screens to one exit (a gap
+# between them, or beside them), then side by side straight back and over the edge
+pa_l, da_l = bridge_cable.host_plug(root_l, halves[0][1])
+for o in bpy.data.objects:
+    if o.parent == root_l and "host" in o.name:
+        o["pk_host"] = True
+mw = root_l.matrix_world
+start_k = mw @ pa_l
+dir_k = (mw.to_3x3() @ da_l).normalized()
+starts = [start_k.x]
+wired = (S.get("mouse") or {}).get("wired")
+if wired:
+    nose = mouse_g.matrix_world @ mathutils.Vector((0, 0.0575, 0.006))
+    starts.append(nose.x)
+x_exit = cable_exit(avoid, starts)
+y_front = (min(y0 for _, _, y0, _ in avoid) - 0.02) if avoid else start_k.y + 0.12
+ye = dhi.y - 0.004
+if x_exit is None:
+    xk, xm = start_k.x - 0.10, (nose.x + 0.06 if wired else 0.0)
+else:
+    side = 1 if (wired and nose.x > start_k.x) else -1     # the mouse's cable on its own side of the pair
+    xk, xm = x_exit - side * 0.008, x_exit + side * 0.008
+host = desk_cable("host cable", start_k, dir_k, xk, y_front, ye, top, bridge_cable.CABLE_R / 1000,
+                  bridge_cable._braid_material(), v_scale=bridge_cable.BRAID_MM / 1000)
+host["pk_host"] = True
+if wired:
+    fwd = mouse_g.matrix_world.to_3x3() @ mathutils.Vector((0, 1, 0))
+    desk_cable("mouse cable", nose, fwd, xm, y_front, ye, top, 0.0016,
+               principled("mouse cable", (0.02, 0.02, 0.022), 0.5))
+print(f"cables: exit {x_exit if x_exit is None else round(x_exit, 3)}, in front of the screens at y {y_front:.3f}")
+placed = []                                        # (name, plan box) of what stands on the desk
 for aid, part, x, y, turn, height, flat, *more in S["props"]:
-    g, objs = gltf(aid, part)
+    g, objs = tablet() if aid == "@tablet" else gltf(aid, part)
     extra = more[0] if more else {}
     if extra.get("at_back"):                         # y from the desk's back edge instead
         y = back_rel - y
-    place(g, objs, (x, kb_y + y), turn, height, flat, base_z=top, origin=extra.get("origin", False))
+    place(g, objs, (x, kb_y + y), turn, height, flat, base_z=top + extra.get("z", 0.0),
+          origin=extra.get("origin", False))
+    if not extra.get("on"):                          # a cup on its saucer may overlap the saucer
+        lo2, hi2 = box(objs)
+        placed.append((part or aid, (lo2.x, hi2.x, lo2.y, hi2.y)))
+lo2, hi2 = box([o for o in root_l.children_recursive if o.type == "MESH"] +
+               [o for o in root_r.children_recursive if o.type == "MESH"])
+placed.append(("keyboard", (lo2.x, hi2.x, lo2.y, hi2.y)))
+if mouse_g:
+    lo2, hi2 = box([o for o in mouse_g.children if o.type == "MESH"])
+    placed.append(("mouse", (lo2.x, hi2.x, lo2.y, hi2.y)))
+for i, (na, ra) in enumerate(placed):
+    for nb, rb in placed[i + 1:] + [(f"screen {k}", r) for k, r in enumerate(avoid)]:
+        if ra[0] < rb[1] and rb[0] < ra[1] and ra[2] < rb[3] and rb[2] < ra[3]:
+            print(f"WARNING overlap in plan: {na} and {nb}")
 
 # ---- camera and render -----------------------------------------------------------
 tgt = bpy.data.objects["target"]
@@ -501,5 +628,8 @@ sc.render.image_settings.file_format = "PNG"
 sc.render.filepath = os.path.abspath(OUT)
 print(f"WORKSPACE {NAME}: desk top {top:.3f} m, keyboard {S['kb_from_front']} m from the front, "
       f"{len(S['props'])} props, rendering {sc.render.resolution_x} x {sc.render.resolution_y}")
-bpy.ops.render.render(write_still=True)
-print("SAVED", OUT)
+if os.environ.get("PK_NO_RENDER"):                # build only, for a script after this one (a check view)
+    print("BUILT", NAME)
+else:
+    bpy.ops.render.render(write_still=True)
+    print("SAVED", OUT)
