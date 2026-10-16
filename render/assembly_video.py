@@ -212,8 +212,9 @@ for o, t in start.items():
         moves[g] = (70.0, 1.4) if big else (rng.uniform(40, 110), rng.uniform(0.5, 1.1))
     fly(o, t, *moves[g])
 
-# a flex cable's tail runs under the board to its socket: it shows once the display
-# has landed, so the strip seems to thread down through its slot
+# a flex cable's tail runs under the board to its socket. It is split off so it can
+# bend (fpc_bend.py), but it comes down with its display from the start, straight out
+# below the strip (the bend's t=0), so the whole flex threads down through its slot
 tails = 0
 for o in of("flex"):
     me = o.data
@@ -239,7 +240,7 @@ for o in of("flex"):
     bmesh.ops.delete(bt, geom=[q for q in bt.faces if q.index not in drop], context="FACES")
     bt.to_mesh(tail.data)
     bt.free()
-    show_from(tail, start[o] + moves[o["pk_ref"]][1])
+    fly(tail, start[o], *moves[o["pk_ref"]])     # with its display, the whole strip at once
     tail["pk_ref"] = o["pk_ref"]
     tails += 1
 print("flex tails split off:", tails)
