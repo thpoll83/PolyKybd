@@ -4,12 +4,15 @@
         out.png samples width atlas fx fy dist elev yaw lens [fstop]
 
 `atlas` names textures/<atlas>.png/.json (export_screens.py, overlay_atlas.py);
-fx, fy place the camera target as fractions of the left half's display decals'
+fx, fy place the camera target as fractions of the framed half's display decals'
 bounding box (x from the left, y from the front); dist is in metres, elev and
 yaw in degrees, lens in mm, fstop > 0 turns on depth of field. PK_STRENGTH sets
 the legends' emission (6 saturates to white at close range; 3 keeps the
-LIT_TINT visible), PK_STATUS the status-panel suffix (_l1), PK_BORDER a crop, PK_SPLAY the left
-half's turn (default -2; 0 squares its columns to the frame), PK_BLOOM="threshold,mix"
+LIT_TINT visible), PK_STATUS the status-panel suffix (_l1), PK_BORDER a crop, PK_SIDE=right
+frames the right half, PK_CLEAR_CASE=1 makes the case clear in the studio,
+PK_COVE_RGB="r,g,b" colours the studio floor, PK_SPLAY the left
+half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
+the right half's (default -9), PK_BLOOM="threshold,mix"
 a compositor fog glow around bright pixels, PK_PANEL_FLOOR="r,g,b"
 (screens.py) gives every key panel a faint glow of that colour, PK_LIGHT scales
 the studio lights (0.15 is a dim room, for the docs' idle close-up).
@@ -39,12 +42,14 @@ aperture = float(a[10]) if len(a) > 10 else 0.0
 
 sc = bpy.context.scene
 materials.tag(bpy)
-root = bpy.data.objects["split72_left.wrl"]
-board = os.path.join(textured_parts.REPO, "poly_kybd", "poly_kybd_split72_left.kicad_pcb")
+SIDE = os.environ.get("PK_SIDE", "left")           # PK_SIDE=right frames the right half
+OTHER = "right" if SIDE == "left" else "left"
+root = bpy.data.objects[f"split72_{SIDE}.wrl"]
+board = os.path.join(textured_parts.REPO, "poly_kybd", f"poly_kybd_split72_{SIDE}.kicad_pcb")
 textured_parts.add(root, textured_parts.board_keys(board))
 materials.apply(bpy)
 PROFILE = os.environ.get("PK_PROFILE")
-print("lit", screens.keys(root, board, "left", strength=float(os.environ.get("PK_STRENGTH", 6.0)), atlas_name=atlas), screens.status(root, "left", suffix=os.environ.get("PK_STATUS", "")))
+print("lit", screens.keys(root, board, SIDE, strength=float(os.environ.get("PK_STRENGTH", 6.0)), atlas_name=atlas), screens.status(root, SIDE, suffix=os.environ.get("PK_STATUS", "")))
 if os.environ.get("PK_DENT"):                     # "depth_mm[,rim_mm]": a real dented top
     _d = [float(v) for v in os.environ["PK_DENT"].split(",")]
     profile.dent(root, board, *_d)
@@ -60,9 +65,12 @@ if RGB:
     rgb.clear_case()
 else:
     lighting.studio(sc, tgt, float(os.environ.get("PK_LIGHT", 1.0)))
-studio.splay(float(os.environ.get("PK_SPLAY", -2)), right=-9)   # PK_SPLAY=0: columns square to the frame
-right = bpy.data.objects["split72_right.wrl"]
-for o in [right] + list(right.children_recursive):
+    if os.environ.get("PK_CLEAR_CASE"):             # the clear printed case of the docs' language photos
+        rgb.clear_case()
+studio.splay(float(os.environ.get("PK_SPLAY", -2)),          # PK_SPLAY=0: columns square to the frame
+             right=float(os.environ.get("PK_SPLAY_RIGHT", -9)))  # the same for the right half
+other = bpy.data.objects[f"split72_{OTHER}.wrl"]
+for o in [other] + list(other.children_recursive):
     o.hide_render = True
 bridge_cable.remove()
 bpy.context.view_layer.update()
@@ -127,7 +135,8 @@ if RGB:
         c0, c1, cs = (float(v) for v in case.split(","))
         rgb.glow("case PLA", x0, x1, (c0, c1), cs)
 else:
-    studio.cove(sc)
+    cove = os.environ.get("PK_COVE_RGB")           # "r,g,b": a coloured floor (the language photos' purple mat)
+    studio.cove(sc, colour=tuple(float(v) for v in cove.split(",")) if cove else (0.9, 0.9, 0.9))
     studio.flag(sc)
     studio.white_look(sc)
 sc.cycles.filter_width = 1.0

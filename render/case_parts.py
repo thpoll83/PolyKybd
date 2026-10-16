@@ -109,8 +109,18 @@ for _ in range(6):
 
 import lighting  # noqa: E402
 lighting.studio(sc, target)
+# PK_FILL scales the two side fills: at 1 they light floor, walls and ribs evenly,
+# and the part reads flat; lower lets the overhead key light model it
+for o in sc.objects:
+    if o.type == "LIGHT" and o.name.startswith("fill"):
+        o.data.energy *= float(os.environ.get("PK_FILL", 1.0))
 studio.cove(sc)
 studio.white_look(sc)
+# PK_LOOK picks another AgX look and PK_EXPOSURE (stops) darkens or brightens:
+# the false-colour parts read pastel at the white studio's defaults
+if os.environ.get("PK_LOOK"):
+    sc.view_settings.look = os.environ["PK_LOOK"]
+sc.view_settings.exposure = float(os.environ.get("PK_EXPOSURE", 0.0))
 
 sc.render.engine = "CYCLES"
 sc.cycles.samples = samples

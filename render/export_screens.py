@@ -36,6 +36,9 @@ COLS, ROWS, LAYERS = 8, 10, 8           # the split72 matrix; the editor reads 8
 CELL_W, CELL_H, ATLAS_COLS = 72, 40, 10
 # the export could not resolve this token to a number; HYPR(KC_NO) is QK_MODS | 0x0F << 8
 UNRESOLVED = {"KC_HYPR": 0x0F00}
+# Keys the editor preview draws nothing for, drawn from the firmware's own legend
+# (keycode_helper.c): KC_HYPR is " " PRIVATE_HYPER, the dizzy glyph U+1F4AB.
+FIRMWARE_CPS = {0x0F00: [0x20, 0x1F4AB]}
 
 BOARD = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HOST, "polyhost", "res", "preview", "board.json")
 LAYER = int(sys.argv[3]) if len(sys.argv) > 3 else 0
@@ -88,6 +91,11 @@ def unlit(img):
 
 
 d = kb.KbLayoutDialog(Core(), Settings())
+# PK_LANG=xx-YY draws the legends in that language (the editor's "Preview
+# language"), for close-ups of a language layout; the atlas name gets the code
+LANG = os.environ.get("PK_LANG")
+if LANG and not d._preview.set_language(LANG):
+    sys.exit(f"preview has no language {LANG}; it knows {', '.join(d._preview.languages)}")
 names = d.keycode_browser.get_keycode_to_name_mapping()
 n_rows = (len(keys) + ATLAS_COLS - 1) // ATLAS_COLS
 atlas = QImage(ATLAS_COLS * CELL_W, n_rows * CELL_H, QImage.Format_RGB32)
@@ -96,6 +104,8 @@ cells, blank = {}, []
 p = QPainter(atlas)
 for i, ((r, c), code) in enumerate(keys):
     img = d._preview.render(code, names.get(code)) if code else None
+    if img is None and code in FIRMWARE_CPS:
+        img = d._preview._to_qimage(d._preview._ld.render_static_cps(d._preview._R, FIRMWARE_CPS[code]))
     if img is None:
         blank.append(f"{r},{c}")
         continue
@@ -104,8 +114,9 @@ for i, ((r, c), code) in enumerate(keys):
     cells[f"{r},{c}"] = [x, y]
 p.end()
 out = os.path.join(HERE, "textures")
-atlas.save(os.path.join(out, f"screens_layer{LAYER}.png"))
-with open(os.path.join(out, f"screens_layer{LAYER}.json"), "w", encoding="utf-8") as f:
+name = f"screens_layer{LAYER}" + (f"_{LANG}" if LANG else "")
+atlas.save(os.path.join(out, name + ".png"))
+with open(os.path.join(out, name + ".json"), "w", encoding="utf-8") as f:
     json.dump({"cell": [CELL_W, CELL_H], "size": [atlas.width(), atlas.height()],
                "fw_version": board.get("fw_version"), "keys": cells}, f, indent=1)
 sr = kb.StatusScreenRenderer(d._preview.status_faces())
