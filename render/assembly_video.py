@@ -249,7 +249,8 @@ print("flex tails split off:", tails)
 # turned over (FLIP_BACK), row by row: the socket's flap opens, the tail bends over
 # into it, the flap closes. The flap is the FH34's actuator (the material
 # pcb_shot/look.py gives (0.040, 0.034, 0.033)), cut out of the socket's mesh and
-# hinged on its back edge (local +y, away from the mouth), along local x.
+# hinged along local x on its edge away from the key switch (local -y), so it opens
+# away from the switch.
 ACTUATOR = (0.040, 0.034, 0.033)
 
 
@@ -273,7 +274,7 @@ for o in sockets:
         b.to_mesh(m2)
         b.free()
     v = np.array([x.co[:] for x in flap.vertices])
-    hinge = mathutils.Vector((0.0, v[:, 1].max(), (v[:, 2].min() + v[:, 2].max()) / 2))
+    hinge = mathutils.Vector((0.0, v[:, 1].min(), (v[:, 2].min() + v[:, 2].max()) / 2))
     flap.transform(mathutils.Matrix.Translation(-hinge))
     cut[me.name] = (body, flap, hinge)
 flaps = {}
