@@ -285,15 +285,21 @@ INK = (40, 44, 60)
 
 
 def cork():
-    """A pinboard's cork, 1800 x 1200 px: warm brown granules."""
+    """A pinboard's cork, 3600 x 2400 px (0.22 mm a pixel on a 0.8 m board): granules
+    of 1 to 3 mm in four shades, dark gaps between them, drawn largest first."""
     import random
     rnd = random.Random(5)
-    im = Image.new("RGB", (1800, 1200), (150, 108, 70))
+    im = Image.new("RGB", (3600, 2400), (96, 64, 38))
     d = ImageDraw.Draw(im)
-    for _ in range(90000):
-        x, y, r = rnd.randint(0, 1800), rnd.randint(0, 1200), rnd.randint(1, 4)
-        v = rnd.randint(-45, 35)
-        d.ellipse((x, y, x + r, y + r), fill=(150 + v, 108 + v, 70 + v // 2))
+    shades = [(178, 128, 82), (160, 112, 70), (140, 96, 58), (196, 148, 100), (122, 82, 48)]
+    for r_hi, n in ((14, 60000), (8, 120000), (4, 160000)):
+        for _ in range(n):
+            x, y, r = rnd.uniform(0, 3600), rnd.uniform(0, 2400), rnd.uniform(r_hi / 2, r_hi)
+            pts = [(x + r * rnd.uniform(0.6, 1.0) * c, y + r * rnd.uniform(0.6, 1.0) * s_)
+                   for c, s_ in ((1, 0), (0.5, 0.87), (-0.5, 0.87), (-1, 0), (-0.5, -0.87), (0.5, -0.87))]
+            c0 = rnd.choice(shades)
+            v = rnd.randint(-12, 12)
+            d.polygon(pts, fill=(c0[0] + v, c0[1] + v, c0[2] + v // 2))
     return im
 
 
