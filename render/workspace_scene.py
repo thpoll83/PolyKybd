@@ -507,7 +507,118 @@ def wall(spec, y_wall, x_mid, top):
         po = bpy.data.objects.new("poster", me)
         sc.collection.objects.link(po)
         parts.append(po)
+    for it in spec.get("items", []):
+        parts += wall_item(it, y_wall, top)
     return parts
+
+
+def sheet(name, img, px, pz, w, h, y, rot, bow, mat_rough=0.75, ny=10):
+    """A sheet hanging from a pin at (px, pz) on a surface at y: w x h, turned rot deg in
+    the wall's plane, its lower part curling bow m off the surface towards the viewer."""
+    me = bpy.data.meshes.new(name)
+    a = math.radians(rot)
+    verts, uvs = [], []
+    for j in range(ny + 1):
+        v = j / ny                                         # 0 at the bottom, 1 at the top
+        for u in (0.0, 1.0):
+            lx, lz = (u - 0.5) * w, (v - 1.0) * h + 0.012  # the pin 12 mm below the top edge
+            verts.append((px + lx * math.cos(a) - lz * math.sin(a), y - bow * (1 - v) ** 2,
+                          pz + lx * math.sin(a) + lz * math.cos(a)))
+            uvs.append((u, v))
+    faces = [(2 * j, 2 * j + 1, 2 * j + 3, 2 * j + 2) for j in range(ny)]
+    me.from_pydata(verts, [], faces)
+    lay = me.uv_layers.new(name="uv")
+    for f in me.polygons:
+        for li, vi in zip(f.loop_indices, f.vertices):
+            lay.data[li].uv = uvs[vi]
+    me.materials.append(image_material(name, img, rough=mat_rough))
+    o = bpy.data.objects.new(name, me)
+    sc.collection.objects.link(o)
+    sol = o.modifiers.new("thickness", "SOLIDIFY")
+    sol.thickness, sol.offset = 0.0003, 1.0
+    return o
+
+
+def pin(name, x, y, z, rgb):
+    """A push pin: a glossy plastic head standing 6 mm off the surface."""
+    bpy.ops.mesh.primitive_cylinder_add(radius=0.0045, depth=0.006, location=(x, y - 0.003, z),
+                                        rotation=(math.pi / 2, 0, 0))
+    o = bpy.context.active_object
+    o.name = name
+    m = o.modifiers.new("bevel", "BEVEL")
+    m.width, m.segments = 0.0015, 3
+    o.data.materials.append(principled(name, rgb, 0.25, coat=0.6))
+    for p in o.data.polygons:
+        p.use_smooth = True
+    return o
+
+
+def disc(name, x, y, z, r, mat, n=96):
+    """A round face at y facing the viewer, its uv the image's inscribed circle."""
+    me = bpy.data.meshes.new(name)
+    verts = [(x, y, z)] + [(x + r * math.cos(2 * math.pi * i / n), y, z + r * math.sin(2 * math.pi * i / n))
+                           for i in range(n)]
+    me.from_pydata(verts, [], [(0, i, i % n + 1) for i in range(1, n + 1)])
+    lay = me.uv_layers.new(name="uv")
+    for f in me.polygons:
+        for li, vi in zip(f.loop_indices, f.vertices):
+            lay.data[li].uv = (0.5, 0.5) if vi == 0 else (0.5 + 0.5 * (verts[vi][0] - x) / r,
+                                                          0.5 + 0.5 * (verts[vi][2] - z) / r)
+    me.materials.append(mat)
+    o = bpy.data.objects.new(name, me)
+    sc.collection.objects.link(o)
+    return o
+
+
+def wall_item(it, y_wall, top):
+    """One thing on the wall; x is from the keyboard's centre, z from the desk top.
+    kind "board": a cork pinboard w x h, with the sheets in it["sheets"] pinned to it
+    (x, z of the pin relative to the board's centre); "sheet": a paper on the wall
+    itself; "clock": a wall clock of radius r."""
+    out = []
+    x, z = it["x"], top + it["z"]
+    if it["kind"] == "board":
+        w, h = it["w"], it["h"]
+        wood = principled("board frame", (0.30, 0.19, 0.10), 0.5)
+        out.append(cube("board frame", (x - w / 2, y_wall - 0.022, z - h / 2), (x + w / 2, y_wall, z + h / 2), wood, 0.003))
+        out.append(cube("cork", (x - w / 2 + 0.02, y_wall - 0.026, z - h / 2 + 0.02),
+                        (x + w / 2 - 0.02, y_wall - 0.02, z + h / 2 - 0.02), image_material("cork", "cork.jpg", rough=0.95), 0.001))
+        for i, sh in enumerate(it.get("sheets", [])):
+            out += hung(f"board sheet {i}", sh, x + sh["x"], y_wall - 0.0262 - 0.0004 * i, z + sh["z"])
+    elif it["kind"] == "sheet":
+        out += hung("wall sheet", it, x, y_wall - 0.0004, z)
+    elif it["kind"] == "clock":
+        r = it.get("r", 0.15)
+        bpy.ops.mesh.primitive_cylinder_add(radius=r, depth=0.035, location=(x, y_wall - 0.0175, z),
+                                            rotation=(math.pi / 2, 0, 0), vertices=96)
+        rim = bpy.context.active_object
+        rim.name = "clock rim"
+        m = rim.modifiers.new("bevel", "BEVEL")
+        m.width, m.segments = 0.006, 4
+        rim.data.materials.append(principled("clock rim", (0.02, 0.02, 0.022), 0.35))
+        for p in rim.data.polygons:
+            p.use_smooth = True
+        out.append(rim)
+        out.append(disc("clock face", x, y_wall - 0.0355, z, r * 0.9, image_material("clock face", "clock_face.jpg", rough=0.6)))
+        glass = bpy.data.materials.new("clock glass")
+        glass.use_nodes = True
+        gb = glass.node_tree.nodes["Principled BSDF"]
+        gb.inputs["Transmission Weight"].default_value = 1.0
+        gb.inputs["Roughness"].default_value = 0.02
+        out.append(disc("clock glass", x, y_wall - 0.0365, z, r * 0.92, glass))
+    return out
+
+
+def hung(name, sh, px, y, pz):
+    """A sheet pinned at its top centre: sh["img"] at width w (its height from the
+    image's aspect), turned rot deg, curling bow m; pin=(r, g, b) or None (taped flat)."""
+    img = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", sh["img"]), check_existing=True)
+    w = sh["w"]
+    h = w * img.size[1] / img.size[0]
+    out = [sheet(name, sh["img"], px, pz, w, h, y, sh.get("rot", 0.0), sh.get("bow", 0.004))]
+    if sh.get("pin"):
+        out.append(pin(name + " pin", px, y - 0.0003, pz, sh["pin"]))
+    return out
 
 
 def screen_material(screen, glow):

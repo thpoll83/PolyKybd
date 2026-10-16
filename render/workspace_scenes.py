@@ -18,7 +18,9 @@ Props are (asset, part, x, y, turn deg, height m or None, lie flat):
 "@mug_dark", "@puzzle_cube" and "@clips" are built in workspace_scene.py; tint=(r, g, b)
 in the last dict multiplies a prop's colours, scale=k resizes it; desk "@black_desk" is a gaming desk. desk_mat: an extended mat under
 keyboard and mouse in color at rough, glow=(r, g, b) lights its edge. wall: the desk
-stands against a painted wall (color), with an LED strip (led=(r, g, b)) and a poster.
+stands against a painted wall (color), with an LED strip (led=(r, g, b)), a poster, and
+items: a cork "board" with pinned "sheets", a "sheet" on the wall itself, a "clock"
+(workspace_scene.wall_item(); x from the keyboard's centre, z from the desk top).
 desk_height, desk_depth and desk_width stretch a desk's height, depth or width only (WoodenTable_01 is a
 0.55 m low table, 0.66 m deep). mouse: a built mouse on a pad, x, y from the keyboard; wired=True gives it a cable
 over the desk's back edge.
@@ -45,10 +47,21 @@ SCENES = {
                ("vintage_stapler", None, -0.56, -0.13, 20, None, False, dict(scale=0.62)),
                ("stationery_supplies", "stationery_supplies_eraser", 0.60, -0.21, 30, None, False)],
         desk_mat=dict(w=0.76, d=0.34, x=0.06, y=0.0, color=(0.08, 0.085, 0.09), rough=0.95),
+        wall=dict(color=(0.56, 0.54, 0.50), items=[
+            dict(kind="board", x=-0.40, z=0.63, w=0.80, h=0.40, sheets=[
+                dict(img="paper_sprint.jpg", x=-0.27, z=0.12, w=0.19, rot=-3, pin=(0.85, 0.1, 0.1)),
+                dict(img="paper_layout.jpg", x=0.02, z=0.13, w=0.28, rot=3, pin=(0.1, 0.3, 0.85)),
+                dict(img="photo_keyboard.jpg", x=0.27, z=0.12, w=0.17, rot=-5, pin=(0.95, 0.8, 0.1)),
+                dict(img="sticky_yellow.jpg", x=0.27, z=-0.04, w=0.076, rot=6, pin=(0.1, 0.6, 0.2)),
+                dict(img="paper_chart.jpg", x=-0.10, z=0.02, w=0.15, rot=-2, pin=(0.85, 0.1, 0.1))]),
+            dict(kind="clock", x=0.30, z=0.74, r=0.11),
+            dict(kind="sheet", img="paper_month.jpg", x=0.86, z=0.76, w=0.28, rot=0, pin=(0.2, 0.2, 0.22)),
+            dict(kind="sheet", img="sticky_pink.jpg", x=0.84, z=0.44, w=0.076, rot=-4, bow=0.008),
+            dict(kind="sheet", img="sticky_blue.jpg", x=0.93, z=0.38, w=0.076, rot=3, bow=0.008)]),
         monitor=dict(style="dual", y=0.42, inches=27, finish="black",
                      screens=["screen_code.jpg", "screen_polykybd_org.jpg"], gap=0.20),
         mouse=dict(x=0.32, y=0.0, turn=-6, wired=True),
-        camera=dict(distance=1.75, elev=15, azim=-10, lens=40, fstop=4.0, aim_y=0.14, aim_z=0.17)),
+        camera=dict(distance=2.0, elev=13, azim=-10, lens=40, fstop=4.0, aim_y=0.16, aim_z=0.29)),
     "front_desk": dict(
         hdri="entrance_hall", hdri_turn=90, hdri_strength=1.2,
         desk="@counter", desk_height=None,

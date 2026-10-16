@@ -9,7 +9,11 @@ Drawn with Pillow at 2560 x 1440, generic on purpose (no product's look or name)
 - screen_plan.jpg: a CAD floor plan, walls, doors, rooms with their areas, dimensions,
 - screen_design.jpg: a vector illustration app with a poster in progress,
 - screen_game.jpg: a made-up synthwave racing game with its HUD,
-- ruler.jpg: a steel rule's millimetre scale, poster_road.jpg: the game's road as a poster.
+- ruler.jpg: a steel rule's millimetre scale, poster_road.jpg: the game's road as a poster,
+- the office wall: cork.jpg (a pinboard's cork), paper_layout.jpg (a keymap sketch),
+  paper_sprint.jpg (a week's task list), paper_chart.jpg (a bar chart printout),
+  paper_month.jpg (a month calendar), photo_keyboard.jpg (a print of the docs page's
+  photo), sticky_<colour>.jpg (sticky notes), clock_face.jpg (a wall clock's dial).
 screen_polykybd_org.jpg is the docs site's front page (a Chromium screenshot of
 polykybd-docs/dist, served locally) and is not made here.
 """
@@ -276,10 +280,161 @@ def poster():
     return game().crop((720, 0, 1840, 1440))
 
 
+PAPER = (244, 242, 236)
+INK = (40, 44, 60)
+
+
+def cork():
+    """A pinboard's cork, 1800 x 1200 px: warm brown granules."""
+    import random
+    rnd = random.Random(5)
+    im = Image.new("RGB", (1800, 1200), (150, 108, 70))
+    d = ImageDraw.Draw(im)
+    for _ in range(90000):
+        x, y, r = rnd.randint(0, 1800), rnd.randint(0, 1200), rnd.randint(1, 4)
+        v = rnd.randint(-45, 35)
+        d.ellipse((x, y, x + r, y + r), fill=(150 + v, 108 + v, 70 + v // 2))
+    return im
+
+
+def paper_layout():
+    """An A4 sheet, landscape: a split keyboard's layer sketched in pen, keys labelled."""
+    im = Image.new("RGB", (1414, 1000), PAPER)
+    d = ImageDraw.Draw(im)
+    d.text((60, 40), "Layer 2  (nav + num)", font=font(BOLD, 44), fill=INK)
+    labels = "1234567890" "←↓↑→" "HPEUD" "+-*/=" "()[]{}" "<>"
+    k, i = 70, 0
+    for half, x0 in ((0, 70), (1, 760)):
+        for r in range(4):
+            for c in range(6):
+                x, y = x0 + c * (k + 8), 160 + r * (k + 8) + (abs(c - 2.5) < 1.5) * -14
+                d.rounded_rectangle((x, y, x + k, y + k), 8, outline=INK, width=3)
+                d.text((x + 20, y + 12), labels[i % len(labels)], font=font(SANS, 34), fill=(30, 70, 160))
+                i += 1
+    for j, line in enumerate(["- move arrows to the home row?", "- F-keys on Fn only", "- try it for a week"]):
+        d.text((80, 520 + j * 70), line, font=font(SANS, 38), fill=(60, 60, 70))
+    d.ellipse((900, 520, 1300, 760), outline=(200, 40, 40), width=5)
+    d.text((960, 600), "ask the team", font=font(SANS, 40), fill=(200, 40, 40))
+    return im
+
+
+def paper_sprint():
+    """An A4 sheet: a week's tasks in a table, some ticked."""
+    im = Image.new("RGB", (1000, 1414), PAPER)
+    d = ImageDraw.Draw(im)
+    d.text((70, 60), "Week 42", font=font(BOLD, 64), fill=INK)
+    tasks = ["Review layout feedback", "Order USB-C cables", "Q4 budget draft", "Team lunch (Thu)",
+             "Update onboarding doc", "Call supplier", "Desk move, 3rd floor", "Backup check", "Plan offsite"]
+    for i, t in enumerate(tasks):
+        y = 200 + i * 120
+        d.line((70, y + 90, 930, y + 90), fill=(190, 190, 195), width=2)
+        d.rectangle((80, y + 20, 130, y + 70), outline=INK, width=4)
+        if i in (0, 1, 3, 7):
+            d.line((88, y + 45, 104, y + 64, 128, y + 14), fill=(30, 120, 60), width=7)
+        d.text((160, y + 18), t, font=font(SANS, 44), fill=INK)
+    return im
+
+
+def paper_chart():
+    """An A4 printout: a bar chart, quarterly numbers."""
+    im = Image.new("RGB", (1000, 1414), PAPER)
+    d = ImageDraw.Draw(im)
+    d.text((70, 60), "Tickets closed", font=font(BOLD, 58), fill=INK)
+    d.text((70, 140), "per month, 2026", font=font(SANS, 38), fill=(110, 110, 120))
+    base, vals = 1150, [310, 420, 380, 520, 610, 560, 700, 760, 690]
+    d.line((90, base, 940, base), fill=INK, width=4)
+    for i, v in enumerate(vals):
+        x = 110 + i * 92
+        d.rectangle((x, base - v * 1.2, x + 62, base), fill=(52, 104, 180) if i < 8 else (230, 140, 40))
+        d.text((x + 14, base + 20), "JFMAMJJAS"[i], font=font(SANS, 38), fill=INK)
+    for j in range(1, 5):
+        y = base - j * 200
+        d.line((90, y, 940, y), fill=(210, 210, 215), width=2)
+    return im
+
+
+def paper_month():
+    """A wall calendar's month page: a photo strip above a grid, a few days marked."""
+    im = Image.new("RGB", (1000, 1300), (250, 249, 245))
+    d = ImageDraw.Draw(im)
+    for y in range(520):                                     # a dusk sky over hills
+        t = y / 520
+        d.line((0, y, 1000, y), fill=(int(70 + 150 * t), int(110 + 80 * t), int(170 - 30 * t)))
+    d.polygon([(0, 520), (0, 380), (260, 300), (520, 400), (760, 320), (1000, 420), (1000, 520)], fill=(40, 70, 60))
+    d.text((60, 560), "October", font=font(BOLD, 72), fill=INK)
+    for i, n in enumerate("MTWTFSS"):
+        d.text((80 + i * 128, 680), n, font=font(BOLD, 36), fill=(120, 120, 130))
+    day = 1
+    for r in range(5):
+        for c in range(7):
+            if r == 0 and c < 3 or day > 31:
+                continue
+            x, y = 70 + c * 128, 740 + r * 108
+            d.rectangle((x, y, x + 120, y + 100), outline=(200, 200, 205), width=2)
+            d.text((x + 10, y + 6), str(day), font=font(SANS, 34), fill=INK)
+            if day in (9, 16, 23):
+                d.ellipse((x + 4, y + 2, x + 70, y + 54), outline=(210, 40, 40), width=4)
+            day += 1
+    return im
+
+
+def photo_keyboard():
+    """A photo print: the keyboard picture from the docs page screenshot, white border."""
+    src = Image.open(os.path.join(OUT, "screen_polykybd_org.jpg"))
+    w, h = src.size
+    ph = src.crop((int(w * 0.31), int(h * 0.665), int(w * 0.70), int(h * 0.99))).resize((1200, 900))
+    im = Image.new("RGB", (1300, 1000), (250, 250, 248))
+    im.paste(ph, (50, 50))
+    return im
+
+
+def sticky(rgb, lines):
+    def draw():
+        im = Image.new("RGB", (760, 760), rgb)
+        d = ImageDraw.Draw(im)
+        for j, line in enumerate(lines):
+            d.text((60, 80 + j * 120), line, font=font(SANS, 76), fill=(30, 40, 90))
+        return im
+    return draw
+
+
+def clock_face():
+    """A wall clock's dial, 1200 px square: ticks, numbers, hands at ten past ten."""
+    import math
+    im = Image.new("RGB", (1200, 1200), (248, 248, 245))
+    d = ImageDraw.Draw(im)
+    c = 600
+    for m in range(60):
+        a = math.radians(m * 6)
+        r0 = 500 if m % 5 else 460
+        d.line((c + r0 * math.sin(a), c - r0 * math.cos(a), c + 540 * math.sin(a), c - 540 * math.cos(a)),
+               fill=(25, 25, 28), width=14 if m % 5 == 0 else 5)
+    for h in range(1, 13):
+        a = math.radians(h * 30)
+        t = str(h)
+        f = font(BOLD, 90)
+        tw = d.textlength(t, font=f)
+        d.text((c + 370 * math.sin(a) - tw / 2, c - 370 * math.cos(a) - 55), t, font=f, fill=(25, 25, 28))
+    for ang, ln, wd in ((305, 280, 30), (60, 420, 20)):
+        a = math.radians(ang)
+        d.line((c, c, c + ln * math.sin(a), c - ln * math.cos(a)), fill=(20, 20, 22), width=wd)
+    a = math.radians(200)
+    d.line((c - 80 * math.sin(a), c + 80 * math.cos(a), c + 460 * math.sin(a), c - 460 * math.cos(a)),
+           fill=(200, 30, 30), width=8)
+    d.ellipse((c - 30, c - 30, c + 30, c + 30), fill=(20, 20, 22))
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in (("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_plan.jpg", plan),
                      ("screen_design.jpg", design), ("screen_game.jpg", game), ("ruler.jpg", ruler),
-                     ("poster_road.jpg", poster)):
+                     ("poster_road.jpg", poster), ("cork.jpg", cork), ("paper_layout.jpg", paper_layout),
+                     ("paper_sprint.jpg", paper_sprint), ("paper_chart.jpg", paper_chart),
+                     ("paper_month.jpg", paper_month), ("photo_keyboard.jpg", photo_keyboard),
+                     ("sticky_yellow.jpg", sticky((250, 230, 110), ["pick up", "badges", "@ 9:30"])),
+                     ("sticky_pink.jpg", sticky((248, 160, 190), ["call IT", "re: VPN"])),
+                     ("sticky_blue.jpg", sticky((150, 210, 240), ["Fri:", "demo day!"])),
+                     ("clock_face.jpg", clock_face)):
         fn().save(os.path.join(OUT, name), quality=88)
         print("wrote", os.path.join("render", "textures", "workspace", name))
