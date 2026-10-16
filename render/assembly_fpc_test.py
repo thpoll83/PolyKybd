@@ -21,12 +21,14 @@ import bpy
 import mathutils
 import numpy as np
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import fpc_bend  # noqa: E402
+
 argv = sys.argv[sys.argv.index("--") + 1:]
 OUT, WIDTH, SAMPLES = argv[0], int(argv[1]), int(argv[2])
 KEY = os.environ.get("PK_FPC_KEY", "SW_K_10")
 FPS, FREEZE, FRAMES = 25, 35.9, 100
 BEND = (15, 75)                                   # frames: straight until the first, plugged at the second
-STEPS = 11
 sc = bpy.context.scene
 root = bpy.data.objects["split72_left.wrl"]
 
@@ -44,80 +46,11 @@ root.rotation_euler.y += math.pi                  # the back side up, about the 
 bpy.context.view_layer.update()
 
 tail = bpy.data.objects[f"{KEY}:flex tail"]
-me = tail.data
-co = np.array([v.co[:] for v in me.vertices]) + np.array(tail.location)   # root frame, mm
-yz = co[:, 1:]
-
-# the strip's centre line in y-z (its width runs along x): walk from the slot end
-# (its highest point) in 0.3 mm steps, each step the mean of the points just ahead
-p = yz[yz[:, 1].argmax()].copy()
-d = np.array([0.0, -1.0])
-line = [p.copy()]
-for _ in range(400):
-    rel = yz - p
-    ahead = rel @ d
-    near = np.linalg.norm(rel, axis=1)
-    sel = (ahead > 0.15) & (ahead < 0.6) & (near < 0.8)
-    if not sel.any():
-        break
-    q = yz[sel].mean(0)
-    d = (q - p) / np.linalg.norm(q - p)
-    p = p + d * 0.3
-    line.append(p.copy())
-line = np.array(line)
-k = np.ones(5) / 5                                # smooth the walk, keep its ends
-sm = np.c_[np.convolve(np.pad(line[:, 0], 2, mode="edge"), k, "valid"),
-           np.convolve(np.pad(line[:, 1], 2, mode="edge"), k, "valid")]
-seg = np.diff(sm, axis=0)
-s = np.concatenate([[0], np.cumsum(np.linalg.norm(seg, axis=1))])
-theta = np.unwrap(np.arctan2(seg[:, 1], seg[:, 0]))
-theta = np.append(theta, theta[-1])
-print(f"fpc test: {KEY} tail {s[-1]:.1f} mm along {len(sm)} points, turns {math.degrees(theta[-1] - theta[0]):.0f} deg")
-
-# each vertex as (s, along, across) on the line
-dist = ((yz[:, None, :] - sm[None]) ** 2).sum(-1)
-idx = dist.argmin(1)
-T = np.c_[np.cos(theta), np.sin(theta)]
-N = np.c_[-T[:, 1], T[:, 0]]
-rel = yz - sm[idx]
-along = (rel * T[idx]).sum(1)
-across = (rel * N[idx]).sum(1)
-
-
-def shape(t):
-    th = theta[0] + t * (theta - theta[0])
-    ds = np.diff(s)
-    c = np.vstack([sm[0], sm[0] + np.cumsum(np.c_[np.cos(th[:-1]), np.sin(th[:-1])] * ds[:, None], axis=0)])
-    tt = np.c_[np.cos(th), np.sin(th)]
-    nn = np.c_[-tt[:, 1], tt[:, 0]]
-    out = co.copy()
-    out[:, 1:] = c[idx] + along[:, None] * tt[idx] + across[:, None] * nn[idx]
-    return out - np.array(tail.location)
-
-
-end_err = np.linalg.norm(shape(1.0)[:, 1:] - (co - np.array(tail.location))[:, 1:], axis=1).max()
-print(f"fpc test: the t=1 shape reproduces the model within {end_err:.3f} mm")
-tail.shape_key_add(name="Basis")
-keys = []
-for i in range(STEPS):
-    kb = tail.shape_key_add(name=f"t{i}")
-    kb.data.foreach_set("co", shape(i / (STEPS - 1)).ravel())
-    kb.slider_min = 0.0
-    keys.append(kb)
-
-
-def smooth(u):
-    u = min(max(u, 0.0), 1.0)
-    return u * u * (3 - 2 * u)
-
-
-for fr in range(1, FRAMES + 1):
-    t = smooth((fr - BEND[0]) / (BEND[1] - BEND[0])) * (STEPS - 1)
-    lo = min(int(t), STEPS - 2)
-    w = t - lo
-    for i, kb in enumerate(keys):
-        kb.value = (1 - w) if i == lo else w if i == lo + 1 else 0.0
-        kb.keyframe_insert("value", frame=fr)
+tail.shape_key_clear()                             # assembly_video.py's own keys; the mesh stays the model
+keys, end, length, turn, yaw = fpc_bend.bend_keys(tail)
+print(f"fpc test: {KEY} tail {length:.1f} mm, turns {turn:.0f} deg, strip at {yaw:.0f} deg")
+fpc_bend.drive(keys, BEND[0], BEND[1])
+co = np.array([v.co[:] for v in tail.data.vertices]) + np.array(tail.location)
 
 # the camera: three-quarter view over the key's socket, from the front and the side
 cam, tgt = sc.camera, bpy.data.objects["target"]

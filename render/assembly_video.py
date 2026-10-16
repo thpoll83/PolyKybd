@@ -22,11 +22,15 @@ seconds at 25 fps (the constants below), in the order of the assembly guide
        second later both come down onto the spacer; the cover insert
  26.6  the switches, row by row; the keycap stems; the displays, each with its
        flex cable as one part; the keycaps
- 39.0  the case slides in on the desk under the floating board, which comes down
+ 40.0  once the clear keycaps cover the displays, the board turns over; row by row,
+       each socket's flap opens, the display's flex tail bends over from straight out
+       of its slot into the socket, and the flap closes (fpc_bend.py); the board
+       turns back
+ 52.4  the case slides in on the desk under the floating board, which comes down
        into it; the four screws
- 44.2  the camera pulls back to both halves, the right half sliding in beside the
+ 57.6  the camera pulls back to both halves, the right half sliding in beside the
        left one; the bridge cable comes down with its plugs out of the ports and
-       they push in; the host cable slides in from far behind; hold until 54 s
+       they push in; the host cable slides in from far behind; hold until 67.4 s
 
 Every part moves along its own side's axis only (pk_side: from above or from
 below the board, 40 to 110 mm away), in 0.5 to 1.1 s, and keeps its orientation.
@@ -44,6 +48,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import bridge_cable  # noqa: E402
+import fpc_bend  # noqa: E402
 import lighting  # noqa: E402
 import materials  # noqa: E402
 import studio  # noqa: E402
@@ -52,7 +57,7 @@ import textured_parts  # noqa: E402
 argv = sys.argv[sys.argv.index("--") + 1:]
 OUT, WIDTH, SAMPLES = argv[0], int(argv[1]), int(argv[2])
 FPS = 25
-END = 54.0
+END = 67.4
 if os.environ.get("PCB2BLENDER"):                  # assembly_pcb.py's scene: its board materials need the add-on
     sys.path.insert(0, os.environ["PCB2BLENDER"])
     import pcb2blender_importer
@@ -113,11 +118,16 @@ DIFF_IN = (20.8, 22.1, 22.6, 23.1)   # the diffuser slides in under the plate fr
                                      # the switch holes, then back into the round LED slots
 LED_DY = 8.73                     # mm: each LED sits this far behind its switch's centre
 PLATE_DOWN = (24.0, 25.4)         # a second's wait, then plate and diffuser come down together
-CASE_IN = (39.0, 40.6)            # the case slides in on the desk from behind, under the floating board
-SETTLE = (41.0, 42.4)             # the board comes down into it
-RIGHT_IN = (44.2, 46.8)           # the right half slides in while the camera pulls back
-BRIDGE_IN = (47.0, 47.8, 48.0, 48.7)   # the bridge cable drops, then its plugs push into the ports
-HOST_IN = (49.2, 51.6)            # the host cable slides in from far behind
+FLIP_BACK = (40.0, 41.8)          # once the clear keycaps cover the displays, the board turns over again
+PLUG = (42.2, 47.6)               # the flex tails plug into their sockets, row by row (starts)
+FLAP_T, BEND_T = 0.4, 1.6         # s: a socket's flap opens, its tail bends in, the flap closes
+FLAP_OPEN = math.radians(105)     # the FH34's back-flip actuator, fully open
+FLIP_UP = (50.4, 52.2)            # and the board turns top side up for the case
+CASE_IN = (52.4, 54.0)            # the case slides in on the desk from behind, under the floating board
+SETTLE = (54.4, 55.8)             # the board comes down into it
+RIGHT_IN = (57.6, 60.2)           # the right half slides in while the camera pulls back
+BRIDGE_IN = (60.4, 61.2, 61.4, 62.1)   # the bridge cable drops, then its plugs push into the ports
+HOST_IN = (62.6, 65.0)            # the host cable slides in from far behind
 
 start = {}                        # parts that drop straight onto their place (fly)
 start.update(wave(of("pcb"), -0.6, -0.6, jitter=0))  # coming in at frame 1
@@ -135,7 +145,7 @@ by_ref = {o["pk_ref"]: t for o, t in disp.items()}
 for o in of("display_decal", "flex"):              # one part with its display: same start, same path
     start[o] = by_ref[o["pk_ref"]]
 start.update(wave(of("keycap"), 35.1, 38.5, key=row))
-start.update(wave(of("screw"), 42.8, 43.6, jitter=0.1))
+start.update(wave(of("screw"), 56.2, 57.0, jitter=0.1))
 plate_group = of("plate", "status") + [o for o in of("lid") if o["pk_ref"] == "LID0"]
 diffuser = of("diffuser")
 case = of("case")
@@ -230,8 +240,77 @@ for o in of("flex"):
     bt.to_mesh(tail.data)
     bt.free()
     show_from(tail, start[o] + moves[o["pk_ref"]][1])
+    tail["pk_ref"] = o["pk_ref"]
     tails += 1
 print("flex tails split off:", tails)
+
+# ---- the flex tails into their sockets, with the board on its back --------------
+# Each tail lands straight, out of its slot (fpc_bend.py's t=0). Once the board has
+# turned over (FLIP_BACK), row by row: the socket's flap opens, the tail bends over
+# into it, the flap closes. The flap is the FH34's actuator (the material
+# pcb_shot/look.py gives (0.040, 0.034, 0.033)), cut out of the socket's mesh and
+# hinged on its back edge (local +y, away from the mouth), along local x.
+ACTUATOR = (0.040, 0.034, 0.033)
+
+
+def is_actuator(m):
+    n = m.node_tree.nodes.get("Mat4cad BSDF") if m and m.node_tree else None
+    return n is not None and max(abs(a - b) for a, b in zip(n.inputs["Color"].default_value[:3], ACTUATOR)) < 0.004
+
+
+sockets = [o for o in bpy.data.objects["PCB_left"].children if o.name.startswith("FH34SRJ")]
+cut = {}                                           # mesh -> (socket without the flap, flap mesh, hinge)
+for o in sockets:
+    me = o.data
+    if me.name in cut:
+        continue
+    flap_i = {i for i, m in enumerate(me.materials) if is_actuator(m)}
+    body, flap = me.copy(), me.copy()
+    for m2, keep in ((body, False), (flap, True)):
+        b = bmesh.new()
+        b.from_mesh(m2)
+        bmesh.ops.delete(b, geom=[q for q in b.faces if (q.material_index in flap_i) != keep], context="FACES")
+        b.to_mesh(m2)
+        b.free()
+    v = np.array([x.co[:] for x in flap.vertices])
+    hinge = mathutils.Vector((0.0, v[:, 1].max(), (v[:, 2].min() + v[:, 2].max()) / 2))
+    flap.transform(mathutils.Matrix.Translation(-hinge))
+    cut[me.name] = (body, flap, hinge)
+flaps = {}
+for o in sockets:
+    body, flap, hinge = cut[o.data.name]
+    o.data = body
+    fo = bpy.data.objects.new(o.name + " flap", flap)
+    sc.collection.objects.link(fo)
+    fo.parent = o
+    fo.location = hinge
+    flaps[o] = fo
+    if o in start:
+        show_from(fo, start[o])
+# which way opens: the flap's middle must swing away from the board (local +z)
+probe = next(iter(flaps.values()))
+mid = mathutils.Vector(np.array([x.co[:] for x in probe.data.vertices]).mean(0))
+OPEN_SIGN = 1.0 if (mathutils.Matrix.Rotation(FLAP_OPEN, 3, "X") @ mid).z > mid.z else -1.0
+
+pcb = bpy.data.objects["PCB_left"]                 # each socket at home in the root's frame (its keys aside)
+sock_at = {o: np.array((pcb.matrix_parent_inverse @ pcb.matrix_basis @ o.matrix_parent_inverse
+                        @ o.matrix_basis).translation) for o in sockets}
+tail_objs = [o for o in bpy.data.objects if o.name.endswith(":flex tail")]
+plug_at = wave(tail_objs, PLUG[0], PLUG[1], key=lambda o: row(bpy.data.objects[o["pk_ref"] + ":flex"]), jitter=0.1)
+worst = 0.0
+for tail in tail_objs:
+    keys, end, length, turn, yaw = fpc_bend.bend_keys(tail)
+    sock = min(sockets, key=lambda q: np.linalg.norm(sock_at[q][:2] - end[:2]))
+    worst = max(worst, float(np.linalg.norm(sock_at[sock][:2] - end[:2])))
+    t = plug_at[tail]
+    fpc_bend.drive(keys, f(t + FLAP_T), f(t + FLAP_T + BEND_T))
+    fo = flaps[sock]
+    for sec, a in ((0, 0), (t, 0), (t + FLAP_T, 1), (t + FLAP_T + BEND_T, 1), (t + 2 * FLAP_T + BEND_T, 0)):
+        fo.rotation_euler = (OPEN_SIGN * FLAP_OPEN * a, 0, 0)
+        fo.keyframe_insert("rotation_euler", frame=f(sec))
+    fo.rotation_euler = (0, 0, 0)
+print("SW_K_10 plugs at", round(plug_at[bpy.data.objects["SW_K_10:flex tail"]], 2), "s")
+print(f"flex tails plugged: {len(tail_objs)}, ends within {worst:.1f} mm of their socket's origin; flaps open {OPEN_SIGN:+.0f}")
 
 # the plate with the status display and its holder: down to HOVER, wait for the
 # diffuser, then down together onto the spacer
@@ -267,7 +346,8 @@ piv_r.location = home_r
 # settle is keyed every frame with the case's own curve, so the case stays put on the desk
 base_loc, base_rot = root.location.copy(), root.rotation_euler.copy()
 lift = mathutils.Vector((0, 0, LIFT / 1000))       # root is in the pivot's frame (metres)
-for sec, flip in ((0, 1), (FLIP[0], 1), (FLIP[1], 0)):
+for sec, flip in ((0, 1), (FLIP[0], 1), (FLIP[1], 0), (FLIP_BACK[0], 0), (FLIP_BACK[1], 1),
+                  (FLIP_UP[0], 1), (FLIP_UP[1], 0)):
     root.rotation_euler = (base_rot.x, base_rot.y + math.pi * flip, base_rot.z)   # about the short axis: the front stays in front
     root.keyframe_insert("rotation_euler", frame=f(sec))
 for fc in fcurves(root):
@@ -419,8 +499,10 @@ lift_c = left_c + mathutils.Vector((0, 0, LIFT / 1000))
 # (s, target, width, elevation, azimuth, fill): one framing for the whole build (the
 # 20 s view of the first draft), drifting a few degrees; then the pull-back to both halves
 SHOTS = [(0.0, lift_c, lw, 40, -4, 0.74), (20.0, lift_c, lw, 40, 6, 0.74), (38.5, lift_c, lw, 38, 2, 0.74),
-         (42.4, left_c, lw, 36, -2, 0.76), (44.2, left_c, lw, 35, -4, 0.80),
-         (46.8, both_c, both_w, 33, 0, 0.95), (END, both_c, both_w, 33, 3, 0.95)]
+         (42.0, lift_c, lw, 50, 0, 0.86), (50.2, lift_c, lw, 50, 4, 0.86),      # closer and steeper for the sockets
+         (52.4, lift_c, lw, 38, 2, 0.74),
+         (55.8, left_c, lw, 36, -2, 0.76), (57.6, left_c, lw, 35, -4, 0.80),
+         (60.2, both_c, both_w, 33, 0, 0.95), (END, both_c, both_w, 33, 3, 0.95)]
 for s, c, w, el, az, fill in SHOTS:
     tgt.location = c
     cam.location = view(c, w, el, az, fill)
