@@ -96,22 +96,56 @@ bpy.data.batch_remove([o for o in root.children if o.get("pk_kind") in ("pcb", "
 
 
 # ---- the RGB LEDs: the board carries a stand-in (KiCad's PLCC4, 3.5 x 2.8 x 2.05 mm,
-# metal) for the XL-3030RGBC, a matte white 3.0 x 3.0 x 0.8 mm package
-led_white = bpy.data.materials.new("XL-3030 body")
-led_white.use_nodes = True
-lb = led_white.node_tree.nodes["Principled BSDF"]
-lb.inputs["Base Color"].default_value = (0.82, 0.82, 0.80, 1)
-lb.inputs["Roughness"].default_value = 0.6
-done = set()
+# metal) for the XL-3030RGBC, a matte white 3.0 x 3.0 x 0.8 mm package with a round
+# clear window over the die. One mesh for all 36: a body with 0.12 mm rounded edges
+# (so its outline catches the light) and a glossy lens disc just proud of its top.
+import bmesh  # noqa: E402
+
+
+def principled(name, rgb, rough, coat=0.0):
+    m = bpy.data.materials.new(name)
+    m.use_nodes = True
+    b = m.node_tree.nodes["Principled BSDF"]
+    b.inputs["Base Color"].default_value = (*rgb, 1)
+    b.inputs["Roughness"].default_value = rough
+    b.inputs["Coat Weight"].default_value = coat
+    return m
+
+
+led_body = principled("XL-3030 body", (0.62, 0.62, 0.60), 0.55)
+led_lens = principled("XL-3030 lens", (0.42, 0.40, 0.34), 0.12, coat=0.6)
 leds = [o for o in pcb.children if str(o.get("pk_lib", "")).startswith("XL-3030")]
-for o in leds:
-    d = o.dimensions / o.scale.x if o.scale.x else o.dimensions      # metres, local axes
-    o.scale = (3.0e-3 / d.x, 3.0e-3 / d.y, 0.8e-3 / d.z)              # its origin is on the board
-    if o.data.name not in done:
-        done.add(o.data.name)
-        for i in range(len(o.data.materials)):
-            o.data.materials[i] = led_white
-print("LEDs resized and made matte white:", len(leds))
+if leds:
+    bm = bmesh.new()
+    mm = 1e-3
+    bmesh.ops.create_cube(bm, size=1.0)
+    for v in bm.verts:
+        v.co = mathutils.Vector((v.co.x * 3.0 * mm, v.co.y * 3.0 * mm, (v.co.z + 0.5) * 0.8 * mm))
+    bmesh.ops.bevel(bm, geom=list(bm.edges), offset=0.12 * mm, segments=2, affect="EDGES", profile=0.5)
+    for fc in bm.faces:
+        fc.material_index = 0
+    lens = bmesh.ops.create_cone(bm, cap_ends=True, segments=32, radius1=1.1 * mm, radius2=1.1 * mm, depth=0.04 * mm)
+    for v in lens["verts"]:
+        v.co.z += 0.80 * mm
+    for fc in {f for v in lens["verts"] for f in v.link_faces}:
+        fc.material_index = 1
+    me = bpy.data.meshes.new("XL-3030")
+    bm.to_mesh(me)
+    bm.free()
+    for p in me.polygons:
+        p.use_smooth = False
+    me.materials.append(led_body)
+    me.materials.append(led_lens)
+    flip = 0
+    for o in leds:
+        lo = min(mathutils.Vector(c).z for c in o.bound_box)
+        hi = max(mathutils.Vector(c).z for c in o.bound_box)
+        o.data = me
+        o.scale = (1.0, 1.0, 1.0)
+        if abs(hi) < abs(lo):                     # the stand-in stood on its +z face: the top is -z
+            o.scale = (1.0, 1.0, -1.0)
+            flip += 1
+    print("LEDs rebuilt as 3.0 x 3.0 x 0.8 mm with a lens:", len(leds), "flipped", flip)
 
 
 def read_stl(path):
@@ -229,6 +263,57 @@ for o in stems:
     o.data = me
     bpy.data.meshes.remove(old_me)
 print("stems replaced:", len(stems), "worst fit %.3f mm" % worst)
+
+# ---- the flex cables, one per key by connection: assembly_scene.py split the textured
+# flex mesh by each face's nearest key, which cut every loop under the board at the
+# halfway line between keys (SW_K_10's own end, into J10, went to the key behind it,
+# and it took the end of the key in front's). Weld the pieces, take each connected
+# strip whole and give it to the key whose slot it comes down through (its top end).
+flex = [o for o in root.children if o.get("pk_kind") == "flex"]
+bm = bmesh.new()
+for o in flex:
+    me = o.data.copy()
+    me.transform(o.matrix_basis)                  # into the root's frame (mm)
+    bm.from_mesh(me)
+    bpy.data.meshes.remove(me)
+bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-4)
+bm.faces.ensure_lookup_table()
+island = [-1] * len(bm.faces)
+n_isl = 0
+for f0 in bm.faces:
+    if island[f0.index] >= 0:
+        continue
+    stack = [f0]
+    island[f0.index] = n_isl
+    while stack:
+        fc = stack.pop()
+        for e in fc.edges:
+            for g in e.link_faces:
+                if island[g.index] < 0:
+                    island[g.index] = n_isl
+                    stack.append(g)
+    n_isl += 1
+keys = np.array([(o["pk_x"], o["pk_y"]) for o in flex])
+owner = {}
+for i in range(n_isl):
+    top = max((v for fc in bm.faces if island[fc.index] == i for v in fc.verts), key=lambda v: v.co.z)
+    owner[i] = int(np.argmin(((keys - np.array(top.co[:2])) ** 2).sum(1)))
+counts = np.bincount(list(owner.values()), minlength=len(flex))
+print("flex strips:", n_isl, "for", len(flex), "keys; strips per key", sorted(set(counts.tolist())))
+for j, o in enumerate(flex):
+    mine = {i for i, k in owner.items() if k == j}
+    b2 = bm.copy()
+    b2.faces.ensure_lookup_table()
+    bmesh.ops.delete(b2, geom=[fc for fc in b2.faces if island[fc.index] not in mine], context="FACES")
+    lo = mathutils.Vector([min(v.co[i] for v in b2.verts) for i in range(3)])
+    hi = mathutils.Vector([max(v.co[i] for v in b2.verts) for i in range(3)])
+    c = (lo + hi) / 2
+    bmesh.ops.translate(b2, verts=b2.verts, vec=-c)
+    me = o.data
+    b2.to_mesh(me)
+    b2.free()
+    o.matrix_basis = mathutils.Matrix.Translation(c)
+bm.free()
 bpy.data.orphans_purge(do_recursive=True)
 bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(out), compress=True)
 print("SAVED", out)

@@ -109,7 +109,9 @@ FLIP = (12.5, 14.3)               # the board turns over (it starts bottom side 
 LIFT = 40.0                       # mm the board floats until the case is under it
 HOVER = 35.0                      # mm the plate waits above the board for its diffuser
 PLATE_IN = (19.6, 21.0)           # plate, status display holder and display come down to HOVER
-DIFF_IN = (21.0, 22.6, 23.0)      # the diffuser slides in under the plate from the front, then up into it
+DIFF_IN = (20.8, 22.1, 22.6, 23.1)   # the diffuser slides in under the plate from the front, up through
+                                     # the switch holes, then back into the round LED slots
+LED_DY = 8.73                     # mm: each LED sits this far behind its switch's centre
 PLATE_DOWN = (24.0, 25.4)         # a second's wait, then plate and diffuser come down together
 CASE_IN = (39.0, 40.6)            # the case slides in on the desk from behind, under the floating board
 SETTLE = (41.0, 42.4)             # the board comes down into it
@@ -236,13 +238,15 @@ print("flex tails split off:", tails)
 for o in plate_group:
     path(o, [(PLATE_IN[0], (0, 0, 100), None), (PLATE_IN[1], (0, 0, HOVER), ease_out),
              (PLATE_DOWN[0], (0, 0, HOVER), smooth), (PLATE_DOWN[1], ZERO, smooth)])
-# the diffuser from the front (the viewer's side, -y), 4.5 mm below its seat so its
-# light pipes clear the plate, then up into the plate's windows
+# the diffuser from the front (the viewer's side, -y), 4.5 mm below its seat and LED_DY
+# nearer the camera: its light pipes come up through the switch holes (their lips
+# would not pass the round slots), then it slides back, away from the camera, so
+# each pipe moves into its LED slot
 for o in diffuser:
     low = HOVER - 4.5
-    path(o, [(DIFF_IN[0], (0, -170, low), None), (DIFF_IN[1], (0, 0, low), ease_out),
-             (DIFF_IN[2], (0, 0, HOVER), smooth), (PLATE_DOWN[0], (0, 0, HOVER), smooth),
-             (PLATE_DOWN[1], ZERO, smooth)])
+    path(o, [(DIFF_IN[0], (0, -170, low), None), (DIFF_IN[1], (0, -LED_DY, low), ease_out),
+             (DIFF_IN[2], (0, -LED_DY, HOVER), smooth), (DIFF_IN[3], (0, 0, HOVER), smooth),
+             (PLATE_DOWN[0], (0, 0, HOVER), smooth), (PLATE_DOWN[1], ZERO, smooth)])
 # the case on the desk, under the floating board, which then comes down into it
 for o in case:
     path(o, [(CASE_IN[0], (0, 200, -LIFT), None), (CASE_IN[1], (0, 0, -LIFT), ease_out),
@@ -286,7 +290,33 @@ for m in bpy.data.materials:
     if m.get("pk_role") == "solder mask":
         m.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = PCB_COLOUR
 tgt = bpy.data.objects.get("target")
-lighting.studio(sc, tgt)
+# about 30% under the hero shots' lights: at full strength the matte white LEDs and
+# the plate burn out to flat white (PK_LIGHT overrides, 1.0 = the hero shots)
+lighting.studio(sc, tgt, scale=float(os.environ.get("PK_LIGHT", 0.7)))
+# the board a little glossier than pcb_shot's (mask roughness 0.4 there)
+for m in [o.active_material for o in bpy.data.objects if o.name == "PCB_left"]:
+    for n in m.node_tree.nodes if m else []:
+        trees = [n.node_tree] if n.bl_idname == "ShaderNodeGroup" and n.node_tree else []
+        for q in [n] + [x for t in trees for x in t.nodes]:
+            if q.bl_idname == "ShaderNodeBsdfPcbSolderMask":
+                q.inputs["Roughness"].default_value = float(os.environ.get("PK_MASK_ROUGH", 0.22))
+# the status display's 30-pin FPC socket (Hirose FH12): its housing is dark grey, not
+# the model's white (mat4cad colours, as pcb_shot/look.py's FH34); its contacts stay
+for o in parts:
+    if not str(o.get("pk_lib", "")).startswith("Hirose_FH12"):
+        continue
+    for slot in o.material_slots:
+        m = slot.material
+        n = m.node_tree.nodes.get("Mat4cad BSDF") if m and m.node_tree else None
+        if n is None:
+            continue
+        col = n.inputs["Color"].default_value[:3]
+        print("FH12 material", m.name, n.mat_base, [round(c, 3) for c in col])
+        if n.mat_base != "METAL":                  # housing and actuator; the contacts are METAL
+            c = m.copy()
+            grey = 0.035 if min(col) > 0.4 else 0.02      # the housing, the actuator a shade darker
+            c.node_tree.nodes["Mat4cad BSDF"].inputs["Color"].default_value = (grey, grey, grey * 1.05, 1)
+            slot.material = c
 studio.cove(sc)
 studio.white_look(sc)
 bridge_cable.remove()
@@ -428,7 +458,7 @@ sc.render.resolution_percentage = 100
 sc.render.image_settings.file_format = "PNG"
 os.makedirs(OUT, exist_ok=True)
 if len(argv) > 3 and argv[3] == "stills":
-    frames = [int(x) for x in argv[4].split(",")]
+    frames = [int(x) for x in argv[4].split(",") if x]          # "stills ," renders none (for a script after this one)
 elif len(argv) > 4:
     frames = list(range(int(argv[3]), int(argv[4]) + 1))
 else:
