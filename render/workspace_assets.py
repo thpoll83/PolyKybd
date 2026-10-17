@@ -53,6 +53,19 @@ def fetch_hdri(aid, res="4k"):
     return path
 
 
+def fetch_photo(aid):
+    """An HDRI's tonemapped JPG: a CC0 landscape photo (equirectangular, 8k+ wide)."""
+    files = json.loads(get(f"{API}/files/{aid}"))
+    t = files["tonemapped"]
+    path = os.path.join(OUT, aid, os.path.basename(t["url"]).replace("%20", "_"))
+    if not os.path.exists(path):
+        get(t["url"], path)
+    return path
+
+
+PHOTOS = ["alps_field"]                                   # the office calendar's picture (workspace_screens.py)
+
+
 def main():
     info = json.loads(get(f"{API}/assets"))
     used = {}
@@ -66,6 +79,9 @@ def main():
             if aid not in used:
                 used[aid] = fetch_model(aid)
                 print(f"  {aid}: {os.path.relpath(used[aid], HERE)}")
+    for aid in PHOTOS:
+        used[aid] = fetch_photo(aid)
+        print(f"photo {aid}: {os.path.relpath(used[aid], HERE)}")
     with open(os.path.join(OUT, "CREDITS.md"), "w", encoding="utf-8") as f:
         f.write("# Poly Haven assets in the workspace scenes\n\nAll CC0 (https://polyhaven.com/license).\n\n")
         for aid in sorted(used):

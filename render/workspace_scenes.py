@@ -33,7 +33,7 @@ there.
 SCENES = {
     "office": dict(
         hdri="poly_haven_studio", hdri_turn=0, hdri_strength=1.0,
-        desk="metal_office_desk", desk_height=None,
+        desk="metal_office_desk", desk_height=None, desk_color=(0.88, 0.88, 0.86, 0.75),
         kb_from_front=0.26,                       # m from the desk's front edge to the keyboard's centre
         props=[("potted_plant_01", None, -0.82, 0.34, 30, 0.42, False),
                ("office_notepads", "office_notepads_a4_stack", 0.56, 0.08, 10, None, False, dict(tint=(1.0, 0.93, 0.78))),
@@ -50,16 +50,17 @@ SCENES = {
         wall=dict(color=(0.56, 0.54, 0.50), items=[
             dict(kind="board", x=-0.40, z=0.63, w=0.80, h=0.40, sheets=[
                 dict(img="paper_sprint.jpg", x=-0.27, z=0.12, w=0.19, rot=-3, pin=(0.85, 0.1, 0.1)),
-                dict(img="paper_layout.jpg", x=0.02, z=0.13, w=0.28, rot=3, pin=(0.1, 0.3, 0.85)),
-                dict(img="photo_keyboard.jpg", x=0.27, z=0.12, w=0.17, rot=-5, pin=(0.95, 0.8, 0.1)),
-                dict(img="sticky_yellow.jpg", x=0.27, z=-0.04, w=0.076, rot=6, pin=(0.1, 0.6, 0.2)),
-                dict(img="paper_chart.jpg", x=-0.10, z=0.02, w=0.15, rot=-2, pin=(0.85, 0.1, 0.1))]),
+                dict(img="print_pcb_rev33.jpg", x=0.01, z=0.13, w=0.25, rot=3, pin=(0.1, 0.3, 0.85)),
+                dict(img="print_pcb_left.jpg", x=0.27, z=0.12, w=0.17, rot=-5, pin=(0.95, 0.8, 0.1)),
+                dict(img="paper_schematic.jpg", x=-0.04, z=-0.02, w=0.25, rot=-2, pin=(0.1, 0.6, 0.2)),
+                dict(img="sticky_yellow.jpg", x=0.28, z=-0.05, w=0.076, rot=6, pin=(0.85, 0.1, 0.1))]),
             dict(kind="sheet", img="paper_month.jpg", x=0.86, z=0.76, w=0.28, rot=0, pin=(0.2, 0.2, 0.22)),
-            dict(kind="sheet", img="sticky_pink.jpg", x=0.84, z=0.44, w=0.076, rot=-4, bow=0.008),
-            dict(kind="sheet", img="sticky_blue.jpg", x=0.93, z=0.38, w=0.076, rot=3, bow=0.008)]),
+            dict(kind="sheet", img="sticky_blue.jpg", x=0.90, z=0.36, w=0.076, rot=3, bow=0.008)]),
         monitor=dict(style="dual", y=0.42, inches=27, finish="black",
-                     screens=["screen_code.jpg", "screen_polykybd_org.jpg"], gap=0.20),
-        mouse=dict(x=0.32, y=0.0, turn=-6, wired=True),
+                     screens=["screen_code.jpg", "screen_polykybd_org.jpg"], gap=0.02,
+                     notes=[(0, -0.36, "sticky_green.jpg", -4), (0, 0.12, "sticky_orange.jpg", 3),
+                            (1, 0.28, "sticky_pink.jpg", -2)]),
+        mouse=dict(x=0.32, y=0.0, turn=-6, wired=True, color=(0.74, 0.74, 0.72), rough=0.35),
         camera=dict(distance=2.0, elev=13, azim=-10, lens=40, fstop=11.0, aim_y=0.16, aim_z=0.29)),
     "front_desk": dict(
         hdri="entrance_hall", hdri_turn=90, hdri_strength=1.2,

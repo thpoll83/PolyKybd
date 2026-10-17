@@ -13,16 +13,22 @@ Drawn with Pillow at 2560 x 1440, generic on purpose (no product's look or name)
 - the office wall: cork.jpg (a pinboard's cork), paper_layout.jpg (a keymap sketch),
   paper_sprint.jpg (a week's task list), paper_chart.jpg (a bar chart printout),
   paper_month.jpg (a month calendar), photo_keyboard.jpg (a print of the docs page's
-  photo), sticky_<colour>.jpg (sticky notes), clock_face.jpg (a wall clock's dial).
+  photo), sticky_<colour>.jpg (sticky notes), clock_face.jpg (a wall clock's dial),
+  print_pcb_rev33.jpg and print_pcb_left.jpg (photo prints of PCB renders:
+  polykybd-docs' pcb-render-rev3.3.jpg and render/out/preview/split72_left_iso.png),
+  paper_schematic.jpg (the left half's schematic on A4).
+The calendar's photo is Poly Haven's alps_field (CC0), fetched by workspace_assets.py.
 screen_polykybd_org.jpg is the docs site's front page (a Chromium screenshot of
 polykybd-docs/dist, served locally) and is not made here.
 """
 import os
 import re
+import sys
 
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
 OUT = os.path.join(HERE, "textures", "workspace")
 W, H = 2560, 1440
 MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
@@ -360,13 +366,18 @@ def paper_chart():
 
 
 def paper_month():
-    """A wall calendar's month page: a photo strip above a grid, a few days marked."""
+    """A wall calendar's month page: a landscape photo above a grid, a few days marked.
+    The photo is a crop of the alps_field HDRI's tonemapped JPG, near its horizon where
+    the equirectangular projection barely bends."""
+    import workspace_assets
     im = Image.new("RGB", (1000, 1300), (250, 249, 245))
     d = ImageDraw.Draw(im)
-    for y in range(520):                                     # a dusk sky over hills
-        t = y / 520
-        d.line((0, y, 1000, y), fill=(int(70 + 150 * t), int(110 + 80 * t), int(170 - 30 * t)))
-    d.polygon([(0, 520), (0, 380), (260, 300), (520, 400), (760, 320), (1000, 420), (1000, 520)], fill=(40, 70, 60))
+    Image.MAX_IMAGE_PIXELS = None
+    src = Image.open(workspace_assets.fetch_photo("alps_field"))
+    w, h = src.size
+    cx = int(w * PHOTO_X)
+    ph = src.crop((cx - int(w * 0.07), int(h * 0.36), cx + int(w * 0.07), int(h * 0.36) + int(w * 0.14 * 0.52)))
+    im.paste(ph.resize((1000, 520), Image.LANCZOS), (0, 0))
     d.text((60, 560), "October", font=font(BOLD, 72), fill=INK)
     for i, n in enumerate("MTWTFSS"):
         d.text((80 + i * 128, 680), n, font=font(BOLD, 36), fill=(120, 120, 130))
@@ -382,6 +393,41 @@ def paper_month():
                 d.ellipse((x + 4, y + 2, x + 70, y + 54), outline=(210, 40, 40), width=4)
             day += 1
     return im
+
+
+PHOTO_X = 0.5            # where across the panorama the calendar's crop is centred
+
+
+def framed_print(path, size=(1300, 1000), border=50, bg=None, zoom=1.0):
+    """A photo print: the image filling size minus a white border (zoom > 1 crops in)."""
+    src = Image.open(path).convert("RGB")
+    if bg:
+        flat = Image.new("RGB", src.size, bg)
+        flat.paste(src, (0, 0))
+        src = flat
+    iw, ih = size[0] - 2 * border, size[1] - 2 * border
+    s_ = max(iw / src.width, ih / src.height) * zoom
+    src = src.resize((int(src.width * s_), int(src.height * s_)), Image.LANCZOS)
+    x0, y0 = (src.width - iw) // 2, (src.height - ih) // 2
+    im = Image.new("RGB", size, (250, 250, 248))
+    im.paste(src.crop((x0, y0, x0 + iw, y0 + ih)), (border, border))
+    return im
+
+
+DOCS = os.path.join(HERE, "..", "..", "polykybd-docs", "src", "assets")
+
+
+def print_pcb_rev33():
+    return framed_print(os.path.join(DOCS, "assembly", "pcb-render-rev3.3.jpg"), (1300, 860))
+
+
+def print_pcb_left():
+    return framed_print(os.path.join(HERE, "out", "preview", "split72_left_iso.png"), (1300, 1000), zoom=1.45)
+
+
+def paper_schematic():
+    """The left half's schematic printed on A4 landscape, a margin all round."""
+    return framed_print(os.path.join(DOCS, "schematics", "schematic_left.png"), (1414, 1000), 60, bg=(255, 255, 255))
 
 
 def photo_keyboard():
@@ -441,6 +487,9 @@ if __name__ == "__main__":
                      ("sticky_yellow.jpg", sticky((250, 230, 110), ["pick up", "badges", "@ 9:30"])),
                      ("sticky_pink.jpg", sticky((248, 160, 190), ["call IT", "re: VPN"])),
                      ("sticky_blue.jpg", sticky((150, 210, 240), ["Fri:", "demo day!"])),
-                     ("clock_face.jpg", clock_face)):
+                     ("clock_face.jpg", clock_face), ("print_pcb_rev33.jpg", print_pcb_rev33),
+                     ("print_pcb_left.jpg", print_pcb_left), ("paper_schematic.jpg", paper_schematic),
+                     ("sticky_green.jpg", sticky((170, 230, 140), ["backup", "Friday"])),
+                     ("sticky_orange.jpg", sticky((250, 180, 100), ["pw reset", "ext. 214"]))):
         fn().save(os.path.join(OUT, name), quality=88)
         print("wrote", os.path.join("render", "textures", "workspace", name))

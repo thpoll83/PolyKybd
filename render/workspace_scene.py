@@ -131,21 +131,31 @@ def counter():
 
 
 def mouse(spec):
-    """A wireless mouse, 64 x 115 mm, 36 mm high at its back and lower over the buttons:
-    a sphere cut flat underneath and shaped by its own (unit) coordinates, matte
-    graphite, a rubber wheel 3 mm proud of the shell; on a felt pad if pad."""
-    shell = principled("mouse shell", (0.03, 0.03, 0.032), 0.45, coat=0.2)
+    """A right-hand mouse, 66 x 118 mm, 40 mm high: a sphere cut flat underneath and
+    shaped by its own (unit) coordinates, its hump leaning left towards the thumb, in
+    spec["color"] (default graphite). Dark seams split the two buttons from each other
+    and from the palm rest; a rubber wheel 3 mm proud of the shell; two thumb buttons
+    on the left flank; dark grips on both flanks; on a felt pad if pad."""
+    shell = principled("mouse shell", spec.get("color", (0.03, 0.03, 0.032)), spec.get("rough", 0.45), coat=0.2)
     rubber = principled("mouse wheel", (0.01, 0.01, 0.01), 0.7)
+    seam_m = principled("mouse seam", (0.004, 0.004, 0.005), 0.8)
+    side_m = principled("mouse side", spec.get("side", (0.02, 0.02, 0.022)), 0.5, coat=0.3)
     felt = principled("mouse pad", (0.025, 0.026, 0.03), 0.9)
-    L, Wd, Hh = 0.0575, 0.032, 0.036              # half length, half width, height
+    L, Wd, Hh = 0.059, 0.033, 0.040               # half length, half width, height
 
     def surface(ux, uy, uz):
         """Unit sphere point (z cut at -0.25) to the mouse: +y is the front."""
-        h = Hh * (1 - 0.35 * max(0.0, uy))        # lower over the buttons
-        w = Wd * (1 - 0.12 * uy)                  # a little narrower at the front
-        return ux * w, uy * L, (uz + 0.25) / 1.25 * h
+        h = Hh * (1 - 0.48 * max(0.0, uy) ** 1.3) * (1 - 0.18 * max(0.0, -uy - 0.3))   # hump at the back, low buttons
+        w = Wd * (1 - 0.10 * uy) * (1 + 0.06 * ux) * (1 - 0.08 * math.exp(-((uy - 0.05) / 0.3) ** 2))  # a waist
+        z = (uz + 0.25) / 1.25
+        return ux * w - 0.006 * z * z, uy * L, z * h  # the top leans left, towards the thumb
 
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=48, ring_count=24, radius=1)
+    def on_top(ux, uy, up=0.0004):
+        uz = math.sqrt(max(0.0, 1 - ux * ux - uy * uy))
+        x, y, z = surface(ux, uy, uz)
+        return mathutils.Vector((x, y, z + up))
+
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=64, ring_count=32, radius=1)
     body = bpy.context.active_object
     body.name = "mouse body"
     import bmesh
@@ -158,22 +168,70 @@ def mouse(spec):
     bmesh.ops.edgeloop_fill(b, edges=[e for e in b.edges if e.is_boundary])
     b.to_mesh(body.data)
     b.free()
+    nt2 = shell.node_tree                         # the grips: shell colour blended to the side colour
+    tc = nt2.nodes.new("ShaderNodeTexCoord")      # where |x| > 25 mm and z < 18 mm, soft-edged
+    xyz = nt2.nodes.new("ShaderNodeSeparateXYZ")
+    nt2.links.new(tc.outputs["Object"], xyz.inputs[0])
+    ax = nt2.nodes.new("ShaderNodeMath")
+    ax.operation = "ABSOLUTE"
+    nt2.links.new(xyz.outputs["X"], ax.inputs[0])
+    mx, mz = nt2.nodes.new("ShaderNodeMapRange"), nt2.nodes.new("ShaderNodeMapRange")
+    for m_, (a0, a1, src) in ((mx, (0.0235, 0.0255, ax.outputs[0])), (mz, (0.019, 0.017, xyz.outputs["Z"]))):
+        m_.interpolation_type = "SMOOTHSTEP"
+        m_.inputs["From Min"].default_value, m_.inputs["From Max"].default_value = a0, a1
+        nt2.links.new(src, m_.inputs["Value"])
+    both = nt2.nodes.new("ShaderNodeMath")
+    both.operation = "MULTIPLY"
+    nt2.links.new(mx.outputs[0], both.inputs[0])
+    nt2.links.new(mz.outputs[0], both.inputs[1])
+    mix = nt2.nodes.new("ShaderNodeMix")
+    mix.data_type = "RGBA"
+    nt2.links.new(both.outputs[0], mix.inputs["Factor"])
+    mix.inputs[6].default_value = (*spec.get("color", (0.03, 0.03, 0.032)), 1)
+    mix.inputs[7].default_value = (*spec.get("side", (0.02, 0.02, 0.022)), 1)
+    bsdf = nt2.nodes["Principled BSDF"]
+    nt2.links.new(mix.outputs[2], bsdf.inputs["Base Color"])
     body.data.materials.append(shell)
     for p in body.data.polygons:
         p.use_smooth = True
     body.modifiers.new("smooth", "SUBSURF").levels = 1
-    uy = 0.42                                     # the wheel, between the buttons
+
+    def strip(name, pts, width):
+        """A dark seam along pts on the shell, width wide."""
+        me = bpy.data.meshes.new(name)
+        verts = []
+        for i, p in enumerate(pts):
+            t = (pts[min(i + 1, len(pts) - 1)] - pts[max(i - 1, 0)]).normalized()
+            n = t.cross(mathutils.Vector((0, 0, 1)))
+            if n.length < 1e-6:
+                n = mathutils.Vector((1, 0, 0))
+            n.normalize()
+            verts += [p - n * width / 2, p + n * width / 2]
+        me.from_pydata(verts, [], [(2 * i, 2 * i + 1, 2 * i + 3, 2 * i + 2) for i in range(len(pts) - 1)])
+        me.materials.append(seam_m)
+        o = bpy.data.objects.new(name, me)
+        sc.collection.objects.link(o)
+        return o
+
+    seams = [strip("mouse seam middle", [on_top(0.0, 0.18 + 0.8 * i / 30, 0.0008) for i in range(31)], 0.0012),
+             strip("mouse seam back", [on_top(-0.86 + 1.72 * i / 40, 0.18, 0.0008) for i in range(41)], 0.0012)]
+    uy = 0.40                                     # the wheel, between the buttons
     _, wy, wz = surface(0.0, uy, math.sqrt(1 - uy * uy))
     r = 0.0075
-    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=r, depth=0.006)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=r, depth=0.0065)
     wheel = bpy.context.active_object
     wheel.name = "mouse wheel"
     wheel.rotation_euler.y = math.radians(90)
-    wheel.location = (0, wy, wz + 0.003 - r)
+    wheel.location = (on_top(0.0, uy).x, wy, wz + 0.003 - r)
     wheel.data.materials.append(rubber)
+    thumbs = []
+    for k, (y0, y1) in enumerate(((-0.004, 0.012), (0.015, 0.030))):  # thumb buttons on the left flank
+        x, _, z = surface(-0.97, 0.0, math.sqrt(1 - 0.97 ** 2))
+        o = cube(f"mouse thumb button {k}", (x - 0.0012, y0, 0.017), (x + 0.002, y1, 0.0205), side_m, 0.0012)
+        thumbs.append(o)
     g = bpy.data.objects.new("mouse", None)
     sc.collection.objects.link(g)
-    parts = [body, wheel]
+    parts = [body, wheel] + seams + thumbs
     for o in parts:
         o.parent = g
     if spec.get("pad", True):
@@ -435,8 +493,9 @@ def paper_clips():
     return g, parts
 
 
-def tint(objs, rgb):
-    """Multiply every material of objs (copies) by rgb: the yellow pad made ivory."""
+def tint(objs, rgb, mode="MULTIPLY", f=1.0):
+    """Multiply every material of objs (copies) by rgb: the yellow pad made ivory.
+    mode="MIX" with f < 1 blends towards rgb instead: the grey desk made whiter."""
     done = {}
     for o in objs:
         if o.type != "MESH":
@@ -453,8 +512,8 @@ def tint(objs, rgb):
                     inp = b.inputs["Base Color"]
                     mix = nt2.nodes.new("ShaderNodeMix")
                     mix.data_type = "RGBA"
-                    mix.blend_type = "MULTIPLY"
-                    mix.inputs["Factor"].default_value = 1.0
+                    mix.blend_type = mode
+                    mix.inputs["Factor"].default_value = f
                     mix.inputs[7].default_value = (*rgb, 1)
                     if inp.is_linked:
                         nt2.links.new(inp.links[0].from_socket, mix.inputs[6])
@@ -675,11 +734,13 @@ FINISH = {    # bezel at the sides and top, chin, shell depth (m); shell and sta
 }
 
 
-def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6, finish="silver"):
+def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6, finish="silver", notes=()):
     """One display head, its screen's centre at the origin facing -y: the screen, a
     bezel and chin around it (FINISH: thin and silver-stood, or a black office monitor
     with a 13 mm bezel), a box behind for the electronics. Returns (head empty,
-    objects, screen width, screen height)."""
+    objects, screen width, screen height). A white power light sits in the chin at the
+    right; notes are sticky notes (u from -0.5 to 0.5 along the width, img, rot) stuck
+    to the bottom bezel and hanging below it."""
     fin = FINISH[finish]
     diag = inches * 0.0254
     sw, sh = diag * aspect[0] / math.hypot(*aspect), diag * aspect[1] / math.hypot(*aspect)
@@ -692,7 +753,27 @@ def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6, finish="silver")
     sol = frame.modifiers.new("depth", "SOLIDIFY")
     sol.thickness, sol.offset = dp, 0.0
     back = cube("monitor back", (-sw * 0.3, dp - 0.001, -sh * 0.32), (sw * 0.3, dp + 0.03, sh * 0.28), shell, 0.01)
-    parts = [scr, frame, back]
+    led = bpy.data.materials.get("monitor power light")
+    if led is None:
+        led = bpy.data.materials.new("monitor power light")
+        led.use_nodes = True
+        lb = led.node_tree.nodes["Principled BSDF"]
+        lb.inputs["Base Color"].default_value = (0.8, 0.85, 1.0, 1)
+        lb.inputs["Emission Color"].default_value = (0.75, 0.85, 1.0, 1)
+        lb.inputs["Emission Strength"].default_value = 12.0
+    lz = -sh / 2 - ch * 0.45
+    lx = sw / 2 - 0.03
+    ly = -0.0004 - (curve - math.sqrt(curve * curve - lx * lx) if curve else 0.0)
+    parts = [scr, frame, back, cube("monitor power light", (lx - 0.0012, ly - 0.0006, lz - 0.0005),
+                                    (lx + 0.0012, ly, lz + 0.0005), led, 0.0002)]
+    for i, n in enumerate(notes):
+        u, img, rot = n
+        nx = u * sw
+        ny = -0.0006 - (curve - math.sqrt(curve * curve - nx * nx) if curve else 0.0)
+        im = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", img), check_existing=True)
+        w = 0.076
+        parts.append(sheet(f"monitor note {i}", img, nx, -sh / 2 - ch * 0.25 - 0.012, w, w * im.size[1] / im.size[0],
+                           ny, rot, 0.010))
     for o in parts:
         o.parent = head
     return head, parts, sw, sh
@@ -722,13 +803,13 @@ def monitors(spec):
     tilt = math.radians(spec.get("tilt", 8))
     lift = spec.get("lift", 0.11)
 
-    def on_stand(screen, inches, aspect, curve, x, turn, base_w=0.24, base_d=0.18):
+    def on_stand(screen, inches, aspect, curve, x, turn, base_w=0.24, base_d=0.18, notes=()):
         st = bpy.data.objects.new("monitor stand", None)
         sc.collection.objects.link(st)
         st.parent = g
         st.location = (x, 0, 0)
         st.rotation_euler.z = math.radians(turn)
-        head, parts, sw, sh = panel(screen, inches, aspect, curve, glow, finish)
+        head, parts, sw, sh = panel(screen, inches, aspect, curve, glow, finish, notes)
         zc = lift + 0.02 + sh / 2
         head.parent = st
         head.location = (0, 0.012 - (fin["depth"] - 0.015), zc)
@@ -743,16 +824,18 @@ def monitors(spec):
         return sw
 
     if style == "stand":
-        on_stand(screens[0], spec.get("inches", 27), (16, 9), None, 0.0, 0.0)
+        on_stand(screens[0], spec.get("inches", 27), (16, 9), None, 0.0, 0.0, notes=spec.get("notes", ()))
     elif style == "dual":
         inches = spec.get("inches", 24)
         sw = inches * 0.0254 * 16 / math.hypot(16, 9)
         gap = sw / 2 + spec.get("gap", 0.012) / 2 + 0.006     # from the middle to each screen's centre
         for k, side in enumerate((-1, 1)):
             on_stand(screens[k % len(screens)], inches, (16, 9), None,
-                     side * gap * math.cos(math.radians(12)), -side * 12, base_w=0.2, base_d=0.16)
+                     side * gap * math.cos(math.radians(12)), -side * 12, base_w=0.2, base_d=0.16,
+                     notes=[n[1:] for n in spec.get("notes", ()) if n[0] == k])
     elif style == "ultrawide":
-        on_stand(screens[0], spec.get("inches", 34), (21, 9), 1.5, 0.0, 0.0, base_w=0.30, base_d=0.20)
+        on_stand(screens[0], spec.get("inches", 34), (21, 9), 1.5, 0.0, 0.0, base_w=0.30, base_d=0.20,
+                 notes=spec.get("notes", ()))
     elif style == "arm":
         reach = spec.get("reach", 0.24)
         head, parts, sw, sh = panel(screens[0], spec.get("inches", 27), (16, 9), None, glow, finish)
@@ -816,6 +899,8 @@ else:
         desk.scale.y = S["desk_depth"] / (hi.y - lo.y)
     if S.get("desk_width"):
         desk.scale.x = S["desk_width"] / (hi.x - lo.x)
+if S.get("desk_color"):                            # (r, g, b, f): blend the desk's colours f towards rgb
+    tint(desk_objs, S["desk_color"][:3], "MIX", S["desk_color"][3])
 lo, hi = box(desk_objs)
 desk.location += mathutils.Vector((-(lo.x + hi.x) / 2, -(lo.y + hi.y) / 2, -lo.z))
 dlo, dhi = box(desk_objs)
