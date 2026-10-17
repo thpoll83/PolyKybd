@@ -136,7 +136,7 @@ def mouse(spec):
     spec["color"] (default graphite). Dark seams split the two buttons from each other
     and from the palm rest; a rubber wheel 3 mm proud of the shell; two thumb buttons
     on the left flank; dark grips on both flanks; on a felt pad if pad."""
-    shell = principled("mouse shell", spec.get("color", (0.03, 0.03, 0.032)), spec.get("rough", 0.45), coat=0.2)
+    shell = principled("mouse shell", spec.get("color", (0.03, 0.03, 0.032)), spec.get("rough", 0.45), coat=spec.get("coat", 0.2))
     rubber = principled("mouse wheel", (0.01, 0.01, 0.01), 0.7)
     seam_m = principled("mouse seam", (0.004, 0.004, 0.005), 0.8)
     side_m = principled("mouse side", spec.get("side", (0.02, 0.02, 0.022)), 0.5, coat=0.3)
@@ -820,7 +820,8 @@ def bent_grid(name, w, h, z0, curve, y_off, mat, nx=64):
 
 FINISH = {    # bezel at the sides and top, chin, shell depth (m); shell and stand colours
     "silver": dict(bezel=0.006, chin=0.020, depth=0.015, shell=(0.015, 0.015, 0.017), stand=(0.55, 0.56, 0.58), metal=1.0),
-    "black": dict(bezel=0.013, chin=0.024, depth=0.024, shell=(0.008, 0.008, 0.009), stand=(0.012, 0.012, 0.013), metal=0.3),
+    "black": dict(bezel=0.013, chin=0.024, depth=0.024, shell=(0.003, 0.003, 0.0034), stand=(0.008, 0.008, 0.009), metal=0.3,
+                  rough=0.45),
 }
 
 
@@ -834,7 +835,8 @@ def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6, finish="silver",
     fin = FINISH[finish]
     diag = inches * 0.0254
     sw, sh = diag * aspect[0] / math.hypot(*aspect), diag * aspect[1] / math.hypot(*aspect)
-    shell = bpy.data.materials.get(f"monitor shell {finish}") or principled(f"monitor shell {finish}", fin["shell"], 0.55)
+    shell = bpy.data.materials.get(f"monitor shell {finish}") or principled(f"monitor shell {finish}", fin["shell"],
+                                                                            fin.get("rough", 0.55))
     head = bpy.data.objects.new("monitor head", None)
     sc.collection.objects.link(head)
     scr = bent_grid("monitor screen", sw, sh, -sh / 2, curve, -0.0008, screen_material(screen, glow, rough))
@@ -918,7 +920,8 @@ def monitors(spec):
     elif style == "dual":
         inches = spec.get("inches", 24)
         sw = inches * 0.0254 * 16 / math.hypot(16, 9)
-        gap = sw / 2 + spec.get("gap", 0.012) / 2 + 0.006     # from the middle to each screen's centre
+        gap = sw / 2 + fin["bezel"] + spec.get("gap", 0.012) / 2   # from the middle to each screen's centre;
+        # gap is between the two frames, so the bezels meet rather than cut into each other
         for k, side in enumerate((-1, 1)):
             on_stand(screens[k % len(screens)], inches, (16, 9), None,
                      side * gap * math.cos(math.radians(12)), -side * 12, base_w=0.2, base_d=0.16,
@@ -1208,6 +1211,39 @@ for i, L in enumerate(LIGHTS):                    # e.g. a warm ceiling panel: (
     sc.collection.objects.link(lo_)
     lo_.location = (L["at"][0], kb_y + L["at"][1], top + L["at"][2])
     lo_.rotation_euler = [math.radians(v) for v in L.get("rot", (0, 0, 0))]
+
+def monitor_cables(spec):
+    """Two cables a monitor, power and signal: out of the bottom of its back box,
+    down behind the neck in a curve, onto the desk 30 mm behind the stand, then
+    straight back and over the edge. spec: dict(color=(r, g, b))."""
+    mat = principled("monitor cable", spec.get("color", (0.012, 0.012, 0.013)), 0.5)
+    n = 0
+    for back in [o for o in bpy.data.objects if o.name.startswith("monitor back")]:
+        st = back.parent.parent
+        vs = [v.co for v in back.data.vertices]
+        ymax, zmin = max(v.y for v in vs), min(v.z for v in vs)
+        stand_parts = [o for o in st.children if o.type == "MESH"]
+        y_land = box(stand_parts)[1].y + 0.03
+        for k, (dx, r) in enumerate(((-0.014, 0.0030), (0.014, 0.0024))):    # power, signal (DP/HDMI)
+            p0 = back.matrix_world @ mathutils.Vector((dx, ymax - 0.012, zmin))
+            land = mathutils.Vector((p0.x + dx * 0.6, max(y_land, p0.y + 0.05) + 0.008 * k, top + r))
+            c1 = p0 + mathutils.Vector((0, 0, -(p0.z - land.z) * 0.55))
+            c2 = land - mathutils.Vector((0, 0.06, 0))
+            pts = []
+            for i in range(40):
+                t = i / 39
+                pts.append((1 - t) ** 3 * p0 + 3 * (1 - t) ** 2 * t * c1 + 3 * (1 - t) * t ** 2 * c2 + t ** 3 * land)
+            m = max(2, int((ye - 0.01 - land.y) / 0.01))
+            pts += [mathutils.Vector((land.x + 0.004 * math.sin(i * 0.7 + k), land.y + (ye - 0.01 - land.y) * i / m, land.z))
+                    for i in range(1, m + 1)]
+            bridge_cable._tube(f"monitor cable {n}", [tuple(p) for p in pts], [r] * len(pts), mat, ring=14)
+            over_edge(f"monitor cable {n} drop", pts[-1].x, ye, top, top, r, mat)
+            n += 1
+    print(f"monitor cables: {n}")
+
+
+if S.get("monitor") and S["monitor"].get("cables"):
+    monitor_cables(S["monitor"]["cables"] if isinstance(S["monitor"]["cables"], dict) else {})
 
 # ---- camera and render -----------------------------------------------------------
 tgt = bpy.data.objects["target"]
