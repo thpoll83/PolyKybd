@@ -284,12 +284,22 @@ def black_desk():
 
 def desk_mat(spec):
     """An extended desk mat under keyboard and mouse, 3 mm thick, in spec["color"] at
-    spec["rough"] (felt 0.9, leather about 0.45), with a light strip around its edge
+    spec["rough"] (felt 0.9, leather about 0.45) or printed with spec["image"], with a light strip around its edge
     glowing spec["glow"] if given (an RGB gamer's mat)."""
-    felt = principled("desk mat", spec.get("color", (0.02, 0.02, 0.024)), spec.get("rough", 0.9),
-                      coat=spec.get("coat", 0.0))
+    if spec.get("image"):                          # a printed mat: render/textures/workspace/<image> on its top
+        felt = image_material("desk mat", spec["image"], rough=spec.get("rough", 0.9))
+    else:
+        felt = principled("desk mat", spec.get("color", (0.02, 0.02, 0.024)), spec.get("rough", 0.9),
+                          coat=spec.get("coat", 0.0))
     w, d, t = spec.get("w", 0.9), spec.get("d", 0.38), 0.003
     parts = [cube("desk mat", (-w / 2, -d / 2, 0.0), (w / 2, d / 2, t), felt, 0.002)]
+    if spec.get("image"):                          # the print spans the top: uv from plan position
+        me = parts[0].data
+        lay = me.uv_layers.active
+        for poly in me.polygons:
+            for li, vi in zip(poly.loop_indices, poly.vertices):
+                co = me.vertices[vi].co
+                lay.data[li].uv = ((co.x + w / 2) / w, (co.y + d / 2) / d)
     if spec.get("glow"):
         lit = bpy.data.materials.new("desk mat glow")
         lit.use_nodes = True
@@ -524,7 +534,87 @@ def tint(objs, rgb, mode="MULTIPLY", f=1.0):
             slot.material = done[m.name]
 
 
-BUILT = {"@puzzle_cube": lambda: puzzle_cube(), "@clips": lambda: paper_clips(),
+def usb_hub():
+    """A four-port USB hub, 100 x 30 x 12 mm: an aluminium bar with a dark top, its
+    ports on the front (-y), a blue power light, its cable leaving at the back (+y,
+    the "cable" option of the prop draws it)."""
+    alu = principled("hub body", (0.62, 0.63, 0.65), 0.3)
+    alu.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    top = principled("hub top", (0.01, 0.01, 0.012), 0.15, coat=0.6)
+    port = principled("hub port", (0.005, 0.005, 0.006), 0.6)
+    tongue = principled("hub port tongue", (0.02, 0.15, 0.6), 0.4)
+    led = bpy.data.materials.new("hub light")
+    led.use_nodes = True
+    lb = led.node_tree.nodes["Principled BSDF"]
+    lb.inputs["Emission Color"].default_value = (0.1, 0.35, 1.0, 1)
+    lb.inputs["Emission Strength"].default_value = 25.0
+    parts = [cube("usb hub", (-0.05, -0.015, 0.0), (0.05, 0.015, 0.012), alu, 0.003),
+             cube("hub top", (-0.047, -0.012, 0.0115), (0.047, 0.012, 0.0122), top, 0.001),
+             cube("hub light", (0.040, -0.0153, 0.0055), (0.042, -0.0149, 0.0065), led, 0.0002)]
+    for i in range(4):
+        x = -0.034 + i * 0.020
+        parts.append(cube("hub port", (x - 0.006, -0.0152, 0.0038), (x + 0.006, -0.0135, 0.0083), port, 0.0004))
+        parts.append(cube("hub port tongue", (x - 0.005, -0.0150, 0.0050), (x + 0.005, -0.0138, 0.0068), tongue, 0.0002))
+    g = bpy.data.objects.new("@usb_hub", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    g["pk_cable_at"] = (0.0, 0.015, 0.006)       # where its cable leaves, in its own frame
+    return g, parts
+
+
+def newtons_cradle():
+    """A Newton's cradle, 180 x 110 x 150 mm: a black base, two steel frames, five
+    19 mm steel balls each hung on a V of two threads; the left ball pulled out 35 deg."""
+    steel = principled("cradle steel", (0.85, 0.86, 0.88), 0.08)
+    steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    base_m = principled("cradle base", (0.015, 0.015, 0.016), 0.3, coat=0.5)
+    thread = principled("cradle thread", (0.8, 0.8, 0.78), 0.6)
+    parts = [cube("cradle base", (-0.09, -0.055, 0.0), (0.09, 0.055, 0.016), base_m, 0.004)]
+    H, X, Y, rr = 0.15, 0.075, 0.04, 0.0022
+
+    def rod(name, a, b, r, mat):
+        a, b = mathutils.Vector(a), mathutils.Vector(b)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=16, radius=r, depth=(b - a).length, location=(a + b) / 2)
+        o = bpy.context.active_object
+        o.name = name
+        o.rotation_mode = "QUATERNION"
+        o.rotation_quaternion = (b - a).to_track_quat("Z", "Y")
+        o.data.materials.append(mat)
+        for p in o.data.polygons:
+            p.use_smooth = True
+        return o
+
+    for y in (-Y, Y):                              # each frame: two posts and a top bar
+        parts += [rod("cradle post", (-X, y, 0.016), (-X, y, H), rr, steel),
+                  rod("cradle post", (X, y, 0.016), (X, y, H), rr, steel),
+                  rod("cradle bar", (-X, y, H), (X, y, H), rr, steel)]
+    R_, zc = 0.0095, 0.050
+    for i in range(5):
+        x = (i - 2) * 2 * R_ * 1.01
+        pivot = mathutils.Vector((x, 0, H))
+        ang = math.radians(-35) if i == 0 else 0.0
+        rot = mathutils.Matrix.Rotation(ang, 3, "Y")
+        c = pivot + rot @ (mathutils.Vector((x, 0, zc)) - pivot)
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=32, ring_count=16, radius=R_, location=c)
+        ball = bpy.context.active_object
+        ball.name = "cradle ball"
+        ball.data.materials.append(steel)
+        for p in ball.data.polygons:
+            p.use_smooth = True
+        parts.append(ball)
+        top_ball = c + mathutils.Vector((0, 0, R_ * 0.9))
+        for y in (-Y, Y):
+            parts.append(rod("cradle thread", (x, y, H), top_ball, 0.0003, thread))
+    g = bpy.data.objects.new("@newtons_cradle", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+BUILT = {"@puzzle_cube": lambda: puzzle_cube(), "@usb_hub": lambda: usb_hub(),
+         "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
          "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
 
@@ -680,7 +770,7 @@ def hung(name, sh, px, y, pz):
     return out
 
 
-def screen_material(screen, glow):
+def screen_material(screen, glow, rough=0.4):
     """A matte screen whose picture is light: black base colour and an anti-glare coat,
     so the room shows on it only as a soft sheen, and the picture
     (render/textures/workspace/<screen>) as emission."""
@@ -694,8 +784,8 @@ def screen_material(screen, glow):
     nt2.links.new(tex.outputs["Color"], b.inputs["Emission Color"])
     b.inputs["Base Color"].default_value = (0.0, 0.0, 0.0, 1)
     b.inputs["Emission Strength"].default_value = glow
-    b.inputs["Roughness"].default_value = 0.4       # an anti-glare coat: the room shows only as a soft sheen
-    b.inputs["Specular IOR Level"].default_value = 0.15
+    b.inputs["Roughness"].default_value = rough     # 0.4 an anti-glare coat: the room shows only as a soft sheen
+    b.inputs["Specular IOR Level"].default_value = 0.15 if rough >= 0.3 else 0.4
     return m
 
 
@@ -734,7 +824,7 @@ FINISH = {    # bezel at the sides and top, chin, shell depth (m); shell and sta
 }
 
 
-def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6, finish="silver", notes=()):
+def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6, finish="silver", notes=(), rough=0.4):
     """One display head, its screen's centre at the origin facing -y: the screen, a
     bezel and chin around it (FINISH: thin and silver-stood, or a black office monitor
     with a 13 mm bezel), a box behind for the electronics. Returns (head empty,
@@ -747,7 +837,7 @@ def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6, finish="silver",
     shell = bpy.data.materials.get(f"monitor shell {finish}") or principled(f"monitor shell {finish}", fin["shell"], 0.55)
     head = bpy.data.objects.new("monitor head", None)
     sc.collection.objects.link(head)
-    scr = bent_grid("monitor screen", sw, sh, -sh / 2, curve, -0.0008, screen_material(screen, glow))
+    scr = bent_grid("monitor screen", sw, sh, -sh / 2, curve, -0.0008, screen_material(screen, glow, rough))
     b, ch, dp = fin["bezel"], fin["chin"], fin["depth"]
     frame = bent_grid("monitor frame", sw + 2 * b, sh + b + ch, -sh / 2 - ch, curve, dp / 2 - 0.0003, shell)
     sol = frame.modifiers.new("depth", "SOLIDIFY")
@@ -767,11 +857,11 @@ def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6, finish="silver",
     parts = [scr, frame, back, cube("monitor power light", (lx - 0.0012, ly - 0.0006, lz - 0.0005),
                                     (lx + 0.0012, ly, lz + 0.0005), led, 0.0002)]
     for i, n in enumerate(notes):
-        u, img, rot = n
+        u, img, rot = n[:3]
         nx = u * sw
         ny = -0.0006 - (curve - math.sqrt(curve * curve - nx * nx) if curve else 0.0)
         im = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", img), check_existing=True)
-        w = 0.076
+        w = n[3] if len(n) > 3 else 0.051
         parts.append(sheet(f"monitor note {i}", img, nx, -sh / 2 - ch * 0.25 - 0.012, w, w * im.size[1] / im.size[0],
                            ny, rot, 0.010))
     for o in parts:
@@ -809,7 +899,7 @@ def monitors(spec):
         st.parent = g
         st.location = (x, 0, 0)
         st.rotation_euler.z = math.radians(turn)
-        head, parts, sw, sh = panel(screen, inches, aspect, curve, glow, finish, notes)
+        head, parts, sw, sh = panel(screen, inches, aspect, curve, glow, finish, notes, spec.get("screen_rough", 0.4))
         zc = lift + 0.02 + sh / 2
         head.parent = st
         head.location = (0, 0.012 - (fin["depth"] - 0.015), zc)
@@ -882,6 +972,7 @@ nt.links.new(coord.outputs["Generated"], mapping.inputs["Vector"])
 nt.links.new(mapping.outputs["Vector"], env.inputs["Vector"])
 nt.links.new(env.outputs["Color"], bg.inputs["Color"])
 nt.links.new(bg.outputs["Background"], out.inputs["Surface"])
+LIGHTS = S.get("lights", [])                     # area lights, placed once the desk is known (below)
 floor = bpy.data.objects["Plane"]
 floor.is_shadow_catcher = True                   # the room's own floor, with the desk's shadow on it
 
@@ -956,6 +1047,20 @@ def cable_exit(rects, xs):
     return min(cands, key=lambda c: sum(abs(c - x) for x in xs))
 
 
+def ground(x, y):
+    """How far above the desk top a cable lies at (x, y): on the mat its thickness,
+    stepping down over 8 mm past the mat's edge (MAT_RECT, MAT_T set once it is built)."""
+    if not MAT_RECT:
+        return 0.0
+    x0, x1, y0, y1 = MAT_RECT
+    out = max(x0 - x, x - x1, y0 - y, y - y1, 0.0)
+    t = min(1.0, out / 0.008)
+    return MAT_T * (1 - (3 * t * t - 2 * t ** 3))
+
+
+MAT_RECT, MAT_T = None, 0.0
+
+
 def desk_cable(name, start, d0, x_exit, y_front, y_edge, z_desk, r, mat, v_scale=None, wobble=(0.006, 0.17, 0.0)):
     """A cable from start (its plug or the mouse's nose) along d0, across in front of
     the screens at y_front to x_exit, back to the desk's back edge and over it. It
@@ -986,7 +1091,8 @@ def desk_cable(name, start, d0, x_exit, y_front, y_edge, z_desk, r, mat, v_scale
         fade = min(1.0, max(0.0, (run - 0.04) / 0.06), max(0.0, (total - run - 0.02) / 0.08))
         off = nrm * (amp * fade * math.sin(2 * math.pi * run / lam + ph))
         kk = min(1.0, run / 0.03)
-        pts.append((p.x + off.x, p.y + off.y, z_desk + r + (start.z - z_desk - r) * (1 - (3 * kk * kk - 2 * kk ** 3))))
+        zg = z_desk + ground(p.x + off.x, p.y + off.y)
+        pts.append((p.x + off.x, p.y + off.y, zg + r + (start.z - zg - r) * (1 - (3 * kk * kk - 2 * kk ** 3))))
     o = bridge_cable._tube(name, pts, [r] * len(pts), mat, ring=16, v_scale=v_scale)
     over_edge(name + " drop", x_exit, y_edge, z_desk, z_desk, r, mat, v_scale)
     return o
@@ -1019,6 +1125,7 @@ if S.get("desk_mat"):                              # the mat first; keyboard, mo
     place(g, objs, (S["desk_mat"].get("x", 0.0), kb_y + S["desk_mat"].get("y", 0.0)), 0, base_z=top)
     lo2, hi2 = box(objs[:1])
     mat_rect = (lo2.x, hi2.x, lo2.y, hi2.y)
+    MAT_RECT, MAT_T = mat_rect, mat_t
 kb.location = (0.0, kb_y, top + mat_t)
 bpy.context.view_layer.update()
 if S.get("wall"):            # the desk against a wall, 40 mm behind its back edge (built after the keyboard
@@ -1071,6 +1178,12 @@ for aid, part, x, y, turn, height, flat, *more in S["props"]:
     on_mat = mat_rect and mat_rect[0] < x < mat_rect[1] and mat_rect[2] < kb_y + y < mat_rect[3]
     place(g, objs, (x, kb_y + y), turn, height, flat, base_z=top + (mat_t if on_mat else 0.0) + extra.get("z", 0.0),
           origin=extra.get("origin", False))
+    if extra.get("cable"):                           # its own cable straight back and over the edge
+        st = g.matrix_world @ mathutils.Vector(g["pk_cable_at"])
+        bk = (g.matrix_world.to_3x3() @ mathutils.Vector((0, 1, 0))).normalized()
+        desk_cable(f"{aid} cable", st, bk, st.x + extra["cable"].get("dx", 0.0), st.y + 0.06, ye, top,
+                   extra["cable"].get("r", 0.0018), principled(f"{aid} cable", extra["cable"].get("color", (0.02, 0.02, 0.022)), 0.5),
+                   wobble=(0.007, 0.21, 0.7))
     if not extra.get("on"):                          # a cup on its saucer may overlap the saucer
         lo2, hi2 = box(objs)
         placed.append((part or aid, (lo2.x, hi2.x, lo2.y, hi2.y)))
@@ -1084,6 +1197,17 @@ for i, (na, ra) in enumerate(placed):
     for nb, rb in placed[i + 1:] + [(f"screen {k}", r) for k, r in enumerate(avoid)]:
         if ra[0] < rb[1] and rb[0] < ra[1] and ra[2] < rb[3] and rb[2] < ra[3]:
             print(f"WARNING overlap in plan: {na} and {nb}")
+
+for i, L in enumerate(LIGHTS):                    # e.g. a warm ceiling panel: (x, y) from the keyboard, z above the desk
+    ld = bpy.data.lights.new(f"light {i}", "AREA")
+    ld.shape = "RECTANGLE"
+    ld.size, ld.size_y = L.get("size", (1.0, 0.6))
+    ld.energy = L["energy"]
+    ld.color = L.get("color", (1.0, 1.0, 1.0))
+    lo_ = bpy.data.objects.new(f"light {i}", ld)
+    sc.collection.objects.link(lo_)
+    lo_.location = (L["at"][0], kb_y + L["at"][1], top + L["at"][2])
+    lo_.rotation_euler = [math.radians(v) for v in L.get("rot", (0, 0, 0))]
 
 # ---- camera and render -----------------------------------------------------------
 tgt = bpy.data.objects["target"]

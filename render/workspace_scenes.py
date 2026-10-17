@@ -32,7 +32,7 @@ there.
 """
 SCENES = {
     "office": dict(
-        hdri="poly_haven_studio", hdri_turn=0, hdri_strength=1.0,
+        hdri="poly_haven_studio", hdri_turn=0, hdri_strength=0.65,
         desk="metal_office_desk", desk_height=None, desk_color=(0.88, 0.88, 0.86, 0.75),
         kb_from_front=0.26,                       # m from the desk's front edge to the keyboard's centre
         props=[("potted_plant_01", None, -0.82, 0.34, 30, 0.42, False),
@@ -45,8 +45,10 @@ SCENES = {
                ("@puzzle_cube", None, -0.58, 0.10, 22, None, False),
                ("@mug_dark", None, -0.42, -0.02, 140, None, False),
                ("vintage_stapler", None, -0.58, -0.05, 20, None, False, dict(scale=0.62)),
-               ("stationery_supplies", "stationery_supplies_eraser", 0.68, -0.10, 30, None, False)],
-        desk_mat=dict(w=0.76, d=0.34, x=0.06, y=0.0, color=(0.08, 0.085, 0.09), rough=0.95),
+               ("stationery_supplies", "stationery_supplies_eraser", 0.68, -0.10, 30, None, False),
+               ("@usb_hub", None, -0.20, 0.24, 6, None, False, dict(cable=dict(dx=-0.24))),
+               ("rubber_duck_toy", None, 0.50, 0.22, -30, 0.065, False)],
+        desk_mat=dict(w=0.76, d=0.34, x=0.06, y=0.0, image="mat_topo.jpg", rough=0.95),
         wall=dict(color=(0.56, 0.54, 0.50), items=[
             dict(kind="board", x=-0.40, z=0.63, w=0.80, h=0.40, sheets=[
                 dict(img="paper_sprint.jpg", x=-0.29, z=0.13, w=0.16, rot=-3, pin=(0.85, 0.1, 0.1)),
@@ -62,10 +64,11 @@ SCENES = {
             dict(kind="sheet", img="sticky_blue.jpg", x=0.90, z=0.22, w=0.076, rot=3, bow=0.008)]),
         monitor=dict(style="dual", y=0.42, inches=27, finish="black",
                      screens=["screen_code.jpg", "screen_polykybd_org.jpg"], gap=0.02,
-                     notes=[(0, -0.36, "sticky_green.jpg", -4), (0, 0.12, "sticky_orange.jpg", 3),
-                            (1, 0.28, "sticky_pink.jpg", -2)]),
-        mouse=dict(x=0.32, y=0.0, turn=-6, wired=True, color=(0.74, 0.74, 0.72), rough=0.35),
-        camera=dict(distance=2.0, elev=13, azim=-10, lens=40, fstop=11.0, aim_y=0.16, aim_z=0.29)),
+                     notes=[(0, -0.36, "sticky_green.jpg", -4), (0, 0.12, "sticky_wide.jpg", 2, 0.076),
+                            (1, 0.28, "sticky_pink.jpg", -3, 0.038)], screen_rough=0.12),
+        mouse=dict(x=0.32, y=0.0, turn=-6, wired=True, color=(0.09, 0.09, 0.095), side=(0.02, 0.02, 0.022), rough=0.4),
+        lights=[dict(at=(0.1, 0.1, 1.5), size=(1.2, 0.6), energy=55, color=(1.0, 0.80, 0.55))],
+        camera=dict(distance=2.6, elev=13, azim=-10, lens=52, fstop=11.0, aim_y=0.16, aim_z=0.29)),
     "front_desk": dict(
         hdri="entrance_hall", hdri_turn=90, hdri_strength=1.2,
         desk="@counter", desk_height=None,

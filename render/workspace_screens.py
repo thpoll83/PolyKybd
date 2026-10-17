@@ -16,6 +16,7 @@ Drawn with Pillow at 2560 x 1440, generic on purpose (no product's look or name)
   photo), sticky_<colour>.jpg (sticky notes), clock_face.jpg (a wall clock's dial),
   print_<name>.jpg (photo prints of pictures from polykybd-docs/src/assets, DOC_PRINTS),
   paper_schematic.jpg (the left half's schematic on A4).
+mat_topo.jpg: a desk mat's print, topographic contour lines on charcoal.
 The calendar's photo is Poly Haven's alps_field (CC0), fetched by workspace_assets.py.
 screen_polykybd_org.jpg is the docs site's front page (a Chromium screenshot of
 polykybd-docs/dist, served locally) and is not made here.
@@ -394,6 +395,33 @@ def paper_month():
     return im
 
 
+def mat_topo():
+    """A desk mat's print, 3040 x 1360 px (4 px a mm on a 760 x 340 mm mat): contour
+    lines of a made-up terrain (a sum of sines), every fifth line heavier, light grey
+    on charcoal. Plain Python at half size, then scaled up (the system numpy is not
+    usable here, and nothing is installed outside a venv)."""
+    import math
+    w, h = 1520, 680
+    s_ = 200.0
+    def z(x, y):
+        x, y = x / s_, y / s_
+        return 9.0 * (math.sin(x * 0.9 + 0.3) * math.cos(y * 1.1) + 0.6 * math.sin(x * 1.7 - y * 1.3 + 1.0)
+                      + 0.35 * math.cos(x * 2.9 + y * 2.3) + 0.2 * math.sin(x * 4.1 - y * 3.7 + 2.0))
+    base, ink = (50, 52, 56), (140, 142, 147)
+    im = Image.new("RGB", (w, h))
+    px = im.load()
+    for j in range(h):
+        for i in range(w):
+            v = z(i, j)
+            gx, gy = z(i + 1, j) - v, z(i, j + 1) - v
+            k = round(v)
+            d = abs(v - k) / (math.hypot(gx, gy) + 1e-6)     # distance to the nearest line, in pixels
+            major = k % 5 == 0
+            a_ = max(0.0, min(1.0, 1.0 - (d - (0.9 if major else 0.35)))) * (1.0 if major else 0.6)
+            px[i, j] = tuple(int(base[c] + (ink[c] - base[c]) * a_) for c in range(3))
+    return im.resize((3040, 1360), Image.BICUBIC)
+
+
 PHOTO_X = 0.5            # where across the panorama the calendar's crop is centred
 
 
@@ -448,9 +476,9 @@ def photo_keyboard():
     return im
 
 
-def sticky(rgb, lines):
+def sticky(rgb, lines, size=(760, 760)):
     def draw():
-        im = Image.new("RGB", (760, 760), rgb)
+        im = Image.new("RGB", size, rgb)
         d = ImageDraw.Draw(im)
         for j, line in enumerate(lines):
             d.text((60, 80 + j * 120), line, font=font(SANS, 76), fill=(30, 40, 90))
@@ -497,7 +525,9 @@ if __name__ == "__main__":
                      ("sticky_blue.jpg", sticky((150, 210, 240), ["Fri:", "demo day!"])),
                      ("clock_face.jpg", clock_face), ("paper_schematic.jpg", paper_schematic),
                      ("sticky_green.jpg", sticky((170, 230, 140), ["backup", "Friday"])),
-                     ("sticky_orange.jpg", sticky((250, 180, 100), ["pw reset", "ext. 214"])))
+                     ("sticky_orange.jpg", sticky((250, 180, 100), ["pw reset", "ext. 214"])),
+                     ("mat_topo.jpg", mat_topo),
+                     ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)):
         fn().save(os.path.join(OUT, name), quality=88)
         print("wrote", os.path.join("render", "textures", "workspace", name))
