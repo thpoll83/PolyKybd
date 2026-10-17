@@ -14,8 +14,7 @@ Drawn with Pillow at 2560 x 1440, generic on purpose (no product's look or name)
   paper_sprint.jpg (a week's task list), paper_chart.jpg (a bar chart printout),
   paper_month.jpg (a month calendar), photo_keyboard.jpg (a print of the docs page's
   photo), sticky_<colour>.jpg (sticky notes), clock_face.jpg (a wall clock's dial),
-  print_pcb_rev33.jpg and print_pcb_left.jpg (photo prints of PCB renders:
-  polykybd-docs' pcb-render-rev3.3.jpg and render/out/preview/split72_left_iso.png),
+  print_<name>.jpg (photo prints of pictures from polykybd-docs/src/assets, DOC_PRINTS),
   paper_schematic.jpg (the left half's schematic on A4).
 The calendar's photo is Poly Haven's alps_field (CC0), fetched by workspace_assets.py.
 screen_polykybd_org.jpg is the docs site's front page (a Chromium screenshot of
@@ -417,12 +416,21 @@ def framed_print(path, size=(1300, 1000), border=50, bg=None, zoom=1.0):
 DOCS = os.path.join(HERE, "..", "..", "polykybd-docs", "src", "assets")
 
 
-def print_pcb_rev33():
-    return framed_print(os.path.join(DOCS, "assembly", "pcb-render-rev3.3.jpg"), (1300, 860))
+DOC_PRINTS = {             # print name: (docs asset, print size in px, zoom)
+    "pcb_rev33": ("assembly/pcb-render-rev3.3.jpg", (1300, 860), 1.0),
+    "pcb_split42": ("firmware/split42-pcb-render.jpg", (1300, 1000), 1.15),
+    "stems": ("assembly/keys-assembled.jpg", (1300, 1000), 1.0),
+    "rgb": ("landing/rgb-both-halves.jpg", (1300, 1000), 1.0),
+    "emoji": ("using/emoji-keycap.jpg", (1000, 1000), 1.1),
+    "halves": ("assembly/split72-both-halves.jpg", (1300, 1000), 1.0),
+    "displays": ("assembly/display-modules.jpg", (1300, 1000), 1.2),
+    "greek": ("using/legends-greek.jpg", (1300, 1000), 1.0),
+}
 
 
-def print_pcb_left():
-    return framed_print(os.path.join(HERE, "out", "preview", "split72_left_iso.png"), (1300, 1000), zoom=1.45)
+def doc_print(name):
+    path, size, zoom = DOC_PRINTS[name]
+    return lambda: framed_print(os.path.join(DOCS, path), size, zoom=zoom)
 
 
 def paper_schematic():
@@ -479,7 +487,7 @@ def clock_face():
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for name, fn in (("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_plan.jpg", plan),
+    for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_plan.jpg", plan),
                      ("screen_design.jpg", design), ("screen_game.jpg", game), ("ruler.jpg", ruler),
                      ("poster_road.jpg", poster), ("cork.jpg", cork), ("paper_layout.jpg", paper_layout),
                      ("paper_sprint.jpg", paper_sprint), ("paper_chart.jpg", paper_chart),
@@ -487,9 +495,9 @@ if __name__ == "__main__":
                      ("sticky_yellow.jpg", sticky((250, 230, 110), ["pick up", "badges", "@ 9:30"])),
                      ("sticky_pink.jpg", sticky((248, 160, 190), ["call IT", "re: VPN"])),
                      ("sticky_blue.jpg", sticky((150, 210, 240), ["Fri:", "demo day!"])),
-                     ("clock_face.jpg", clock_face), ("print_pcb_rev33.jpg", print_pcb_rev33),
-                     ("print_pcb_left.jpg", print_pcb_left), ("paper_schematic.jpg", paper_schematic),
+                     ("clock_face.jpg", clock_face), ("paper_schematic.jpg", paper_schematic),
                      ("sticky_green.jpg", sticky((170, 230, 140), ["backup", "Friday"])),
-                     ("sticky_orange.jpg", sticky((250, 180, 100), ["pw reset", "ext. 214"]))):
+                     ("sticky_orange.jpg", sticky((250, 180, 100), ["pw reset", "ext. 214"])))
+                     + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)):
         fn().save(os.path.join(OUT, name), quality=88)
         print("wrote", os.path.join("render", "textures", "workspace", name))
