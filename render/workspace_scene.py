@@ -613,7 +613,20 @@ def newtons_cradle():
     return g, parts
 
 
-BUILT = {"@puzzle_cube": lambda: puzzle_cube(), "@usb_hub": lambda: usb_hub(),
+def pot_soil(r=0.074):
+    """Potting soil for a plant set in a pot: a dark, rough disc r m across, 10 mm thick."""
+    soil = principled("pot soil", (0.035, 0.025, 0.018), 1.0)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=48, radius=r, depth=0.01, location=(0, 0, 0.005))
+    o = bpy.context.active_object
+    o.name = "pot soil"
+    o.data.materials.append(soil)
+    g = bpy.data.objects.new("@pot_soil", None)
+    sc.collection.objects.link(g)
+    o.parent = g
+    return g, [o]
+
+
+BUILT = {"@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
          "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
@@ -924,7 +937,7 @@ def monitors(spec):
         # gap is between the two frames, so the bezels meet rather than cut into each other
         for k, side in enumerate((-1, 1)):
             on_stand(screens[k % len(screens)], inches, (16, 9), None,
-                     side * gap * math.cos(math.radians(12)), -side * 12, base_w=0.2, base_d=0.16,
+                     side * gap * math.cos(math.radians(12)), -side * 12, base_w=0.27, base_d=0.21,
                      notes=[n[1:] for n in spec.get("notes", ()) if n[0] == k])
     elif style == "ultrawide":
         on_stand(screens[0], spec.get("inches", 34), (21, 9), 1.5, 0.0, 0.0, base_w=0.30, base_d=0.20,
@@ -1214,7 +1227,8 @@ for i, L in enumerate(LIGHTS):                    # e.g. a warm ceiling panel: (
 
 def monitor_cables(spec):
     """Two cables a monitor, power and signal: out of the bottom of its back box,
-    down behind the neck in a curve, onto the desk 30 mm behind the stand, then
+    down behind the neck in a curve, onto the desk 30 mm behind the stand (a side
+    monitor's beside its base, on the outer side, where the camera sees them), then
     straight back and over the edge. spec: dict(color=(r, g, b))."""
     mat = principled("monitor cable", spec.get("color", (0.012, 0.012, 0.013)), 0.5)
     n = 0
@@ -1223,10 +1237,15 @@ def monitor_cables(spec):
         vs = [v.co for v in back.data.vertices]
         ymax, zmin = max(v.y for v in vs), min(v.z for v in vs)
         stand_parts = [o for o in st.children if o.type == "MESH"]
-        y_land = box(stand_parts)[1].y + 0.03
+        slo, shi = box(stand_parts)
+        y_land = shi.y + 0.03
+        cx = (slo.x + shi.x) / 2
+        side = -1 if cx < -0.05 else (1 if cx > 0.05 else 0)   # a side stand's cables leave on its outer side
+        x_out = (slo.x - 0.04 if side < 0 else shi.x + 0.04) if side else None
         for k, (dx, r) in enumerate(((-0.014, 0.0030), (0.014, 0.0024))):    # power, signal (DP/HDMI)
             p0 = back.matrix_world @ mathutils.Vector((dx, ymax - 0.012, zmin))
-            land = mathutils.Vector((p0.x + dx * 0.6, max(y_land, p0.y + 0.05) + 0.008 * k, top + r))
+            lx = (x_out + side * 0.012 * k) if side else p0.x + dx * 0.6
+            land = mathutils.Vector((lx, max(y_land, p0.y + 0.05) + 0.008 * k, top + r))
             c1 = p0 + mathutils.Vector((0, 0, -(p0.z - land.z) * 0.55))
             c2 = land - mathutils.Vector((0, 0.06, 0))
             pts = []
@@ -1241,6 +1260,27 @@ def monitor_cables(spec):
             n += 1
     print(f"monitor cables: {n}")
 
+
+for i, G in enumerate(S.get("glints", [])):     # a light only reflections see: a ceiling fixture's strip
+    w_, h_ = G.get("size", (1.6, 0.12))          # in the screens, which a real ceiling light at this camera height
+    gm = bpy.data.materials.new(f"glint {i}")    # cannot reach (the reflected rays leave the screens nearly level)
+    gm.use_nodes = True
+    gn = gm.node_tree.nodes
+    gn.remove(gn["Principled BSDF"])
+    em = gn.new("ShaderNodeEmission")
+    em.inputs["Color"].default_value = (*G.get("color", (1.0, 0.9, 0.75)), 1)
+    em.inputs["Strength"].default_value = G.get("strength", 6.0)
+    gm.node_tree.links.new(em.outputs[0], gn["Material Output"].inputs["Surface"])
+    gme = bpy.data.meshes.new(f"glint {i}")
+    cx_, cy_, cz_ = G["at"][0], kb_y + G["at"][1], top + G["at"][2]
+    gme.from_pydata([(cx_ - w_ / 2, cy_, cz_ - h_ / 2), (cx_ + w_ / 2, cy_, cz_ - h_ / 2),
+                     (cx_ + w_ / 2, cy_, cz_ + h_ / 2), (cx_ - w_ / 2, cy_, cz_ + h_ / 2)], [], [(0, 3, 2, 1)])
+    gme.materials.append(gm)
+    go = bpy.data.objects.new(f"glint {i}", gme)
+    sc.collection.objects.link(go)
+    go.visible_camera = False
+    go.visible_diffuse = False
+    go.visible_shadow = False
 
 if S.get("monitor") and S["monitor"].get("cables"):
     monitor_cables(S["monitor"]["cables"] if isinstance(S["monitor"]["cables"], dict) else {})
