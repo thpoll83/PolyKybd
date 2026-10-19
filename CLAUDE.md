@@ -44,7 +44,7 @@ Board-level facts, extractions and re-route costs: [`docs/KICAD_BOARDS.md`](docs
 - ⚠️ **Grep for the part (value, `lib_id`, footprint), not the reference designator.**
   Symbol instances store only `reference` and `unit`.
 - **A shared sheet cannot vary a part per board.** All four boards include
-  `rp_pico.kicad_sch`, so a change lands on split72 and split42 alike.
+  `rp_pico.kicad_sch`, so a change applies to split72 and split42 alike.
 - ⚠️ **The JLC exporter builds the BOM from the board's footprint properties**, and
   *Update PCB from Schematic* does not refresh them by default. Sweep board vs schematic
   `MPN`/`LCSC` after every export; read `poly_kybd/Gerber/PCB/FABRICATION-NOTES.md` first.
@@ -84,7 +84,7 @@ Traps and the pin rationale: [`parts/STEP_PIPELINE.md`](parts/STEP_PIPELINE.md).
   from build123d `font_size` by 1.389×. Pin the font to a file and convert the size.
 - **The drawing governs tolerance, material and finish; the STEP conveys shape.**
 - ⚠️ **Measure the sheet layout** (`Sheet.report_collisions()`, `check_inside_frame()`);
-  never eyeball offsets.
+  never estimate offsets by eye.
 
 ## Verifying a printed part
 
