@@ -126,7 +126,7 @@ def counter():
     top, which hides the cables. Worn: the oak has dents, the lacquer a few spots."""
     lacquer = principled("counter lacquer", (0.80, 0.80, 0.78), 0.3, coat=0.3)
     if S.get("counter_wood"):                     # a veneer texture, the grain along the counter
-        oak = wall_texture(dict(S["counter_wood"], axes=("Y", "X")))
+        oak = wall_texture(dict(S["counter_wood"], axes="box"))
     else:
         oak = wood("counter oak", (0.22, 0.12, 0.055), 0.62, grain=22.0)
     oak.node_tree.nodes["Principled BSDF"].inputs["Specular IOR Level"].default_value = 0.3   # a glossier top mirrors the room
@@ -675,9 +675,10 @@ def white_pot(r_top=0.075, r_bot=0.058, h=0.13):
     return g, [o]
 
 
-def spots(objs, amount):
-    """Faint spots on a surface (objs' materials, copies): where a large noise rises past
-    a threshold the colour darkens a few per cent, soft-edged, here and there."""
+def spots(objs, amount, scale=9.0, tint=(0.86, 0.83, 0.78), lo=0.60, mode="MULTIPLY", detail=2.0):
+    """Faint spots on a surface (objs' materials, copies): where a noise of `scale` rises
+    past `lo` the colour turns towards tint (MULTIPLY: darkens; MIX: dust on a dark
+    shell), soft-edged, here and there. A large scale with a high lo gives specks."""
     for o in objs:
         if o.type != "MESH":
             continue
@@ -690,16 +691,16 @@ def spots(objs, amount):
             if b is None:
                 continue
             tc = nt2.nodes.new("ShaderNodeTexCoord")
-            nz = nt2.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 9.0
-            nz.inputs["Detail"].default_value = 2.0
+            nz = nt2.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = scale
+            nz.inputs["Detail"].default_value = detail
             nt2.links.new(tc.outputs["Object"], nz.inputs["Vector"])
             mr = nt2.nodes.new("ShaderNodeMapRange"); mr.interpolation_type = "SMOOTHSTEP"
-            mr.inputs["From Min"].default_value, mr.inputs["From Max"].default_value = 0.60, 0.70
+            mr.inputs["From Min"].default_value, mr.inputs["From Max"].default_value = lo, lo + 0.10
             mr.inputs["To Max"].default_value = amount
             nt2.links.new(nz.outputs["Fac"], mr.inputs["Value"])
-            mix = nt2.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"; mix.blend_type = "MULTIPLY"
+            mix = nt2.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"; mix.blend_type = mode
             nt2.links.new(mr.outputs[0], mix.inputs["Factor"])
-            mix.inputs[7].default_value = (0.86, 0.83, 0.78, 1)
+            mix.inputs[7].default_value = (*tint, 1)
             inp = b.inputs["Base Color"]
             if inp.is_linked:
                 nt2.links.new(inp.links[0].from_socket, mix.inputs[6])
@@ -707,6 +708,19 @@ def spots(objs, amount):
                 mix.inputs[6].default_value = inp.default_value
             nt2.links.new(mix.outputs[2], inp)
             slot.material = m
+
+
+def wear(objs, marks):
+    """Use marks on objs, a list of dicts: {"spots": amount, ...spots() options} or
+    {"band": (axis, lo, hi), "amount": a} (a darker band, as grime's) or {"edges": a}."""
+    for mk in marks or []:
+        mk = dict(mk)
+        if "spots" in mk:
+            spots(objs, mk.pop("spots"), **mk)
+        elif "band" in mk:
+            grime(objs, mk.get("amount", 0.5), tuple(mk["band"]))
+        elif "edges" in mk:
+            grime(objs, mk["edges"])
 
 
 def grime(objs, amount, band=None, axes=("X", "Y")):
@@ -852,17 +866,44 @@ def wall_texture(tx):
     sep = nt2.nodes.new("ShaderNodeSeparateXYZ")
     nt2.links.new(tc.outputs["Object"], sep.inputs[0])
     comb = nt2.nodes.new("ShaderNodeCombineXYZ")
-    for src_, dst in zip(tx.get("axes", ("X", "Z")), ("X", "Y")):
-        mm = nt2.nodes.new("ShaderNodeMath"); mm.operation = "DIVIDE"; mm.inputs[1].default_value = tx.get("tile", 2.0)
-        nt2.links.new(sep.outputs[src_], mm.inputs[0])
-        nt2.links.new(mm.outputs[0], comb.inputs[dst])
+    if tx.get("axes") == "box":                    # a board: each face its own pair of axes, chosen by its
+        nrm = nt2.nodes.new("ShaderNodeSeparateXYZ")     # normal, the grain along x everywhere it can be: the top
+        nt2.links.new(tc.outputs["Normal"], nrm.inputs[0])   # (y, x), front and back edges (z, x), the ends (y, z)
+        vecs = []
+        for ua, va in (("Y", "X"), ("Z", "X"), ("Y", "Z")):
+            cb = nt2.nodes.new("ShaderNodeCombineXYZ")
+            for src_, dst in ((ua, "X"), (va, "Y")):
+                mm = nt2.nodes.new("ShaderNodeMath"); mm.operation = "DIVIDE"; mm.inputs[1].default_value = tx.get("tile", 2.0)
+                nt2.links.new(sep.outputs[src_], mm.inputs[0])
+                nt2.links.new(mm.outputs[0], cb.inputs[dst])
+            vecs.append(cb)
+        sel = []
+        for ax_ in ("Z", "X"):
+            ab = nt2.nodes.new("ShaderNodeMath"); ab.operation = "ABSOLUTE"
+            nt2.links.new(nrm.outputs[ax_], ab.inputs[0])
+            gt = nt2.nodes.new("ShaderNodeMath"); gt.operation = "GREATER_THAN"; gt.inputs[1].default_value = 0.5
+            nt2.links.new(ab.outputs[0], gt.inputs[0])
+            sel.append(gt)
+        m1 = nt2.nodes.new("ShaderNodeMix"); m1.data_type = "VECTOR"
+        nt2.links.new(sel[0].outputs[0], m1.inputs["Factor"])
+        nt2.links.new(vecs[1].outputs[0], m1.inputs[4]); nt2.links.new(vecs[0].outputs[0], m1.inputs[5])
+        comb = nt2.nodes.new("ShaderNodeMix"); comb.data_type = "VECTOR"
+        nt2.links.new(sel[1].outputs[0], comb.inputs["Factor"])
+        nt2.links.new(m1.outputs[1], comb.inputs[4]); nt2.links.new(vecs[2].outputs[0], comb.inputs[5])
+        vec_src = comb.outputs[1]                  # a vector Mix gives its result on output 1
+    else:
+        for src_, dst in zip(tx.get("axes", ("X", "Z")), ("X", "Y")):
+            mm = nt2.nodes.new("ShaderNodeMath"); mm.operation = "DIVIDE"; mm.inputs[1].default_value = tx.get("tile", 2.0)
+            nt2.links.new(sep.outputs[src_], mm.inputs[0])
+            nt2.links.new(mm.outputs[0], comb.inputs[dst])
+        vec_src = comb.outputs[0]
 
     def tex(kind, colour):
         t = nt2.nodes.new("ShaderNodeTexImage")
         t.image = bpy.data.images.load(os.path.join(folder, f"{tx['id']}_{kind}_2k.jpg"), check_existing=True)
         if not colour:
             t.image.colorspace_settings.name = "Non-Color"
-        nt2.links.new(comb.outputs[0], t.inputs["Vector"])
+        nt2.links.new(vec_src, t.inputs["Vector"])
         return t
     diff = tex("diff", True)
     mix = nt2.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"; mix.blend_type = "MULTIPLY"
@@ -1556,6 +1597,7 @@ mon = None
 if S.get("monitor"):
     spec = S["monitor"]
     mon, mon_objs, blocks, feet = monitors(spec)
+    wear(feet, spec.get("wear"))                   # dust and rub marks on the stand's foot
     if spec.get("style") == "arm":                 # the pole's clamp on the desk's back edge
         mon.location = (spec.get("x", 0.0), dhi.y - spec.get("reach", 0.24) - 0.035, top)
         mon.rotation_euler.z = math.radians(spec.get("turn", 0))
@@ -1719,6 +1761,7 @@ mat_t, mat_rect = 0.0, None
 if S.get("desk_mat"):                              # the mat first; keyboard, mouse and what is on it stand on it
     g, objs, mat_t = desk_mat(S["desk_mat"])
     place(g, objs, (S["desk_mat"].get("x", 0.0), kb_y + S["desk_mat"].get("y", 0.0)), 0, base_z=top)
+    wear(objs[:1], S["desk_mat"].get("wear"))
     lo2, hi2 = box(objs[:1])
     mat_rect = (lo2.x, hi2.x, lo2.y, hi2.y)
     MAT_RECT, MAT_T = mat_rect, mat_t
@@ -1763,6 +1806,7 @@ mouse_g = None
 if S.get("mouse"):
     mouse_g, objs = mouse(dict(S["mouse"], pad=S["mouse"].get("pad", not S.get("desk_mat"))))
     place(mouse_g, objs, (S["mouse"]["x"], kb_y + S["mouse"]["y"]), S["mouse"].get("turn", 0), base_z=top + mat_t)
+    wear(objs, S["mouse"].get("wear"))
 
 # both cables leave the same way: across in front of the screens to one exit (a gap
 # between them, or beside them), then side by side straight back and over the edge
@@ -1830,6 +1874,7 @@ for aid, part, x, y, turn, height, flat, *more in S["props"]:
         grime(objs, extra["grime"])
     if extra.get("grip"):                          # (axis, lo, hi, amount): where it is held
         grime(objs, extra["grip"][3], extra["grip"][:3])
+    wear(objs, extra.get("wear"))
     if extra.get("scale"):
         g.scale = [extra["scale"]] * 3
     if extra.get("at_back"):                         # y from the desk's back edge instead
