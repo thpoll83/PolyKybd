@@ -377,27 +377,75 @@ def industrial_desk():
     for pl in top.data.polygons:                   # the four sides show the plies
         if abs(pl.normal.z) < 0.5:
             pl.material_index = 1
+    parts = [top] + steel_frame(0.72)
+    g = bpy.data.objects.new("@industrial_desk", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def steel_frame(z_top):
+    """A black powder-coated desk frame of 50 mm square steel tube under a top whose
+    underside is at z_top: four legs with levelling feet, a rail round under the top,
+    a stretcher low at the back, the steel rubbed here and there."""
     steel = principled("desk frame steel", (0.035, 0.036, 0.04), 0.5)
     steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.6
     foot_m = principled("desk feet", (0.01, 0.01, 0.01), 0.7)
-    parts = [top]
+    parts = []
     t, xl, yl = 0.05, 0.84, 0.37
     for sx in (-1, 1):
         for sy in (-1, 1):
             x, y = sx * xl, sy * yl
-            parts.append(cube("desk leg", (x - t / 2, y - t / 2, 0.015), (x + t / 2, y + t / 2, 0.72), steel, 0.004))
+            parts.append(cube("desk leg", (x - t / 2, y - t / 2, 0.015), (x + t / 2, y + t / 2, z_top), steel, 0.004))
             bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.02, depth=0.015, location=(x, y, 0.0075))
             fo = bpy.context.active_object
             fo.name = "desk foot"
             fo.data.materials.append(foot_m)
             parts.append(fo)
     for sy in (-1, 1):                             # the rails under the top
-        parts.append(cube("desk rail", (-xl, sy * yl - t / 2, 0.66), (xl, sy * yl + t / 2, 0.71), steel, 0.004))
+        parts.append(cube("desk rail", (-xl, sy * yl - t / 2, z_top - 0.06), (xl, sy * yl + t / 2, z_top - 0.01), steel, 0.004))
     for sx in (-1, 1):
-        parts.append(cube("desk rail", (sx * xl - t / 2, -yl, 0.66), (sx * xl + t / 2, yl, 0.71), steel, 0.004))
+        parts.append(cube("desk rail", (sx * xl - t / 2, -yl, z_top - 0.06), (sx * xl + t / 2, yl, z_top - 0.01), steel, 0.004))
     parts.append(cube("desk stretcher", (-xl, yl - t / 2, 0.12), (xl, yl + t / 2, 0.17), steel, 0.004))
-    spots(parts[1:], 0.3, scale=140, lo=0.68, tint=(0.14, 0.14, 0.15), mode="MIX", detail=4.0)   # rubbed steel
-    g = bpy.data.objects.new("@industrial_desk", None)
+    spots(parts, 0.3, scale=140, lo=0.68, tint=(0.14, 0.14, 0.15), mode="MIX", detail=4.0)   # rubbed steel
+    return parts
+
+
+def concrete_desk():
+    """A concrete desk, 1.8 x 0.85 m, top at 0.75 m: a 50 mm cast slab with 6 mm rounded
+    edges, sealed (a slight sheen), in a Poly Haven concrete texture (S["desk_concrete"])
+    mapped per face, with a scatter of small dark pinholes, on the black steel frame."""
+    if S.get("desk_concrete"):
+        cm = wall_texture(dict(S["desk_concrete"], axes="box"))
+        matte_material(cm, S["desk_concrete"].get("rough", 0.45))
+    else:
+        cm = principled("desk concrete", (0.40, 0.40, 0.39), 0.5)
+    nt2 = cm.node_tree                             # pinholes: the centres of small Voronoi cells, darkened
+    b = nt2.nodes["Principled BSDF"]
+    tc = nt2.nodes.new("ShaderNodeTexCoord")
+    vo = nt2.nodes.new("ShaderNodeTexVoronoi"); vo.inputs["Scale"].default_value = 90.0
+    nt2.links.new(tc.outputs["Object"], vo.inputs["Vector"])
+    ph = nt2.nodes.new("ShaderNodeMapRange")
+    ph.inputs["From Min"].default_value, ph.inputs["From Max"].default_value = 0.0, 0.035
+    ph.inputs["To Min"].default_value, ph.inputs["To Max"].default_value = 0.45, 1.0
+    nt2.links.new(vo.outputs["Distance"], ph.inputs["Value"])
+    mix = nt2.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"; mix.blend_type = "MULTIPLY"
+    mix.inputs["Factor"].default_value = 1.0
+    inp = b.inputs["Base Color"]
+    if inp.is_linked:
+        nt2.links.new(inp.links[0].from_socket, mix.inputs[6])
+    else:
+        mix.inputs[6].default_value = inp.default_value
+    cr = nt2.nodes.new("ShaderNodeCombineColor")
+    for k in ("Red", "Green", "Blue"):
+        nt2.links.new(ph.outputs[0], cr.inputs[k])
+    nt2.links.new(cr.outputs[0], mix.inputs[7])
+    nt2.links.new(mix.outputs[2], inp)
+    top = cube("desk top", (-0.9, -0.425, 0.70), (0.9, 0.425, 0.75), cm, 0.006)
+    top.modifiers["bevel"].segments = 5
+    parts = [top] + steel_frame(0.70)
+    g = bpy.data.objects.new("@concrete_desk", None)
     sc.collection.objects.link(g)
     for o in parts:
         o.parent = g
@@ -1910,6 +1958,8 @@ elif S["desk"] == "@industrial_desk":
     desk, desk_objs = industrial_desk()
 elif S["desk"] == "@steel_bench":
     desk, desk_objs = steel_bench()
+elif S["desk"] == "@concrete_desk":
+    desk, desk_objs = concrete_desk()
 else:
     desk, desk_objs = gltf(S["desk"])
     lo, hi = box(desk_objs)
