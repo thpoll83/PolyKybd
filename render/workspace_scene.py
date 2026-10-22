@@ -2039,6 +2039,24 @@ for aid, part, x, y, turn, height, flat, *more in S["props"]:
     if extra.get("grip"):                          # (axis, lo, hi, amount): where it is held
         grime(objs, extra["grip"][3], extra["grip"][:3])
     wear(objs, extra.get("wear"))
+    if extra.get("matte"):                         # less glossy: the roughness raised to at least this
+        for o in objs:
+            for slot in (o.material_slots if o.type == "MESH" else []):
+                if slot.material is None:
+                    continue
+                slot.material = slot.material.copy()
+                nt2 = slot.material.node_tree
+                b_ = next((n for n in nt2.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
+                if b_ is None:
+                    continue
+                inp = b_.inputs["Roughness"]
+                mx = nt2.nodes.new("ShaderNodeMath"); mx.operation = "MAXIMUM"; mx.inputs[1].default_value = extra["matte"]
+                if inp.is_linked:
+                    nt2.links.new(inp.links[0].from_socket, mx.inputs[0])
+                else:
+                    mx.inputs[0].default_value = inp.default_value
+                nt2.links.new(mx.outputs[0], inp)
+                b_.inputs["Specular IOR Level"].default_value = min(b_.inputs["Specular IOR Level"].default_value, 0.35)
     if extra.get("scale"):
         g.scale = [extra["scale"]] * 3
     if extra.get("at_back"):                         # y from the desk's back edge instead

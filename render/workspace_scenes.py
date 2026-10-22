@@ -127,7 +127,7 @@ SCENES = {
         props=[("@white_pot", None, 0.66, 0.26, 0, None, False, dict(wear=[      # specks, watering tide marks,
                    dict(spots=0.7, scale=70, lo=0.58, tint=(0.55, 0.50, 0.42), detail=4.0),   # a darker foot
                    dict(spots=0.3, scale=8, lo=0.52, tint=(0.86, 0.81, 0.72)), dict(band=("Z", 0.0, 0.12), amount=0.25)])),
-               ("anthurium_botany_01", "anthurium_botany_01_b", 0.66, 0.26, 200, 0.30, False, dict(z=0.112, on=True)),
+               ("anthurium_botany_01", "anthurium_botany_01_b", 0.66, 0.26, 200, 0.30, False, dict(z=0.112, on=True, matte=0.6)),
                ("binder_notebook", "binder_notebook_closed", -0.52, 0.02, 8, None, False, dict(grime=0.6, wear=[dict(spots=0.4, scale=15, lo=0.58)])),
                ("stationery_supplies", "stationery_supplies_pen_fancy", -0.40, 0.14, 80, None, True, dict(grip=("auto", 0.12, 0.40, 0.35), wear=[dict(spots=0.3, scale=60, lo=0.62)])),
                ("office_notepads", "office_notepads_sticky_stack", -0.33, -0.10, -12, None, False, dict(grime=0.4, wear=[dict(spots=0.3, scale=12, lo=0.6, tint=(0.85, 0.80, 0.70))])),
