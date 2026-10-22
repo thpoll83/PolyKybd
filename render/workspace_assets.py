@@ -53,6 +53,45 @@ def fetch_hdri(aid, res="4k"):
     return path
 
 
+def fetch_photo(aid):
+    """An HDRI's tonemapped JPG: a CC0 landscape photo (equirectangular, 8k+ wide)."""
+    files = json.loads(get(f"{API}/files/{aid}"))
+    t = files["tonemapped"]
+    path = os.path.join(OUT, aid, os.path.basename(t["url"]).replace("%20", "_"))
+    if not os.path.exists(path):
+        get(t["url"], path)
+    return path
+
+
+def fetch_texture(aid, res="2k"):
+    """A Poly Haven texture's colour, normal (GL) and roughness maps as 2k JPGs;
+    returns {"diff": path, "nor": path, "rough": path}."""
+    files = json.loads(get(f"{API}/files/{aid}"))
+    out = {}
+    for key, kind in (("diff", "Diffuse"), ("nor", "nor_gl"), ("rough", "Rough")):
+        u = files[kind][res]["jpg"]["url"]
+        path = os.path.join(OUT, aid, os.path.basename(u))
+        if not os.path.exists(path):
+            get(u, path)
+        out[key] = path
+    return out
+
+
+FONTS = {"Caveat.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/caveat/Caveat%5Bwght%5D.ttf",
+         "Caveat-OFL.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/caveat/OFL.txt"}
+
+
+def fetch_font(name):
+    """A handwriting font (SIL OFL) for the pen notes in workspace_screens.py."""
+    path = os.path.join(HERE, "out", "assets", "fonts", name)
+    if not os.path.exists(path):
+        get(FONTS[name], path)
+    return path
+
+
+PHOTOS = ["bell_park_pier"]                                   # the office calendar's picture (workspace_screens.py)
+
+
 def main():
     info = json.loads(get(f"{API}/assets"))
     used = {}
@@ -60,12 +99,17 @@ def main():
         p = fetch_hdri(sc["hdri"])
         used[sc["hdri"]] = p
         print(f"{name}: room {os.path.relpath(p, HERE)}")
+        if sc.get("wall", {}).get("texture"):
+            used[sc["wall"]["texture"]["id"]] = fetch_texture(sc["wall"]["texture"]["id"])["diff"]
         for aid in [sc["desk"]] + [pr[0] for pr in sc["props"]] + sc.get("fetch", []):
             if aid.startswith("@"):                   # built in the scene script, not fetched
                 continue
             if aid not in used:
                 used[aid] = fetch_model(aid)
                 print(f"  {aid}: {os.path.relpath(used[aid], HERE)}")
+    for aid in PHOTOS:
+        used[aid] = fetch_photo(aid)
+        print(f"photo {aid}: {os.path.relpath(used[aid], HERE)}")
     with open(os.path.join(OUT, "CREDITS.md"), "w", encoding="utf-8") as f:
         f.write("# Poly Haven assets in the workspace scenes\n\nAll CC0 (https://polyhaven.com/license).\n\n")
         for aid in sorted(used):
