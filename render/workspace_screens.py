@@ -963,6 +963,16 @@ def paper_desk_month():
     return im
 
 
+def name_card():
+    """A desk name card, 3:1: the name large, the role under it, a teal bar at the left."""
+    im = Image.new("RGB", (1200, 400), (252, 252, 250))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 40, 400), fill=(0, 120, 130))
+    d.text((110, 70), "Lea Brandt", font=font(BOLD, 120), fill=INK)
+    d.text((114, 250), "Reception  ·  Empfang", font=font(SANS, 56), fill=(0, 120, 130))
+    return im
+
+
 def paper_wifi():
     """A guest Wi-Fi card, the password partly handwritten over a printed blank."""
     im = Image.new("RGB", (900, 560), (252, 252, 250))
@@ -1446,7 +1456,7 @@ if __name__ == "__main__":
                      ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
                      ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))),
                      ("art_arches.jpg", art_arches), ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
-                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)),
+                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card),
                      ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))

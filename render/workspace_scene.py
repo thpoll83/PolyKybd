@@ -131,7 +131,22 @@ def counter():
         oak = wood("counter oak", (0.22, 0.12, 0.055), 0.62, grain=22.0)
     oak.node_tree.nodes["Principled BSDF"].inputs["Specular IOR Level"].default_value = 0.3   # a glossier top mirrors the room
     plinth = principled("counter plinth", (0.05, 0.05, 0.05), 0.6)
-    parts = [cube("counter body", (-0.9, -0.40, 0.08), (0.9, 0.42, 0.73), lacquer),
+    front = lacquer
+    if S.get("counter_dents"):                     # the body's lacquer, knocked by chairs and bags: soft shallow dents
+        front = lacquer.copy()
+        ft = front.node_tree
+        tcd = ft.nodes.new("ShaderNodeTexCoord")
+        vo = ft.nodes.new("ShaderNodeTexVoronoi"); vo.feature = "SMOOTH_F1"
+        vo.inputs["Scale"].default_value = 14.0; vo.inputs["Smoothness"].default_value = 1.0
+        ft.links.new(tcd.outputs["Object"], vo.inputs["Vector"])
+        nz = ft.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 3.0
+        ft.links.new(tcd.outputs["Object"], nz.inputs["Vector"])
+        add = ft.nodes.new("ShaderNodeMath"); add.operation = "MULTIPLY_ADD"; add.inputs[1].default_value = 0.4
+        ft.links.new(vo.outputs["Distance"], add.inputs[0]); ft.links.new(nz.outputs["Fac"], add.inputs[2])
+        bm = ft.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = S["counter_dents"]
+        ft.links.new(add.outputs[0], bm.inputs["Height"])
+        ft.links.new(bm.outputs["Normal"], ft.nodes["Principled BSDF"].inputs["Normal"])
+    parts = [cube("counter body", (-0.9, -0.40, 0.08), (0.9, 0.42, 0.73), front),
              cube("counter plinth", (-0.88, -0.37, 0.0), (0.88, 0.40, 0.08), plinth),
              cube("counter top", (-0.92, -0.43, 0.73), (0.92, 0.43, 0.76), oak, bevel=0.004),
              cube("counter screen", (-0.92, 0.43, 0.0), (0.92, 0.47, 1.10), lacquer, bevel=0.004),
@@ -876,7 +891,80 @@ def card_holder():
     return g, parts
 
 
+def name_card():
+    """A name-card stand: a dark acrylic foot 120 x 30 mm holding a clear acrylic
+    sleeve, leaning back 10 deg, with a printed card (name_card.jpg) in it, the same
+    print on both faces, so visitors and staff both read it."""
+    acr = principled("name stand foot", (0.02, 0.02, 0.022), 0.15, coat=0.6)
+    clear = bpy.data.materials.new("name stand acrylic")
+    clear.use_nodes = True
+    cb = clear.node_tree.nodes["Principled BSDF"]
+    cb.inputs["Transmission Weight"].default_value = 1.0
+    cb.inputs["Roughness"].default_value = 0.02
+    cb.inputs["IOR"].default_value = 1.49
+    w, h = 0.110, 0.0367                          # the card, 3:1
+    parts = [cube("name stand foot", (-0.06, -0.015, 0.0), (0.06, 0.015, 0.008), acr, 0.002)]
+    sleeve = cube("name stand sleeve", (-0.058, -0.0025, 0.006), (0.058, 0.0025, 0.006 + h + 0.006), clear, 0.0008)
+    sleeve.visible_shadow = False
+    for p_ in sleeve.data.polygons:
+        p_.use_smooth = False
+    card = []
+    for sd in (-1, 1):                             # the print on each face, just inside the sleeve
+        me = bpy.data.meshes.new("name card")
+        y = sd * 0.0009
+        vs = [(-w / 2, y, 0.009), (w / 2, y, 0.009), (w / 2, y, 0.009 + h), (-w / 2, y, 0.009 + h)]
+        if sd > 0:
+            vs = [vs[1], vs[0], vs[3], vs[2]]
+        me.from_pydata(vs, [], [(0, 1, 2, 3)])
+        lay = me.uv_layers.new(name="uv")
+        for li, uv in zip(me.polygons[0].loop_indices, [(0, 0), (1, 0), (1, 1), (0, 1)]):
+            lay.data[li].uv = uv
+        me.materials.append(image_material("name card", "name_card.jpg", rough=0.6))
+        o = bpy.data.objects.new("name card", me)
+        sc.collection.objects.link(o)
+        card.append(o)
+    lean = bpy.data.objects.new("name stand lean", None)
+    sc.collection.objects.link(lean)
+    lean.rotation_euler.x = math.radians(-10)
+    for o in [sleeve] + card:
+        o.parent = lean
+    g = bpy.data.objects.new("@name_card", None)
+    sc.collection.objects.link(g)
+    lean.parent = g
+    for o in parts:
+        o.parent = g
+    return g, parts + [sleeve] + card
+
+
+def card_reader():
+    """A USB smart-card reader, 72 x 64 x 16 mm, dark grey with a rounded top, an
+    access card pushed into the slot at its front (-y), a green light on top; its cable
+    leaves at the back (g["pk_cable_at"])."""
+    body_m = principled("card reader", (0.04, 0.042, 0.046), 0.45, coat=0.2)
+    slot_m = principled("card reader slot", (0.004, 0.004, 0.005), 0.8)
+    card_m = principled("access card", (0.10, 0.34, 0.62), 0.35, coat=0.3)
+    chip_m = principled("card chip", (0.85, 0.66, 0.30), 0.25)
+    chip_m.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    led = bpy.data.materials.new("reader light")
+    led.use_nodes = True
+    lb = led.node_tree.nodes["Principled BSDF"]
+    lb.inputs["Emission Color"].default_value = (0.2, 1.0, 0.35, 1)
+    lb.inputs["Emission Strength"].default_value = 6.0
+    parts = [cube("card reader", (-0.036, -0.032, 0.0), (0.036, 0.032, 0.016), body_m, 0.005),
+             cube("card reader slot", (-0.029, -0.0325, 0.0085), (0.029, -0.026, 0.0105), slot_m, 0.0003),
+             cube("access card", (-0.0271, -0.062, 0.0090), (0.0271, -0.02, 0.0099), card_m, 0.0008),
+             cube("card chip", (-0.006, -0.058, 0.0099), (0.006, -0.048, 0.0101), chip_m, 0.0003),
+             cube("reader light", (0.022, 0.014, 0.0159), (0.028, 0.020, 0.0163), led, 0.0005)]
+    g = bpy.data.objects.new("@card_reader", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    g["pk_cable_at"] = (0.0, 0.034, 0.006)
+    return g, parts
+
+
 BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(),
+         "@name_card": lambda: name_card(), "@card_reader": lambda: card_reader(),
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
@@ -1963,7 +2051,29 @@ for aid, part, x, y, turn, height, flat, *more in S["props"]:
         dec = uv_plane(f"decal {img_}", (-dw / 2, -dd / 2), (dw / 2, dd / 2), 0.0, dm)
         dec.location = ((lo3.x + hi3.x) / 2, (lo3.y + hi3.y) / 2, hi3.z + 0.0003)
         dec.rotation_euler.z = math.radians(turn)
-    if extra.get("cable"):                           # its own cable straight back and over the edge
+    if extra.get("cable") and extra["cable"].get("grommet") and GROMMET:   # loose across the desk and down the hole
+        st = g.matrix_world @ mathutils.Vector(g["pk_cable_at"])
+        bk = (g.matrix_world.to_3x3() @ mathutils.Vector((0, 1, 0))).normalized()
+        gx_, gy_, gr_ = GROMMET
+        r_ = extra["cable"].get("r", 0.0018)
+        V_ = mathutils.Vector
+        e_ = V_((gx_ + extra["cable"].get("dx", 0.016), gy_ - 0.02, top + r_))
+        p0 = V_((st.x, st.y, top + r_))
+        way = [p0 - bk * 0.03, p0, p0 + bk * 0.05,
+               V_(((p0.x + e_.x) / 2 + 0.02, (p0.y + e_.y) / 2 - 0.03, top + r_)), e_ - V_((0, 0.05, 0)), e_, e_ + V_((0, 0.03, 0))]
+        seg = []
+        for a_ in range(1, len(way) - 2):          # Catmull-Rom through the waypoints
+            q0, q1, q2, q3 = way[a_ - 1:a_ + 3]
+            for i in range(1, 21):
+                t = i / 20
+                seg.append(0.5 * ((2 * q1) + (-q0 + q2) * t + (2 * q0 - 5 * q1 + 4 * q2 - q3) * t * t
+                                  + (-q0 + 3 * q1 - 3 * q2 + q3) * t ** 3))
+        for p_ in seg:
+            p_.z = top + r_ + ground(p_.x, p_.y)
+        cm_ = principled(f"{aid} cable", extra["cable"].get("color", (0.02, 0.02, 0.022)), 0.5)
+        bridge_cable._tube(f"{aid} cable", [tuple(st)] + [tuple(p_) for p_ in seg], [r_] * (len(seg) + 1), cm_, ring=14)
+        into_hole(f"{aid} cable drop", seg[-1], V_((0, 1, 0)), r_, cm_)
+    elif extra.get("cable"):                         # its own cable straight back and over the edge
         st = g.matrix_world @ mathutils.Vector(g["pk_cable_at"])
         bk = (g.matrix_world.to_3x3() @ mathutils.Vector((0, 1, 0))).normalized()
         xt, yf = st.x + extra["cable"].get("dx", 0.0), st.y + 0.06

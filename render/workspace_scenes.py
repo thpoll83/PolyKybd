@@ -114,7 +114,8 @@ SCENES = {
                 dict(at=(-0.1, -1.5, 1.5), size=(1.2, 0.3), energy=70, color=(1.0, 0.86, 0.66))],
         desk="@counter", desk_height=None, desk_spots=0.5,
         counter_wood=dict(id="oak_veneer_01", tile=1.83, tint=(0.80, 0.74, 0.68), bump=0.5),
-        counter_glass=dict(t=0.008, density=1.2, tint=(0.955, 1.0, 0.99), edge=(0.66, 0.98, 0.92)),
+        counter_glass=dict(t=0.008, density=0.6, tint=(0.975, 1.0, 0.993), edge=(0.66, 0.98, 0.92)),
+        counter_dents=0.2,
         kb_from_front=0.26,
         grommet=dict(r=0.03, inset=0.07),
         screen_items=[
@@ -131,7 +132,9 @@ SCENES = {
                ("stationery_supplies", "stationery_supplies_pen_fancy", -0.40, 0.14, 80, None, True, dict(grip=("auto", 0.12, 0.40, 0.35), wear=[dict(spots=0.3, scale=60, lo=0.62)])),
                ("office_notepads", "office_notepads_sticky_stack", -0.33, -0.10, -12, None, False, dict(grime=0.4, wear=[dict(spots=0.3, scale=12, lo=0.6, tint=(0.85, 0.80, 0.70))])),
                ("@badges", None, 0.52, -0.04, 10, None, False, dict(wear=[dict(spots=0.3, scale=20, lo=0.6), dict(edges=0.4)])),
-               ("@card_holder", None, -0.66, 0.24, 12, None, False, dict(wear=[dict(edges=0.5), dict(spots=0.3, scale=25, lo=0.62)])),
+               ("@name_card", None, -0.55, 0.655, 4, None, False, dict(z=0.37, on=True)),     # on the ledge top
+               ("@card_reader", None, 0.24, 0.15, -12, None, False, dict(cable=dict(grommet=True, dx=0.018, r=0.0017),
+                wear=[dict(spots=0.3, scale=90, lo=0.66, tint=(0.25, 0.25, 0.26), mode="MIX", detail=4.0)])),
                ("@mug", None, 0.56, 0.10, 40, None, False, dict(wear=[dict(band=("Z", 0.90, 1.0), amount=0.2),   # a coffee
                    dict(spots=0.6, scale=45, lo=0.60, tint=(0.68, 0.52, 0.38), detail=4.0)]))],                       # ring, drips
         desk_mat=dict(w=0.80, d=0.34, x=0.06, y=0.0, color=(0.10, 0.06, 0.04), rough=0.55, coat=0.1,
