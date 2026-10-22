@@ -1391,7 +1391,7 @@ DOC_PRINTS = {             # print name: (docs asset, print size in px, zoom)
     "emoji": ("using/emoji-keycap.jpg", (1000, 1000), 1.1),
     "halves": ("assembly/split72-both-halves.jpg", (1300, 1000), 1.0),
     "displays": ("assembly/display-modules.jpg", (1300, 1000), 1.2),
-    "greek": ("using/legends-greek.jpg", (1300, 1000), 1.0),
+    "greek": ("using/legends-greek-render.jpg", (1300, 1000), 1.0),
 }
 
 
