@@ -884,6 +884,24 @@ def paper_wifi():
     return im
 
 
+def art_arches():
+    """A large print for the lobby wall: mid-century arches and a sun in terracotta,
+    sage, ochre and ink on warm paper, with a white margin."""
+    im = Image.new("RGB", (1400, 1000), (246, 240, 228))
+    d = ImageDraw.Draw(im)
+    d.rectangle((70, 70, 1330, 930), fill=(236, 226, 206))
+    d.ellipse((860, 150, 1120, 410), fill=(222, 160, 60))                     # the sun
+    for (x0, w, col) in ((120, 420, (186, 92, 62)), (430, 360, (128, 150, 120)), (760, 300, (40, 52, 70)), (1010, 270, (196, 130, 90))):
+        top_ = 930 - int(w * 1.25)
+        d.rectangle((x0, top_ + w // 2, x0 + w, 930), fill=col)
+        d.ellipse((x0, top_, x0 + w, top_ + w), fill=col)
+    for k in range(5):                                                         # thin rings in the first arch
+        r = 60 + k * 34
+        d.arc((330 - r, 615 - r, 330 + r, 615 + r), 180, 360, fill=(246, 240, 228), width=8)
+    d.rectangle((70, 900, 1330, 930), fill=(40, 52, 70))
+    return im
+
+
 SCRIBBLES = [  # (day, text, ink, tilt deg): pen notes in the calendar's day boxes
     (6, "dentist\n9:30", (30, 50, 140), 4), (9, "demo!", (200, 30, 30), -6), (13, "PCB\norder", (30, 50, 140), 3),
     (16, "ship\nv1.8", (200, 30, 30), -4), (20, "Mia's\nbday", (40, 110, 60), 6), (23, "team\nlunch", (30, 50, 140), -3),
@@ -1334,7 +1352,7 @@ if __name__ == "__main__":
                      ("wall_scuff.png", wall_scuff),
                      ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
                      ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))),
-                     ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
+                     ("art_arches.jpg", art_arches), ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
                      ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)),
                      ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)

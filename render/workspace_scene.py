@@ -1147,6 +1147,14 @@ def wall_item(it, y_wall, top):
             g, objs = gltf(aid, part)
             place(g, objs, (x + dx, y_wall - dp_ / 2), turn, height, base_z=z)
             out += [o for o in objs if o.type == "MESH"]
+    elif it["kind"] == "frame":                   # a framed print, w wide, its height from the image; z its centre
+        img = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", it["img"]), check_existing=True)
+        w = it["w"]
+        h = w * img.size[1] / img.size[0]
+        bw = it.get("border", 0.025)
+        fm = principled("art frame", it.get("frame", (0.03, 0.03, 0.032)), 0.4)
+        out.append(cube("art frame", (x - w / 2 - bw, y_wall - 0.025, z - h / 2 - bw), (x + w / 2 + bw, y_wall, z + h / 2 + bw), fm, 0.003))
+        out.append(sheet("art", it["img"], x, z + h / 2 - 0.012, w, h, y_wall - 0.0255, 0.0, 0.0, mat_rough=0.6, ny=1))
     elif it["kind"] == "clock":
         r = it.get("r", 0.15)
         bpy.ops.mesh.primitive_cylinder_add(radius=r, depth=0.035, location=(x, y_wall - 0.0175, z),
@@ -1697,6 +1705,28 @@ if S.get("room"):                                  # a plain bright room instead
     wy_ = R_.get("wall_y", 3.5)
     cube("room wall", (-8, wy_, 0), (8, wy_ + 0.1, 4.0), principled("room wall", R_.get("wall", (0.82, 0.82, 0.80)), 0.9), 0.0)
     cube("room skirting", (-8, wy_ - 0.015, 0), (8, wy_, 0.08), principled("room skirting", R_.get("wall", (0.82, 0.82, 0.80)), 0.5), 0.0)
+    if R_.get("window"):                           # a band of tall panes in the wall: bright, out of focus, the
+        W_ = R_["window"]                          # room's one strong shape; thin grey mullions between them
+        x0_, x1_, z0_, z1_ = W_["x"][0], W_["x"][1], W_["z"][0], W_["z"][1]
+        sky = bpy.data.materials.new("room window")
+        sky.use_nodes = True
+        sb_ = sky.node_tree.nodes["Principled BSDF"]
+        sb_.inputs["Base Color"].default_value = (0, 0, 0, 1)
+        sb_.inputs["Emission Color"].default_value = (*W_.get("color", (0.86, 0.92, 1.0)), 1)
+        sb_.inputs["Emission Strength"].default_value = W_.get("strength", 3.0)
+        cube("room window", (x0_, wy_ - 0.002, z0_), (x1_, wy_ + 0.001, z1_), sky, 0.0)
+        frame_m = principled("room window frame", (0.25, 0.25, 0.26), 0.4)
+        n_ = W_.get("panes", 3)
+        for k in range(n_ + 1):
+            xm_ = x0_ + (x1_ - x0_) * k / n_
+            cube(f"room mullion {k}", (xm_ - 0.03, wy_ - 0.04, z0_), (xm_ + 0.03, wy_, z1_), frame_m, 0.002)
+        for zz in (z0_, z1_):
+            cube("room transom", (x0_ - 0.03, wy_ - 0.04, zz - 0.03), (x1_ + 0.03, wy_, zz + 0.03), frame_m, 0.002)
+    for aid, part, x, y, turn, height, *z_ in R_.get("things", []):   # on the floor (or z_ m above it)
+        g_, objs_ = gltf(aid, part)
+        place(g_, objs_, (x, y), turn, height, base_z=z_[0] if z_ else 0.0)
+    for it in R_.get("items", []):                 # on the wall: x from the desk's centre, z from the floor
+        wall_item(it, wy_, 0.0)
 for it in S.get("screen_items", []):              # the counter's raised screen, the staff side: papers taped on
     wall_item(it, dhi.y, top)
 mouse_g = None
@@ -1895,9 +1925,22 @@ def monitor_cables(spec):
                 gx_, gy_, gr_ = GROMMET
                 d_ = 1 if gx_ > land.x else -1
                 e_ = mathutils.Vector((gx_ - d_ * (gr_ * 0.53 + 0.012), gy_ + 0.008 * (k - 0.5) * 2, land.z))
-                q1, q2 = land + mathutils.Vector((0, 0.03, 0)), e_ - mathutils.Vector((d_ * 0.08, 0, 0))
-                pts += [(1 - t) ** 3 * land + 3 * (1 - t) ** 2 * t * q1 + 3 * (1 - t) * t ** 2 * q2 + t ** 3 * e_
-                        for t in (i / 40 for i in range(1, 41))]
+                D_ = e_.x - land.x                     # slack: waypoints on the desk, the power cable in a wide
+                V_ = mathutils.Vector                  # loop forward, the signal cable in a shallow one
+                way = ([land, V_((land.x + 0.22 * D_, land.y + 0.005, land.z)), V_((land.x + 0.55 * D_, gy_ - 0.11, land.z)),
+                        V_((e_.x - d_ * 0.07, gy_ - 0.05, land.z)), e_] if k == 0 else
+                       [land, V_((land.x + 0.30 * D_, land.y + 0.01, land.z)), V_((land.x + 0.68 * D_, gy_ - 0.04, land.z)), e_])
+                way = [way[0] - (way[1] - way[0])] + way + [way[-1] + V_((d_ * 0.02, 0, 0))]
+                seg = []
+                for a_ in range(1, len(way) - 2):      # Catmull-Rom through the waypoints
+                    p0, p1, p2, p3 = way[a_ - 1:a_ + 3]
+                    for i in range(1, 21):
+                        t = i / 20
+                        seg.append(0.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t
+                                          + (-p0 + 3 * p1 - 3 * p2 + p3) * t ** 3))
+                for p_ in seg:
+                    p_.z = top + r + ground(p_.x, p_.y)
+                pts += seg
                 bridge_cable._tube(f"monitor cable {n}", [tuple(p) for p in pts], [r] * len(pts), mat, ring=14)
                 into_hole(f"monitor cable {n} drop", pts[-1], mathutils.Vector((d_, 0, 0)), r, mat)
                 n += 1

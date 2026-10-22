@@ -101,7 +101,7 @@ def main():
         print(f"{name}: room {os.path.relpath(p, HERE)}")
         if sc.get("wall", {}).get("texture"):
             used[sc["wall"]["texture"]["id"]] = fetch_texture(sc["wall"]["texture"]["id"])["diff"]
-        for aid in [sc["desk"]] + [pr[0] for pr in sc["props"]] + sc.get("fetch", []):
+        for aid in [sc["desk"]] + [pr[0] for pr in sc["props"]] + [t[0] for t in sc.get("room", {}).get("things", [])] + sc.get("fetch", []):
             if aid.startswith("@"):                   # built in the scene script, not fetched
                 continue
             if aid not in used:

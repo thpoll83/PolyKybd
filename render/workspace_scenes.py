@@ -102,7 +102,12 @@ SCENES = {
         camera=dict(distance=2.6, elev=13, azim=-10, lens=52, fstop=11.0, aim_y=0.16, aim_z=0.33)),
     "front_desk": dict(
         hdri="cyclorama_hard_light", hdri_turn=90, hdri_strength=1.1, exposure=0.35,
-        room=dict(wall_y=3.2, wall=(0.92, 0.92, 0.90), floor=(0.85, 0.84, 0.82)),
+        room=dict(wall_y=3.2, wall=(0.92, 0.92, 0.90), floor=(0.85, 0.84, 0.82),
+                  window=dict(x=(0.95, 2.9), z=(0.45, 2.55), panes=4, strength=2.5),
+                  things=[("planter_pot_clay", None, 0.55, 2.85, 0, 0.45), ("Sofa_01", None, -1.45, 2.78, 180, 0.85),
+                          ("pachira_aquatica_01", ("pachira_aquatica_01_bark_d", "pachira_aquatica_01_leaves_d"), 0.55, 2.85, 30, 1.75, 0.32)],
+                  items=[dict(kind="frame", img="art_arches.jpg", x=-1.45, z=1.22, w=0.90, border=0.03),
+                         dict(kind="clock", x=-0.55, z=1.17, r=0.13)]),
         look="AgX - Punchy", sun=dict(**{"from": (-0.8, 0.6, 0.7)}, strength=3.0, angle=1.5),
         post=dict(vignette=0.32, glare=0.12, sat=0.95),
         lights=[dict(at=(0.0, 0.0, 1.5), size=(1.2, 0.6), energy=45, color=(1.0, 0.82, 0.58)),
@@ -130,7 +135,7 @@ SCENES = {
         mouse=dict(x=0.34, y=0.0, turn=-4, wired=True, shape="ambi", color=(0.62, 0.63, 0.65), side=(0.05, 0.05, 0.055),
                    rough=0.4, coat=0.3),
         glints=[dict(at=(0.25, -2.5, 0.75), size=(1.0, 0.07), strength=4.0, color=(1.0, 0.88, 0.70))],
-        camera=dict(distance=2.5, elev=17, azim=8, lens=52, fstop=8.0, aim_y=0.16, aim_z=0.22)),
+        camera=dict(distance=2.5, elev=13, azim=8, lens=52, fstop=8.0, aim_y=0.16, aim_z=0.22)),
     "planning": dict(
         hdri="studio_country_hall", hdri_turn=60, hdri_strength=1.0,
         desk="WoodenTable_01", desk_height=0.75, desk_depth=0.90,
