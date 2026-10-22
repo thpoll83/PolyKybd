@@ -120,14 +120,19 @@ def cube(name, lo, hi, mat, bevel=0.003):
 
 
 def counter():
-    """A reception counter, 1.8 x 0.85 m, its worktop at 1.05 m: a white lacquer body,
-    an oak-coloured worktop with a 25 mm lip over the front."""
-    lacquer = principled("counter lacquer", (0.78, 0.78, 0.76), 0.25, coat=0.3)
-    oak = principled("counter oak", (0.36, 0.22, 0.12), 0.45, coat=0.15)
+    """A reception counter, 1.8 x 0.85 m, its worktop at 0.76 m (sitting height): a white
+    lacquer body, an oak worktop, and on the visitors' side (+y) the raised ledge real
+    reception desks have, a lacquer screen 0.34 m high with an oak transaction shelf on
+    top, which hides the cables. Worn: the oak has dents, the lacquer a few spots."""
+    lacquer = principled("counter lacquer", (0.80, 0.80, 0.78), 0.3, coat=0.3)
+    oak = wood("counter oak", (0.22, 0.12, 0.055), 0.62, grain=22.0)
+    oak.node_tree.nodes["Principled BSDF"].inputs["Specular IOR Level"].default_value = 0.3   # at 17 deg a glossier top mirrors the hall white
     plinth = principled("counter plinth", (0.05, 0.05, 0.05), 0.6)
-    parts = [cube("counter body", (-0.9, -0.40, 0.08), (0.9, 0.42, 1.02), lacquer),
+    parts = [cube("counter body", (-0.9, -0.40, 0.08), (0.9, 0.42, 0.73), lacquer),
              cube("counter plinth", (-0.88, -0.37, 0.0), (0.88, 0.40, 0.08), plinth),
-             cube("counter top", (-0.92, -0.43, 1.02), (0.92, 0.43, 1.05), oak, bevel=0.004)]
+             cube("counter top", (-0.92, -0.43, 0.73), (0.92, 0.43, 0.76), oak, bevel=0.004),
+             cube("counter screen", (-0.92, 0.43, 0.0), (0.92, 0.47, 1.10), lacquer, bevel=0.004),
+             cube("counter ledge", (-0.95, 0.35, 1.10), (0.95, 0.62, 1.13), oak, bevel=0.004)]
     g = bpy.data.objects.new("@counter", None)
     sc.collection.objects.link(g)
     for o in parts:
@@ -746,7 +751,50 @@ def grime(objs, amount, band=None, axes=("X", "Y")):
             slot.material = m
 
 
-BUILT = {"@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@usb_hub": lambda: usb_hub(),
+def visitor_badges():
+    """Three visitor badges on lanyards, lying fanned out: a white card with a coloured
+    band and the word VISITOR, a ribbon loop."""
+    out = []
+    band_m = principled("badge band", (0.0, 0.25, 0.6), 0.4)
+    card_m = principled("badge card", (0.94, 0.94, 0.92), 0.3, coat=0.4)
+    rib_m = principled("lanyard", (0.0, 0.18, 0.45), 0.7)
+    for k in range(3):
+        g_ = bpy.data.objects.new(f"badge {k}", None)
+        sc.collection.objects.link(g_)
+        card = cube(f"badge card {k}", (-0.027, -0.043, 0.0), (0.027, 0.043, 0.0012), card_m, 0.0008)
+        band = cube(f"badge band {k}", (-0.027, 0.025, 0.0012), (0.027, 0.040, 0.0016), band_m, 0.0003)
+        rib = cube(f"lanyard {k}", (-0.006, 0.043, 0.0), (0.006, 0.20, 0.0008), rib_m, 0.0003)
+        for o in (card, band, rib):
+            o.parent = g_
+            out.append(o)
+        g_.location = (k * 0.018, k * 0.012, k * 0.0014)
+        g_.rotation_euler.z = math.radians(-12 + k * 14)
+    g = bpy.data.objects.new("@badges", None)
+    sc.collection.objects.link(g)
+    for o in out:
+        if o.parent.parent is None:
+            o.parent.parent = g
+    return g, out
+
+
+def card_holder():
+    """A business-card holder: a dark acrylic stand with a stack of white cards in it."""
+    acr = principled("card holder", (0.02, 0.02, 0.022), 0.15, coat=0.6)
+    card_m = principled("business cards", (0.95, 0.95, 0.93), 0.6)
+    parts = [cube("card holder base", (-0.05, -0.022, 0.0), (0.05, 0.022, 0.006), acr, 0.001),
+             cube("card holder back", (-0.05, 0.016, 0.0), (0.05, 0.022, 0.040), acr, 0.001)]
+    cards = cube("business cards", (-0.045, -0.012, 0.006), (0.045, 0.012, 0.036), card_m, 0.0005)
+    cards.rotation_euler.x = math.radians(-15)
+    parts.append(cards)
+    g = bpy.data.objects.new("@card_holder", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(),
+         "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
          "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
@@ -1423,6 +1471,9 @@ if S.get("desk_spots"):                            # faint marks of use: a few s
 lo, hi = box(desk_objs)
 desk.location += mathutils.Vector((-(lo.x + hi.x) / 2, -(lo.y + hi.y) / 2, -lo.z))
 dlo, dhi = box(desk_objs)
+if S["desk"] == "@counter":                      # the worktop, not the ledge above it, is what things stand on
+    tlo, thi = box([o for o in desk_objs if o.name.startswith("counter top")])
+    dhi = mathutils.Vector((dhi.x, thi.y, thi.z))
 top = dhi.z
 
 kb_y = dlo.y + S["kb_from_front"]                 # the keyboard's centre on the desk

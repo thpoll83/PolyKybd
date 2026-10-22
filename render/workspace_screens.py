@@ -449,6 +449,82 @@ def mail():
     return taskbar(full, APPS, 1)
 
 
+def reception_full():
+    """A visitor-management app at 3840 x 2104: today's visitors as a table (time, name,
+    company, host, badge, status), the rooms' day plan beside it."""
+    W4, H4 = 3840, 2104
+    im = Image.new("RGB", (W4, H4), (246, 247, 250))
+    d = ImageDraw.Draw(im)
+    teal = (0, 120, 130)
+    d.rectangle((0, 0, W4, 64), fill=teal)
+    d.text((30, 14), "Front Desk  -  Visitors", font=font(BOLD, 30), fill=(255, 255, 255))
+    for k, t in enumerate(["Today", "Upcoming", "Deliveries", "Rooms", "Reports"]):
+        d.text((900 + k * 230, 18), t, font=font(BOLD if k == 0 else SANS, 26), fill=(230, 245, 246))
+    d.rounded_rectangle((30, 100, 330, 160), 10, fill=teal)
+    d.text((62, 114), "+ Sign in visitor", font=font(BOLD, 24), fill=(255, 255, 255))
+    cols = [("Time", 140), ("Visitor", 330), ("Company", 300), ("Host", 260), ("Badge", 130), ("Status", 220)]
+    x0, y0, rh = 30, 200, 64
+    xs = [x0]
+    for _, w_ in cols:
+        xs.append(xs[-1] + w_)
+    d.rectangle((x0, y0, xs[-1], y0 + rh), fill=(226, 236, 238))
+    for i, (t, _) in enumerate(cols):
+        d.text((xs[i] + 14, y0 + 18), t, font=font(BOLD, 24), fill=(40, 44, 56))
+    rows = [("08:30", "J. Meyer", "Courier", "Reception", "-", "Left"), ("09:00", "S. Patel", "Brightline", "Anna Weber", "V-104", "In"),
+            ("09:15", "L. Novak", "Northwind", "Marco Rossi", "V-105", "In"), ("09:30", "Delivery", "Office supplies", "Facilities", "-", "Left"),
+            ("10:00", "K. Ito", "Studio Ko", "Lena Hofmann", "V-106", "Waiting"), ("10:30", "M. Garcia", "Garcia & Co", "Anna Weber", "", "Expected"),
+            ("11:00", "Interview", "", "HR", "", "Expected"), ("12:00", "Courier pick-up", "", "Reception", "", "Expected"),
+            ("13:00", "T. Berg", "City Council", "Jonas K.", "", "Expected"), ("14:00", "Site tour (6)", "Partner school", "Facilities", "", "Expected"),
+            ("15:30", "R. Okafor", "Brightline", "Marco Rossi", "", "Expected"), ("16:00", "Window cleaning", "CleanCo", "Facilities", "", "Expected")]
+    stc = {"In": (40, 150, 80), "Left": (130, 134, 146), "Waiting": (220, 140, 30), "Expected": (60, 110, 200)}
+    for r, row in enumerate(rows):
+        y = y0 + (r + 1) * rh
+        if r == 4:
+            d.rectangle((x0, y, xs[-1], y + rh), fill=(255, 244, 222))
+        d.line((x0, y + rh, xs[-1], y + rh), fill=(222, 225, 232), width=2)
+        for i, t in enumerate(row):
+            if i == 5:
+                d.rounded_rectangle((xs[i] + 10, y + 12, xs[i] + 160, y + 52), 18, fill=stc[t])
+                d.text((xs[i] + 30, y + 18), t, font=font(BOLD, 22), fill=(255, 255, 255))
+            else:
+                d.text((xs[i] + 14, y + 18), t, font=font(SANS, 24), fill=(40, 44, 56))
+    plan_ = calendar().resize((3840 - xs[-1] - 90, int((3840 - xs[-1] - 90) * 1440 / 2560)), Image.LANCZOS)
+    im.paste(plan_, (xs[-1] + 50, 100))
+    d.text((x0, y0 + 14 * rh), "Deliveries today: 3   ·   Badges out: 3   ·   Parking: 2 of 6 free", font=font(SANS, 26), fill=(80, 86, 100))
+    return im
+
+
+def badge_dialog():
+    """A small dialog: print a visitor badge, a badge preview, two buttons."""
+    im = Image.new("RGB", (900, 620), (250, 250, 252))
+    d = ImageDraw.Draw(im)
+    d.text((40, 30), "Print visitor badge", font=font(BOLD, 34), fill=(30, 34, 46))
+    d.rounded_rectangle((40, 100, 400, 520), 16, fill=(255, 255, 255), outline=(200, 204, 212), width=3)
+    d.rectangle((40, 100, 400, 170), fill=(0, 64, 160))
+    d.text((120, 116), "VISITOR", font=font(BOLD, 36), fill=(255, 255, 255))
+    d.text((70, 220), "Kenji Ito", font=font(BOLD, 34), fill=(30, 34, 46))
+    d.text((70, 270), "Studio Ko", font=font(SANS, 28), fill=(90, 94, 106))
+    d.text((70, 330), "Host: Lena Hofmann", font=font(SANS, 24), fill=(90, 94, 106))
+    d.text((70, 370), "V-106   22 Oct", font=font(SANS, 24), fill=(90, 94, 106))
+    for k, (t, prim) in enumerate((("Print", True), ("Cancel", False))):
+        d.rounded_rectangle((460, 400 + k * 90, 840, 470 + k * 90), 12, fill=(0, 120, 130) if prim else (232, 234, 240))
+        d.text((600, 414 + k * 90), t, font=font(BOLD if prim else SANS, 30), fill=(255, 255, 255) if prim else (40, 44, 56))
+    d.text((460, 120), "Printer: Badge-01", font=font(SANS, 24), fill=(90, 94, 106))
+    d.text((460, 160), "Paper: 54 x 86 mm", font=font(SANS, 24), fill=(90, 94, 106))
+    return im
+
+
+def reception():
+    """The front desk's screen: the visitor app, a badge dialog and a chat window over it,
+    a notification, the desktop panel."""
+    full = Image.new("RGB", (3840, 2160))
+    full.paste(reception_full(), (0, 0))
+    window(full, badge_dialog(), 600, 1180, 900, "Print badge", accent=(0, 120, 130))
+    window(full, chat(), 2560, 1240, 1100, "Chat - #budget-2026", accent=(50, 48, 76))
+    toast(full, 3150, 90, "Visitor arrived", "K. Ito for Lena Hofmann")
+    return taskbar(full, APPS, 3)
+
+
 def plan():
     im = Image.new("RGB", (W, H), (236, 238, 242))
     d = ImageDraw.Draw(im)
@@ -1162,7 +1238,7 @@ def clock_face():
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_sheet.jpg", sheet), ("screen_mail.jpg", mail), ("screen_plan.jpg", plan),
+    for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_sheet.jpg", sheet), ("screen_reception.jpg", reception), ("screen_mail.jpg", mail), ("screen_plan.jpg", plan),
                      ("screen_design.jpg", design), ("screen_game.jpg", game), ("ruler.jpg", ruler),
                      ("poster_road.jpg", poster), ("cork.jpg", cork), ("paper_layout.jpg", worn(highlighted(paper_layout, [((70, 585, 430, 642), "green")]), 7)),
                      ("paper_sprint.jpg", worn(highlighted(paper_sprint, [((150, 454, 520, 512), "yellow"), ((150, 814, 470, 872), "pink")]), 3)), ("paper_chart.jpg", worn(paper_chart, 13)),
