@@ -145,17 +145,25 @@ def mouse(spec):
     shaped by its own (unit) coordinates, its hump leaning left towards the thumb, in
     spec["color"] (default graphite). Dark seams split the two buttons from each other
     and from the palm rest; a rubber wheel 3 mm proud of the shell; two thumb buttons
-    on the left flank; dark grips on both flanks; on a felt pad if pad."""
+    on the left flank; dark grips on both flanks; on a felt pad if pad.
+    spec["shape"] = "ambi": a slim symmetric office mouse instead, 108 x 60 mm, 34 mm high,
+    its hump in the middle, no thumb buttons."""
     shell = principled("mouse shell", spec.get("color", (0.03, 0.03, 0.032)), spec.get("rough", 0.45), coat=spec.get("coat", 0.2))
     shell.node_tree.nodes["Principled BSDF"].inputs["Specular IOR Level"].default_value = spec.get("specular", 0.5)
     rubber = principled("mouse wheel", (0.01, 0.01, 0.01), 0.7)
     seam_m = principled("mouse seam", (0.004, 0.004, 0.005), 0.8)
     side_m = principled("mouse side", spec.get("side", (0.02, 0.02, 0.022)), 0.5, coat=0.3)
     felt = principled("mouse pad", (0.025, 0.026, 0.03), 0.9)
-    L, Wd, Hh = 0.059, 0.033, 0.040               # half length, half width, height
+    ambi = spec.get("shape") == "ambi"
+    L, Wd, Hh = (0.054, 0.030, 0.034) if ambi else (0.059, 0.033, 0.040)   # half length, half width, height
 
     def surface(ux, uy, uz):
         """Unit sphere point (z cut at -0.25) to the mouse: +y is the front."""
+        if ambi:                                  # the hump a little behind the middle, the sides straight
+            h = Hh * (1 - 0.40 * max(0.0, uy) ** 1.6) * (1 - 0.22 * max(0.0, -uy - 0.35))
+            w = Wd * (1 - 0.07 * uy) * (1 - 0.05 * math.exp(-((uy + 0.05) / 0.35) ** 2))
+            z = (uz + 0.25) / 1.25
+            return ux * w, uy * L, z * h
         h = Hh * (1 - 0.48 * max(0.0, uy) ** 1.3) * (1 - 0.18 * max(0.0, -uy - 0.3))   # hump at the back, low buttons
         w = Wd * (1 - 0.10 * uy) * (1 + 0.06 * ux) * (1 - 0.08 * math.exp(-((uy - 0.05) / 0.3) ** 2))  # a waist
         z = (uz + 0.25) / 1.25
@@ -187,7 +195,8 @@ def mouse(spec):
     ax.operation = "ABSOLUTE"
     nt2.links.new(xyz.outputs["X"], ax.inputs[0])
     mx, mz = nt2.nodes.new("ShaderNodeMapRange"), nt2.nodes.new("ShaderNodeMapRange")
-    for m_, (a0, a1, src) in ((mx, (0.0235, 0.0255, ax.outputs[0])), (mz, (0.019, 0.017, xyz.outputs["Z"]))):
+    gx0, gz0 = (Wd - 0.0085, 0.015) if ambi else (0.0235, 0.019)
+    for m_, (a0, a1, src) in ((mx, (gx0, gx0 + 0.002, ax.outputs[0])), (mz, (gz0, gz0 - 0.002, xyz.outputs["Z"]))):
         m_.interpolation_type = "SMOOTHSTEP"
         m_.inputs["From Min"].default_value, m_.inputs["From Max"].default_value = a0, a1
         nt2.links.new(src, m_.inputs["Value"])
@@ -236,7 +245,7 @@ def mouse(spec):
     wheel.location = (on_top(0.0, uy).x, wy, wz + 0.003 - r)
     wheel.data.materials.append(rubber)
     thumbs = []
-    for k, (y0, y1) in enumerate(((-0.004, 0.012), (0.015, 0.030))):  # thumb buttons on the left flank
+    for k, (y0, y1) in enumerate(() if ambi else ((-0.004, 0.012), (0.015, 0.030))):  # thumb buttons, left flank
         x, _, z = surface(-0.97, 0.0, math.sqrt(1 - 0.97 ** 2))
         o = cube(f"mouse thumb button {k}", (x - 0.0012, y0, 0.017), (x + 0.002, y1, 0.0205), side_m, 0.0012)
         thumbs.append(o)
@@ -1193,6 +1202,23 @@ def hung(name, sh, px, y, pz):
         return out
     if sh.get("pin"):
         out.append(pin(name + " pin", px, y - 0.0003, pz, sh["pin"]))
+    if sh.get("tape"):                             # on lacquer, not cork: a strip of clear tape over each top corner
+        tm = bpy.data.materials.get("tape") or principled("tape", (0.92, 0.90, 0.82), 0.35)
+        tm.node_tree.nodes["Principled BSDF"].inputs["Alpha"].default_value = 0.45
+        a_ = math.radians(sh.get("rot", 0.0))
+        for k, sx in enumerate((-1, 1)):
+            cx_, cz_ = sx * w / 2, 0.012                # the corner, from the pin point
+            tw, th_, ta = 0.032, 0.012, a_ + math.radians(-35 * sx)
+            ox = px + cx_ * math.cos(a_) - cz_ * math.sin(a_)
+            oz = pz + cx_ * math.sin(a_) + cz_ * math.cos(a_)
+            vs = [(ox + u * math.cos(ta) - v * math.sin(ta), y - 0.0009, oz + u * math.sin(ta) + v * math.cos(ta))
+                  for u, v in ((-tw / 2, -th_ / 2), (tw / 2, -th_ / 2), (tw / 2, th_ / 2), (-tw / 2, th_ / 2))]
+            me = bpy.data.meshes.new(f"{name} tape {k}")
+            me.from_pydata(vs, [], [(0, 1, 2, 3)])
+            me.materials.append(tm)
+            to = bpy.data.objects.new(f"{name} tape {k}", me)
+            sc.collection.objects.link(to)
+            out.append(to)
     return out
 
 
@@ -1574,7 +1600,10 @@ def desk_cable(name, start, d0, x_exit, y_front, y_edge, z_desk, r, mat, v_scale
         zg = z_desk + ground(p.x + off.x, p.y + off.y)
         pts.append((p.x + off.x, p.y + off.y, zg + r + (start.z - zg - r) * (1 - (3 * kk * kk - 2 * kk ** 3))))
     o = bridge_cable._tube(name, pts, [r] * len(pts), mat, ring=16, v_scale=v_scale)
-    over_edge(name + " drop", x_exit, y_edge, z_desk, z_desk, r, mat, v_scale)
+    if GROMMET:
+        into_hole(name + " drop", mathutils.Vector(pts[-1]), mathutils.Vector((0, 1, 0)), r, mat)
+    else:
+        over_edge(name + " drop", x_exit, y_edge, z_desk, z_desk, r, mat, v_scale)
     return o
 
 
@@ -1589,6 +1618,54 @@ def over_edge(name, x, y_edge, z_desk, drop, r, mat, v_scale=None):
     for i in range(1, 9):
         pts.append((x, y_edge + 0.012 + 0.002 * i, z_desk + r - 0.012 - (drop - 0.02) * i / 8))
     return bridge_cable._tube(name, pts, [r] * len(pts), mat, ring=16, v_scale=v_scale)
+
+
+def grommet(x, y, z_top, r, cut):
+    """A cable grommet: a hole of radius r through the desk top at (x, y), cut into the
+    objects in cut, lined by a black plastic sleeve 30 mm deep with a 7 mm lip lying on
+    the top, and a dark floor in the sleeve so nothing under the top shows through."""
+    import bmesh
+    blk = principled("grommet", (0.012, 0.012, 0.013), 0.55)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=r, depth=0.2, location=(x, y, z_top))
+    hole = bpy.context.active_object
+    for o in cut:
+        bo = o.modifiers.new("grommet hole", "BOOLEAN")
+        bo.operation, bo.object = "DIFFERENCE", hole
+    hole.hide_render = hole.hide_viewport = True
+    me = bpy.data.meshes.new("grommet")
+    n = 64
+    loops = [(r + 0.007, 0.0), (r + 0.006, 0.0018), (r + 0.001, 0.0022), (r, 0.0012), (r, -0.03)]
+    verts = [(x + rr * math.cos(2 * math.pi * i / n), y + rr * math.sin(2 * math.pi * i / n), z_top + dz)
+             for rr, dz in loops for i in range(n)]
+    faces = [(j * n + i, j * n + (i + 1) % n, (j + 1) * n + (i + 1) % n, (j + 1) * n + i)
+             for j in range(len(loops) - 1) for i in range(n)]
+    verts.append((x, y, z_top - 0.029))
+    faces += [(len(loops) * n - n + i, len(verts) - 1, len(loops) * n - n + (i + 1) % n) for i in range(n)]
+    me.from_pydata(verts, [], faces)
+    bm_ = bmesh.new(); bm_.from_mesh(me)
+    bmesh.ops.recalc_face_normals(bm_, faces=bm_.faces[:])
+    bm_.to_mesh(me); bm_.free()
+    for pl in me.polygons:
+        pl.use_smooth = True
+    me.materials.append(blk)
+    o = bpy.data.objects.new("grommet", me)
+    sc.collection.objects.link(o)
+    return o
+
+
+def into_hole(name, p, d, r, mat, depth=0.06):
+    """A cable lying on the desk at p (its centre r above the top), heading d (in plan),
+    turning down into a hole over 12 mm and going straight down depth m."""
+    CABLE_DROPS.append(p.x)
+    d = mathutils.Vector((d.x, d.y, 0)).normalized()
+    pts = [tuple(p)]
+    for i in range(1, 13):
+        a = math.pi / 2 * i / 12
+        q = p + d * (0.012 * math.sin(a)) - mathutils.Vector((0, 0, 0.012 * (1 - math.cos(a))))
+        pts.append(tuple(q))
+    for i in range(1, 9):
+        pts.append(tuple(p + d * 0.012 - mathutils.Vector((0, 0, 0.012 + depth * i / 8))))
+    return bridge_cable._tube(name, pts, [r] * len(pts), mat, ring=16)
 
 
 # ---- the keyboard onto the desk top, the props around it ----------------------
@@ -1611,6 +1688,17 @@ kb.location = (0.0, kb_y, top + mat_t)
 bpy.context.view_layer.update()
 if S.get("wall"):            # the desk against a wall, 40 mm behind its back edge (built after the keyboard
     wall(S["wall"], dhi.y + 0.04, (dlo.x + dhi.x) / 2, top)   # group took the loose objects)
+if S.get("room"):                                  # a plain bright room instead: a matte floor and, room["wall_y"] m
+    R_ = S["room"]                                 # behind the desk, a wall with a skirting, both off-white
+    floor.is_shadow_catcher = False
+    floor.scale = (40, 40, 1)
+    floor.data.materials.clear()
+    floor.data.materials.append(principled("room floor", R_.get("floor", (0.72, 0.71, 0.69)), 0.6))
+    wy_ = R_.get("wall_y", 3.5)
+    cube("room wall", (-8, wy_, 0), (8, wy_ + 0.1, 4.0), principled("room wall", R_.get("wall", (0.82, 0.82, 0.80)), 0.9), 0.0)
+    cube("room skirting", (-8, wy_ - 0.015, 0), (8, wy_, 0.08), principled("room skirting", R_.get("wall", (0.82, 0.82, 0.80)), 0.5), 0.0)
+for it in S.get("screen_items", []):              # the counter's raised screen, the staff side: papers taped on
+    wall_item(it, dhi.y, top)
 mouse_g = None
 if S.get("mouse"):
     mouse_g, objs = mouse(dict(S["mouse"], pad=S["mouse"].get("pad", not S.get("desk_mat"))))
@@ -1628,16 +1716,23 @@ dir_k = (mw.to_3x3() @ da_l).normalized()
 starts = [start_k.x]
 wired = (S.get("mouse") or {}).get("wired")
 if wired:
-    nose = mouse_g.matrix_world @ mathutils.Vector((0, 0.0575, 0.006))
+    nose = mouse_g.matrix_world @ mathutils.Vector((0, 0.053 if S["mouse"].get("shape") == "ambi" else 0.0575, 0.006))
     starts.append(nose.x)
 x_exit = cable_exit(avoid, starts)
 y_front = (min(y0 for _, _, y0, _ in avoid) - 0.02) if avoid else start_k.y + 0.12
 ye = dhi.y - 0.004
+GROMMET = None
 if x_exit is None:
     xk, xm = start_k.x - 0.10, (nose.x + 0.06 if wired else 0.0)
 else:
     side = 1 if (wired and nose.x > start_k.x) else -1     # the mouse's cable on its own side of the pair
     xk, xm = x_exit - side * 0.026, x_exit + side * 0.026     # side by side, apart
+    if S.get("grommet"):                           # no gap behind the desk: the cables go down a hole near its back
+        G_ = S["grommet"]
+        GROMMET = (x_exit + G_.get("dx", 0.0), dhi.y - G_.get("inset", 0.07), G_.get("r", 0.03))
+        grommet(*GROMMET[:2], top, GROMMET[2], [o for o in desk_objs if o.type == "MESH" and abs(box([o])[1].z - top) < 1e-4])
+        xk, xm = GROMMET[0] + 0.004 - side * 0.008, GROMMET[0] + 0.004 + side * 0.008
+        ye = GROMMET[1] - 0.008                    # over_edge's turn then drops them 4 mm past the centre
 host = desk_cable("host cable", start_k, dir_k, xk, y_front, ye, top, bridge_cable.CABLE_R / 1000,
                   bridge_cable._braid_material(), v_scale=bridge_cable.BRAID_MM / 1000)
 host["pk_host"] = True
@@ -1796,6 +1891,17 @@ def monitor_cables(spec):
             for i in range(40):
                 t = i / 39
                 pts.append((1 - t) ** 3 * p0 + 3 * (1 - t) ** 2 * t * c1 + 3 * (1 - t) * t ** 2 * c2 + t ** 3 * land)
+            if GROMMET:                            # sideways along the back to the hole, in from its left
+                gx_, gy_, gr_ = GROMMET
+                d_ = 1 if gx_ > land.x else -1
+                e_ = mathutils.Vector((gx_ - d_ * (gr_ * 0.53 + 0.012), gy_ + 0.008 * (k - 0.5) * 2, land.z))
+                q1, q2 = land + mathutils.Vector((0, 0.03, 0)), e_ - mathutils.Vector((d_ * 0.08, 0, 0))
+                pts += [(1 - t) ** 3 * land + 3 * (1 - t) ** 2 * t * q1 + 3 * (1 - t) * t ** 2 * q2 + t ** 3 * e_
+                        for t in (i / 40 for i in range(1, 41))]
+                bridge_cable._tube(f"monitor cable {n}", [tuple(p) for p in pts], [r] * len(pts), mat, ring=14)
+                into_hole(f"monitor cable {n} drop", pts[-1], mathutils.Vector((d_, 0, 0)), r, mat)
+                n += 1
+                continue
             m = max(2, int((ye - 0.01 - land.y) / 0.01))
             pts += [mathutils.Vector((land.x + 0.004 * math.sin(i * 0.7 + k), land.y + (ye - 0.01 - land.y) * i / m, land.z))
                     for i in range(1, m + 1)]

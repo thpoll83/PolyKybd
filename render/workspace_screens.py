@@ -803,6 +803,87 @@ def paper_month():
     return im
 
 
+def paper_rota():
+    """A4 landscape, the front desk's rota for the week: three shifts a day, a
+    colour per person, one shift swapped by hand."""
+    im = Image.new("RGB", (1414, 1000), PAPER)
+    d = ImageDraw.Draw(im)
+    d.text((60, 50), "Front desk rota", font=font(BOLD, 60), fill=INK)
+    d.text((60, 130), "Week 43  -  20 to 24 October", font=font(SANS, 34), fill=(110, 110, 120))
+    who = {"Anna": (150, 200, 240), "Marco": (250, 200, 120), "Lea": (170, 220, 150), "Jonas": (240, 170, 190)}
+    plan = [["Anna", "Anna", "Marco", "Anna", "Lea"], ["Marco", "Lea", "Lea", "Jonas", "Marco"],
+            ["Jonas", "Jonas", "Anna", "Marco", "Jonas"]]
+    x0, y0, cw, ch = 300, 230, 210, 200
+    for c, day in enumerate(["Mon", "Tue", "Wed", "Thu", "Fri"]):
+        d.text((x0 + c * cw + 70, y0), day, font=font(BOLD, 36), fill=INK)
+    for r, shift in enumerate(["7:30 - 12:00", "12:00 - 16:30", "16:30 - 19:00"]):
+        y = y0 + 70 + r * ch
+        d.text((60, y + 75), shift, font=font(SANS, 34), fill=INK)
+        for c in range(5):
+            x = x0 + c * cw
+            d.rectangle((x + 6, y + 6, x + cw - 6, y + ch - 6), fill=who[plan[r][c]])
+            d.text((x + 30, y + 75), plan[r][c], font=font(SANS, 38), fill=INK)
+    x, y = x0 + 3 * cw, y0 + 70 + 2 * ch               # Thu evening: Marco crossed out, Lea written in
+    d.line((x + 26, y + 98, x + 140, y + 98), fill=(200, 30, 30), width=6)
+    layer = Image.new("RGBA", (200, 90), (0, 0, 0, 0))
+    ImageDraw.Draw(layer).text((4, 0), "Lea!", font=hand(64, 650), fill=(200, 30, 30, 240))
+    layer = layer.rotate(-5, resample=Image.BICUBIC)
+    im.paste(layer, (x + 60, y + 112), layer)
+    return im
+
+
+def paper_phone():
+    """A5 portrait: the internal phone list."""
+    im = Image.new("RGB", (700, 1000), (252, 252, 250))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 700, 120), fill=(40, 90, 150))
+    d.text((40, 32), "Extensions", font=font(BOLD, 52), fill=(255, 255, 255))
+    rows = [("Reception", "100"), ("IT helpdesk", "214"), ("Facilities", "230"), ("HR", "305"),
+            ("Accounts", "410"), ("Meeting rm 1", "501"), ("Meeting rm 2", "502"), ("Security", "999")]
+    for i, (n, e) in enumerate(rows):
+        y = 170 + i * 92
+        d.text((40, y), n, font=font(SANS, 38), fill=INK)
+        d.text((560, y), e, font=font(BOLD, 38), fill=INK)
+        d.line((40, y + 68, 660, y + 68), fill=(210, 210, 215), width=2)
+    d.text((40, 920), "Emergency  112", font=font(BOLD, 40), fill=(200, 30, 30))
+    return im
+
+
+def paper_desk_month():
+    """A small tear-off month calendar: November, a bar on top, the 3rd circled."""
+    im = Image.new("RGB", (800, 760), (253, 252, 249))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 800, 150), fill=(190, 60, 50))
+    d.text((40, 30), "November 2026", font=font(BOLD, 64), fill=(255, 255, 255))
+    for i, n in enumerate("MTWTFSS"):
+        d.text((60 + i * 102, 180), n, font=font(BOLD, 34), fill=(120, 120, 130) if i < 5 else (190, 60, 50))
+    day = 1
+    for r in range(6):
+        for c in range(7):
+            if (r == 0 and c < 6) or day > 30:
+                continue
+            x, y = 50 + c * 102, 240 + r * 84
+            d.text((x + 10, y), str(day), font=font(SANS, 38), fill=INK if c < 5 else (190, 60, 50))
+            if day == 3:
+                d.ellipse((x - 4, y - 8, x + 74, y + 56), outline=(30, 50, 140), width=4)
+            day += 1
+    return im
+
+
+def paper_wifi():
+    """A guest Wi-Fi card, the password partly handwritten over a printed blank."""
+    im = Image.new("RGB", (900, 560), (252, 252, 250))
+    d = ImageDraw.Draw(im)
+    d.text((50, 40), "Guest Wi-Fi", font=font(BOLD, 64), fill=INK)
+    d.text((50, 170), "Network", font=font(SANS, 36), fill=(120, 120, 130))
+    d.text((300, 162), "Visitors", font=font(BOLD, 46), fill=INK)
+    d.text((50, 280), "Password", font=font(SANS, 36), fill=(120, 120, 130))
+    d.line((300, 350, 820, 350), fill=(180, 180, 185), width=3)
+    d.text((310, 262), "welcome-2026", font=hand(70, 600), fill=(30, 50, 140))
+    d.text((50, 440), "Ask at the desk if it does not connect.", font=font(SANS, 30), fill=(120, 120, 130))
+    return im
+
+
 SCRIBBLES = [  # (day, text, ink, tilt deg): pen notes in the calendar's day boxes
     (6, "dentist\n9:30", (30, 50, 140), 4), (9, "demo!", (200, 30, 30), -6), (13, "PCB\norder", (30, 50, 140), 3),
     (16, "ship\nv1.8", (200, 30, 30), -4), (20, "Mia's\nbday", (40, 110, 60), 6), (23, "team\nlunch", (30, 50, 140), -3),
@@ -1252,7 +1333,10 @@ if __name__ == "__main__":
                      ("mat_topo.jpg", mat_topo), ("notepad_writing.png", notepad_writing), ("notepad_page.jpg", notepad_page),
                      ("wall_scuff.png", wall_scuff),
                      ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
-                     ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))))
+                     ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))),
+                     ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
+                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)),
+                     ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))
                      + tuple((f"cover_{i}.jpg", book_cover(i)) for i in range(len(BOOKS)))
