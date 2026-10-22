@@ -340,6 +340,70 @@ def black_desk():
     return g, parts
 
 
+def industrial_desk():
+    """An industrial desk, 1.8 x 0.85 m, top at 0.75 m: a 30 mm birch plywood top (the
+    Poly Haven plywood texture on its faces, its edges showing the plies as pale and
+    darker bands, 1.5 mm each), on a black powder-coated frame of 50 mm square steel
+    tube: four legs with levelling feet, a rail round under the top, a stretcher low at
+    the back. The top dented and spotted by use; the steel rubbed."""
+    import bmesh
+    if S.get("desk_wood"):
+        face = wall_texture(dict(S["desk_wood"], axes="box"))
+        matte_material(face, 0.5)
+    else:
+        face = wood("plywood face", (0.62, 0.50, 0.34), 0.55, grain=30.0)
+    dent_material(face, S.get("desk_dents", 0.1))
+    edge = bpy.data.materials.new("plywood edge")
+    edge.use_nodes = True
+    en = edge.node_tree
+    eb = en.nodes["Principled BSDF"]
+    eb.inputs["Roughness"].default_value = 0.7
+    tc = en.nodes.new("ShaderNodeTexCoord")
+    sep = en.nodes.new("ShaderNodeSeparateXYZ")
+    en.links.new(tc.outputs["Object"], sep.inputs[0])
+    mul = en.nodes.new("ShaderNodeMath"); mul.operation = "MULTIPLY"; mul.inputs[1].default_value = 1 / 0.003
+    en.links.new(sep.outputs["Z"], mul.inputs[0])
+    fr = en.nodes.new("ShaderNodeMath"); fr.operation = "FRACT"
+    en.links.new(mul.outputs[0], fr.inputs[0])
+    st = en.nodes.new("ShaderNodeMath"); st.operation = "GREATER_THAN"; st.inputs[1].default_value = 0.5
+    en.links.new(fr.outputs[0], st.inputs[0])
+    mix = en.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"
+    mix.inputs[6].default_value = (0.70, 0.58, 0.40, 1)    # birch ply
+    mix.inputs[7].default_value = (0.42, 0.31, 0.19, 1)    # the darker veneer between
+    en.links.new(st.outputs[0], mix.inputs["Factor"])
+    en.links.new(mix.outputs[2], eb.inputs["Base Color"])
+    top = cube("desk top", (-0.9, -0.425, 0.72), (0.9, 0.425, 0.75), face, 0.0015)
+    top.data.materials.append(edge)
+    for pl in top.data.polygons:                   # the four sides show the plies
+        if abs(pl.normal.z) < 0.5:
+            pl.material_index = 1
+    steel = principled("desk frame steel", (0.035, 0.036, 0.04), 0.5)
+    steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.6
+    foot_m = principled("desk feet", (0.01, 0.01, 0.01), 0.7)
+    parts = [top]
+    t, xl, yl = 0.05, 0.84, 0.37
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            x, y = sx * xl, sy * yl
+            parts.append(cube("desk leg", (x - t / 2, y - t / 2, 0.015), (x + t / 2, y + t / 2, 0.72), steel, 0.004))
+            bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.02, depth=0.015, location=(x, y, 0.0075))
+            fo = bpy.context.active_object
+            fo.name = "desk foot"
+            fo.data.materials.append(foot_m)
+            parts.append(fo)
+    for sy in (-1, 1):                             # the rails under the top
+        parts.append(cube("desk rail", (-xl, sy * yl - t / 2, 0.66), (xl, sy * yl + t / 2, 0.71), steel, 0.004))
+    for sx in (-1, 1):
+        parts.append(cube("desk rail", (sx * xl - t / 2, -yl, 0.66), (sx * xl + t / 2, yl, 0.71), steel, 0.004))
+    parts.append(cube("desk stretcher", (-xl, yl - t / 2, 0.12), (xl, yl + t / 2, 0.17), steel, 0.004))
+    spots(parts[1:], 0.3, scale=140, lo=0.68, tint=(0.14, 0.14, 0.15), mode="MIX", detail=4.0)   # rubbed steel
+    g = bpy.data.objects.new("@industrial_desk", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
 def desk_mat(spec):
     """An extended desk mat under keyboard and mouse, 3 mm thick, in spec["color"] at
     spec["rough"] (felt 0.9, leather about 0.45) or printed with spec["image"], with a light strip around its edge
@@ -1755,6 +1819,8 @@ if S["desk"] == "@counter":
     desk, desk_objs = counter()
 elif S["desk"] == "@black_desk":
     desk, desk_objs = black_desk()
+elif S["desk"] == "@industrial_desk":
+    desk, desk_objs = industrial_desk()
 else:
     desk, desk_objs = gltf(S["desk"])
     lo, hi = box(desk_objs)
@@ -1766,7 +1832,7 @@ else:
         desk.scale.x = S["desk_width"] / (hi.x - lo.x)
 if S.get("desk_color"):                            # (r, g, b, f): blend the desk's colours f towards rgb
     tint(desk_objs, S["desk_color"][:3], "MIX", S["desk_color"][3])
-if S.get("desk_matte") or S.get("desk_dents"):     # a varnished model made matte, and dented by use
+if (S.get("desk_matte") or S.get("desk_dents")) and not S["desk"].startswith("@"):   # a varnished model made matte, dented
     for o in desk_objs:
         for slot in (o.material_slots if o.type == "MESH" else []):
             if slot.material is None:
@@ -2092,8 +2158,9 @@ for aid, part, x, y, turn, height, flat, *more in S["props"]:
         y = back_rel - y
     on_mat = mat_rect and mat_rect[0] < x < mat_rect[1] and mat_rect[2] < kb_y + y < mat_rect[3]
     floor_z = extra.get("z", 0.0) if extra.get("floor") else None     # floor=True: it stands on the floor
+    # (0.4 mm above the top otherwise: a sheet with no thickness exactly on it is coplanar, and the top shadows it black)
     place(g, objs, (x, kb_y + y), turn, height, flat,
-          base_z=floor_z if floor_z is not None else top + (mat_t if on_mat else 0.0) + extra.get("z", 0.0),
+          base_z=floor_z if floor_z is not None else top + (mat_t if on_mat else 0.0) + extra.get("z", 0.0) + 0.0004,
           origin=extra.get("origin", False))
     if extra.get("page"):                          # (image, width, depth, curl m): its top page, peeling up
         img_, pw, pd, curl = extra["page"]           # at the bottom (near) edge

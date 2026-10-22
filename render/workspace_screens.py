@@ -826,6 +826,59 @@ def mat_cutting():
     return im
 
 
+def mat_blue():
+    """A blue drafting / cutting mat, 3600 x 1440 px (4 px a mm on 900 x 360 mm): a
+    white-grey 10 mm grid with every fifth line heavier, mm ticks and numbers along the
+    bottom, two circle templates (concentric rings, 10 mm apart), and in the middle a
+    golden-section figure in thin gold lines: the golden rectangles nested to the
+    spiral that joins them."""
+    import math as _m
+    W_, H_ = 3600, 1440
+    im = Image.new("RGB", (W_, H_), (30, 70, 132))
+    d = ImageDraw.Draw(im)
+    for k in range(0, W_ // 40 + 1):
+        x = k * 40
+        d.line((x, 0, x, H_), fill=(120, 146, 186) if k % 5 else (206, 212, 222), width=2 if k % 5 else 4)
+    for k in range(0, H_ // 40 + 1):
+        y = k * 40
+        d.line((0, y, W_, y), fill=(120, 146, 186) if k % 5 else (206, 212, 222), width=2 if k % 5 else 4)
+    for x in range(0, W_, 4):
+        d.line((x, H_ - (28 if x % 40 == 0 else 14), x, H_), fill=(226, 230, 238), width=1)
+    for k in range(0, W_ // 40, 5):
+        d.text((k * 40 + 6, H_ - 70), str(k), font=font(SANS, 30), fill=(226, 230, 238))
+    for cx, cy, n in ((360, 360, 6), (3280, 1000, 5)):           # circle templates
+        for k in range(1, n + 1):
+            r = k * 40
+            d.ellipse((cx - r, cy - r, cx + r, cy + r), outline=(222, 226, 234), width=3)
+        d.line((cx - n * 40 - 30, cy, cx + n * 40 + 30, cy), fill=(222, 226, 234), width=2)
+        d.line((cx, cy - n * 40 - 30, cx, cy + n * 40 + 30), fill=(222, 226, 234), width=2)
+    gold = (214, 178, 86)                                         # the golden section, centred
+    phi = (1 + 5 ** 0.5) / 2
+    gw = 1600
+    x0, y0 = (W_ - gw) / 2, (H_ - gw / phi) / 2
+    x, y, w, h = x0, y0, gw, gw / phi
+    d.rectangle((x, y, x + w, y + h), outline=gold, width=4)
+    for k in range(9):                                            # cut a square off, turning each time
+        side = min(w, h)
+        q = k % 4
+        if q == 0:
+            sq = (x, y, x + side, y + side); arc_c, a0 = (x + side, y + side), 180
+            x, w = x + side, w - side
+        elif q == 1:
+            sq = (x, y, x + side, y + side); arc_c, a0 = (x, y + side), 270
+            y, h = y + side, h - side
+        elif q == 2:
+            sq = (x + w - side, y, x + w, y + side); arc_c, a0 = (x + w - side, y), 0
+            w = w - side
+        else:
+            sq = (x, y + h - side, x + side, y + h); arc_c, a0 = (x + side, y + h - side), 90
+            h = h - side
+        d.rectangle(sq, outline=gold, width=3)
+        cxa, cya = arc_c
+        d.arc((cxa - side, cya - side, cxa + side, cya + side), a0, a0 + 90, fill=gold, width=5)
+    return im
+
+
 def paper_elevation():
     """A3 landscape: the south elevation, line drawing: ground line, two volumes, window
     grid, entrance, levels on the right, a title."""
@@ -1759,7 +1812,7 @@ if __name__ == "__main__":
                      ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
                      ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))),
                      ("art_arches.jpg", art_arches), ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
-                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("screen_plan2.jpg", plan2), ("mat_cutting.jpg", mat_cutting), ("photo_building.jpg", photo_building),
+                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("screen_plan2.jpg", plan2), ("mat_cutting.jpg", mat_cutting), ("mat_blue.jpg", mat_blue), ("photo_building.jpg", photo_building),
                      ("paper_elevation.jpg", worn(highlighted(paper_elevation, [((60, 860, 640, 912), "yellow")]), 37)),
                      ("paper_section.jpg", worn(paper_section, 41)), ("paper_site.jpg", worn(paper_site, 43, 0.8)), ("nfc_pad.jpg", nfc_pad),
                      ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])))
