@@ -963,7 +963,52 @@ def card_reader():
     return g, parts
 
 
-BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(),
+def nfc_reader():
+    """A contactless card reader for visitors, 86 x 96 mm: one dark grey wedge, 12 mm
+    high at the front (-y) and 34 mm at the back, its sloping top printed with the
+    contactless mark and a row of four status lights (nfc_pad.jpg, the first one lit),
+    an access card laid on it, a little askew. Its cable leaves at the back
+    (g["pk_cable_at"])."""
+    body_m = principled("nfc reader", (0.035, 0.037, 0.041), 0.45, coat=0.2)
+    card_m = principled("access card", (0.10, 0.34, 0.62), 0.35, coat=0.3)
+    zf, zb, d2 = 0.012, 0.034, 0.048
+    body = cube("nfc reader", (-0.043, -d2, 0.0), (0.043, d2, zf), body_m, 0.0035)
+    for v in body.data.vertices:                   # the top's back edge raised: a wedge
+        if v.co.z > zf / 2 and v.co.y > 0:
+            v.co.z = zb
+    ang = math.atan2(zb - zf, 2 * d2)
+    tilt = bpy.data.objects.new("nfc reader slope", None)   # a frame lying on the slope, from its front edge
+    sc.collection.objects.link(tilt)
+    tilt.location = (0, -d2, zf)
+    tilt.rotation_euler.x = ang
+    L_ = 2 * d2 / math.cos(ang)
+    me = bpy.data.meshes.new("nfc pad print")
+    vs = [(-0.038, 0.006, 0.0003), (0.038, 0.006, 0.0003), (0.038, L_ - 0.006, 0.0003), (-0.038, L_ - 0.006, 0.0003)]
+    me.from_pydata(vs, [], [(0, 1, 2, 3)])
+    lay = me.uv_layers.new(name="uv")
+    for li, uv in zip(me.polygons[0].loop_indices, [(0, 0), (1, 0), (1, 1), (0, 1)]):
+        lay.data[li].uv = uv
+    pm = image_material("nfc pad print", "nfc_pad.jpg", rough=0.35)
+    pmb = pm.node_tree.nodes["Principled BSDF"]    # the lights glow: the print's colour emits, faintly
+    tx_ = next(n for n in pm.node_tree.nodes if n.bl_idname == "ShaderNodeTexImage")
+    pm.node_tree.links.new(tx_.outputs["Color"], pmb.inputs["Emission Color"])
+    pmb.inputs["Emission Strength"].default_value = 0.35
+    me.materials.append(pm)
+    pr = bpy.data.objects.new("nfc pad print", me)
+    sc.collection.objects.link(pr)
+    card = cube("access card", (-0.0271, 0.020, 0.0004), (0.0271, 0.0856, 0.0012), card_m, 0.0012)
+    card.rotation_euler.z = math.radians(9)
+    for o in (pr, card):
+        o.parent = tilt
+    g = bpy.data.objects.new("@nfc_reader", None)
+    sc.collection.objects.link(g)
+    tilt.parent = g
+    body.parent = g
+    g["pk_cable_at"] = (0.0, d2 + 0.001, 0.006)
+    return g, [body, pr, card]
+
+
+BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(), "@nfc_reader": lambda: nfc_reader(),
          "@name_card": lambda: name_card(), "@card_reader": lambda: card_reader(),
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
@@ -2051,7 +2096,26 @@ for aid, part, x, y, turn, height, flat, *more in S["props"]:
         dec = uv_plane(f"decal {img_}", (-dw / 2, -dd / 2), (dw / 2, dd / 2), 0.0, dm)
         dec.location = ((lo3.x + hi3.x) / 2, (lo3.y + hi3.y) / 2, hi3.z + 0.0003)
         dec.rotation_euler.z = math.radians(turn)
-    if extra.get("cable") and extra["cable"].get("grommet") and GROMMET:   # loose across the desk and down the hole
+    if extra.get("cable") and extra["cable"].get("ledge_hole"):   # into its own small hole behind it (a ledge's)
+        st = g.matrix_world @ mathutils.Vector(g["pk_cable_at"])
+        bk = (g.matrix_world.to_3x3() @ mathutils.Vector((0, 1, 0))).normalized()
+        bk.z = 0
+        bk.normalize()
+        r_ = extra["cable"].get("r", 0.0018)
+        hy = extra["cable"]["ledge_hole"]          # the hole's y in the world, over the screen panel
+        z_l = top + extra.get("z", 0.0)
+        k_ = (hy - st.y) / bk.y
+        hc = mathutils.Vector((st.x + bk.x * k_, hy, z_l))
+        ledge_o = [o for o in desk_objs if o.name.startswith("counter ledge")]
+        grommet(hc.x, hc.y, z_l, extra["cable"].get("hole_r", 0.011), ledge_o)
+        cm_ = principled(f"{aid} cable", extra["cable"].get("color", (0.02, 0.02, 0.022)), 0.5)
+        p0 = mathutils.Vector((st.x, st.y, z_l + r_))
+        e_ = hc - bk * 0.012 + mathutils.Vector((0, 0, r_))
+        pts = [st] + [p0.lerp(e_, i / 12) for i in range(1, 13)]
+        pts[1].z = (st.z + p0.z) / 2
+        bridge_cable._tube(f"{aid} cable", [tuple(p_) for p_ in pts], [r_] * len(pts), cm_, ring=14)
+        into_hole(f"{aid} cable drop", pts[-1], bk, r_, cm_)
+    elif extra.get("cable") and extra["cable"].get("grommet") and GROMMET:   # loose across the desk and down the hole
         st = g.matrix_world @ mathutils.Vector(g["pk_cable_at"])
         bk = (g.matrix_world.to_3x3() @ mathutils.Vector((0, 1, 0))).normalized()
         gx_, gy_, gr_ = GROMMET
@@ -2196,6 +2260,10 @@ for i, G in enumerate(S.get("glints", [])):     # a light only reflections see: 
     m5 = gn.new("ShaderNodeMath"); m5.operation = "MULTIPLY"; m5.inputs[1].default_value = G.get("strength", 6.0) * 2
     gm.node_tree.links.new(m4.outputs[0], m5.inputs[0])
     gm.node_tree.links.new(m5.outputs[0], em.inputs["Strength"])
+    if G.get("flat"):                              # a window pane behind the camera: even, not a fading streak
+        for l_ in list(em.inputs["Strength"].links):
+            gm.node_tree.links.remove(l_)
+        em.inputs["Strength"].default_value = G.get("strength", 1.0)
     gm.node_tree.links.new(em.outputs[0], gn["Material Output"].inputs["Surface"])
     gme = bpy.data.meshes.new(f"glint {i}")
     cx_, cy_, cz_ = G["at"][0], kb_y + G["at"][1], top + G["at"][2]

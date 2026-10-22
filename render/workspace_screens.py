@@ -612,7 +612,6 @@ def reception2():
     full.paste(parcels_full(), (0, 0))
     window(full, mail_full().resize((1920, 1080), Image.LANCZOS), 70, 1020, 1280, "Mail - Inbox", accent=(0, 95, 184))
     window(full, rooms(), 2300, 980, 1000, "Rooms", accent=(0, 120, 130))
-    window(full, softphone(), 1500, 900, 640, "Phone", accent=(32, 36, 44))
     screen_note(full, 3360, 1500, (250, 230, 110), ["UPS for Anna", "-> shelf B1", "call her!"], -3)
     toast(full, 3150, 90, "Courier at the door", "DHL Express, 3 boxes to collect")
     return taskbar(full, APPS, 5)
@@ -970,6 +969,21 @@ def name_card():
     d.rectangle((0, 0, 40, 400), fill=(0, 120, 130))
     d.text((110, 70), "Lea Brandt", font=font(BOLD, 120), fill=INK)
     d.text((114, 250), "Reception  ·  Empfang", font=font(SANS, 56), fill=(0, 120, 130))
+    return im
+
+
+def nfc_pad():
+    """The print on a contactless reader's pad: dark grey, the contactless mark (four
+    arcs) in light grey, four status lights along the bottom edge, the first one lit."""
+    im = Image.new("RGB", (760, 880), (22, 23, 26))
+    d = ImageDraw.Draw(im)
+    cx, cy = 330, 400
+    for k in range(4):                             # the arcs, opening to the right
+        r = 70 + k * 70
+        d.arc((cx - r, cy - r, cx + r, cy + r), -50, 50, fill=(205, 208, 214), width=34)
+    for k in range(4):
+        x = 230 + k * 100
+        d.ellipse((x - 18, 790 - 18, x + 18, 790 + 18), fill=(70, 255, 120) if k == 0 else (60, 62, 68))
     return im
 
 
@@ -1456,7 +1470,7 @@ if __name__ == "__main__":
                      ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
                      ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))),
                      ("art_arches.jpg", art_arches), ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
-                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card),
+                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("nfc_pad.jpg", nfc_pad),
                      ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))

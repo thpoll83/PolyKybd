@@ -133,7 +133,8 @@ SCENES = {
                ("office_notepads", "office_notepads_sticky_stack", -0.33, -0.10, -12, None, False, dict(grime=0.4, wear=[dict(spots=0.3, scale=12, lo=0.6, tint=(0.85, 0.80, 0.70))])),
                ("@badges", None, 0.52, -0.04, 10, None, False, dict(wear=[dict(spots=0.3, scale=20, lo=0.6), dict(edges=0.4)])),
                ("@name_card", None, -0.55, 0.655, 4, None, False, dict(z=0.37, on=True)),     # on the ledge top
-               ("@card_reader", None, 0.24, 0.15, -12, None, False, dict(cable=dict(grommet=True, dx=0.018, r=0.0017),
+               ("@nfc_reader", None, 0.42, 0.705, 186, None, False, dict(z=0.37, on=True,   # on the ledge, for visitors
+                cable=dict(ledge_hole=0.355, r=0.0017),
                 wear=[dict(spots=0.3, scale=90, lo=0.66, tint=(0.25, 0.25, 0.26), mode="MIX", detail=4.0)])),
                ("@mug", None, 0.56, 0.10, 40, None, False, dict(wear=[dict(band=("Z", 0.90, 1.0), amount=0.2),   # a coffee
                    dict(spots=0.6, scale=45, lo=0.60, tint=(0.68, 0.52, 0.38), detail=4.0)]))],                       # ring, drips
@@ -147,7 +148,9 @@ SCENES = {
         mouse=dict(x=0.34, y=0.0, turn=-4, wired=True, shape="ambi", color=(0.62, 0.63, 0.65), side=(0.05, 0.05, 0.055),
                    rough=0.4, coat=0.3,
                    wear=[dict(band=("Y", 0.0, 0.5), amount=0.15), dict(spots=0.25, scale=110, lo=0.68, tint=(0.70, 0.68, 0.64), detail=4.0)]),
-        glints=[dict(at=(0.25, -2.5, 0.75), size=(1.0, 0.07), strength=4.0, color=(1.0, 0.88, 0.70))],
+        glints=[dict(at=(0.25, -2.5, 0.75), size=(1.0, 0.07), strength=4.0, color=(1.0, 0.88, 0.70))]
+               + [dict(at=(-0.85 + 0.45 * k, -2.2, 0.58), size=(0.40, 0.85), strength=3.5, color=(0.92, 0.96, 1.0), flat=True)
+                  for k in range(3)],     # a window behind the camera, three panes, where the screen's reflected rays go
         camera=dict(distance=2.5, elev=13, azim=8, lens=52, fstop=8.0, aim_y=0.16, aim_z=0.22)),
     "planning": dict(
         hdri="studio_country_hall", hdri_turn=60, hdri_strength=1.0,
