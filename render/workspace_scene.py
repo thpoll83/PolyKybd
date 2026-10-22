@@ -136,6 +136,37 @@ def counter():
              cube("counter top", (-0.92, -0.43, 0.73), (0.92, 0.43, 0.76), oak, bevel=0.004),
              cube("counter screen", (-0.92, 0.43, 0.0), (0.92, 0.47, 1.10), lacquer, bevel=0.004),
              cube("counter ledge", (-0.95, 0.35, 1.10), (0.95, 0.62, 1.13), oak, bevel=0.004)]
+    if S.get("counter_glass"):                    # a glass panel over the screen's white face, from the worktop
+        G_ = S["counter_glass"]                    # up to the ledge: 8 mm float glass, its iron content green,
+        t_, yf = G_.get("t", 0.008), 0.43          # strongest through its edges; a silicone bead along its foot
+        glass = bpy.data.materials.new("counter glass")
+        glass.use_nodes = True
+        gn = glass.node_tree.nodes
+        gb = gn["Principled BSDF"]
+        gb.inputs["Base Color"].default_value = (*G_.get("tint", (0.90, 0.97, 0.93)), 1)
+        gb.inputs["Transmission Weight"].default_value = 1.0
+        gb.inputs["Roughness"].default_value = 0.0
+        gb.inputs["IOR"].default_value = 1.52
+        ab = gn.new("ShaderNodeVolumeAbsorption")  # the green builds up with the path length in the glass
+        ab.inputs["Color"].default_value = (*G_.get("edge", (0.55, 0.82, 0.68)), 1)
+        ab.inputs["Density"].default_value = G_.get("density", 18.0)
+        glass.node_tree.links.new(ab.outputs[0], gn["Material Output"].inputs["Volume"])
+        gl_ = cube("counter glass", (-0.92, yf - t_, 0.76), (0.92, yf, 1.098), glass, 0.0012)
+        for p_ in gl_.data.polygons:               # flat: smooth normals on a slab refract like a lens
+            p_.use_smooth = False
+        gl_.modifiers["bevel"].harden_normals = True
+        gl_.visible_shadow = False                 # no caustics: as a shadow caster it would leave the face grey
+        parts.append(gl_)
+        sil = principled("counter silicone", (0.80, 0.81, 0.80), 0.3)
+        sil.node_tree.nodes["Principled BSDF"].inputs["Transmission Weight"].default_value = 0.4
+        bpy.ops.mesh.primitive_cylinder_add(vertices=16, radius=0.0035, depth=1.84,
+                                            location=(0, yf - t_, 0.76), rotation=(0, math.pi / 2, 0))
+        bead = bpy.context.active_object
+        bead.name = "counter silicone"
+        bead.data.materials.append(sil)
+        for p_ in bead.data.polygons:
+            p_.use_smooth = True
+        parts.append(bead)
     g = bpy.data.objects.new("@counter", None)
     sc.collection.objects.link(g)
     for o in parts:
@@ -1801,7 +1832,7 @@ if S.get("room"):                                  # a plain bright room instead
     for it in R_.get("items", []):                 # on the wall: x from the desk's centre, z from the floor
         wall_item(it, wy_, 0.0)
 for it in S.get("screen_items", []):              # the counter's raised screen, the staff side: papers taped on
-    wall_item(it, dhi.y, top)
+    wall_item(it, dhi.y - (S["counter_glass"].get("t", 0.008) if S.get("counter_glass") else 0.0), top)   # (its glass)
 mouse_g = None
 if S.get("mouse"):
     mouse_g, objs = mouse(dict(S["mouse"], pad=S["mouse"].get("pad", not S.get("desk_mat"))))

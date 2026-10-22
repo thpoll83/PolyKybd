@@ -114,6 +114,7 @@ SCENES = {
                 dict(at=(-0.1, -1.5, 1.5), size=(1.2, 0.3), energy=70, color=(1.0, 0.86, 0.66))],
         desk="@counter", desk_height=None, desk_spots=0.5,
         counter_wood=dict(id="oak_veneer_01", tile=1.83, tint=(0.80, 0.74, 0.68), bump=0.5),
+        counter_glass=dict(t=0.008, density=1.2, tint=(0.955, 1.0, 0.99), edge=(0.66, 0.98, 0.92)),
         kb_from_front=0.26,
         grommet=dict(r=0.03, inset=0.07),
         screen_items=[
@@ -136,7 +137,7 @@ SCENES = {
         desk_mat=dict(w=0.80, d=0.34, x=0.06, y=0.0, color=(0.10, 0.06, 0.04), rough=0.55, coat=0.1,
                       wear=[dict(spots=0.5, scale=4, lo=0.5, tint=(0.78, 0.74, 0.70)), dict(edges=0.5),
                             dict(spots=0.3, scale=3, lo=0.55, tint=(0.17, 0.12, 0.09), mode="MIX")]),
-        monitor=dict(style="stand", y=0.40, x=-0.02, inches=27, finish="black", screen="screen_reception.jpg", glow=1.4,
+        monitor=dict(style="stand", y=0.40, x=-0.02, inches=27, finish="black", screen="screen_reception2.jpg", glow=1.4,
                      wear=[dict(spots=0.5, scale=140, lo=0.65, tint=(0.14, 0.14, 0.14), mode="MIX", detail=4.0)],
                      screen_rough=0.06, cables=True,
                      notes=[(0.38, "sticky_yellow.jpg", 3, 0.051), (-0.30, "sticky_blue.jpg", -2, 0.038)]),
