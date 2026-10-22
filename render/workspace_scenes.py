@@ -109,7 +109,7 @@ SCENES = {
                   items=[dict(kind="frame", img="art_arches.jpg", x=-1.45, z=1.22, w=0.90, border=0.03),
                          dict(kind="clock", x=-0.55, z=1.27, r=0.12)]),
         look="AgX - Punchy", sun=dict(**{"from": (-0.8, 0.6, 0.7)}, strength=3.0, angle=1.5),
-        post=dict(vignette=0.32, glare=0.12, sat=0.95),
+        post=dict(vignette=0.32, glare=0.05, glare_threshold=1.5, sat=0.95, sharpen=0.05), filter_width=1.0,
         lights=[dict(at=(0.0, 0.0, 1.5), size=(1.2, 0.6), energy=45, color=(1.0, 0.82, 0.58)),
                 dict(at=(-0.1, -1.5, 1.5), size=(1.2, 0.3), energy=70, color=(1.0, 0.86, 0.66))],
         desk="@counter", desk_height=None, desk_spots=0.5,
@@ -151,7 +151,7 @@ SCENES = {
         glints=[dict(at=(0.25, -2.5, 0.75), size=(1.0, 0.07), strength=4.0, color=(1.0, 0.88, 0.70))]
                + [dict(at=(-0.85 + 0.45 * k, -2.2, 0.58), size=(0.40, 0.85), strength=3.5, color=(0.92, 0.96, 1.0), flat=True)
                   for k in range(3)],     # a window behind the camera, three panes, where the screen's reflected rays go
-        camera=dict(distance=2.5, elev=13, azim=8, lens=52, fstop=8.0, aim_y=0.16, aim_z=0.22)),
+        camera=dict(distance=2.5, elev=13, azim=8, lens=52, fstop=11.0, aim_y=0.16, aim_z=0.22)),
     "planning": dict(
         hdri="studio_country_hall", hdri_turn=60, hdri_strength=1.0,
         desk="WoodenTable_01", desk_height=0.75, desk_depth=0.90,

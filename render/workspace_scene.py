@@ -2372,9 +2372,15 @@ if S.get("post") and not RAW:                     # the lens: a vignette, a soft
     last = rl.outputs["Image"]
     if po.get("glare"):
         gl = ct.nodes.new("CompositorNodeGlare")
-        gl.glare_type, gl.quality, gl.threshold, gl.mix = "FOG_GLOW", "HIGH", 1.0, -1 + po["glare"]
+        gl.glare_type, gl.quality, gl.threshold, gl.mix = "FOG_GLOW", "HIGH", po.get("glare_threshold", 1.0), -1 + po["glare"]
         ct.links.new(last, gl.inputs["Image"])
         last = gl.outputs["Image"]
+    if po.get("sharpen"):                         # a light sharpen: the denoiser and the pixel filter soften fine print
+        sh_ = ct.nodes.new("CompositorNodeFilter")
+        sh_.filter_type = "SHARPEN"
+        sh_.inputs["Fac"].default_value = po["sharpen"]
+        ct.links.new(last, sh_.inputs["Image"])
+        last = sh_.outputs["Image"]
     if po.get("vignette"):
         el = ct.nodes.new("CompositorNodeEllipseMask")
         el.width, el.height = 0.95, 0.95
@@ -2397,6 +2403,7 @@ if S.get("post") and not RAW:                     # the lens: a vignette, a soft
         last = hs.outputs["Image"]
     ct.links.new(last, comp.inputs["Image"])
 sc.cycles.samples = SAMPLES
+sc.cycles.filter_width = S.get("filter_width", 1.5)   # the pixel filter, px: 1.5 is Blender's default, softer
 sc.render.resolution_x, sc.render.resolution_y = WIDTH, int(round(WIDTH * 9 / 16 / 2)) * 2
 sc.render.resolution_percentage = 100
 sc.render.image_settings.file_format = "PNG"
