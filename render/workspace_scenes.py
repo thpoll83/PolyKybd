@@ -47,7 +47,7 @@ SCENES = {
     "office": dict(
         hdri="poly_haven_studio", hdri_turn=0, hdri_strength=0.55, exposure=0.25,
         look="AgX - Punchy", sun=dict(**{"from": (-1.0, -0.3, 0.6)}, strength=4.0, angle=1.5),
-        post=dict(vignette=0.35, glare=0.15, sat=0.95),
+        post=dict(vignette=0.35, glare=0.06, glare_threshold=1.5, sat=0.95, sharpen=0.05), filter_width=1.0,
         desk="metal_office_desk", desk_height=None, desk_color=(0.88, 0.88, 0.86, 0.75), desk_spots=0.6,
         kb_from_front=0.26,                       # m from the desk's front edge to the keyboard's centre
         props=[("planter_pot_clay", None, -0.90, 0.30, 0, 0.14, False),
