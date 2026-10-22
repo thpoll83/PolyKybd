@@ -617,6 +617,295 @@ def reception2():
     return taskbar(full, APPS, 5)
 
 
+def cad_full(W4=5040, H4=2160):
+    """An architect's CAD app on a 34-inch 21:9 panel (5040 x 2160, so a circle stays a
+    circle): menu and ribbon, a tool strip, the ground floor of a small office building
+    on a grid (walls, doors with their swings, windows, furniture, dimension chains, room
+    labels with areas, a north arrow, a title block), the layers and properties panels,
+    a command line and layout tabs at the bottom."""
+    im = Image.new("RGB", (W4, H4), (250, 250, 248))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, W4, 56), fill=(44, 50, 62))
+    d.text((24, 12), "File   Edit   View   Insert   Draw   Modify   Dimension   Layers   Window   Help",
+           font=font(SANS, 26), fill=(222, 226, 234))
+    d.text((W4 - 760, 12), "Office_Hafenstrasse_GF.dwg", font=font(BOLD, 26), fill=(222, 226, 234))
+    d.rectangle((0, 56, W4, 150), fill=(238, 240, 244))                       # the ribbon
+    for k, t in enumerate(["Line", "Polyline", "Wall", "Door", "Window", "Stair", "Hatch", "Dimension", "Text", "Block", "Array"]):
+        x = 130 + k * 170
+        d.rounded_rectangle((x, 70, x + 56, 120), 8, outline=(150, 156, 170), width=2)
+        d.text((x - 6, 122), t, font=font(SANS, 20), fill=(70, 74, 86))
+    d.rectangle((0, 150, 90, H4 - 100), fill=(58, 64, 76))                   # tool strip
+    for i in range(16):
+        d.rounded_rectangle((18, 170 + i * 72, 72, 224 + i * 72), 8, outline=(150, 156, 170), width=2)
+    px0, px1 = 90, W4 - 820                                                  # the drawing area
+    for gx in range(px0, px1, 60):                                           # the grid
+        d.line((gx, 150, gx, H4 - 100), fill=(236, 238, 242), width=1)
+    for gy in range(150, H4 - 100, 60):
+        d.line((px0, gy, px1, gy), fill=(236, 238, 242), width=1)
+    s, ox, oy = 150, 360, 330                                                # px per metre, origin
+    wall, thin = (26, 26, 30), (60, 62, 70)
+
+    def X(x):
+        return ox + x * s
+
+    def Y(y):
+        return oy + y * s
+
+    def wl(x1, y1, x2, y2, t=0.30, col=wall):
+        d.rectangle((X(min(x1, x2)) - t * s / 2, Y(min(y1, y2)) - t * s / 2, X(max(x1, x2)) + t * s / 2, Y(max(y1, y2)) + t * s / 2), fill=col)
+    wl(0, 0, 22, 0); wl(0, 10, 22, 10); wl(0, 0, 0, 10); wl(22, 0, 22, 10)  # outer walls
+    for (x1, y1, x2, y2) in [(8, 0, 8, 6), (8, 6, 22, 6), (14, 0, 14, 6), (18, 6, 18, 10), (8, 8, 8, 10)]:
+        wl(x1, y1, x2, y2, 0.14, thin)
+    for x in (2.5, 5.5, 10, 12, 16, 19.5):                                   # windows in the outer walls
+        for y in (0, 10):
+            d.rectangle((X(x - 0.8), Y(y) - 0.15 * s, X(x + 0.8), Y(y) + 0.15 * s), fill=(255, 255, 255), outline=(60, 120, 200), width=3)
+            d.line((X(x - 0.8), Y(y), X(x + 0.8), Y(y)), fill=(60, 120, 200), width=2)
+    for (cx, cy, r, a0, a1, lx1, ly1, lx2, ly2) in [(8, 6.9, 0.9, 270, 360, 8, 6.9, 8.9, 6.9), (10.2, 6, 0.9, 180, 270, 10.2, 6, 10.2, 5.1),
+                                                    (15.2, 6, 0.9, 180, 270, 15.2, 6, 15.2, 5.1), (18, 7.1, 0.9, 0, 90, 18, 7.1, 18.9, 7.1)]:
+        d.arc((X(cx - r), Y(cy - r), X(cx + r), Y(cy + r)), a0, a1, fill=(60, 120, 200), width=3)   # door swings
+        d.line((X(lx1), Y(ly1), X(lx2), Y(ly2)), fill=(60, 120, 200), width=4)
+    furn = (110, 150, 90)
+    for i in range(3):                                                       # desks in the studio, two rows
+        for j in range(2):
+            x, y = 1.2 + i * 2.2, 1.4 + j * 2.6
+            d.rectangle((X(x), Y(y), X(x + 1.6), Y(y + 0.8)), outline=furn, width=3)
+            d.ellipse((X(x + 0.55), Y(y + 0.95), X(x + 1.05), Y(y + 1.45)), outline=furn, width=3)
+    d.ellipse((X(15.6), Y(7.0), X(17.4), Y(8.8)), outline=furn, width=3)     # meeting table and chairs
+    for k in range(6):
+        import math as _m
+        a_ = 2 * _m.pi * k / 6
+        cx, cy = 16.5 + 1.25 * _m.cos(a_), 7.9 + 1.25 * _m.sin(a_)
+        d.ellipse((X(cx - 0.25), Y(cy - 0.25), X(cx + 0.25), Y(cy + 0.25)), outline=furn, width=3)
+    for k in range(9):                                                       # the stair
+        d.rectangle((X(19 + k * 0.32), Y(6.4), X(19.32 + k * 0.32), Y(7.6)), outline=thin, width=2)
+    for x, y, name, area in [(4, 7.8, "Studio", "78.4 m²"), (11, 3, "Office 1", "33.6 m²"), (18, 3, "Office 2", "38.4 m²"),
+                             (13, 8.2, "Kitchen", "19.6 m²"), (16.5, 9.4, "Meeting", "")]:
+        d.text((X(x), Y(y)), name, font=font(BOLD, 34), fill=(40, 44, 56), anchor="mm")
+        if area:
+            d.text((X(x), Y(y) + 44), area, font=font(SANS, 28), fill=(90, 96, 110), anchor="mm")
+    dim = (200, 80, 50)                                                      # dimension chains
+    for (a_, b_) in [(0, 8), (8, 14), (14, 22)]:
+        y = Y(-1.0)
+        d.line((X(a_), y, X(b_), y), fill=dim, width=2)
+        for x in (a_, b_):
+            d.line((X(x), y - 14, X(x), y + 14), fill=dim, width=2)
+        d.text(((X(a_) + X(b_)) / 2, y - 26), f"{b_ - a_:.2f}", font=font(SANS, 26), fill=dim, anchor="mm")
+    y = X(-1.0)
+    d.line((y, Y(0), y, Y(10)), fill=dim, width=2)
+    d.text((y - 30, Y(5)), "10.00", font=font(SANS, 26), fill=dim, anchor="mm")
+    nx, ny = X(23.4), Y(1.0)                                                 # north arrow
+    d.polygon([(nx, ny - 60), (nx - 28, ny + 30), (nx, ny + 10), (nx + 28, ny + 30)], outline=(40, 44, 56), fill=(40, 44, 56))
+    d.text((nx, ny + 60), "N", font=font(BOLD, 34), fill=(40, 44, 56), anchor="mm")
+    tb = (px1 - 940, H4 - 420, px1 - 40, H4 - 130)                            # title block
+    d.rectangle(tb, outline=(40, 44, 56), width=3)
+    for k, (lbl, val) in enumerate([("Project", "Office Hafenstrasse 12"), ("Drawing", "Ground floor plan"),
+                                    ("Scale", "1:100"), ("Drawn", "L. Brandt   22.10.2026"), ("Rev", "C")]):
+        y = tb[1] + 18 + k * 54
+        d.text((tb[0] + 24, y), lbl, font=font(SANS, 24), fill=(110, 114, 126))
+        d.text((tb[0] + 220, y - 4), val, font=font(BOLD, 28), fill=(40, 44, 56))
+    d.rectangle((px1, 150, W4, H4 - 100), fill=(246, 247, 250))              # layers + properties
+    d.text((px1 + 30, 180), "Layers", font=font(BOLD, 32), fill=(40, 44, 56))
+    for i, (name, rgb) in enumerate([("A-WALL", (26, 26, 30)), ("A-WALL-INT", (60, 62, 70)), ("A-DOOR", (60, 120, 200)),
+                                      ("A-GLAZ", (60, 120, 200)), ("A-FURN", (110, 150, 90)), ("A-DIMS", (200, 80, 50)),
+                                      ("A-TEXT", (90, 90, 90)), ("A-GRID", (200, 200, 205))]):
+        y = 240 + i * 60
+        d.rectangle((px1 + 30, y, px1 + 62, y + 32), fill=rgb)
+        d.text((px1 + 84, y), name, font=font(SANS, 28), fill=(60, 64, 76))
+        d.ellipse((W4 - 90, y + 4, W4 - 66, y + 28), outline=(120, 124, 136), width=3)
+    d.text((px1 + 30, 760), "Properties", font=font(BOLD, 32), fill=(40, 44, 56))
+    for i, (k_, v_) in enumerate([("Type", "Wall, interior"), ("Thickness", "140 mm"), ("Height", "2.80 m"), ("Layer", "A-WALL-INT"),
+                                   ("Material", "Drywall"), ("Fire rating", "EI 30")]):
+        y = 820 + i * 56
+        d.text((px1 + 30, y), k_, font=font(SANS, 26), fill=(110, 114, 126))
+        d.text((px1 + 320, y), v_, font=font(SANS, 26), fill=(40, 44, 56))
+    d.rectangle((0, H4 - 100, W4, H4), fill=(236, 238, 242))                 # command line and tabs
+    d.text((24, H4 - 92), "Command: _WALL   Specify start point or [Thickness/Height]:", font=font(MONO, 26), fill=(40, 44, 56))
+    for k, t in enumerate(["Model", "GF plan", "1F plan", "Sections", "Elevations"]):
+        d.text((24 + k * 200, H4 - 48), t, font=font(BOLD if k == 1 else SANS, 24), fill=(60, 64, 76))
+    return im
+
+
+def view3d():
+    """A 3D view window: the building as a massing model, two boxes and a roof plane,
+    shaded, on a ground grid, with a view cube."""
+    im = Image.new("RGB", (1400, 1000), (214, 220, 228))
+    d = ImageDraw.Draw(im)
+    import math as _m
+    c, s_ = _m.cos(_m.radians(30)), _m.sin(_m.radians(30))
+
+    def P(x, y, z):                                         # isometric: x to the right-down, y left-down
+        return (470 + (x - y) * c * 26, 400 + (x + y) * s_ * 26 - z * 26)
+    for i in range(-6, 26, 2):                              # the ground grid
+        d.line((P(i, -6, 0), P(i, 18, 0)), fill=(196, 202, 212), width=1)
+        d.line((P(-6, i, 0), P(26, i, 0)), fill=(196, 202, 212), width=1)
+
+    def box(x0, y0, x1, y1, h, top, left, right):
+        d.polygon([P(x0, y1, 0), P(x1, y1, 0), P(x1, y1, h), P(x0, y1, h)], fill=left, outline=(60, 64, 76))
+        d.polygon([P(x1, y0, 0), P(x1, y1, 0), P(x1, y1, h), P(x1, y0, h)], fill=right, outline=(60, 64, 76))
+        d.polygon([P(x0, y0, h), P(x1, y0, h), P(x1, y1, h), P(x0, y1, h)], fill=top, outline=(60, 64, 76))
+        for k in range(1, int(x1 - x0), 2):                 # window bands on the left face
+            for z in range(1, int(h), 3):
+                d.polygon([P(x0 + k, y1, z), P(x0 + k + 1, y1, z), P(x0 + k + 1, y1, z + 1.6), P(x0 + k, y1, z + 1.6)],
+                          fill=(120, 150, 190))
+    box(0, 0, 22, 10, 6, (236, 236, 232), (196, 190, 180), (170, 164, 156))
+    box(12, 2, 22, 10, 9.5, (240, 240, 236), (206, 200, 190), (176, 170, 162))
+    d.rectangle((1240, 30, 1360, 150), fill=(240, 242, 246), outline=(120, 124, 136), width=2)
+    d.text((1300, 90), "TOP", font=font(BOLD, 26), fill=(80, 84, 96), anchor="mm")
+    d.text((30, 940), "Perspective  ·  Shaded  ·  Sun 14:00", font=font(SANS, 26), fill=(70, 74, 86))
+    return im
+
+
+def materials():
+    """A material library: a grid of swatches with their names."""
+    im = Image.new("RGB", (1000, 780), (255, 255, 255))
+    d = ImageDraw.Draw(im)
+    d.text((30, 24), "Materials", font=font(BOLD, 36), fill=(40, 44, 56))
+    sw = [("Oak, oiled", (176, 132, 84)), ("Concrete", (168, 166, 160)), ("Terrazzo", (214, 208, 196)), ("Brick", (164, 82, 60)),
+          ("Steel, black", (52, 54, 58)), ("Glass", (170, 200, 214)), ("Linoleum", (92, 118, 96)), ("Plaster", (236, 232, 222))]
+    for i, (n, rgb) in enumerate(sw):
+        x, y = 30 + (i % 4) * 240, 110 + (i // 4) * 320
+        d.rounded_rectangle((x, y, x + 210, y + 210), 12, fill=rgb, outline=(210, 212, 220), width=2)
+        d.text((x, y + 228), n, font=font(SANS, 26), fill=(60, 64, 76))
+    return im
+
+
+def plan2():
+    """The planning agency's ultrawide screen: the CAD plan, a 3D view and the material
+    library over it, a meeting reminder, an on-screen note, the desktop panel."""
+    full = cad_full()
+    window(full, view3d(), 2300, 1080, 1180, "3D view", accent=(44, 50, 62))
+    window(full, materials(), 1250, 1240, 860, "Material library", accent=(110, 150, 90))
+    toast(full, 3600, 180, "Site meeting in 30 min", "Hafenstrasse 12, with the client")
+    screen_note(full, 4420, 1330, (250, 230, 110), ["send plans", "to statics", "by Fri!"], 4)
+    return taskbar(full, APPS, 4)
+
+
+def photo_building():
+    """A framed photograph of glass office towers: a crop of the canary_wharf HDRI's
+    tonemapped JPG near its horizon, where the equirectangular projection barely bends,
+    on a white mount."""
+    import workspace_assets
+    Image.MAX_IMAGE_PIXELS = None
+    src = Image.open(workspace_assets.fetch_photo("canary_wharf"))
+    w, h = src.size
+    ph = src.crop((int(w * 0.555), int(h * 0.17), int(w * 0.735), int(h * 0.50)))
+    ph = ph.resize((1100, int(1100 * ph.height / ph.width)), Image.LANCZOS)
+    im = Image.new("RGB", (ph.width + 240, ph.height + 240), (246, 245, 240))
+    im.paste(ph, (120, 120))
+    return im
+
+
+def mat_cutting():
+    """A self-healing cutting mat's print, 3600 x 1440 px (4 px a mm on 900 x 360 mm):
+    dark green, a 10 mm grid with every fifth line heavier, mm ticks and numbers along
+    two edges, 45 and 60 deg guide lines from a corner, a few pale knife scores."""
+    import random
+    W_, H_ = 3600, 1440
+    im = Image.new("RGB", (W_, H_), (34, 82, 62))
+    d = ImageDraw.Draw(im)
+    for k in range(0, W_ // 40 + 1):
+        x = k * 40
+        d.line((x, 0, x, H_), fill=(110, 160, 132) if k % 5 else (190, 222, 200), width=2 if k % 5 else 4)
+    for k in range(0, H_ // 40 + 1):
+        y = k * 40
+        d.line((0, y, W_, y), fill=(110, 160, 132) if k % 5 else (190, 222, 200), width=2 if k % 5 else 4)
+    for x in range(0, W_, 4):                                  # mm ticks along the bottom edge
+        d.line((x, H_ - (28 if x % 40 == 0 else 14), x, H_), fill=(214, 236, 220), width=1)
+    for k in range(0, W_ // 40, 5):
+        d.text((k * 40 + 6, H_ - 70), str(k), font=font(SANS, 30), fill=(214, 236, 220))
+    import math as _m
+    for a_ in (45, 60):
+        t = _m.tan(_m.radians(a_))
+        d.line((0, H_, H_ / t, 0), fill=(230, 210, 120), width=3)
+    rnd = random.Random(9)
+    for _ in range(14):                                        # knife scores
+        x, y = rnd.randint(200, W_ - 200), rnd.randint(100, H_ - 100)
+        ln, ang = rnd.randint(120, 600), rnd.choice([0, 90, 0, 45])
+        dx, dy = ln * _m.cos(_m.radians(ang)), ln * _m.sin(_m.radians(ang))
+        d.line((x, y, x + dx, y + dy), fill=(70, 116, 94), width=2)
+    return im
+
+
+def paper_elevation():
+    """A3 landscape: the south elevation, line drawing: ground line, two volumes, window
+    grid, entrance, levels on the right, a title."""
+    im = Image.new("RGB", (1414, 1000), (252, 252, 250))
+    d = ImageDraw.Draw(im)
+    ink = (30, 32, 40)
+    gl = 760
+    d.line((60, gl, 1360, gl), fill=ink, width=5)
+    d.rectangle((140, gl - 300, 1000, gl), outline=ink, width=4)              # the low volume
+    d.rectangle((620, gl - 470, 1000, gl), outline=ink, width=4)              # the tall volume
+    for k in range(8):
+        for r in range(2):
+            x, y = 170 + k * 56, gl - 270 + r * 130
+            if x < 600 and not (r == 1 and 390 < x < 530):   # the entrance takes the lower row's middle
+                d.rectangle((x, y, x + 36, y + 90), outline=ink, width=2)
+    for k in range(6):
+        for r in range(4):
+            x, y = 650 + k * 58, gl - 440 + r * 108
+            d.rectangle((x, y, x + 36, y + 70), outline=ink, width=2)
+    d.rectangle((420, gl - 140, 520, gl), outline=ink, width=3)               # entrance
+    for k, (z, lbl) in enumerate([(0, "±0.00"), (300, "+3.00"), (470, "+9.50")]):
+        d.line((1040, gl - z, 1100, gl - z), fill=ink, width=2)
+        d.text((1110, gl - z - 16), lbl, font=font(SANS, 26), fill=ink)
+    d.text((60, 860), "South elevation   1:100", font=font(BOLD, 40), fill=ink)
+    d.text((60, 920), "Office Hafenstrasse 12  ·  Rev C", font=font(SANS, 28), fill=(110, 110, 120))
+    return im
+
+
+def paper_section():
+    """A4 landscape: section A-A: ground hatched, slabs, the stair, room heights."""
+    im = Image.new("RGB", (1414, 1000), (252, 252, 250))
+    d = ImageDraw.Draw(im)
+    ink = (30, 32, 40)
+    gl = 700
+    for x in range(60, 1360, 28):                                            # the ground, hatched
+        d.line((x, gl + 10, x + 40, gl + 70), fill=(150, 150, 156), width=2)
+    d.line((60, gl, 1360, gl), fill=ink, width=5)
+    for z in (0, 280, 560):                                                  # slabs
+        d.rectangle((160, gl - z - 22, 1200, gl - z), fill=ink)
+    d.rectangle((160, gl - 560, 182, gl), fill=ink); d.rectangle((1178, gl - 560, 1200, gl), fill=ink)
+    x, y = 760, gl                                                           # the stair
+    for k in range(10):
+        d.line((x, y, x, y - 28, x + 40, y - 28), fill=ink, width=3)
+        x, y = x + 40, y - 28
+    d.text((360, gl - 160), "Studio  h = 2.80", font=font(SANS, 30), fill=ink)
+    d.text((360, gl - 440), "Office  h = 2.80", font=font(SANS, 30), fill=ink)
+    d.text((60, 820), "Section A-A   1:100", font=font(BOLD, 40), fill=ink)
+    return im
+
+
+def paper_site():
+    """A4 portrait: the site plan: plot boundary dashed, the building hatched, trees,
+    the street, a north arrow."""
+    im = Image.new("RGB", (1000, 1414), (252, 252, 250))
+    d = ImageDraw.Draw(im)
+    ink = (30, 32, 40)
+    d.rectangle((0, 1060, 1000, 1240), fill=(222, 222, 220))                 # the street
+    d.text((40, 1130), "Hafenstrasse", font=font(BOLD, 36), fill=(110, 110, 120))
+    for x in range(120, 880, 40):                                            # plot boundary, dashed
+        d.line((x, 200, x + 22, 200), fill=ink, width=3); d.line((x, 1000, x + 22, 1000), fill=ink, width=3)
+    for y in range(200, 1000, 40):
+        d.line((120, y, 120, y + 22), fill=ink, width=3); d.line((880, y, 880, y + 22), fill=ink, width=3)
+    d.rectangle((260, 420, 760, 760), outline=ink, width=5)                  # the building, hatched
+    x0_, y0_, x1_, y1_ = 260, 420, 760, 760
+    for c_ in range(x0_ - y1_, x1_ - y0_, 22):          # 45 deg hatch, x - y = c_, clipped to the footprint
+        pts = sorted({(max(x0_, y0_ + c_), max(x0_, y0_ + c_) - c_), (min(x1_, y1_ + c_), min(x1_, y1_ + c_) - c_)})
+        (ax, ay), (bx, by) = pts[0], pts[-1]
+        if y0_ <= ay <= y1_ and y0_ <= by <= y1_:
+            d.line((ax, ay, bx, by), fill=(140, 140, 146), width=2)
+    import random as _r
+    rnd = _r.Random(5)
+    for k in range(9):                                                       # trees
+        x, y, r = rnd.randint(160, 840), rnd.choice([rnd.randint(240, 380), rnd.randint(800, 960)]), rnd.randint(30, 55)
+        d.ellipse((x - r, y - r, x + r, y + r), outline=(80, 130, 80), width=3)
+    d.polygon([(880, 80), (856, 150), (880, 132), (904, 150)], fill=ink)
+    d.text((880, 180), "N", font=font(BOLD, 34), fill=ink, anchor="mm")
+    d.text((40, 1300), "Site plan   1:500", font=font(BOLD, 40), fill=ink)
+    return im
+
+
 def plan():
     im = Image.new("RGB", (W, H), (236, 238, 242))
     d = ImageDraw.Draw(im)
@@ -1470,7 +1759,9 @@ if __name__ == "__main__":
                      ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
                      ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))),
                      ("art_arches.jpg", art_arches), ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
-                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("nfc_pad.jpg", nfc_pad),
+                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("screen_plan2.jpg", plan2), ("mat_cutting.jpg", mat_cutting), ("photo_building.jpg", photo_building),
+                     ("paper_elevation.jpg", worn(highlighted(paper_elevation, [((60, 860, 640, 912), "yellow")]), 37)),
+                     ("paper_section.jpg", worn(paper_section, 41)), ("paper_site.jpg", worn(paper_site, 43, 0.8)), ("nfc_pad.jpg", nfc_pad),
                      ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))

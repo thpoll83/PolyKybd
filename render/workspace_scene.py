@@ -134,18 +134,7 @@ def counter():
     front = lacquer
     if S.get("counter_dents"):                     # the body's lacquer, knocked by chairs and bags: soft shallow dents
         front = lacquer.copy()
-        ft = front.node_tree
-        tcd = ft.nodes.new("ShaderNodeTexCoord")
-        vo = ft.nodes.new("ShaderNodeTexVoronoi"); vo.feature = "SMOOTH_F1"
-        vo.inputs["Scale"].default_value = 14.0; vo.inputs["Smoothness"].default_value = 1.0
-        ft.links.new(tcd.outputs["Object"], vo.inputs["Vector"])
-        nz = ft.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 3.0
-        ft.links.new(tcd.outputs["Object"], nz.inputs["Vector"])
-        add = ft.nodes.new("ShaderNodeMath"); add.operation = "MULTIPLY_ADD"; add.inputs[1].default_value = 0.4
-        ft.links.new(vo.outputs["Distance"], add.inputs[0]); ft.links.new(nz.outputs["Fac"], add.inputs[2])
-        bm = ft.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = S["counter_dents"]
-        ft.links.new(add.outputs[0], bm.inputs["Height"])
-        ft.links.new(bm.outputs["Normal"], ft.nodes["Principled BSDF"].inputs["Normal"])
+        dent_material(front, S["counter_dents"])
     parts = [cube("counter body", (-0.9, -0.40, 0.08), (0.9, 0.42, 0.73), front),
              cube("counter plinth", (-0.88, -0.37, 0.0), (0.88, 0.40, 0.08), plinth),
              cube("counter top", (-0.92, -0.43, 0.73), (0.92, 0.43, 0.76), oak, bevel=0.004),
@@ -719,6 +708,48 @@ def white_pot(r_top=0.075, r_bot=0.058, h=0.13):
     sc.collection.objects.link(g)
     o.parent = g
     return g, [o]
+
+
+def dent_material(m, strength, scale=14.0):
+    """Soft shallow dents in m's bump: the smooth cells of a Voronoi (scale per m of the
+    object's own coordinates) with a long gentle noise over them. Any bump the material
+    already has stays under it."""
+    ft = m.node_tree
+    b = next((n for n in ft.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
+    if b is None:
+        return
+    tcd = ft.nodes.new("ShaderNodeTexCoord")
+    vo = ft.nodes.new("ShaderNodeTexVoronoi"); vo.feature = "SMOOTH_F1"
+    vo.inputs["Scale"].default_value = scale; vo.inputs["Smoothness"].default_value = 1.0
+    ft.links.new(tcd.outputs["Object"], vo.inputs["Vector"])
+    nz = ft.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = scale / 4.7
+    ft.links.new(tcd.outputs["Object"], nz.inputs["Vector"])
+    add = ft.nodes.new("ShaderNodeMath"); add.operation = "MULTIPLY_ADD"; add.inputs[1].default_value = 0.4
+    ft.links.new(vo.outputs["Distance"], add.inputs[0]); ft.links.new(nz.outputs["Fac"], add.inputs[2])
+    bm = ft.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = strength
+    ft.links.new(add.outputs[0], bm.inputs["Height"])
+    nin = b.inputs["Normal"]
+    if nin.is_linked:                              # the texture's own normal map under the dents
+        ft.links.new(nin.links[0].from_socket, bm.inputs["Normal"])
+    ft.links.new(bm.outputs["Normal"], nin)
+
+
+def matte_material(m, rough, specular=0.35):
+    """Less glossy: m's roughness raised to at least rough, its specular capped."""
+    nt2 = m.node_tree
+    b_ = next((n for n in nt2.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
+    if b_ is None:
+        return
+    inp = b_.inputs["Roughness"]
+    mx = nt2.nodes.new("ShaderNodeMath"); mx.operation = "MAXIMUM"; mx.inputs[1].default_value = rough
+    if inp.is_linked:
+        nt2.links.new(inp.links[0].from_socket, mx.inputs[0])
+    else:
+        mx.inputs[0].default_value = inp.default_value
+    nt2.links.new(mx.outputs[0], inp)
+    b_.inputs["Specular IOR Level"].default_value = min(b_.inputs["Specular IOR Level"].default_value, specular)
+    if "Coat Weight" in b_.inputs:
+        b_.inputs["Coat Weight"].default_value = min(b_.inputs["Coat Weight"].default_value, 0.1)
 
 
 def spots(objs, amount, scale=9.0, tint=(0.86, 0.83, 0.78), lo=0.60, mode="MULTIPLY", detail=2.0):
@@ -1735,6 +1766,16 @@ else:
         desk.scale.x = S["desk_width"] / (hi.x - lo.x)
 if S.get("desk_color"):                            # (r, g, b, f): blend the desk's colours f towards rgb
     tint(desk_objs, S["desk_color"][:3], "MIX", S["desk_color"][3])
+if S.get("desk_matte") or S.get("desk_dents"):     # a varnished model made matte, and dented by use
+    for o in desk_objs:
+        for slot in (o.material_slots if o.type == "MESH" else []):
+            if slot.material is None:
+                continue
+            slot.material = slot.material.copy()
+            if S.get("desk_matte"):
+                matte_material(slot.material, S["desk_matte"])
+            if S.get("desk_dents"):
+                dent_material(slot.material, S["desk_dents"], S.get("desk_dent_scale", 14.0))
 if S.get("desk_spots"):                            # faint marks of use: a few soft, slightly darker spots
     spots(desk_objs, S["desk_spots"])
 lo, hi = box(desk_objs)
@@ -2042,21 +2083,9 @@ for aid, part, x, y, turn, height, flat, *more in S["props"]:
     if extra.get("matte"):                         # less glossy: the roughness raised to at least this
         for o in objs:
             for slot in (o.material_slots if o.type == "MESH" else []):
-                if slot.material is None:
-                    continue
-                slot.material = slot.material.copy()
-                nt2 = slot.material.node_tree
-                b_ = next((n for n in nt2.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
-                if b_ is None:
-                    continue
-                inp = b_.inputs["Roughness"]
-                mx = nt2.nodes.new("ShaderNodeMath"); mx.operation = "MAXIMUM"; mx.inputs[1].default_value = extra["matte"]
-                if inp.is_linked:
-                    nt2.links.new(inp.links[0].from_socket, mx.inputs[0])
-                else:
-                    mx.inputs[0].default_value = inp.default_value
-                nt2.links.new(mx.outputs[0], inp)
-                b_.inputs["Specular IOR Level"].default_value = min(b_.inputs["Specular IOR Level"].default_value, 0.35)
+                if slot.material is not None:
+                    slot.material = slot.material.copy()
+                    matte_material(slot.material, extra["matte"])
     if extra.get("scale"):
         g.scale = [extra["scale"]] * 3
     if extra.get("at_back"):                         # y from the desk's back edge instead

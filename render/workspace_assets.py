@@ -89,7 +89,7 @@ def fetch_font(name):
     return path
 
 
-PHOTOS = ["bell_park_pier"]                                   # the office calendar's picture (workspace_screens.py)
+PHOTOS = ["bell_park_pier", "canary_wharf"]                                   # the office calendar's picture (workspace_screens.py)
 
 
 def main():
