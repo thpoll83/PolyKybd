@@ -125,8 +125,11 @@ def counter():
     reception desks have, a lacquer screen 0.34 m high with an oak transaction shelf on
     top, which hides the cables. Worn: the oak has dents, the lacquer a few spots."""
     lacquer = principled("counter lacquer", (0.80, 0.80, 0.78), 0.3, coat=0.3)
-    oak = wood("counter oak", (0.22, 0.12, 0.055), 0.62, grain=22.0)
-    oak.node_tree.nodes["Principled BSDF"].inputs["Specular IOR Level"].default_value = 0.3   # at 17 deg a glossier top mirrors the hall white
+    if S.get("counter_wood"):                     # a veneer texture, the grain along the counter
+        oak = wall_texture(dict(S["counter_wood"], axes=("Y", "X")))
+    else:
+        oak = wood("counter oak", (0.22, 0.12, 0.055), 0.62, grain=22.0)
+    oak.node_tree.nodes["Principled BSDF"].inputs["Specular IOR Level"].default_value = 0.3   # a glossier top mirrors the room
     plinth = principled("counter plinth", (0.05, 0.05, 0.05), 0.6)
     parts = [cube("counter body", (-0.9, -0.40, 0.08), (0.9, 0.42, 0.73), lacquer),
              cube("counter plinth", (-0.88, -0.37, 0.0), (0.88, 0.40, 0.08), plinth),
@@ -646,6 +649,32 @@ def pot_soil(r=0.074):
     return g, [o]
 
 
+def white_pot(r_top=0.075, r_bot=0.058, h=0.13):
+    """A plain matte white planter: a tapered cylinder with a 6 mm rim, the soil 12 mm
+    below it."""
+    import bmesh
+    glaze = principled("white pot", (0.80, 0.79, 0.76), 0.55)
+    soil = principled("pot soil", (0.035, 0.025, 0.018), 1.0)
+    bpy.ops.mesh.primitive_cone_add(vertices=64, radius1=r_bot, radius2=r_top, depth=h, location=(0, 0, h / 2))
+    o = bpy.context.active_object
+    o.name = "white pot"
+    b_ = bmesh.new(); b_.from_mesh(o.data)
+    topf = max(b_.faces, key=lambda f: f.calc_center_median().z)
+    res = bmesh.ops.inset_region(b_, faces=[topf], thickness=0.006)
+    bmesh.ops.translate(b_, vec=(0, 0, -0.012), verts=topf.verts)
+    topf.material_index = 1
+    b_.to_mesh(o.data); b_.free()
+    o.data.materials.append(glaze)
+    o.data.materials.append(soil)
+    for p_ in o.data.polygons:
+        p_.use_smooth = len(p_.vertices) == 4
+    o.modifiers.new("bevel", "BEVEL").width = 0.0015
+    g = bpy.data.objects.new("@white_pot", None)
+    sc.collection.objects.link(g)
+    o.parent = g
+    return g, [o]
+
+
 def spots(objs, amount):
     """Faint spots on a surface (objs' materials, copies): where a large noise rises past
     a threshold the colour darkens a few per cent, soft-edged, here and there."""
@@ -803,7 +832,7 @@ def card_holder():
 
 
 BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(),
-         "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@usb_hub": lambda: usb_hub(),
+         "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
          "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
@@ -812,7 +841,8 @@ BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holde
 def wall_texture(tx):
     """A wall material from a Poly Haven texture (workspace_assets.fetch_texture): colour,
     GL normal and roughness, laid over the wall's face (x, z) one tile per tx["tile"] m,
-    its colour multiplied by tx["tint"]."""
+    its colour multiplied by tx["tint"]. tx["axes"]: the object axes that map to the
+    image's u and v, ("X", "Z") for a wall, ("Y", "X") for a top with the grain along x."""
     folder = os.path.join(ASSETS, tx["id"])
     m = bpy.data.materials.new(f"wall {tx['id']}")
     m.use_nodes = True
@@ -822,7 +852,7 @@ def wall_texture(tx):
     sep = nt2.nodes.new("ShaderNodeSeparateXYZ")
     nt2.links.new(tc.outputs["Object"], sep.inputs[0])
     comb = nt2.nodes.new("ShaderNodeCombineXYZ")
-    for src_, dst in (("X", "X"), ("Z", "Y")):
+    for src_, dst in zip(tx.get("axes", ("X", "Z")), ("X", "Y")):
         mm = nt2.nodes.new("ShaderNodeMath"); mm.operation = "DIVIDE"; mm.inputs[1].default_value = tx.get("tile", 2.0)
         nt2.links.new(sep.outputs[src_], mm.inputs[0])
         nt2.links.new(mm.outputs[0], comb.inputs[dst])
