@@ -158,8 +158,7 @@ SCENES = {
         post=dict(vignette=0.35, glare=0.06, glare_threshold=1.5, sat=0.95, sharpen=0.05), filter_width=1.0,
         lights=[dict(at=(0.1, 0.1, 1.5), size=(1.2, 0.6), energy=40, color=(1.0, 0.82, 0.58)),
                 dict(at=(-0.1, -1.5, 1.75), size=(1.2, 0.3), energy=80, color=(1.0, 0.86, 0.66))],
-        desk="@industrial_desk", desk_wood=dict(id="plywood", tile=1.22, tint=(1.0, 0.97, 0.92), bump=0.4),
-        desk_dents=0.10, desk_spots=0.5,
+        desk="@steel_bench",
         kb_from_front=0.24,
         wall=dict(color=(0.62, 0.61, 0.58), texture=dict(id="concrete_wall_008", tile=2.4, tint=(1.12, 1.10, 1.06), bump=0.5),
                   items=[

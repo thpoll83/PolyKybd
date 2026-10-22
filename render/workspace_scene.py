@@ -404,6 +404,93 @@ def industrial_desk():
     return g, parts
 
 
+def brushed_steel(name, rgb=(0.52, 0.53, 0.55), rough=0.30):
+    """Brushed sheet steel: metallic, its roughness and a faint bump streaked along x
+    (a noise stretched 80:1), fine random scratches (Voronoi cell edges, thin and
+    shinier), and a few darker handling smudges."""
+    m = principled(name, rgb, rough)
+    nt2 = m.node_tree
+    b = nt2.nodes["Principled BSDF"]
+    b.inputs["Metallic"].default_value = 1.0
+    tc = nt2.nodes.new("ShaderNodeTexCoord")
+    mp = nt2.nodes.new("ShaderNodeMapping"); mp.inputs["Scale"].default_value = (1.0, 80.0, 80.0)
+    nt2.links.new(tc.outputs["Object"], mp.inputs["Vector"])
+    br = nt2.nodes.new("ShaderNodeTexNoise"); br.inputs["Scale"].default_value = 30.0; br.inputs["Detail"].default_value = 6.0
+    nt2.links.new(mp.outputs["Vector"], br.inputs["Vector"])
+    rr = nt2.nodes.new("ShaderNodeMapRange")       # the brushing: roughness between rough-0.08 and rough+0.10
+    rr.inputs["To Min"].default_value, rr.inputs["To Max"].default_value = rough - 0.08, rough + 0.10
+    nt2.links.new(br.outputs["Fac"], rr.inputs["Value"])
+    stx = nt2.nodes.new("ShaderNodeTexImage")      # the scratches: steel_scratches.png, one tile a metre
+    stx.image = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", "steel_scratches.png"), check_existing=True)
+    stx.image.colorspace_settings.name = "Non-Color"
+    nt2.links.new(tc.outputs["Object"], stx.inputs["Vector"])
+    sc_ = nt2.nodes.new("ShaderNodeMapRange")      # a scratch is shinier: up to 0.15 off the roughness
+    sc_.inputs["To Min"].default_value, sc_.inputs["To Max"].default_value = 0.0, 0.15
+    nt2.links.new(stx.outputs["Color"], sc_.inputs["Value"])
+    sub = nt2.nodes.new("ShaderNodeMath"); sub.operation = "SUBTRACT"
+    nt2.links.new(rr.outputs[0], sub.inputs[0]); nt2.links.new(sc_.outputs[0], sub.inputs[1])
+    nt2.links.new(sub.outputs[0], b.inputs["Roughness"])
+    bm = nt2.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = 0.04
+    nt2.links.new(br.outputs["Fac"], bm.inputs["Height"])
+    nt2.links.new(bm.outputs["Normal"], b.inputs["Normal"])
+    return m
+
+
+def steel_bench():
+    """A steel workbench, 1.8 x 0.85 m, top at 0.75 m: a 40 mm top of brushed sheet steel
+    (its folded edge the same sheet), on a frame of 50 x 50 x 5 mm angle iron painted
+    dark grey and chipped to the steel at the edges: four legs, an angle round under the
+    top and another 150 mm off the floor carrying a scaffold-plank shelf, hex bolts where
+    the angles meet the legs."""
+    top_m = brushed_steel("bench top steel")
+    paint = principled("bench frame paint", (0.045, 0.047, 0.05), 0.55)
+    plank = wood("bench shelf plank", (0.42, 0.33, 0.22), 0.8, grain=18.0)
+    bolt_m = principled("bench bolts", (0.30, 0.30, 0.31), 0.35)
+    bolt_m.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    parts = [cube("bench top", (-0.9, -0.425, 0.71), (0.9, 0.425, 0.75), top_m, 0.003)]
+    a, t, xl, yl = 0.05, 0.005, 0.86, 0.39         # angle size, wall, leg centres
+    frame = []
+    for sx in (-1, 1):                             # each leg an L, its corner outwards
+        for sy in (-1, 1):
+            x, y = sx * xl, sy * yl
+            xo, yo = x + sx * a / 2, y + sy * a / 2
+            frame.append(cube("bench leg", (min(xo, xo - sx * a), yo - sy * t if sy > 0 else yo, 0.0),
+                              (max(xo, xo - sx * a), yo if sy > 0 else yo - sy * t, 0.71), paint, 0.001))
+            frame.append(cube("bench leg", (xo - sx * t if sx > 0 else xo, min(yo, yo - sy * a), 0.0),
+                              (xo if sx > 0 else xo - sx * t, max(yo, yo - sy * a), 0.71), paint, 0.001))
+    for z0 in (0.66, 0.15):                        # the angles round the frame, under the top and low down
+        for sy in (-1, 1):
+            yo = sy * (yl + a / 2)
+            frame.append(cube("bench rail", (-xl, min(yo, yo - sy * t), z0 + a - t), (xl, max(yo, yo - sy * t), z0 + a), paint, 0.001))
+            frame.append(cube("bench rail", (-xl, min(yo, yo - sy * a), z0), (xl, max(yo, yo - sy * a), z0 + t), paint, 0.001))
+        for sx in (-1, 1):
+            xo = sx * (xl + a / 2)
+            frame.append(cube("bench rail", (min(xo, xo - sx * t), -yl, z0 + a - t), (max(xo, xo - sx * t), yl, z0 + a), paint, 0.001))
+            frame.append(cube("bench rail", (min(xo, xo - sx * a), -yl, z0), (max(xo, xo - sx * a), yl, z0 + t), paint, 0.001))
+    parts += frame
+    for k in range(5):                             # the shelf: five scaffold planks on the low angles
+        y0 = -yl + 0.01 + k * (2 * yl - 0.02) / 5
+        parts.append(cube("bench shelf", (-xl + 0.01, y0 + 0.003, 0.155), (xl - 0.01, y0 + (2 * yl - 0.02) / 5 - 0.003, 0.18), plank, 0.002))
+    for sx in (-1, 1):                             # hex bolts on the legs' outer faces, two per joint
+        for sy in (-1, 1):
+            for z in (0.685, 0.175):
+                for dz in (-0.01, 0.01):
+                    bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.007, depth=0.005,
+                                                        location=(sx * (xl + a / 2) + sx * 0.0025, sy * (yl - 0.06), z + dz),
+                                                        rotation=(0, math.pi / 2, 0))
+                    bo = bpy.context.active_object
+                    bo.name = "bench bolt"
+                    bo.data.materials.append(bolt_m)
+                    parts.append(bo)
+    spots(frame, 0.6, scale=90, lo=0.66, tint=(0.40, 0.41, 0.43), mode="MIX", detail=4.0)   # chipped paint, steel under
+    spots(parts[:1], 0.35, scale=5, lo=0.55, tint=(0.62, 0.62, 0.64), detail=3.0)          # handling smudges on the top
+    g = bpy.data.objects.new("@steel_bench", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
 def desk_mat(spec):
     """An extended desk mat under keyboard and mouse, 3 mm thick, in spec["color"] at
     spec["rough"] (felt 0.9, leather about 0.45) or printed with spec["image"], with a light strip around its edge
@@ -1821,6 +1908,8 @@ elif S["desk"] == "@black_desk":
     desk, desk_objs = black_desk()
 elif S["desk"] == "@industrial_desk":
     desk, desk_objs = industrial_desk()
+elif S["desk"] == "@steel_bench":
+    desk, desk_objs = steel_bench()
 else:
     desk, desk_objs = gltf(S["desk"])
     lo, hi = box(desk_objs)

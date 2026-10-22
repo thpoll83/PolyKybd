@@ -879,6 +879,31 @@ def mat_blue():
     return im
 
 
+def steel_scratches():
+    """A scratch map for a steel top, 2048 px a metre, tiling: about 700 short thin
+    strokes on black, most within 15 deg of the brushing (x), a few at random, each a
+    little curved, brighter in the middle."""
+    import math as _m, random
+    S_ = 2048
+    im = Image.new("L", (S_, S_), 0)
+    d = ImageDraw.Draw(im)
+    rnd = random.Random(17)
+    for _ in range(700):
+        x, y = rnd.uniform(0, S_), rnd.uniform(0, S_)
+        a_ = rnd.gauss(0, 8) if rnd.random() < 0.8 else rnd.uniform(0, 180)
+        ln, bend = rnd.uniform(20, 260), rnd.uniform(-0.002, 0.002)
+        pts = []
+        for i in range(12):
+            t = i / 11
+            aa = _m.radians(a_) + bend * ln * (t - 0.5)
+            pts.append(((x + _m.cos(aa) * ln * t) % S_, (y + _m.sin(aa) * ln * t) % S_))
+        v = rnd.randint(60, 200)
+        for (p0, p1) in zip(pts, pts[1:]):
+            if abs(p0[0] - p1[0]) < S_ / 2 and abs(p0[1] - p1[1]) < S_ / 2:
+                d.line((p0, p1), fill=v, width=rnd.choice((1, 1, 2)))
+    return im.convert("RGB")
+
+
 def paper_elevation():
     """A3 landscape: the south elevation, line drawing: ground line, two volumes, window
     grid, entrance, levels on the right, a title."""
@@ -1812,7 +1837,7 @@ if __name__ == "__main__":
                      ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
                      ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))),
                      ("art_arches.jpg", art_arches), ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
-                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("screen_plan2.jpg", plan2), ("mat_cutting.jpg", mat_cutting), ("mat_blue.jpg", mat_blue), ("photo_building.jpg", photo_building),
+                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("screen_plan2.jpg", plan2), ("mat_cutting.jpg", mat_cutting), ("mat_blue.jpg", mat_blue), ("steel_scratches.png", steel_scratches), ("photo_building.jpg", photo_building),
                      ("paper_elevation.jpg", worn(highlighted(paper_elevation, [((60, 860, 640, 912), "yellow")]), 37)),
                      ("paper_section.jpg", worn(paper_section, 41)), ("paper_site.jpg", worn(paper_site, 43, 0.8)), ("nfc_pad.jpg", nfc_pad),
                      ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])))
