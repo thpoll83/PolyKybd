@@ -21,6 +21,26 @@ pcb_edge_height = 9.5;
 pcb_edge_width = 1.4;
 stand_off_extra_radius = 2.3;
 
+// --- LED window inserts (EMC/ESD) -------------------------------------------
+// The three status LEDs (D1, D5, D6 - all 0805 on the PCB underside) shine out
+// through slots in the wall. EMC report EMC-700 left +-8 kV ESD air discharge at
+// these openings NOT RATED, so each slot takes a bonded transparent insert and
+// the opening stops existing on a shipped unit.
+//
+// The insert is a top hat fitted from OUTSIDE: a flange sitting flush in a local
+// pocket (the wall is thinned there to make room), and a boss filling the
+// remaining wall thickness. Pressure from outside seats it against the pocket
+// floor rather than pushing it through.
+//
+// The case pocket and the insert are generated from the SAME modules below, so
+// they cannot drift apart. `led_inserts.scad` builds the printable parts.
+led_insert = true;         // cut the pocket; set false for the pre-insert case
+led_slot_r = 0.9;          // the LED SVG holds zero-width lines; this makes the slot
+led_pocket_depth = 1.0;    // how much thinner the wall gets, i.e. flange thickness
+led_pocket_overlap = 3.5;  // in plan. >= 3.1 so D5 and D6 flanges merge into ONE part
+led_pocket_down = 2.0;     // and below it
+led_insert_gap = 0.10;     // bond gap, everywhere except the visible outer face
+
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
 text_height = 0.35;
@@ -252,6 +272,94 @@ module inner_walls()
         }
     }
 }
+// --- LED window / insert geometry --------------------------------------------
+// Everything derives from the same SVG and the same parameters, so the pocket in
+// the case and the insert that fills it are two views of one definition. `g` is
+// the bond gap: 0 builds the cut, led_insert_gap builds the part that fits it.
+
+// z range of the slot through the wall (unchanged from the original cut)
+function led_window_z0() = pcb_edge_height - 0.1;
+function led_window_h() = 2.20;
+// The pocket must not reach above the PCB underside: the wall is only
+// case_wall_thickness there, and a pocket would leave it too thin to print.
+function led_pocket_z1() = case_bottom_thickness + pcb_edge_height;
+function led_pocket_z0() = led_window_z0() - led_pocket_down;
+
+// The band of wall between the outer face and `d` inboard of it, full height.
+module led_wall_band(d, g = 0)
+{
+    linear_extrude(height = case_height * 3, center = true) difference()
+    {
+        offset(r = case_wall_thickness + pcb_clearance, $fn = 128) import(file = pcb_outline, dpi = 300);
+        offset(r = case_wall_thickness + pcb_clearance - d + g, $fn = 128)
+            import(file = pcb_outline, dpi = 300);
+    }
+}
+
+// The slot itself, through the whole wall.
+module led_window_cut(g = 0)
+{
+    translate([ 0, 0, led_window_z0() + g ])
+        linear_extrude(height = led_window_h() - 2 * g, scale = 1)
+            offset(r = led_slot_r - g, $fn = 64) import(file = led_holes, dpi = 300);
+}
+
+// The local thinning of the wall that makes room for the flange.
+module led_pocket_cut(g = 0)
+{
+    intersection()
+    {
+        led_wall_band(led_pocket_depth, g);
+        translate([ 0, 0, led_pocket_z0() + g ])
+            linear_extrude(height = led_pocket_z1() - led_pocket_z0() - 2 * g, scale = 1)
+                offset(r = led_slot_r + led_pocket_overlap - g, $fn = 64)
+                    import(file = led_holes, dpi = 300);
+    }
+}
+
+// Both cuts together - what the case loses, and (with g) what the insert is.
+module led_insert_solid(g = 0)
+{
+    union()
+    {
+        led_pocket_cut(g);
+        intersection()
+        {
+            // the boss stops at the wall's inner face so it cannot foul the PCB
+            led_wall_band(case_wall_thickness + pcb_clearance + pcb_edge_width, 0);
+            led_window_cut(g);
+        }
+    }
+}
+
+// D5 and D6 sit 7.95 mm apart on one wall; D1 is round the corner on the next.
+// So there are two parts per half, four per keyboard - not one, and not three.
+//
+// !! OpenSCAD's SVG import FLIPS Y. A coordinate read off the .svg or the KiCad
+// board is NOT an OpenSCAD coordinate: openscad_y = led_svg_h - svg_y, x is
+// unchanged. Verified by measuring the exported slot bbox (slots at svg y 41.2
+// and 49.2 come out at y 97.89 and 89.89). led_region() does the conversion so
+// the regions below can be written in the same coordinates as the drawing.
+led_svg_h = 139.0904;  // height= of the *-LED.svg / *-OUTLINE.svg page
+
+function led_y(svg_y) = led_svg_h - svg_y;
+
+module led_region(x0, svg_y0, x1, svg_y1)
+{
+    translate([ x0, led_y(svg_y1), 0 ]) cube([ x1 - x0, svg_y1 - svg_y0, case_height * 3 ]);
+}
+
+// These boxes only pick which slots go in which part. They are regions, not
+// dimensions - generous, and they do not need to track the SVG.
+module led_insert_pair(g = led_insert_gap)   // D6 (svg y 41.2) + D5 (svg y 49.2)
+{
+    intersection() { led_insert_solid(g); led_region(-10, 36, 10, 55); }
+}
+module led_insert_single(g = led_insert_gap) // D1 (svg x 12.8)
+{
+    intersection() { led_insert_solid(g); led_region(4, -8, 22, 16); }
+}
+
 module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_infill = true)
 {
 
@@ -354,9 +462,9 @@ module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_i
         // bottom branding
         translate([ 92 * 2, 0, text_height - 0.01 ]) rotate([ 0, 180, 0 ]) branding(mirror_text);
 
-        // cut out LEDs
-        translate([ 0, 0, pcb_edge_height - 0.1 ]) linear_extrude(height = 2.20, scale = 1) offset(r = 0.9)
-            import(file = led_holes, dpi = 300);
+        // cut out LEDs (and, with led_insert, the pocket the insert's flange sits in)
+        led_window_cut();
+        if (led_insert) led_pocket_cut();
 
         // cut out switch
         translate([ 0, 0, pcb_edge_height - 0.4 ]) linear_extrude(height = 3, scale = 1) offset(r = 2.5)

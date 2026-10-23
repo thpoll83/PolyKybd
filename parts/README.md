@@ -23,6 +23,7 @@ parts/
 | Case, split72 (metal / CNC) | `export/case/case_polykybd_split72_metal*.stl`, `.3mf`; B-Rep STEP `export/case/metal-case-{left,right}.step` | `case/case_polykybd_split72_metal.scad`, re-authored by `case/step/` |
 | Case, right side | `export/case/right_side_case.3mf`, `right_side_spacer.3mf` | `case/right_side.scad` |
 | Spacer | `export/case/spacer.stl` — or `spacer_diffuser_frame.stl` when the LED diffuser frame is fitted (it is notched for the frame's web on **both** faces, so one part serves either half) | `right_spacer()` in `case/case_polykybd_split72_lr.scad` |
+| Status-LED inserts (**EMC**) | `export/case/led_inserts.stl` — two parts: one spanning D5+D6, one for D1. Print in **clear** resin, **four per keyboard**, bond them in | `case/led_inserts.scad` over the `led_*` modules in `case/case_polykybd_split72_lr.scad` |
 | LED diffuser frame | `export/diffuser/diffuser_frame_{left,right}.stl` (`_4x` = four stacked per plate) | `diffuser/` — **generated from the plate PCB**, see below |
 | LED diffuser, old generation | `export/diffuser/diff_v2.stl` (4 rings × 19 caps, 97 × 97 × 6.2 mm) | `diffuser/led_caps.scad` |
 | Keycap stems | `export/keycap_stem/keycap_stem_revAlpha_{1U,1U25}_{R1..R5,S1,S,S5}_10p.stl` | one file per plate in `keycap_stem/variants/`, over the shared `keycap_stem/keycap_stem.scad` |
