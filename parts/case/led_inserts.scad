@@ -15,7 +15,8 @@
 
 use <case_polykybd_split72_lr.scad>
 
-part = "both";   // "pair" (D6+D5) | "single" (D1) | "both"
+part = "plate";  // "plate" (all four, chained for printing) | "pair" | "single" | "both"
 
+if (part == "plate") led_plate();
 if (part == "pair"   || part == "both") led_insert_pair();
 if (part == "single" || part == "both") led_insert_single();

@@ -368,6 +368,20 @@ derives it from those same parameters).
 | Wall left under the pocket | 1.9 mm |
 | **Air path through the seam** | **6.4 mm**, before the bond closes it |
 
+✅ **All four print as one piece.** Each insert is only a couple of hundred
+cubic millimetres of resin — small enough to lose and fiddly to place — so
+`led_plate()` lays a whole keyboard's set flat in a row and chains them on a
+breakaway spine (29.5 × 17.6 × 3.3 mm). They print, wash and cure together and
+get snapped apart at assembly. The spine meets each part on the flange **edge**,
+so the witness mark is never on the visible outer face.
+
+⚠️ **The two part families are picked up on their OUTER face**, offset outward
+by `pcb_clearance`, precisely so both land in the same z band once laid flat
+(`case_wall_thickness` down to `case_wall_thickness - led_pocket_depth`). The
+spine keys off that band. Reference them any other way and the tabs miss: the
+first attempt put the spine at z = 0, where the pair has only the gap between
+its two bosses, and the plate exported happily as **three** disconnected pieces.
+
 ⚠️ **`led_pocket_overlap` has a floor near 3.1 mm.** At 2.0 the two flanges came
 out 5.8 mm wide with centres 8 mm apart — a "part" in two disconnected pieces
 that exports and renders perfectly happily. 3.5 merges them *and* lengthens the

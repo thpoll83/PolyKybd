@@ -40,6 +40,8 @@ led_pocket_depth = 1.0;    // how much thinner the wall gets, i.e. flange thickn
 led_pocket_overlap = 3.5;  // in plan. >= 3.1 so D5 and D6 flanges merge into ONE part
 led_pocket_down = 2.0;     // and below it
 led_insert_gap = 0.10;     // bond gap, everywhere except the visible outer face
+led_sprue = 0.9;           // breakaway tab between parts on the print plate
+led_plate_pitch = 8.5;     // part spacing on that plate
 
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
@@ -362,6 +364,65 @@ module led_insert_pair(g = led_insert_gap)   // D6 (svg y 41.2) + D5 (svg y 49.2
 module led_insert_single(g = led_insert_gap) // D1 (svg x 12.8)
 {
     intersection() { led_insert_solid(g); led_region(4, -8, 22, 16); }
+}
+
+// --- print plate --------------------------------------------------------------
+// The parts are 1.8 x 2.2 mm slots' worth of resin - small enough to lose and
+// fiddly to place one at a time. The plate lays all four of a keyboard's inserts
+// flat in a row and chains them with breakaway tabs, so they print, wash and cure
+// as one piece and get snapped apart at assembly.
+//
+// Each part is picked up by a reference point on its own wall and laid flange-down.
+// These three are the LED centres in the SVG's own coordinates (the KiCad board
+// offset by the Edge.Cuts bbox, (-28.0995, -26.395)); they only position the part
+// for printing, the geometry still comes from the SVG.
+led_d6 = [ 4.603, 41.203 ];
+led_d5 = [ 4.553, 49.153 ];
+led_d1 = [ 12.795, 9.597 ];
+
+function led_z_mid() = (led_pocket_z0() + led_pocket_z1()) / 2;
+
+// Where each part's wall meets the board outline, in the SVG's coordinates.
+led_edge_x = 1.1985;   // the x of the outline's straight left edge (D5/D6 wall)
+led_edge_y = 6.234;    // the outline's front edge at D1's x (interpolated)
+
+// Both parts are picked up on their OUTER face, offset outward by pcb_clearance,
+// so after laying them flat the flange lands in the same z band either way:
+// z = case_wall_thickness down to case_wall_thickness - led_pocket_depth. The
+// tabs key off that, which is why the convention has to match.
+function led_plate_tab_z() = case_wall_thickness - led_pocket_depth / 2;
+
+// D5/D6 sit on a wall of constant x, so its normal is x: rotate about y to put
+// the flange face down. D1's wall runs the other way, so it rotates about x, and
+// then about z to stand its long axis alongside the others and keep the gap short.
+module led_plate_pair()
+{
+    rotate([ 0, 90, 0 ])
+        translate([ -(led_edge_x - pcb_clearance), -led_y((led_d5[1] + led_d6[1]) / 2), -led_z_mid() ])
+            led_insert_pair();
+}
+module led_plate_single()
+{
+    rotate([ 0, 0, 90 ]) rotate([ 90, 0, 0 ])
+        translate([ -led_d1[0], -(led_y(led_edge_y) + pcb_clearance), -led_z_mid() ])
+            led_insert_single();
+}
+
+module led_plate()
+{
+    parts = [ 0, 1, 2, 3 ];   // right pair, right single, left pair, left single
+    for (i = parts)
+        translate([ i * led_plate_pitch, 0, 0 ])
+        {
+            if (i == 0) led_plate_pair();
+            if (i == 1) led_plate_single();
+            if (i == 2) mirror([ 0, 1, 0 ]) led_plate_pair();
+            if (i == 3) mirror([ 0, 1, 0 ]) led_plate_single();
+        }
+    // breakaway tabs - deliberately thin, and square so they snap rather than tear
+    for (i = [0:len(parts) - 2])
+        translate([ (i + 0.5) * led_plate_pitch, 0, led_plate_tab_z() ])
+            cube([ led_plate_pitch + 1, led_sprue, led_sprue ], center = true);
 }
 
 module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_infill = true)
