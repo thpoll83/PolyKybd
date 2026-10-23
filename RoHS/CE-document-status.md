@@ -169,11 +169,11 @@ replacement and rejected (its datasheet carries no RoHS statement), so
 4. Resolve JUSHUO vs Hirose for J1–J36 (§3c)
 5. **After A6** (v3.3 gerbers): `pcb_render.py` → `pcb_merge.py` → `PolyKybd-PCB-Layers.pdf`
 6. ✅ **EMC tested 2026-10-06, report EMC-700 v1.0 received 2026-10-23** (§6)
-7. 🔴 **Close the unrated ESD air discharge (§6e).** Design the covers for the
-   reset button, boot button and LED openings, then book a short re-test of
-   ±8 kV air discharge. **The DoC cannot be issued over an `NR` result**, and one
-   of those discharges caused permanent damage (a dead LED), so this is the
-   critical path — ahead of everything else here.
+7. 🔴 **Close the unrated ESD air discharge (§6e).** Design and fit the covers
+   for the reset button, boot button and LED openings (§6e2), then **write the
+   justification into the technical file** — decided 2026-10-23 to close this by
+   justification rather than a re-test, since the DoC is ours to declare. A
+   re-test stays the fallback if challenged.
 8. 🔴 **Add the enclosure/screws/PCB bonding to the production assembly (§6f).**
    It was a lab modification, it is what turned a restart-every-discharge into
    criterion A, and it is in no BOM or assembly note.
@@ -282,13 +282,46 @@ enclosure openings to avoid air discharges and resolve this issues. The covers
 were not available during the test, therefore these tests are not rated."*
 
 ⚠️ **A permanently dark LED is not criterion B and not even C** — nothing about
-it is self-recoverable or operator-restorable; it is damage. And `NR` is not a
-pass: **a declaration cannot rest on an unrated test.** Two ways to close it, and
-the covers must exist either way:
-1. **Re-test ±8 kV air discharge with the covers fitted** at those openings, and
-   get a rated result. This is the clean route and it is a short session.
-2. Argue the openings are not accessible in the shipped product — which requires
-   the covers to be a shipped part and documented as such, and the lab to agree.
+it is self-recoverable or operator-restorable; it is damage.
+
+✅ **DECIDED 2026-10-23: closed by justification, not by re-test.** An earlier
+draft of this section claimed "a declaration cannot rest on an unrated test" and
+made this the critical path. **That was wrong about whose decision it is.** The
+DoC is the *manufacturer's* declaration; KEBA supplies evidence, PolyTasten
+declares. Whether an unrated point is covered is ours to decide and document.
+The decision is: **fit the covers (§6e2), seal the cavities so the openings do
+not exist in the shipped product, and justify it in the technical file.**
+
+Three conditions on which it rests:
+1. ⚠️ **"The opening does not exist" must be literally true** — a remaining seam
+   an 8 kV discharge could jump leaves the test point in existence and the
+   justification fails. This is why the seam is bonded rather than merely fitted.
+2. ⚠️ **Confine the change to filling the openings.** The other ESD points passed
+   on the as-tested case (keycaps top and front criterion A; enclosure, screws
+   and USB-C plugs A on contact). Moving wall thickness, the plate mounting, or
+   introducing a seam elsewhere would change more of the tested article than
+   intended.
+3. ⚠️ **The justification goes IN THE FILE, not just into the product.** An `NR`
+   plus a product with covers is not self-explanatory to a later reader.
+
+✅ **The report already carries the intent**, which makes the package coherent
+rather than an unsupported assertion — §4.3.2: *"According to customer a cover
+will be placed at these enclosure openings to avoid air discharges and resolve
+this issues."*
+
+**What the file needs:** the insert geometry (drawing or CAD view showing the
+flush fill and inner overlap), a photo of a fitted production unit, a
+one-paragraph justification referencing report §4.3.2, and the assembly/QC step
+(insert seated, bead continuous).
+
+**The downside is bounded**, which is what makes deciding now reasonable: if
+challenged, the fallback is an ±8 kV air-discharge re-test with covers fitted —
+a short session, bookable then rather than now.
+
+**Free improvement:** v1.0 is preliminary, so a final version is coming anyway.
+If KEBA will strengthen that §4.3.2 sentence when they issue it — from "a cover
+*will* be placed" to language describing the production configuration — it costs
+nothing and makes the file materially better.
 
 Note the openings are the **reset button, boot button and the LEDs**, i.e. exactly
 the service/debug features. Covering them in production is a case-design task, not
