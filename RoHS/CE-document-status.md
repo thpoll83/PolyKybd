@@ -168,88 +168,183 @@ replacement and rejected (its datasheet carries no RoHS statement), so
 3. Ask Winbond for a current declaration (§3a); correct the matrix either way
 4. Resolve JUSHUO vs Hirose for J1–J36 (§3c)
 5. **After A6** (v3.3 gerbers): `pcb_render.py` → `pcb_merge.py` → `PolyKybd-PCB-Layers.pdf`
-6. ✅ **EMC test done 2026-10-13** — passed with two snap ferrites added (§7)
-7. **When the report arrives**: check which hardware revision it names (§6b — the
-   sample reported `HW0x3200` while the boards are v3.3), and extract the
-   **pre- and post-mitigation emission scans** plus the declared measurement
-   uncertainty — four numbers per peak. The peaks are still visible with the
-   ferrites fitted, so the attenuation they deliver is measurable per frequency,
-   which is what sizes any replacement core (§7e)
-8. **Record the ferrite placement** from the report before it is needed for a
-   production fitting instruction (§7c) — unrecoverable later
-9. **Wire the ferrite datasheet into the appendix** (§7d.3) — add the `.xls` row
-   and rebuild in the same change; do not re-run `update_xls_pages.py`
-10. **After the GmbH exists**: fill in the DoC (§1), naming the ferrites in the
-    EUT description
+6. ✅ **EMC tested 2026-10-06, report EMC-700 v1.0 received 2026-10-23** (§6)
+7. 🔴 **Close the unrated ESD air discharge (§6e).** Design the covers for the
+   reset button, boot button and LED openings, then book a short re-test of
+   ±8 kV air discharge. **The DoC cannot be issued over an `NR` result**, and one
+   of those discharges caused permanent damage (a dead LED), so this is the
+   critical path — ahead of everything else here.
+8. 🔴 **Add the enclosure/screws/PCB bonding to the production assembly (§6f).**
+   It was a lab modification, it is what turned a restart-every-discharge into
+   criterion A, and it is in no BOM or assembly note.
+9. **Request the pre-modification emission scan from KEBA** (§6h) — without it
+   the replacement-core sizing in §7e cannot be done at all.
+10. **Update the ferrite count everywhere to FOUR** (§6c): packaging BOM, cost
+    model (`polykybd-costing/scripts/gen_ods.py`, which also has no bridge-cable
+    line), manual, and the DoC's EUT description.
+11. **Fill in the DoC** (§1) — the manufacturer name and address are now known
+    from the report (§6a), so only the GmbH registration formalities and the
+    final report version remain.
+12. Optional, for margin rather than compliance: identify the 6.25 MHz source
+    (§6i) and the shield-bonding experiment (§7f–h). The pass stands at 1.35 dB
+    without them; neither is required to ship.
 
 ---
 
-## 6. EMC test — done, passed with added ferrites (2026-10-13)
+## 6. EMC test — report EMC-700 v1.0 (KEBA, test 2026-10-06)
 
-The lab test ran on **Tuesday 2026-10-13** and the product **passed**, but only
-with two snap ferrites fitted to the cables — see §7, which is now a shipping
-requirement, not a test-bench detail. Confirm the exact test date and the EUT
-table against the issued report when it arrives; everything below is what was
-submitted, recorded here so the DoC and the report can be checked against each
-other.
+Issued 2026-10-16 by **KEBA Industrial Automation GmbH**, Reindlstraße 51, 4040
+Linz. Order 105860810010. Tested and released by Christian Leitner / Andreas
+Reiter. **Preliminary version 1.0** — received 2026-10-23.
 
-### a. EUT identification as submitted
+Standards: EN 61000-6-3:2007+A1:2011 and EN 55032:2015+A11:2020 **Class B**
+(emission), EN 61000-6-1:2007 and EN 55035:2017+A11:2020 (immunity).
+Environment declared: **residential**.
 
-| Field | Value |
+### a. EUT identification — as the report records it
+
+| Field | Value in the report |
 |---|---|
-| Manufacturer | PolyTasten GmbH — address `[TO CONFIRM]` (same placeholder as the DoC) |
-| Product | PolyKybd Split72 |
-| Model / type designation | `POLYKYBD-SPLIT72-01` |
-| Hardware revision | **v3.3** |
-| Firmware | `PolyKybd-fw-v1.7.3` (tagged 2026-10-05, `PROTOCOL_VERSION 22`) |
-| USB VID / PID | `0x2021` / `0x2007` |
-| USB descriptor strings | Manufacturer `PolyTasten`, Product `PolyKybd Split72` |
-| Sample serial | `POLYKYBD-SPLIT72-01/3.3/EMC-001` |
-| Required accessory | 2 × Würth Elektronik `74271111` snap ferrite (§7) |
+| Type designation | PolyKybd Split72 |
+| **Serial number** | **`POLYKYBD-SPLIT72-01/3.3/EMC-001`** |
+| **Hardware version** | **3.3** |
+| Software version | `PolyKybd-fw-v1.7.3` |
+| Manufacturer | **PolyTasten GmbH** |
+| Customer address | **Zieglerstrasse 2, 4470 Enns, Austria** |
+| Parts of the system | left and right keyboard, joined by a short USB-C cable |
+| Power supply | 5 VDC USB |
+| Port | 1 × USB-C, signal port, shielded, **2 m used / 5 m max** |
 
-The EUT is **both halves plus the interconnect**, not one device: the bridge
-cable carries a 460800-baud full-duplex UART and radiates, which is precisely
-why it needed a ferrite. **Both cable lengths belong in the report's EUT
-description** — a radiated result is not reproducible without them.
+✅ **The hardware revision is recorded as 3.3.** The lab took it from the
+paperwork and the marking plate, not from the USB descriptor, so the
+`device_version "3.2.0"` defect did **not** contaminate the report and there is
+nothing to correct with the lab. The fix is still right — a shipping product
+should not misreport itself — but it is no longer on the critical path.
 
-### b. ⚠️ The tested sample reported hardware revision 3.2, not 3.3
+✅ **The DoC's manufacturer placeholders are answered by this report**: it names
+PolyTasten GmbH at Zieglerstrasse 2, 4470 Enns. §1 can be filled in from here.
 
-`keyboards/polykybd/split72/keyboard.json` carried `"device_version": "3.2.0"`
-at the time of the test, so QMK generated `DEVICE_VER 0x3200` and the sample
-stated v3.2 in two places: the USB `bcdDevice` field, and the HID `GET_ID`
-reply (`"Split72 1.7.3 P22 HW0x3200 "`, from `hid_com.c`'s
-`POLY_GET_ID_STR`).
+### b. Emission — passed, but on 1.35 dB
 
-**Check what the issued report says.** If the lab took the revision from the
-paperwork and the label it reads v3.3 and there is nothing to do. If they read
-it off the USB descriptor, the report names a revision that does not exist, and
-a DoC for v3.3 cannot cleanly reference it — that needs a correction from the
-lab, or a dated note in the technical file explaining the discrepancy.
+30 MHz – 1 GHz, Class B, quasi-peak, limit 30 dB(µV/m) below 230 MHz. Three
+peaks, all vertical polarisation at 100–107 cm:
 
-A fix is on `claude/polykybd-costing-handover-6iwoes` in the firmware repo
-(`device_version` → `3.3.0`). It is worth stating explicitly, so nobody later
-reads it as invalidating the test: **this changes only a descriptor string and
-has no effect on emissions.** Nothing reads the value for a decision — the host
-keeps it as a display string, the rig does not check it, and no test pins
-`0x3200`.
+| Frequency | Level | Limit | **Margin** |
+|---|---|---|---|
+| 31.26 MHz | 27.39 dB(µV/m) | 30.00 | 2.61 dB |
+| **43.74 MHz** | **28.65 dB(µV/m)** | 30.00 | **1.35 dB** |
+| 56.25 MHz | 25.66 dB(µV/m) | 30.00 | 4.34 dB |
 
-### c. The USB serial number is not this serial
+1 GHz – 6 GHz: passed with no listed peaks and **no modification**.
 
-`SERIAL_NUMBER_USE_HARDWARE_ID` defaults on for ChibiOS, and RP2040's
-`get_hardware_id()` returns `flash_get_unique_id()` — the external QSPI flash
-chip's 0x4B unique id, since the RP2040 has none of its own. So the serial
-string in the USB descriptor is a 16-hex-digit flash id unrelated to
-`POLYKYBD-SPLIT72-01/3.3/EMC-001`, which is a chassis/label serial. If the
-report carries both, say which is which, or it reads as two unexplained
-serials for one sample.
+⚠️ **1.35 dB is not margin.** The report states compliance under **ILAC-G08
+shared risk** (cover page: results lie in the confidence interval with
+probability >50 % and <95 %), i.e. **measurement uncertainty is not subtracted**,
+and it publishes no uncertainty figure. Typical U for CISPR radiated emission in
+this band is ~5–6 dB, several times the margin. So this is a formal pass whose
+result would not survive a different chamber, a different sample, or normal
+production spread. **Treat headroom at 43.74 MHz as a design objective, not a
+solved problem.**
+
+### c. ⚠️ The modification is FOUR ferrites, not two
+
+§4.1.1, verbatim: **two** snap ferrites (WE 742 711 11) on the cable **between
+left and right keyboard**, and **two** on the cable **between keyboard and the
+host**. Four `74271111` per keyboard, two per cable. §7 is corrected
+accordingly — this doubles the accessory cost and changes the packaging BOM and
+the fitting instruction.
+
+### d. Two configuration facts that are easy to miss
+
+- ⚠️ **The host was a mobile phone in flight mode, not a PC.** "USB isolator and
+  laptop had too high emission for class B measurement from 30 MHz – 1 GHz.
+  Therefore they were replaced with a cell phone in flight mode." Standard
+  practice for removing the associated equipment's own emissions, and legitimate
+  — the PC is not the EUT. But the measured configuration is not the user's, and
+  the two host-side ferrites were what that configuration needed.
+- **The emission mode was the screensaver**, chosen because "the constantly
+  changing images caused higher emission" — i.e. the lab selected the worst case
+  it could sustain, and display activity is what drives the emission. Final
+  measurement time was raised to 5 s.
+
+### e. ⚠️ OPEN: ESD air discharge ±8 kV is NOT RATED at five points
+
+This is the real outstanding item, and it is not the ferrites.
+
+| Point | Criterion target | Result |
+|---|---|---|
+| Reset button right, Boot button right | B | **NR** — right keyboard restarts at some air discharges |
+| Reset button left, Boot button left | B | **NR** — left keyboard restarts at some air discharges |
+| **LEDs left** | B | **NR** — "left keyboard side, **red LED got permanently dark** after air discharge" |
+
+The report's resolution: *"According to customer a cover will be placed at these
+enclosure openings to avoid air discharges and resolve this issues. The covers
+were not available during the test, therefore these tests are not rated."*
+
+⚠️ **A permanently dark LED is not criterion B and not even C** — nothing about
+it is self-recoverable or operator-restorable; it is damage. And `NR` is not a
+pass: **a declaration cannot rest on an unrated test.** Two ways to close it, and
+the covers must exist either way:
+1. **Re-test ±8 kV air discharge with the covers fitted** at those openings, and
+   get a rated result. This is the clean route and it is a short session.
+2. Argue the openings are not accessible in the shipped product — which requires
+   the covers to be a shipped part and documented as such, and the lab to agree.
+
+Note the openings are the **reset button, boot button and the LEDs**, i.e. exactly
+the service/debug features. Covering them in production is a case-design task, not
+an electronics one.
+
+### f. A second modification was needed for contact discharge
+
+±4 kV contact on *Enclosure left* and *Screws left* initially gave *"left keyboard
+restarts at the every discharge"*. The report records: **"With modified EUT,
+electrical connection established between metal enclosure, screws and PCB, the
+test was passed with criterion A."**
+
+⚠️ **That bonding is now a production requirement, not a lab fix.** The shipped
+assembly must make the same electrical connection between the metal enclosure,
+the screws and the PCB ground. It is not in any BOM or assembly note yet. It also
+makes the right half's behaviour the reference — the left half was the one that
+restarted, so check whether the two halves differ in how the plate is bonded.
+
+### g. Everything else passed
+
+Radiated RF immunity 80 MHz–6 GHz (criterion A), EFT ±0.5 kV (B), conducted RF
+150 kHz–80 MHz at 3 V (A), contact discharge indirect HCP/VCP (A). Surge: NA
+(cable < 30 m, not leaving the building). Power-frequency magnetic field: not
+performed, EUT has no magnetically sensitive component — informative only.
+
+### h. ⚠️ The pre-modification scan is NOT in the report
+
+Only the final, post-ferrite scan is published. So the per-peak pre/post delta
+the §7e arithmetic needs — and the whole "which peaks does the cable own, how
+much attenuation can be given back" method — **cannot be run from this
+document.** Ask KEBA whether the pre-modification sweep was retained as a working
+measurement; they ran it, since that is what prompted the ferrites.
+
+### i. What the peaks are: odd harmonics of 6.25 MHz
+
+31.25, 43.75 and 56.25 MHz are the **5th, 7th and 9th harmonics of 6.25 MHz** —
+odd orders only, which is the signature of a **symmetric (50 % duty) square
+wave**. The spacing is a clean 12.5 MHz. 6.25 MHz is `clk_sys`/32 (200/32) and
+equally XIP/8 (50/8).
+
+⚠️ **The per-key display SPI is ruled out**: `SPI_DIVISOR (CPU_CLOCK / 10000000)`
+in `keyboards/polykybd/config.h` gives 200/20, i.e. a **10 MHz** SPI clock, whose
+harmonics are 10/30/50/70 — not this comb. That is worth stating because display
+activity *is* what the lab observed driving the emission, so the SPI clock is the
+assumption everyone will make first. **The 6.25 MHz source is not yet
+identified**; nothing in `keyboards/polykybd/` declares a 6.25 or 12.5 MHz clock.
+Finding it with a near-field probe over the board is exactly what such a probe is
+good for, and it would be the most direct route to real margin at 43.74 MHz.
 
 ---
 
-## 7. Required accessory: two snap ferrites (EMC pass condition)
+## 7. Required accessory: FOUR snap ferrites (EMC pass condition)
 
-The product passed **with ferrite cores added to the host cable and the bridge
-cable**. That makes them part of the tested configuration, so they are a
-shipping requirement — see the obligations below, which are the part of this
+The product passed **with two ferrite cores on the host cable and two on the
+bridge cable — four in total** (report §4.1.1). That makes them part of the
+tested configuration, so they are a shipping requirement — see the obligations below, which are the part of this
 easiest to get wrong.
 
 ### a. The part
@@ -302,8 +397,8 @@ detail that is cheapest to capture now and impossible to recover later.
 
 ### d. Obligations that follow
 
-1. **Ship two per keyboard** and include them in the packaging BOM and cost
-   model — one for the host cable, one for the bridge cable.
+1. **Ship FOUR per keyboard** and include them in the packaging BOM and cost
+   model — two on the host cable, two on the bridge cable, as tested.
 2. **Document fitting in the user manual**: which cable, where, and that it is
    required for compliance rather than optional.
 3. **Add to the RoHS appendix.** The ferrite is now a component placed on the
@@ -460,14 +555,15 @@ worst-case mode) rather than a full repeat.
 
 ### f. ⚠️ Cable substitution, and a LEAD — unverified — that would make the cable not matter
 
-> ⚠️ **Gate for §7f, §7g and §7h: all three rest on one unproven premise** — that
-> the marginal peaks are common-mode current on the cables. **The report settles
-> that before any of it is actionable**, from the per-peak pre/post delta (§7e):
-> a peak the ferrites moved ~10 dB is cable common-mode and these sections apply;
-> a peak they barely moved is board or enclosure radiation, and none of them do.
-> The shield *finding* is a measured fact about the schematic either way; its
-> *relevance* is not. Written up ahead of the report so the analysis is ready,
-> **not because the diagnosis is made.**
+> ✅ **Gate answered by report EMC-700 (§6): the peaks ARE cable common-mode.**
+> The lab's own fix was ferrites on the two cables, and it is what brought
+> 30 MHz – 1 GHz inside Class B — so the emission is carried on the cables and
+> these sections apply. Two qualifications: the **pre-modification scan is not in
+> the report** (§6h), so the per-peak dB delta the §7e arithmetic needs is still
+> missing and must be requested from KEBA; and the peaks are at **31–56 MHz**,
+> lower than this analysis assumed, where the Würth core gives roughly 175–200 Ω
+> rather than its 100 MHz figure. The shield-bonding lead is now worth pursuing
+> on its merits, with the worst margin at 43.74 MHz being only **1.35 dB** (§6b).
 
 
 **The user-substitution problem does not have a cable-side answer, so this is
