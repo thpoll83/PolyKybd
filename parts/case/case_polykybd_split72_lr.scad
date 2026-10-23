@@ -325,8 +325,12 @@ module led_insert_solid(g = 0)
         led_pocket_cut(g);
         intersection()
         {
-            // the boss stops at the wall's inner face so it cannot foul the PCB
-            led_wall_band(case_wall_thickness + pcb_clearance + pcb_edge_width, 0);
+            // The boss stops exactly at the wall's inner face so it cannot foul
+            // anything under the PCB. The wall runs from offset
+            // +(case_wall_thickness + pcb_clearance) to -(pcb_edge_width -
+            // pcb_clearance), so its thickness is the sum below - the clearance
+            // cancels, and including it would leave the boss 0.15 mm proud.
+            led_wall_band(case_wall_thickness + pcb_edge_width, 0);
             led_window_cut(g);
         }
     }
