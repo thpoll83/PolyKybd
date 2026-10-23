@@ -35,7 +35,10 @@ stand_off_extra_radius = 2.3;
 // The case pocket and the insert are generated from the SAME modules below, so
 // they cannot drift apart. `led_inserts.scad` builds the printable parts.
 led_insert = true;         // cut the pocket; set false for the pre-insert case
-led_slot_r = 0.9;          // the LED SVG holds zero-width lines; this makes the slot
+led_slot_r = 0.9;          // grows the imported slot. !! The SVG paths are LINES, but
+                           // OpenSCAD imports them with a ~1.0 mm stroke, not zero width,
+                           // so the window comes out 1.0 + 2*0.9 = 2.8 mm wide, not 1.8.
+                           // Measure the import before quoting a window size.
 led_pocket_depth = 1.0;    // how much thinner the wall gets, i.e. flange thickness
 led_pocket_overlap = 3.5;  // in plan. >= 3.1 so D5 and D6 flanges merge into ONE part
 led_pocket_down = 2.0;     // and below it
@@ -367,7 +370,7 @@ module led_insert_single(g = led_insert_gap) // D1 (svg x 12.8)
 }
 
 // --- print plate --------------------------------------------------------------
-// The parts are 1.8 x 2.2 mm slots' worth of resin - small enough to lose and
+// The parts are 2.8 x 2.2 mm slots' worth of resin - small enough to lose and
 // fiddly to place one at a time. The plate lays all four of a keyboard's inserts
 // flat in a row and chains them with breakaway tabs, so they print, wash and cure
 // as one piece and get snapped apart at assembly.

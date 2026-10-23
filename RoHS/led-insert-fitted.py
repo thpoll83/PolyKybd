@@ -19,7 +19,7 @@ f.panel(768, 160, 722, 700, 'B — with the insert bonded in',
         'flange flush in the pocket, bosses filling the windows')
 f.image(f'{S}/v1_tint.png', 773, 235, IW, IH, clip=(768, 160, 722, 700))
 
-f.footer('Window 1.8 × 2.2 mm through a 2.9 mm wall; pocket 1.0 mm deep with a 3.5 mm flange overlap, leaving',
+f.footer('Window 2.8 × 2.2 mm through a 2.9 mm wall; pocket 1.0 mm deep with a 3.5 mm flange overlap, leaving',
          '1.9 mm of wall. 6.4 mm of air path through the seam before the bond closes it. Geometry from the led_*',
          'parameters in case/case_polykybd_split72_lr.scad — the pocket and the insert share the same modules.')
 f.save(f'{REPO}/RoHS/led-insert-fitted.svg'); f.png()

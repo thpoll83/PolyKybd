@@ -351,7 +351,7 @@ board to the case SVG through the `Edge.Cuts` bbox — offset exactly
 (−28.0995, −26.395) — puts **D5 and D6 7.95 mm apart on one wall, and D1 round
 the corner on the next**. So it is **two parts per half, four per keyboard**: one
 spanning D5+D6, one for D1. One part over D5+D6 beats two, since each slot is
-only 1.8 × 2.2 mm and separate plugs would be fragile in resin.
+only 2.8 × 2.2 mm and separate plugs would be fragile in resin.
 
 ✅ **Built and verified.** `parts/case/case_polykybd_split72_lr.scad` carries the
 `led_*` parameters and modules, `parts/case/led_inserts.scad` selects the parts,
@@ -363,7 +363,7 @@ before/after view from outside the case.
 
 | | |
 |---|---|
-| Window, on the outer face | 1.8 × 2.2 mm |
+| Window, on the outer face | **2.8 × 2.2 mm** |
 | Wall there | 2.9 mm (only 1.5 mm above the PCB underside) |
 | Pocket depth / flange overlap | 1.0 mm / 3.5 mm |
 | Wall left under the pocket | 1.9 mm |
@@ -382,6 +382,35 @@ by `pcb_clearance`, precisely so both land in the same z band once laid flat
 spine keys off that band. Reference them any other way and the tabs miss: the
 first attempt put the spine at z = 0, where the pair has only the gap between
 its two bosses, and the plate exported happily as **three** disconnected pieces.
+
+✅ **Fitted from OUTSIDE, and that reverses what this file said earlier.** The
+first analysis argued for an inner flange. It does not fit: the PCB underside is
+at z = 11.5 and the window top at 11.6, so a flange behind the wall would foul
+the PCB ledge immediately above it. The pocket is therefore cut into the **outer**
+face.
+
+⚠️ **And the retention argument was backwards.** An inner flange was described
+here as "seated harder by any pressure from outside". It is not — outside
+pressure pushes an inner flange *away* from the wall, into the cavity. The outer
+pocket is the arrangement that is captive against being pushed in, because the
+flange bears on the pocket floor, and pushing in is the direction a finger or an
+ESD gun actually applies. What the inner flange would have bought is resistance
+to being *pulled* out, which the bond covers.
+
+✅ **The air path is NOT load-bearing — the report already shows why.** Table 14
+records the tenting-kit breakout holes as **n.d., "no discharge possible"**, and
+those are open 1 mm holes straight into the cavity. So a small opening is not by
+itself a path; what made the LED and button openings rateable was a **conductive
+target close behind them** (the LED sits 2.1 mm back, the switches are at the
+opening). Once the window is filled with solid dielectric there is no such target,
+and a hairline seam is far less of a path than the 1 mm hole that already failed
+to conduct.
+
+**Consequence worth recording so the geometry is not re-justified wrongly:** the
+3.5 mm overlap and the bond stay, but **for mechanical reasons, not electrical
+ones** — the overlap because below ~3.1 mm the two flanges stop merging into one
+part (below), and the bond for retention. Anyone shrinking the pocket later
+should know the ESD margin was never what sized it.
 
 ⚠️ **`led_pocket_overlap` has a floor near 3.1 mm.** At 2.0 the two flanges came
 out 5.8 mm wide with centres 8 mm apart — a "part" in two disconnected pieces

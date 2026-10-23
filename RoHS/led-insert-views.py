@@ -25,7 +25,7 @@ put(30,  660, 'C_t.png', 'C — D1 on the adjacent wall',
 put(790, 660, 'D_t.png', 'D — cut through D5',
     'flange in the pocket, boss filling the window')
 
-f.footer('Window 1.8 × 2.2 mm through a 2.9 mm wall. Pocket 1.0 mm deep, 3.5 mm flange overlap, 1.9 mm of wall',
+f.footer('Window 2.8 × 2.2 mm through a 2.9 mm wall. Pocket 1.0 mm deep, 3.5 mm flange overlap, 1.9 mm of wall',
          'left under it — 6.4 mm of air path before the bond closes it. All four of a keyboard’s inserts print as',
          'one chained piece (export/case/led_inserts.stl) and snap apart at assembly.')
 f.save(f'{REPO}/RoHS/led-insert-views.svg'); f.png()
