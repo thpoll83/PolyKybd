@@ -358,7 +358,8 @@ only 1.8 × 2.2 mm and separate plugs would be fragile in resin.
 and `parts/build_parts.sh led_ins` exports them. The pocket and the insert come
 from the **same modules**, so they cannot drift. Section drawing:
 `RoHS/led-insert-section.svg` (regenerate with `led-insert-section.py`, which
-derives it from those same parameters).
+derives it from those same parameters), and `RoHS/led-insert-fitted.svg` for the
+before/after view from outside the case.
 
 | | |
 |---|---|
