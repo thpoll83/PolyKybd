@@ -294,6 +294,64 @@ Note the openings are the **reset button, boot button and the LEDs**, i.e. exact
 the service/debug features. Covering them in production is a case-design task, not
 an electronics one.
 
+### e2. ✅ DECIDED: how the ESD openings get closed (2026-10-23)
+
+The case is the **resin-printed** shell, and **resin printing is the shipped
+process** — so the EUT's case *is* the production case. That keeps the argument
+simple: the only difference between tested and shipped is the **addition** of
+inserts, which removes an exposure path rather than changing the product. KEBA
+is being asked to rate points that are no longer accessible, not to accept a
+different EUT.
+
+**Geometry — a "top hat", fitted from the inside:**
+
+| Feature | Why |
+|---|---|
+| Boss **fills the hole flush** with the outer face | no recess for the gun's 8 mm tip to enter, no edge to approach; also removes the shadowed recess over the LEDs |
+| **Flange overlaps the inner wall** | the air path must turn a corner and run the overlap width, not the wall thickness; seated harder by outside pressure; cannot be pushed through or prised out |
+| **Adhesive bead around the seam** | see the three reasons below |
+| ≥1 mm in the transparent window | PMMA/PC ≈ 16–20 kV/mm, so 1 mm ≫ the 8 kV test; 0.5 mm is only 8–10 kV, i.e. at the test level |
+
+**One window for all three LEDs**, not three — fewer seams, one overlap, cannot
+be fitted wrong.
+
+**The buttons need a different part from the LEDs, because they must move.** Any
+clearance is an air path unless it is long or sealed, so the protection should be
+a **flexible membrane or boot** (silicone/TPU) with the same inner flange: you
+press *through* it and there is no gap at all. A rigid plunger with an inside
+flange also works, but its protection is the length of the annular clearance —
+a dimensional argument that degrades with tolerance, where the membrane is a
+structural one. These points made the board **restart**, so prefer structural.
+If the LEDs and buttons share a face, one moulded piece can do both regions with
+no seam between them.
+
+⚠️ **Three independent reasons the seam is bonded rather than merely fitted:**
+1. **Resin is brittle** — an interference fit in the thin wall around an opening
+   is exactly where an SLA part cracks.
+2. **Printed dimensions vary** (resin batch, parameters, post-cure), so a
+   tolerance-based gap argument is weak at the design stage.
+3. ⚠️ **It fails silently in production.** A shell that prints slightly oversized
+   leaves an insert loose; the keyboard works perfectly and the ESD margin is
+   simply gone, with no functional symptom to catch it. Hence "insert seated,
+   bead continuous" is a **QC check**, not a design note.
+
+✅ **The top-hat pocket is free in resin** — a stepped recess for an inner flange
+would need a side action or a split line in an injection tool. It also prints
+same-day, so the geometry can be iterated before the re-test is booked.
+
+**Rejected, with the number:** leaving a thin resin membrane over the LEDs
+instead of a hole. Resin is ~15–20 kV/mm, so 0.4 mm gives ~6–8 kV — at the test
+level, and fragile. 1 mm would be comfortable but will not pass useful light
+through opaque resin. (A translucent shell resin would change this.)
+
+**Close-out:** fit all five NR points, then **one re-test session** covering them
+together, and get the rated result into the **final** report — v1.0 is
+preliminary, which is the natural opening.
+
+Already fine, so do not chase them: the lab worked round the whole case —
+breakout holes returned "no discharge possible", and keycaps from top and front
+were both criterion A. The five NR points are the whole exposure.
+
 ### f. A second modification was needed for contact discharge
 
 ±4 kV contact on *Enclosure left* and *Screws left* initially gave *"left keyboard
@@ -301,11 +359,24 @@ restarts at the every discharge"*. The report records: **"With modified EUT,
 electrical connection established between metal enclosure, screws and PCB, the
 test was passed with criterion A."**
 
-⚠️ **That bonding is now a production requirement, not a lab fix.** The shipped
-assembly must make the same electrical connection between the metal enclosure,
-the screws and the PCB ground. It is not in any BOM or assembly note yet. It also
-makes the right half's behaviour the reference — the left half was the one that
-restarted, so check whether the two halves differ in how the plate is bonded.
+✅ **"Metal enclosure" means the ALUMINIUM SWITCH PLATE** — and the test method
+proves it rather than it being a guess: contact discharge is applied only to
+*conductive* surfaces (insulating ones get air discharge), so with a resin shell
+the "Enclosure right/left" rows in the ±4 kV **contact** table cannot be the
+case. The only exposed metal is the plate and the screws.
+
+⚠️ **That bonding is now a production requirement, not a lab fix**, and it is in
+no BOM or assembly note. Make it a **deliberate feature** — a dedicated grounding
+screw into a plated pad, or a spring contact — rather than a connection that
+happens because a screw incidentally touches a pad. A bond that depends on
+assembly variation passes the re-test and then varies per unit, which is the same
+silent-failure shape as the loose insert in §6e2.
+
+**C and F are complementary, not alternatives:** the bonded plate drains a
+*contact* discharge safely, and the filled openings stop an *air* discharge
+bypassing the plate to reach the PCB directly. Both are needed. The left half was
+the one restarting at every discharge, so check whether the two halves currently
+differ in how the plate is bonded — that asymmetry is a clue, not noise.
 
 ### g. Everything else passed
 
