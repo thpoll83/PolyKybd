@@ -345,8 +345,40 @@ different EUT.
 | **Adhesive bead around the seam** | see the three reasons below |
 | ≥1 mm in the transparent window | PMMA/PC ≈ 16–20 kV/mm, so 1 mm ≫ the 8 kV test; 0.5 mm is only 8–10 kV, i.e. at the test level |
 
-**One window for all three LEDs**, not three — fewer seams, one overlap, cannot
-be fitted wrong.
+⚠️ **NOT one window for all three** — that was wrong, and the board says so. The
+three status LEDs are **D1, D5 and D6** (0805, all on `B.Cu`), and mapping the
+board to the case SVG through the `Edge.Cuts` bbox — offset exactly
+(−28.0995, −26.395) — puts **D5 and D6 7.95 mm apart on one wall, and D1 round
+the corner on the next**. So it is **two parts per half, four per keyboard**: one
+spanning D5+D6, one for D1. One part over D5+D6 beats two, since each slot is
+only 1.8 × 2.2 mm and separate plugs would be fragile in resin.
+
+✅ **Built and verified.** `parts/case/case_polykybd_split72_lr.scad` carries the
+`led_*` parameters and modules, `parts/case/led_inserts.scad` selects the parts,
+and `parts/build_parts.sh led_ins` exports them. The pocket and the insert come
+from the **same modules**, so they cannot drift. Section drawing:
+`RoHS/led-insert-section.svg` (regenerate with `led-insert-section.py`, which
+derives it from those same parameters).
+
+| | |
+|---|---|
+| Window, on the outer face | 1.8 × 2.2 mm |
+| Wall there | 2.9 mm (only 1.5 mm above the PCB underside) |
+| Pocket depth / flange overlap | 1.0 mm / 3.5 mm |
+| Wall left under the pocket | 1.9 mm |
+| **Air path through the seam** | **6.4 mm**, before the bond closes it |
+
+⚠️ **`led_pocket_overlap` has a floor near 3.1 mm.** At 2.0 the two flanges came
+out 5.8 mm wide with centres 8 mm apart — a "part" in two disconnected pieces
+that exports and renders perfectly happily. 3.5 merges them *and* lengthens the
+air path.
+
+⚠️ **The pocket must not reach above the PCB underside** (z = 11.5): the wall is
+only `case_wall_thickness` there, so a pocket would leave it too thin to print.
+
+Verified rather than eyeballed: both inserts sit inside the cavity the case
+loses, four positive controls (0.4 mm in x, y and z) all collide, and the glue
+gap is a real non-empty shell.
 
 **The buttons need a different part from the LEDs, because they must move.** Any
 clearance is an air path unless it is long or sealed, so the protection should be
