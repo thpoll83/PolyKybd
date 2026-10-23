@@ -42,7 +42,15 @@ led_slot_r = 0.9;          // grows the imported slot. !! The SVG paths are LINE
 led_pocket_depth = 1.0;    // how much thinner the wall gets, i.e. flange thickness
 led_pocket_overlap = 3.5;  // in plan. >= 3.1 so D5 and D6 flanges merge into ONE part
 led_pocket_down = 2.0;     // and below it
-led_insert_gap = 0.10;     // bond gap, everywhere except the visible outer face
+// Two clearances, because they are not the same problem. The flange's edge is
+// ON the outer surface, so its gap is a seam the user can see - keep it tight.
+// The boss is buried in the wall where nothing is visible, so it gets the
+// margin that actually lets the part go in: it travels the full 2.9 mm wall
+// thickness, and it is the only feature that can bind on the way.
+led_insert_gap = 0.10;     // flange: pocket fit, i.e. the visible seam width
+led_window_gap = 0.25;     // boss: clearance in the slot, per face. Also why the
+                           // boss now ends 0.15 mm BELOW the PCB rather than
+                           // touching it, and 0.05 mm below the flange top.
 led_sprue = 0.9;           // breakaway tab between parts on the print plate
 led_plate_pitch = 8.5;     // part spacing on that plate
 
@@ -279,8 +287,9 @@ module inner_walls()
 }
 // --- LED window / insert geometry --------------------------------------------
 // Everything derives from the same SVG and the same parameters, so the pocket in
-// the case and the insert that fills it are two views of one definition. `g` is
-// the bond gap: 0 builds the cut, led_insert_gap builds the part that fits it.
+// the case and the insert that fills it are two views of one definition. `g`
+// and `gw` are the clearances: 0 builds the cut, the led_*_gap values build the
+// part that fits it.
 
 // z range of the slot through the wall (unchanged from the original cut)
 function led_window_z0() = pcb_edge_height - 0.1;
@@ -323,7 +332,7 @@ module led_pocket_cut(g = 0)
 }
 
 // Both cuts together - what the case loses, and (with g) what the insert is.
-module led_insert_solid(g = 0)
+module led_insert_solid(g = 0, gw = 0)
 {
     union()
     {
@@ -336,7 +345,7 @@ module led_insert_solid(g = 0)
             // pcb_clearance), so its thickness is the sum below - the clearance
             // cancels, and including it would leave the boss 0.15 mm proud.
             led_wall_band(case_wall_thickness + pcb_edge_width, 0);
-            led_window_cut(g);
+            led_window_cut(gw);
         }
     }
 }
@@ -360,13 +369,15 @@ module led_region(x0, svg_y0, x1, svg_y1)
 
 // These boxes only pick which slots go in which part. They are regions, not
 // dimensions - generous, and they do not need to track the SVG.
-module led_insert_pair(g = led_insert_gap)   // D6 (svg y 41.2) + D5 (svg y 49.2)
+// D6 (svg y 41.2) + D5 (svg y 49.2)
+module led_insert_pair(g = led_insert_gap, gw = led_window_gap)
 {
-    intersection() { led_insert_solid(g); led_region(-10, 36, 10, 55); }
+    intersection() { led_insert_solid(g, gw); led_region(-10, 36, 10, 55); }
 }
-module led_insert_single(g = led_insert_gap) // D1 (svg x 12.8)
+// D1 (svg x 12.8)
+module led_insert_single(g = led_insert_gap, gw = led_window_gap)
 {
-    intersection() { led_insert_solid(g); led_region(4, -8, 22, 16); }
+    intersection() { led_insert_solid(g, gw); led_region(4, -8, 22, 16); }
 }
 
 // --- print plate --------------------------------------------------------------

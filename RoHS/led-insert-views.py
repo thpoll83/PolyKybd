@@ -3,7 +3,17 @@ REPO = subprocess.run(['git','rev-parse','--show-toplevel'], cwd='/home/user/Pol
                       capture_output=True, text=True, check=True).stdout.strip()
 sys.path.insert(0, f'{REPO}/.claude/skills/explain-geometry-figure')
 from figlib import Fig, C
-S = '<renders>'
+import os
+
+# The four 820x640 OpenSCAD renders. They are build artefacts, not committed, so
+# point RENDERS at wherever they were made. To remake them: export the case and
+# the inserts over the LED corner to reg_case.stl / reg_ins.stl, then for each
+# view render the case ALONE and case+insert with the same camera and tint the
+# pixels that differ (that marks where the insert is actually visible - OpenSCAD
+# drops colour() under --render=cgal). D is a section: intersect with
+# translate([-20,60,-5]) cube([60,29.89,30]) to cut at y = 89.89, through D5, and
+# use camera '16,100,17,1,89.5,10'.
+S = os.environ.get('RENDERS', '/tmp/led-renders')
 
 f = Fig(1540, 1270)
 f.title('Status-LED inserts in place — four views',
@@ -23,10 +33,11 @@ put(790, 160, 'B_t.png', 'B — D5 and D6',
 put(30,  660, 'C_t.png', 'C — D1 on the adjacent wall',
     'its own part, round the corner from the pair')
 put(790, 660, 'D_t.png', 'D — cut through D5',
-    'flange in the pocket, boss filling the window')
+    'flange in its pocket, boss in the window with 0.25 mm all round')
 
 f.footer('Window 2.8 × 2.2 mm through a 2.9 mm wall. Pocket 1.0 mm deep, 3.5 mm flange overlap, 1.9 mm of wall',
-         'left under it — 6.4 mm of air path before the bond closes it. All four of a keyboard’s inserts print as',
+         'left under it. Clearance 0.10 mm at the flange (the visible seam) and 0.25 mm per face around the boss,',
+         'which is what lets the part go in; the bond closes the seam. All four of a keyboard’s inserts print as',
          'one chained piece (export/case/led_inserts.stl) and snap apart at assembly.')
 f.save(f'{REPO}/RoHS/led-insert-views.svg'); f.png()
 print('ok')

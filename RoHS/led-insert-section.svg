@@ -9,7 +9,7 @@
 <path d="M 119.70,779.80 L 299.50,779.80 L 299.50,476.00 L 212.70,476.00 L 212.70,370.60 L 119.70,370.60 Z" fill="#21262d" fill-opacity="1.0" stroke="#8b949e" stroke-width="2"/>
 <path d="M 119.70,606.20 L 299.50,606.20 L 299.50,469.80 L 119.70,469.80 Z" fill="#0d1117" fill-opacity="1.0" stroke="#3d4756" stroke-width="1.5" stroke-dasharray="4 3"/>
 <path d="M 119.70,730.20 L 181.70,730.20 L 181.70,476.00 L 119.70,476.00 Z" fill="#0d1117" fill-opacity="1.0" stroke="#58a6ff" stroke-width="2" stroke-dasharray="5 3"/>
-<path d="M 119.70,724.00 L 175.50,724.00 L 175.50,600.00 L 299.50,600.00 L 299.50,476.00 L 175.50,476.00 L 175.50,482.20 L 119.70,482.20 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
+<path d="M 119.70,724.00 L 175.50,724.00 L 175.50,590.70 L 299.50,590.70 L 299.50,485.30 L 175.50,485.30 L 175.50,482.20 L 119.70,482.20 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
 <path d="M 212.70,476.00 L 532.00,476.00 L 532.00,407.80 L 212.70,407.80 Z" fill="#3d4756" fill-opacity="1.0" stroke="#8b949e" stroke-width="1.5"/>
 <path d="M 367.98,531.80 L 491.98,531.80 L 491.98,476.00 L 367.98,476.00 Z" fill="#f0b429" fill-opacity="0.8" stroke="#f0b429" stroke-width="1.5"/>
 <line x1="119.7" y1="856.0" x2="299.5" y2="856.0" stroke="#e6edf3" stroke-width="2.5"/>
@@ -20,6 +20,8 @@
 <line x1="119.7" y1="793.0" x2="119.7" y2="807.0" stroke="#58a6ff" stroke-width="2.5"/>
 <line x1="181.7" y1="793.0" x2="181.7" y2="807.0" stroke="#58a6ff" stroke-width="2.5"/>
 <text x="150.7" y="834.0" fill="#58a6ff" font-size="20" text-anchor="middle" font-weight="bold">pocket 1.0</text>
+<text x="62.0" y="242.0" fill="#3fb950" font-size="15" text-anchor="start" font-weight="normal">clearance 0.10 mm at the flange (a seam you can see),</text>
+<text x="62.0" y="264.0" fill="#3fb950" font-size="15" text-anchor="start" font-weight="normal">0.25 mm per face around the boss (buried in the wall)</text>
 <line x1="216.7" y1="476.0" x2="535.3" y2="476.0" stroke="#8b949e" stroke-width="1.5" stroke-dasharray="3 3"/>
 <text x="541.3" y="481.0" fill="#8b949e" font-size="13" text-anchor="start" font-weight="normal">PCB underside 11.5</text>
 <line x1="303.5" y1="606.2" x2="535.3" y2="606.2" stroke="#3d4756" stroke-width="1.5" stroke-dasharray="3 3"/>
@@ -27,25 +29,25 @@
 <line x1="185.7" y1="730.2" x2="535.3" y2="730.2" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="3 3"/>
 <text x="541.3" y="735.2" fill="#58a6ff" font-size="13" text-anchor="start" font-weight="normal">pocket floor  7.4</text>
 <rect x="760.0" y="150.0" width="700.0" height="760.0" fill="none" stroke="#21262d" stroke-width="1"/>
-<text x="780.0" y="182.0" fill="#e6edf3" font-size="19" text-anchor="start" font-weight="normal">B — the air path an 8 kV discharge must take</text>
-<text x="780.0" y="206.0" fill="#3d4756" font-size="15" text-anchor="start" font-weight="normal">and why the seam is bonded rather than merely fitted</text>
+<text x="780.0" y="182.0" fill="#e6edf3" font-size="19" text-anchor="start" font-weight="normal">B — the seam, and why it is bonded</text>
+<text x="780.0" y="206.0" fill="#3d4756" font-size="15" text-anchor="start" font-weight="normal">the path is long, but the bond is what the design rests on</text>
 <path d="M 839.70,779.80 L 1019.50,779.80 L 1019.50,476.00 L 932.70,476.00 L 932.70,370.60 L 839.70,370.60 Z" fill="#21262d" fill-opacity="1.0" stroke="#8b949e" stroke-width="2"/>
 <path d="M 839.70,606.20 L 1019.50,606.20 L 1019.50,469.80 L 839.70,469.80 Z" fill="#0d1117" fill-opacity="1.0" stroke="#3d4756" stroke-width="1.5" stroke-dasharray="4 3"/>
 <path d="M 839.70,730.20 L 901.70,730.20 L 901.70,476.00 L 839.70,476.00 Z" fill="#0d1117" fill-opacity="1.0" stroke="#58a6ff" stroke-width="2" stroke-dasharray="5 3"/>
-<path d="M 839.70,724.00 L 895.50,724.00 L 895.50,600.00 L 1019.50,600.00 L 1019.50,476.00 L 895.50,476.00 L 895.50,482.20 L 839.70,482.20 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
+<path d="M 839.70,724.00 L 895.50,724.00 L 895.50,590.70 L 1019.50,590.70 L 1019.50,485.30 L 895.50,485.30 L 895.50,482.20 L 839.70,482.20 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
 <path d="M 932.70,476.00 L 1252.00,476.00 L 1252.00,407.80 L 932.70,407.80 Z" fill="#3d4756" fill-opacity="1.0" stroke="#8b949e" stroke-width="1.5"/>
 <path d="M 1087.98,531.80 L 1211.98,531.80 L 1211.98,476.00 L 1087.98,476.00 Z" fill="#f0b429" fill-opacity="0.8" stroke="#f0b429" stroke-width="1.5"/>
 <line x1="839.7" y1="482.2" x2="895.5" y2="482.2" stroke="#f85149" stroke-width="4"/>
-<line x1="895.5" y1="482.2" x2="895.5" y2="476.0" stroke="#f85149" stroke-width="4"/>
-<line x1="895.5" y1="476.0" x2="1019.5" y2="476.0" stroke="#f85149" stroke-width="4"/>
+<line x1="895.5" y1="482.2" x2="895.5" y2="485.3" stroke="#f85149" stroke-width="4"/>
+<line x1="895.5" y1="485.3" x2="1019.5" y2="485.3" stroke="#f85149" stroke-width="4"/>
 <circle cx="839.7" cy="482.2" r="5" fill="#f85149"/>
-<circle cx="1019.5" cy="476.0" r="5" fill="#f85149"/>
+<circle cx="1019.5" cy="485.3" r="5" fill="#f85149"/>
 <text x="975.0" y="806.0" fill="#f85149" font-size="17" text-anchor="start" font-weight="normal">pocket depth      1.0 mm</text>
 <text x="975.0" y="830.0" fill="#f85149" font-size="17" text-anchor="start" font-weight="normal">+ flange overlap  3.5 mm</text>
 <text x="975.0" y="854.0" fill="#f85149" font-size="17" text-anchor="start" font-weight="normal">+ wall under it   1.9 mm</text>
 <line x1="971.0" y1="866.0" x2="1215.0" y2="866.0" stroke="#f85149" stroke-width="2"/>
 <text x="975.0" y="892.0" fill="#f85149" font-size="19" text-anchor="start" font-weight="bold">= 6.4 mm of narrow gap</text>
-<text x="975.0" y="916.0" fill="#8b949e" font-size="15" text-anchor="start" font-weight="normal">and the bond closes it entirely</text>
+<text x="975.0" y="916.0" fill="#8b949e" font-size="15" text-anchor="start" font-weight="normal">which the bond then closes entirely</text>
 <text x="40.0" y="978.0" fill="#8b949e" font-size="16" text-anchor="start" font-weight="normal">one covers D1. Four per keyboard, printed in clear resin.</text>
 <text x="40.0" y="954.0" fill="#8b949e" font-size="16" text-anchor="start" font-weight="normal">insert come from the same modules, so they cannot drift. Two parts per half: one spans D5+D6,</text>
 <text x="40.0" y="930.0" fill="#8b949e" font-size="16" text-anchor="start" font-weight="normal">Derived from the led_* parameters in case/case_polykybd_split72_lr.scad — the pocket and the</text>

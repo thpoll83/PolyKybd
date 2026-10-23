@@ -336,13 +336,14 @@ inserts, which removes an exposure path rather than changing the product. KEBA
 is being asked to rate points that are no longer accessible, not to accept a
 different EUT.
 
-**Geometry — a "top hat", fitted from the inside:**
+**Geometry — a "top hat", fitted from the OUTSIDE** (the first analysis said
+inside; see the correction further down for why that does not fit):
 
 | Feature | Why |
 |---|---|
 | Boss **fills the hole flush** with the outer face | no recess for the gun's 8 mm tip to enter, no edge to approach; also removes the shadowed recess over the LEDs |
-| **Flange overlaps the inner wall** | the air path must turn a corner and run the overlap width, not the wall thickness; seated harder by outside pressure; cannot be pushed through or prised out |
-| **Adhesive bead around the seam** | see the three reasons below |
+| **Flange sits in a pocket in the outer face** | bears on the pocket floor, so the insert is captive against being pushed in — the direction a finger or a gun actually loads it; the overlap also turns the seam into a long narrow path rather than a straight 2.9 mm hole |
+| **Adhesive bead around the seam** | see the three reasons below; it is also what resists the insert being *pulled* out |
 | ≥1 mm in the transparent window | PMMA/PC ≈ 16–20 kV/mm, so 1 mm ≫ the 8 kV test; 0.5 mm is only 8–10 kV, i.e. at the test level |
 
 ⚠️ **NOT one window for all three** — that was wrong, and the board says so. The
@@ -367,6 +368,8 @@ before/after view from outside the case.
 | Wall there | 2.9 mm (only 1.5 mm above the PCB underside) |
 | Pocket depth / flange overlap | 1.0 mm / 3.5 mm |
 | Wall left under the pocket | 1.9 mm |
+| **Clearance — flange in its pocket** | **0.10 mm** per face (`led_insert_gap`) |
+| **Clearance — boss in the slot** | **0.25 mm** per face (`led_window_gap`) |
 | **Air path through the seam** | **6.4 mm**, before the bond closes it |
 
 ✅ **All four print as one piece.** Each insert is only a couple of hundred
@@ -412,6 +415,33 @@ ones** — the overlap because below ~3.1 mm the two flanges stop merging into o
 part (below), and the bond for retention. Anyone shrinking the pocket later
 should know the ESD margin was never what sized it.
 
+✅ **Two clearances, not one — and the second one follows from that.** Once the
+seam stopped being the ESD argument, the fit could be loosened to whatever makes
+the part go in. But the two faces are not the same problem, so one number is the
+wrong tool:
+
+- **`led_insert_gap` = 0.10 mm** — the flange's fit in its pocket. The flange
+  edge is **on the outer surface**, so this gap *is* the visible seam. Keep it
+  tight.
+- **`led_window_gap` = 0.25 mm** — the boss's clearance in the slot. It is buried
+  in the wall where nothing is visible, it has to travel the full 2.9 mm wall
+  thickness, and it is the only feature that can bind on the way in. So it gets
+  the margin.
+
+Two defects disappeared with it, neither of which was the point:
+
+- The boss used to end **exactly at the PCB underside** (z = 11.5). It now stops
+  at 11.35, so the insert cannot bear on the board.
+- The insert had an **odd stepped top**: the boss stood 0.1 mm proud of the
+  flange, because the flange carried the gap and the boss did not. At 0.25 the
+  boss top (11.35) is *below* the flange top (11.4) and the part has one flat
+  face.
+
+⚠️ The outer face itself has **no** clearance in either direction — `led_wall_band`
+takes the gap off the *inboard* side only, so the insert is flush with the case
+and the bond gap is behind it. That is deliberate; do not add a gap there to
+"make it easier", it would sink the insert below the surface.
+
 ⚠️ **`led_pocket_overlap` has a floor near 3.1 mm.** At 2.0 the two flanges came
 out 5.8 mm wide with centres 8 mm apart — a "part" in two disconnected pieces
 that exports and renders perfectly happily. 3.5 merges them *and* lengthens the
@@ -421,8 +451,11 @@ air path.
 only `case_wall_thickness` there, so a pocket would leave it too thin to print.
 
 Verified rather than eyeballed: both inserts sit inside the cavity the case
-loses, four positive controls (0.4 mm in x, y and z) all collide, and the glue
-gap is a real non-empty shell.
+loses (the difference exports as *empty*), **five positive controls — 0.3 mm in
+±y, ±z and +x — all collide**, so the test can still fail, and the clearance
+volume is a real non-empty shell. Measured per face: boss y 88.74–99.04 inside a
+window at 88.49–99.29, boss z 9.65–11.35 inside a window at 9.4–11.6 → 0.25 mm
+all round; flange 0.10 mm all round.
 
 **The buttons need a different part from the LEDs, because they must move.** Any
 clearance is an air path unless it is long or sealed, so the protection should be
