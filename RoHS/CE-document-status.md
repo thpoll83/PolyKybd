@@ -336,14 +336,14 @@ inserts, which removes an exposure path rather than changing the product. KEBA
 is being asked to rate points that are no longer accessible, not to accept a
 different EUT.
 
-**Geometry — a "top hat", fitted from the OUTSIDE** (the first analysis said
-inside; see the correction further down for why that does not fit):
+**Geometry — a "top hat", fitted from the INSIDE** (`led_fit_from = "inside"`,
+the default; the file argued itself round this twice — see the record below):
 
 | Feature | Why |
 |---|---|
 | Boss **fills the hole flush** with the outer face | no recess for the gun's 8 mm tip to enter, no edge to approach; also removes the shadowed recess over the LEDs |
-| **Flange sits in a pocket in the outer face** | bears on the pocket floor, so the insert is captive against being pushed in — the direction a finger or a gun actually loads it; the overlap also turns the seam into a long narrow path rather than a straight 2.9 mm hole |
-| **Adhesive bead around the seam** | see the three reasons below; it is also what resists the insert being *pulled* out |
+| **Flange sits in a pocket cut into the PCB ledge** | the outer surface keeps exactly the geometry that was tested — no pocket, no seam ring round the window, and nothing for a blade or a fingernail to engage |
+| **Adhesive bead around the seam** | see the three reasons below. Fitted from the inside it is also the *only* thing resisting a push from outside, so it is not optional |
 | ≥1 mm in the transparent window | PMMA/PC ≈ 16–20 kV/mm, so 1 mm ≫ the 8 kV test; 0.5 mm is only 8–10 kV, i.e. at the test level |
 
 ⚠️ **NOT one window for all three** — that was wrong, and the board says so. The
@@ -368,8 +368,9 @@ before/after view from outside the case.
 | Wall there | 2.9 mm (only 1.5 mm above the PCB underside) |
 | Pocket depth / flange overlap | 1.0 mm / 3.5 mm |
 | Wall left under the pocket | 1.9 mm |
-| **Clearance — flange in its pocket** | **0.10 mm** per face (`led_insert_gap`) |
-| **Clearance — boss in the slot** | **0.25 mm** per face (`led_window_gap`) |
+| PCB ledge left at full width above the pocket | **0.5 mm** (`led_ledge_keep`) |
+| **Clearance where the seam SHOWS** | **0.10 mm** per face (`led_insert_gap`) — flange in its pocket, and the boss's outer lip |
+| **Clearance, buried** | **0.25 mm** per face (`led_window_gap`), behind a `led_boss_lip` = 0.6 mm lip |
 | **Air path through the seam** | **6.4 mm**, before the bond closes it |
 
 ✅ **All four print as one piece.** Each insert is only a couple of hundred
@@ -379,26 +380,44 @@ breakaway spine (29.5 × 17.6 × 3.3 mm). They print, wash and cure together and
 get snapped apart at assembly. The spine meets each part on the flange **edge**,
 so the witness mark is never on the visible outer face.
 
-⚠️ **The two part families are picked up on their OUTER face**, offset outward
-by `pcb_clearance`, precisely so both land in the same z band once laid flat
-(`case_wall_thickness` down to `case_wall_thickness - led_pocket_depth`). The
+⚠️ **The two part families are picked up on the board outline**, offset outward
+by `pcb_clearance`, precisely so both land in the same z band once laid flat.
+Which band that is depends on **which face the flange is in**, so
+`led_plate_tab_z()` is derived from `led_fit_from` rather than hard-coded. The
 spine keys off that band. Reference them any other way and the tabs miss: the
 first attempt put the spine at z = 0, where the pair has only the gap between
 its two bosses, and the plate exported happily as **three** disconnected pieces.
 
-✅ **Fitted from OUTSIDE, and that reverses what this file said earlier.** The
-first analysis argued for an inner flange. It does not fit: the PCB underside is
-at z = 11.5 and the window top at 11.6, so a flange behind the wall would foul
-the PCB ledge immediately above it. The pocket is therefore cut into the **outer**
-face.
+⚠️ **The fit direction was argued round TWICE, and the objection that settled
+it the first time was wrong.** Worth recording, because the wrong objection is
+the kind that sounds decisive:
 
-⚠️ **And the retention argument was backwards.** An inner flange was described
-here as "seated harder by any pressure from outside". It is not — outside
-pressure pushes an inner flange *away* from the wall, into the cavity. The outer
-pocket is the arrangement that is captive against being pushed in, because the
-flange bears on the pocket floor, and pushing in is the direction a finger or an
-ESD gun actually applies. What the inner flange would have bought is resistance
-to being *pulled* out, which the bond covers.
+1. The first analysis said **inside**, and justified it with "seated harder by
+   any pressure from outside". That is **backwards** — outside pressure pushes an
+   inner flange *away* from the wall, into the cavity.
+2. So it was flipped to **outside**, on the grounds that an inner flange "does
+   not fit: the PCB underside is at z = 11.5 and the window top at 11.6, so it
+   would foul the PCB ledge". That is **overstated**. Only the window's top
+   **0.1 mm** is above the ledge top. An inner flange does not have to reach it,
+   and it is not in the cavity at all — the pocket is cut *into* the ledge, so
+   the flange lives inside the wall and never gets near the LED (which stands
+   1.1 mm clear of the ledge's inner face in any case).
+3. Back to **inside**, which is what was wanted, with the real constraint found
+   by measuring instead of assuming: the pocket must stop **below the ledge top**,
+   because that ledge is what the board rests on and it is only 1.25 mm wide.
+   `led_ledge_keep` = 0.5 mm holds it back; slices of the built case confirm the
+   wall still runs x −0.452…2.448 at z 11.1 and 11.44, i.e. full support, and
+   −0.452…1.448 through the pocket, i.e. **the outer face is untouched**.
+
+⚠️ **The retention trade is real and does not go away.** Fitted from the inside,
+pressure from outside — a finger, an ESD gun tip — pushes the part *into* the
+cavity and only the bond resists it. Fitted from the outside the flange would
+bear on the pocket floor and the part would be captive against exactly that load
+(and only the bond would resist a *pull*). The outside arrangement is still in
+the file, one parameter away (`led_fit_from = "outside"`), and panel B of
+`led-insert-section.svg` draws it. It was not chosen because the visible seam and
+the untouched outer surface won; the price is that the bond is load-bearing, which
+is why "insert seated, bead continuous" is a QC check rather than a design note.
 
 ✅ **The air path is NOT load-bearing — the report already shows why.** Table 14
 records the tenting-kit breakout holes as **n.d., "no discharge possible"**, and
@@ -415,32 +434,37 @@ ones** — the overlap because below ~3.1 mm the two flanges stop merging into o
 part (below), and the bond for retention. Anyone shrinking the pocket later
 should know the ESD margin was never what sized it.
 
-✅ **Two clearances, not one — and the second one follows from that.** Once the
-seam stopped being the ESD argument, the fit could be loosened to whatever makes
-the part go in. But the two faces are not the same problem, so one number is the
-wrong tool:
+✅ **Two clearances, split by whether the seam can be SEEN — not by which
+feature it is.** Once the seam stopped being the ESD argument, the fit could be
+loosened to whatever makes the part go in. The first attempt split it by feature
+(flange 0.10, boss 0.25) and that was right *for the outside fit*, where the
+flange covers the window. **Fitted from the inside it is wrong, and the render
+is what showed it**: with no flange on the outer face, the boss *is* the visible
+seam, so a 0.25 mm clearance meant a 0.25 mm adhesive line round a 2.8 mm
+window. The split is therefore:
 
-- **`led_insert_gap` = 0.10 mm** — the flange's fit in its pocket. The flange
-  edge is **on the outer surface**, so this gap *is* the visible seam. Keep it
-  tight.
-- **`led_window_gap` = 0.25 mm** — the boss's clearance in the slot. It is buried
-  in the wall where nothing is visible, it has to travel the full 2.9 mm wall
-  thickness, and it is the only feature that can bind on the way in. So it gets
-  the margin.
+- **`led_insert_gap` = 0.10 mm** — **every seam anybody can see**: the flange in
+  its pocket, and the boss's outer lip. ⚠️ This is also the number to raise if a
+  printed part will not push home; it is the only one that costs anything visible.
+- **`led_window_gap` = 0.25 mm** — the **buried** remainder of the boss, behind a
+  `led_boss_lip` = 0.6 mm lip. The boss has to travel the full 2.9 mm of wall and
+  is the only feature that can bind on the way, so everything except the lip is
+  relieved. The step also acts as a lead-in.
 
-Two defects disappeared with it, neither of which was the point:
+With `led_fit_from = "outside"` the flange covers the lip region entirely, so the
+lip is a no-op there — one geometry, correct either way.
 
-- The boss used to end **exactly at the PCB underside** (z = 11.5). It now stops
-  at 11.35, so the insert cannot bear on the board.
-- The insert had an **odd stepped top**: the boss stood 0.1 mm proud of the
-  flange, because the flange carried the gap and the boss did not. At 0.25 the
-  boss top (11.35) is *below* the flange top (11.4) and the part has one flat
-  face.
+Two defects disappeared along the way, neither of which was the point:
 
-⚠️ The outer face itself has **no** clearance in either direction — `led_wall_band`
-takes the gap off the *inboard* side only, so the insert is flush with the case
-and the bond gap is behind it. That is deliberate; do not add a gap there to
-"make it easier", it would sink the insert below the surface.
+- The boss used to end **exactly at the PCB underside** (z = 11.5) and could bear
+  on the board. The buried part now stops at 11.35.
+- The part had an **odd stepped top**, the boss standing 0.1 mm proud of the
+  flange, because the flange carried the gap and the boss did not.
+
+⚠️ The **visible face gets no clearance in the insertion direction** — the bands
+take the gap off the far side only, so the part is flush with the case and the
+slack ends up behind it. Do not add a gap there to "make it easier": it would
+sink the insert below the surface.
 
 ⚠️ **`led_pocket_overlap` has a floor near 3.1 mm.** At 2.0 the two flanges came
 out 5.8 mm wide with centres 8 mm apart — a "part" in two disconnected pieces
@@ -451,11 +475,21 @@ air path.
 only `case_wall_thickness` there, so a pocket would leave it too thin to print.
 
 Verified rather than eyeballed: both inserts sit inside the cavity the case
-loses (the difference exports as *empty*), **five positive controls — 0.3 mm in
-±y, ±z and +x — all collide**, so the test can still fail, and the clearance
-volume is a real non-empty shell. Measured per face: boss y 88.74–99.04 inside a
-window at 88.49–99.29, boss z 9.65–11.35 inside a window at 9.4–11.6 → 0.25 mm
-all round; flange 0.10 mm all round.
+loses (the difference exports as *empty*), **five positive controls — 0.15 mm in
+±y, ±z and −x — all collide**, so the test can still fail, and the clearance
+volume is a real non-empty shell. Measured per face, by slicing the part and the
+cavity in the same slab:
+
+| slab | part | cavity | per face |
+|---|---|---|---|
+| boss lip (outer 0.5 mm of wall) | y 88.59–99.19, z 9.5–11.5 | y 88.49–99.29, z 9.4–11.6 | **0.10** |
+| boss body (x 0.4–0.9) | y 88.74–99.04, z 9.65–11.35 | y 88.49–99.29, z 9.4–11.6 | **0.25** |
+| flange (x 1.7–2.448, between the slots) | x 1.548–2.448, z 7.5–10.9 | x 1.448–2.448, z 7.4–11.0 | **0.10** |
+
+The flange reading is the one that shows the fit is not over-constrained: it is
+flush at the ledge's inner face (2.448) with the 0.10 mm standing at the pocket
+floor, so the part is positioned by pushing it until the boss is flush from
+outside and the print tolerance lands in the bond gap.
 
 **The buttons need a different part from the LEDs, because they must move.** Any
 clearance is an air path unless it is long or sealed, so the protection should be

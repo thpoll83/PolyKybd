@@ -5,8 +5,15 @@
 // shipped unit; being transparent, it also turns the slot into a light pipe for
 // an LED that previously only showed at an angle.
 //
+// Fitted from the INSIDE: the boss fills the window flush with the outer face
+// and the flange sits in a pocket cut into the PCB ledge, so the case's outer
+// surface is exactly as designed and tested. led_fit_from in the case file
+// switches it back to an outer pocket.
+//
 // The geometry comes from case_polykybd_split72_lr.scad, so the insert and the
 // pocket it fills can never drift apart - edit the led_* parameters there.
+// !! -D on the command line sets a variable in THIS file, not in a use<>'d one,
+// so -D 'led_fit_from="outside"' does nothing. Edit the case file to switch.
 //
 //   openscad -o ../export/case/led_insert_pair.stl  -D 'part="pair"'  led_inserts.scad
 //   openscad -o ../export/case/led_insert_single.stl -D 'part="single"' led_inserts.scad

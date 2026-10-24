@@ -27,14 +27,27 @@ stand_off_extra_radius = 2.3;
 // these openings NOT RATED, so each slot takes a bonded transparent insert and
 // the opening stops existing on a shipped unit.
 //
-// The insert is a top hat fitted from OUTSIDE: a flange sitting flush in a local
-// pocket (the wall is thinned there to make room), and a boss filling the
-// remaining wall thickness. Pressure from outside seats it against the pocket
-// floor rather than pushing it through.
+// The insert is a top hat: a boss filling the window flush with the outer face,
+// and a flange sitting in a local pocket where the wall is thinned to make room.
+// led_fit_from picks which face that pocket is cut into - "inside" by default,
+// which leaves the outer surface untouched.
 //
 // The case pocket and the insert are generated from the SAME modules below, so
 // they cannot drift apart. `led_inserts.scad` builds the printable parts.
 led_insert = true;         // cut the pocket; set false for the pre-insert case
+led_fit_from = "inside";   // which face the flange sits in: "inside" | "outside".
+                           // INSIDE leaves the outer surface exactly as it was
+                           // designed and tested - the only thing visible is the
+                           // window itself, filled flush, with no seam ring round
+                           // it and nothing for a blade to engage. The pocket is
+                           // cut into the PCB ledge instead, so it must stop short
+                           // of the ledge top (led_ledge_keep).
+                           // OUTSIDE is kept because it is better against the load
+                           // that actually occurs: pressure from outside seats the
+                           // flange on the pocket floor instead of pushing the part
+                           // into the cavity. Fitted from the inside only the bond
+                           // resists that, which is one more reason the bond is not
+                           // optional.
 led_slot_r = 0.9;          // grows the imported slot. !! The SVG paths are LINES, but
                            // OpenSCAD imports them with a ~1.0 mm stroke, not zero width,
                            // so the window comes out 1.0 + 2*0.9 = 2.8 mm wide, not 1.8.
@@ -42,15 +55,31 @@ led_slot_r = 0.9;          // grows the imported slot. !! The SVG paths are LINE
 led_pocket_depth = 1.0;    // how much thinner the wall gets, i.e. flange thickness
 led_pocket_overlap = 3.5;  // in plan. >= 3.1 so D5 and D6 flanges merge into ONE part
 led_pocket_down = 2.0;     // and below it
+led_ledge_keep = 0.5;      // inside fit only: height of PCB ledge left at FULL
+                           // width above the pocket. The ledge is what the board
+                           // rests on and it is only 1.25 mm wide, so the pocket
+                           // must not run up into it.
 // Two clearances, because they are not the same problem. The flange's edge is
 // ON the outer surface, so its gap is a seam the user can see - keep it tight.
 // The boss is buried in the wall where nothing is visible, so it gets the
 // margin that actually lets the part go in: it travels the full 2.9 mm wall
 // thickness, and it is the only feature that can bind on the way.
-led_insert_gap = 0.10;     // flange: pocket fit, i.e. the visible seam width
-led_window_gap = 0.25;     // boss: clearance in the slot, per face. Also why the
-                           // boss now ends 0.15 mm BELOW the PCB rather than
-                           // touching it, and 0.05 mm below the flange top.
+led_insert_gap = 0.10;     // EVERY VISIBLE SEAM, per face: the flange in its
+                           // pocket, and the boss's lip where it meets the outer
+                           // face. If a printed part is too tight to push home,
+                           // this is the number to raise - it is also the only
+                           // one anybody can see.
+led_window_gap = 0.25;     // the BURIED clearance, per face: the rest of the boss
+                           // inside the wall, behind the lip. Also what keeps the
+                           // boss (z 9.65 .. 11.35) clear of the PCB underside at
+                           // 11.5 rather than touching it.
+led_boss_lip = 0.6;        // how deep the close-fitting lip runs in from the outer
+                           // face. Fitted from the inside the boss IS the visible
+                           // seam, so it cannot simply take led_window_gap; a short
+                           // lip keeps the seam tight while the rest stays loose
+                           // enough to push through 2.9 mm of wall. Set 0 for a
+                           // plain boss. With led_fit_from = "outside" the flange
+                           // covers this region, so the lip makes no difference.
 led_sprue = 0.9;           // breakaway tab between parts on the print plate
 led_plate_pitch = 8.5;     // part spacing on that plate
 
@@ -291,22 +320,60 @@ module inner_walls()
 // and `gw` are the clearances: 0 builds the cut, the led_*_gap values build the
 // part that fits it.
 
+function led_fit_inside() = led_fit_from == "inside";
+
+// The two wall faces the flange can sit in, as offsets from the board outline
+// (positive = outboard). Measured on the model, not assumed: below z = 11.5 the
+// wall runs x -0.452 .. 2.448, above it only -0.452 .. 1.048.
+function led_out_r() = case_wall_thickness + pcb_clearance;    // outer face
+function led_in_r() = -(pcb_edge_width - pcb_clearance);       // ledge inner face
+
 // z range of the slot through the wall (unchanged from the original cut)
 function led_window_z0() = pcb_edge_height - 0.1;
 function led_window_h() = 2.20;
 // The pocket must not reach above the PCB underside: the wall is only
 // case_wall_thickness there, and a pocket would leave it too thin to print.
-function led_pocket_z1() = case_bottom_thickness + pcb_edge_height;
+// Fitted from the INSIDE it has to stop lower still, because that pocket is cut
+// into the ledge the board rests on - hence led_ledge_keep.
+function led_pocket_z1() = case_bottom_thickness + pcb_edge_height
+                           - (led_fit_inside() ? led_ledge_keep : 0);
 function led_pocket_z0() = led_window_z0() - led_pocket_down;
 
-// The band of wall between the outer face and `d` inboard of it, full height.
-module led_wall_band(d, g = 0)
+// Everything that needs a slice of wall asks for it by the two offsets that
+// bound it, so there is one place where the wall's thickness is expressed.
+module led_band_r(r_out, r_in)
 {
     linear_extrude(height = case_height * 3, center = true) difference()
     {
-        offset(r = case_wall_thickness + pcb_clearance, $fn = 128) import(file = pcb_outline, dpi = 300);
-        offset(r = case_wall_thickness + pcb_clearance - d + g, $fn = 128)
-            import(file = pcb_outline, dpi = 300);
+        offset(r = r_out, $fn = 128) import(file = pcb_outline, dpi = 300);
+        offset(r = r_in, $fn = 128) import(file = pcb_outline, dpi = 300);
+    }
+}
+
+// The band `d` deep measured from whichever face the flange sits in, full height.
+// `g` thins it on the FAR side, so the part stays flush with that face and the
+// clearance ends up behind it where nothing can see it.
+module led_wall_band(d, g = 0)
+{
+    if (led_fit_inside()) led_band_r(led_in_r() + d - g, led_in_r());
+    else led_band_r(led_out_r(), led_out_r() - d + g);
+}
+
+// The boss: the part of the insert that fills the slot. Two clearances along its
+// length - a short lip at the outer face at `g`, the buried remainder at `gw`.
+// With both at 0 this is just the slot through the wall, which is what the case
+// subtracts, so the cut and the part still come from one definition.
+module led_boss(g = 0, gw = 0)
+{
+    intersection()
+    {
+        led_band_r(led_out_r(), led_out_r() - led_boss_lip);
+        led_window_cut(g);
+    }
+    intersection()
+    {
+        led_band_r(led_out_r() - led_boss_lip, led_in_r());
+        led_window_cut(gw);
     }
 }
 
@@ -337,16 +404,9 @@ module led_insert_solid(g = 0, gw = 0)
     union()
     {
         led_pocket_cut(g);
-        intersection()
-        {
-            // The boss stops exactly at the wall's inner face so it cannot foul
-            // anything under the PCB. The wall runs from offset
-            // +(case_wall_thickness + pcb_clearance) to -(pcb_edge_width -
-            // pcb_clearance), so its thickness is the sum below - the clearance
-            // cancels, and including it would leave the boss 0.15 mm proud.
-            led_wall_band(case_wall_thickness + pcb_edge_width, 0);
-            led_window_cut(gw);
-        }
+        // The boss spans the whole wall, outer face to ledge inner face, so it
+        // cannot foul anything under the PCB.
+        led_boss(g, gw);
     }
 }
 
@@ -400,11 +460,15 @@ function led_z_mid() = (led_pocket_z0() + led_pocket_z1()) / 2;
 led_edge_x = 1.1985;   // the x of the outline's straight left edge (D5/D6 wall)
 led_edge_y = 6.234;    // the outline's front edge at D1's x (interpolated)
 
-// Both parts are picked up on their OUTER face, offset outward by pcb_clearance,
-// so after laying them flat the flange lands in the same z band either way:
-// z = case_wall_thickness down to case_wall_thickness - led_pocket_depth. The
-// tabs key off that, which is why the convention has to match.
-function led_plate_tab_z() = case_wall_thickness - led_pocket_depth / 2;
+// Both parts are picked up on the board outline offset outward by pcb_clearance,
+// so after laying them flat the flange lands in the same z band either way. That
+// band depends on WHICH face the flange is in: measured from that datum the outer
+// face is case_wall_thickness away and the ledge's inner face pcb_edge_width, in
+// the other direction. The tabs key off it, which is why the convention has to
+// match - put the spine anywhere else and the plate exports as four loose parts.
+function led_flange_face_z() = led_fit_inside() ? -pcb_edge_width : case_wall_thickness;
+function led_plate_tab_z() = led_flange_face_z()
+                             + (led_fit_inside() ? 1 : -1) * led_pocket_depth / 2;
 
 // D5/D6 sit on a wall of constant x, so its normal is x: rotate about y to put
 // the flange face down. D1's wall runs the other way, so it rotates about x, and
