@@ -58,8 +58,14 @@ def draw(A, side):
     # the insert: boss through the window (tight lip, relieved behind) and
     # flange in the pocket
     g, L = led_insert_gap, OUT + led_boss_lip
+    # The boss is relieved where it would otherwise run under the ledge the board
+    # rests on (inboard of IN_HI, above the pocket top). On the outside fit the
+    # pocket already reaches the ledge top, so the cap is above the boss and the
+    # relief is a no-op - hence the min().
+    cap = min(pz1 - g, WZ1 - gw)
     f.poly([A((OUT,WZ0+g)),A((L,WZ0+g)),A((L,WZ0+gw)),A((IN_LO,WZ0+gw)),
-            A((IN_LO,WZ1-gw)),A((L,WZ1-gw)),A((L,WZ1-g)),A((OUT,WZ1-g))],
+            A((IN_LO,cap)),A((IN_HI,cap)),A((IN_HI,WZ1-gw)),
+            A((L,WZ1-gw)),A((L,WZ1-g)),A((OUT,WZ1-g))],
            C.GRN, C.GRN, sw=2, op=.45)
     f.poly([A((fx0,fz0)),A((fx1,fz0)),A((fx1,fz1)),A((fx0,fz1))], C.GRN, C.GRN, sw=2, op=.45)
     # PCB + the LED behind the window

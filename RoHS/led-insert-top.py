@@ -28,9 +28,9 @@ for k, v in [('flange top', FL_TOP), ('boss body top', BO_TOP), ('boss lip top',
     print(f'  {k:28s} {v:.3f}')
 
 f = Fig(1500, 1000)
-f.title('The top of the insert: what the 0.47 mm step is',
-        'Section through D5, looking along the wall. Everything above the flange is the only thing',
-        'closing the top of the window — the pocket cannot follow it up without eating the PCB ledge.')
+f.title('The top of the insert: relieved under the board, not shaved flat',
+        'Section through D5, looking along the wall. The boss is cut back where it would run under the',
+        'ledge the PCB rests on; the rest of it is the only thing closing the top of the window.')
 
 def draw(A, shaved):
     # wall, with the ledge stepping back above the PCB
@@ -48,8 +48,11 @@ def draw(A, shaved):
     # boss: lip at g, body at gw, optionally cut flat at the flange top
     bt = min(BO_TOP, top) if top else BO_TOP
     lt = min(LP_TOP, top) if top else LP_TOP
+    # the boss is cut back to the flange top inboard of IN_HI, i.e. under the
+    # ledge the board rests on; `shaved` takes the whole top off instead
     f.poly([A((OUT, WZ0 + g)), A((LIP_X, WZ0 + g)), A((LIP_X, WZ0 + gw)), A((IN_LO, WZ0 + gw)),
-            A((IN_LO, bt)), A((LIP_X, bt)), A((LIP_X, lt)), A((OUT, lt))],
+            A((IN_LO, FL_TOP)), A((IN_HI, FL_TOP)), A((IN_HI, bt)),
+            A((LIP_X, bt)), A((LIP_X, lt)), A((OUT, lt))],
            C.GRN, C.GRN, sw=2, op=.45)
     # flange
     f.poly([A((PK_X0 + g, 9.0)), A((IN_LO, 9.0)), A((IN_LO, FL_TOP)), A((PK_X0 + g, FL_TOP))],
@@ -60,7 +63,7 @@ def draw(A, shaved):
 
 SC = 117
 # ---- panel A ----
-f.panel(40, 160, 690, 700, 'A — as built',
+f.panel(40, 160, 690, 700, 'A — as built: relieved under the ledge',
         'green = insert, blue dashed = pocket, grey dashed = the window')
 A = Fig.frame(scale=SC, ox=280, oy=1874)
 draw(A, False)
@@ -77,13 +80,14 @@ for lbl, z, col, x_at in [('ledge top / PCB  11.50', PCB_Z, C.DIM, IN_HI),
     ly = max(y, prev + 26); prev = ly
     f.leader((A((x_at, z))[0] + 4, y), (XL - 6, ly), col)
     f.txt(XL, ly + 5, lbl, 13, col)
-f.txt(62, 250, f'the step is {STEP:.2f} mm, and it is inside the wall —', 15, C.GRN)
-f.txt(62, 272, 'nobody ever sees it. The pocket stops 0.5 mm below', 15, C.GRN)
-f.txt(62, 294, 'the ledge top so the board keeps its 1.25 mm of support.', 15, C.GRN)
+f.txt(62, 250, 'Under the ledge the part now tops out at 10.88, so it', 15, C.GRN)
+f.txt(62, 272, f'clears the board by {PCB_Z - FL_TOP:.2f} mm instead of 0.15. The window', 15, C.GRN)
+f.txt(62, 294, 'is still plugged 1.50 mm deep from the OUTER face, so', 15, C.GRN)
+f.txt(62, 316, 'what is left is a blind recess, not a path.', 15, C.GRN)
 
 # ---- panel B ----
-f.panel(760, 160, 700, 700, 'B — shaved flat to the flange',
-        'what the 0.47 mm costs if it comes off')
+f.panel(760, 160, 700, 700, 'B — the rest shaved off too',
+        'what taking the OUTER 1.5 mm as well would cost')
 B = Fig.frame(scale=SC, ox=1000, oy=1874)
 draw(B, True)
 f.txt(782, 250, f'{WZ1 - FL_TOP:.2f} × 2.8 mm of the window is left open,', 15, C.RED)
@@ -95,7 +99,8 @@ f.txt(782, 370, 'ledge under the board: a standing rib well under the', 15, C.AM
 f.txt(782, 392, '0.8 mm the print service allows.', 15, C.AMB)
 
 f.footer('Flange 0.88 mm thick in a 1.0 mm pocket; ledge 1.25 mm wide, so flange + remaining ledge cannot both',
-         'clear 0.8 mm — that is what fixes the pocket top at 11.0 and leaves the step. Derived from the led_*',
-         'parameters in case/case_polykybd_split72_lr.scad; regenerate with RoHS/led-insert-top.py.')
+         'clear 0.8 mm — that is what fixes the pocket top at 11.0, and why the boss has to carry the top of',
+         'the window on its own. led_ledge_relief() takes off the slice that ran under the board: 1.5 mm³ per',
+         'part, 5% of it. Derived from the led_* parameters in case/case_polykybd_split72_lr.scad.')
 f.save(f'{REPO}/RoHS/led-insert-top.svg'); f.png()
 print('figure written')

@@ -17,7 +17,7 @@ S = os.environ.get('RENDERS', '/tmp/led-renders')
 f = Fig(1540, 1230)
 f.title('The ESD insert, and how six of them get printed',
         'ONE part, three per half. The boss fills the window flush with the case’s outer face; the flange',
-        'behind it sits in a pocket cut into the PCB ledge. 7.4 × 4.0 × 2.9 mm, 31.3 mm³ of clear resin.')
+        'behind it sits in a pocket cut into the PCB ledge. 7.4 × 4.0 × 2.9 mm, 29.8 mm³ of clear resin.')
 
 PW, PH = 486, 470
 IW, IH = 450, 345

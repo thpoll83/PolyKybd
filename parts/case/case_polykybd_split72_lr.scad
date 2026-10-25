@@ -348,6 +348,11 @@ function led_fit_inside() = led_fit_from == "inside";
 // wall runs x -0.452 .. 2.448, above it only -0.452 .. 1.048.
 function led_out_r() = case_wall_thickness + pcb_clearance;    // outer face
 function led_in_r() = -(pcb_edge_width - pcb_clearance);       // ledge inner face
+function led_hi_r() = pcb_clearance;                            // wall above the PCB
+// ⚠️ SIGN: offset() grows OUTWARD, and above the board the wall stops 0.15 mm
+// outboard of the outline (measured: x -0.452..1.048 above z 11.5, against
+// -0.452..2.448 below it), so this is +pcb_clearance. Getting it negative puts
+// the band 0.3 mm inboard and the relief below silently does nothing.
 
 // z range of the slot through the wall (unchanged from the original cut)
 function led_window_z0() = pcb_edge_height - 0.1;
@@ -420,14 +425,34 @@ module led_pocket_cut(g = 0, ov = led_pocket_overlap)
 }
 
 // Both cuts together - what the case loses, and (with g) what the insert is.
-module led_insert_solid(g = 0, gw = 0, ov = led_pocket_overlap)
+// Where the PCB rests. Everything inboard of the wall above the board, above
+// the pocket top, is the one slice of the boss that runs under the ledge the
+// board sits on - and at the shipped numbers it passes 0.15 mm under it.
+// Taking it off costs nothing: the window stays plugged for the 1.65 mm from
+// the OUTER face inwards, so there is still no path from outside, and what is
+// left behind is a blind recess on the inside. Only the part is relieved; the
+// case's cut is untouched, which is why `relief` defaults off.
+module led_ledge_relief(g = 0)
 {
-    union()
+    intersection()
     {
-        led_pocket_cut(g, ov);
-        // The boss spans the whole wall, outer face to ledge inner face, so it
-        // cannot foul anything under the PCB.
-        led_boss(g, gw);
+        led_band_r(led_hi_r(), led_in_r());
+        translate([ 0, 0, led_pocket_z1() - g ])
+            linear_extrude(height = case_height * 2) square(600, center = true);
+    }
+}
+
+module led_insert_solid(g = 0, gw = 0, ov = led_pocket_overlap, relief = false)
+{
+    difference()
+    {
+        union()
+        {
+            led_pocket_cut(g, ov);
+            // The boss spans the whole wall, outer face to ledge inner face.
+            led_boss(g, gw);
+        }
+        if (relief) led_ledge_relief(g);
     }
 }
 
@@ -454,9 +479,9 @@ module led_region(x0, svg_y0, x1, svg_y1)
 // (70.54, 135.04)), the wall is 2.9 mm thick at all three, and the slots and the
 // pocket come from the same parameters. So these three differ only by a rigid
 // transform - which is what led_insert_congruence_test() below asserts.
-module led_insert_d5() { intersection() { led_insert_solid(led_insert_gap, led_window_gap, led_flange_overlap); led_region(-10, 45, 10, 53); } }
-module led_insert_d6() { intersection() { led_insert_solid(led_insert_gap, led_window_gap, led_flange_overlap); led_region(-10, 37, 10, 45); } }
-module led_insert_d1() { intersection() { led_insert_solid(led_insert_gap, led_window_gap, led_flange_overlap); led_region(4, -8, 22, 16); } }
+module led_insert_d5() { intersection() { led_insert_solid(led_insert_gap, led_window_gap, led_flange_overlap, true); led_region(-10, 45, 10, 53); } }
+module led_insert_d6() { intersection() { led_insert_solid(led_insert_gap, led_window_gap, led_flange_overlap, true); led_region(-10, 37, 10, 45); } }
+module led_insert_d1() { intersection() { led_insert_solid(led_insert_gap, led_window_gap, led_flange_overlap, true); led_region(4, -8, 22, 16); } }
 
 
 // --- the part on its own, and the chain it prints on ---------------------------

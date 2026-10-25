@@ -9,7 +9,7 @@
 <path d="M 119.70,779.80 L 299.50,779.80 L 299.50,476.00 L 212.70,476.00 L 212.70,370.60 L 119.70,370.60 Z" fill="#21262d" fill-opacity="1.0" stroke="#8b949e" stroke-width="2"/>
 <path d="M 119.70,606.20 L 299.50,606.20 L 299.50,469.80 L 119.70,469.80 Z" fill="#0d1117" fill-opacity="1.0" stroke="#3d4756" stroke-width="1.5" stroke-dasharray="4 3"/>
 <path d="M 237.50,730.20 L 299.50,730.20 L 299.50,507.00 L 237.50,507.00 Z" fill="#0d1117" fill-opacity="1.0" stroke="#58a6ff" stroke-width="2" stroke-dasharray="5 3"/>
-<path d="M 119.70,598.76 L 156.90,598.76 L 156.90,590.70 L 299.50,590.70 L 299.50,485.30 L 156.90,485.30 L 156.90,477.24 L 119.70,477.24 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
+<path d="M 119.70,598.76 L 156.90,598.76 L 156.90,590.70 L 299.50,590.70 L 299.50,514.44 L 212.70,514.44 L 212.70,485.30 L 156.90,485.30 L 156.90,477.24 L 119.70,477.24 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
 <path d="M 244.94,722.76 L 299.50,722.76 L 299.50,514.44 L 244.94,514.44 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
 <path d="M 212.70,476.00 L 532.00,476.00 L 532.00,407.80 L 212.70,407.80 Z" fill="#3d4756" fill-opacity="1.0" stroke="#8b949e" stroke-width="1.5"/>
 <path d="M 367.98,531.80 L 491.98,531.80 L 491.98,476.00 L 367.98,476.00 Z" fill="#f0b429" fill-opacity="0.8" stroke="#f0b429" stroke-width="1.5"/>
@@ -39,7 +39,7 @@
 <path d="M 839.70,779.80 L 1019.50,779.80 L 1019.50,476.00 L 932.70,476.00 L 932.70,370.60 L 839.70,370.60 Z" fill="#21262d" fill-opacity="1.0" stroke="#8b949e" stroke-width="2"/>
 <path d="M 839.70,606.20 L 1019.50,606.20 L 1019.50,469.80 L 839.70,469.80 Z" fill="#0d1117" fill-opacity="1.0" stroke="#3d4756" stroke-width="1.5" stroke-dasharray="4 3"/>
 <path d="M 839.70,730.20 L 901.70,730.20 L 901.70,476.00 L 839.70,476.00 Z" fill="#0d1117" fill-opacity="1.0" stroke="#58a6ff" stroke-width="2" stroke-dasharray="5 3"/>
-<path d="M 839.70,598.76 L 876.90,598.76 L 876.90,590.70 L 1019.50,590.70 L 1019.50,485.30 L 876.90,485.30 L 876.90,477.24 L 839.70,477.24 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
+<path d="M 839.70,598.76 L 876.90,598.76 L 876.90,590.70 L 1019.50,590.70 L 1019.50,485.30 L 932.70,485.30 L 932.70,485.30 L 876.90,485.30 L 876.90,477.24 L 839.70,477.24 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
 <path d="M 839.70,722.76 L 894.26,722.76 L 894.26,483.44 L 839.70,483.44 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
 <path d="M 932.70,476.00 L 1252.00,476.00 L 1252.00,407.80 L 932.70,407.80 Z" fill="#3d4756" fill-opacity="1.0" stroke="#8b949e" stroke-width="1.5"/>
 <path d="M 1087.98,531.80 L 1211.98,531.80 L 1211.98,476.00 L 1087.98,476.00 Z" fill="#f0b429" fill-opacity="0.8" stroke="#f0b429" stroke-width="1.5"/>

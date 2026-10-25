@@ -398,7 +398,7 @@ chain, the V-score and where they ride on the frame.
 | PCB ledge left at full width above the pocket | **0.5 mm** (`led_ledge_keep`) |
 | **Clearance where the seam SHOWS** | **0.12 mm** per face (`led_insert_gap`) — flange in its pocket, and the boss's outer lip |
 | **Clearance, buried** | **0.25 mm** per face (`led_window_gap`), behind a `led_boss_lip` = 0.6 mm lip |
-| The part | **7.4 × 4.0 × 2.9 mm, 31.3 mm³** |
+| The part | **7.4 × 4.0 × 2.9 mm, 29.8 mm³** |
 | **Air path through the seam** | **5.3 mm**, before the bond closes it |
 
 ✅ **They ride on the diffuser frame — there is normally nothing to print
@@ -527,19 +527,34 @@ take the gap off the far side only, so the part is flush with the case and the
 slack ends up behind it. Do not add a gap there to "make it easier": it would
 sink the insert below the surface.
 
-⚠️ **The 0.47 mm step on the part's top is NOT spare material — don't shave it
-flat.** The boss stands 0.47 mm above the flange's shoulders (boss body 11.35,
-flange 10.88) and the lip another 0.13 above that. It looks like a cosmetic
-stepped top and it is tempting to cut, but that material is the **only thing
-closing the top of the window**: shaved flat to the flange it leaves **0.72 ×
-2.8 mm open**, straight through 2.9 mm of wall to the LED behind — the exact
-opening the insert exists to close. Doing it the other way round, raising the
-flange to meet the boss, needs the pocket top at 11.47, which leaves **0.25 mm**
-of PCB ledge under the board: a standing rib well under the 0.8 mm the print
-service allows. Flange 0.88 in a 1.0 mm pocket and a 1.25 mm ledge cannot both
-clear 0.8, and that is what fixes the pocket top at 11.0. Figure:
-`RoHS/led-insert-top.svg` (`led-insert-top.py`). The step is inside the wall and
-nobody ever sees it.
+✅ **The boss is RELIEVED under the ledge, and the distinction is the whole
+point** (`led_ledge_relief`). The boss stood 0.47 mm above the flange's
+shoulders across the full wall thickness, which put it **0.15 mm** under the
+ledge the PCB rests on. The slice inboard of the wall-above-the-board (offset
+`led_hi_r()`, case x 1.048 → 2.448) is now cut back to the flange top, so:
+
+- the part clears the board by **0.62 mm** instead of 0.15, and its inner face
+  is flat — no tab standing proud of the flange;
+- the window is still plugged **1.50 mm deep from the OUTER face**, so what is
+  left is a blind recess on the inside, not a path;
+- it costs 1.5 mm³, 5% of the part.
+
+⚠️ **Do NOT extend that relief outboard and shave the top flat.** The remaining
+0.47 mm on the outer 1.5 mm is the **only thing closing the top of the window**:
+taken off, it leaves **0.72 × 2.8 mm open** straight through 2.9 mm of wall to
+the LED behind. Nor can it be met from the other side — raising the flange to
+the boss needs the pocket top at 11.47, leaving **0.25 mm** of PCB ledge under
+the board, a standing rib well under the 0.8 mm the print service allows. Flange
+0.88 in a 1.0 mm pocket and a 1.25 mm ledge cannot both clear 0.8, and that is
+what fixes the pocket top at 11.0. Figure: `RoHS/led-insert-top.svg`
+(`led-insert-top.py`) draws both.
+
+⚠️ **`led_hi_r()` is +`pcb_clearance`, not −.** `offset()` grows **outward**, and
+above the board the wall stops 0.15 mm *outboard* of the outline (measured: the
+wall is x −0.452…1.048 above z 11.5 against −0.452…2.448 below it). With the sign
+wrong the band lands 0.3 mm inboard and the relief silently does nothing — which
+is exactly what the first attempt did, and the only tell was that the measured
+top of the ledge slab did not move.
 
 ✅ **The witness stub is why the cavity stays wider than the flange — verified,
 not assumed.** Breaking a V-score leaves half the tab (0.8 mm) on the insert, and
