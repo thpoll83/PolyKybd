@@ -527,6 +527,20 @@ take the gap off the far side only, so the part is flush with the case and the
 slack ends up behind it. Do not add a gap there to "make it easier": it would
 sink the insert below the surface.
 
+⚠️ **The 0.47 mm step on the part's top is NOT spare material — don't shave it
+flat.** The boss stands 0.47 mm above the flange's shoulders (boss body 11.35,
+flange 10.88) and the lip another 0.13 above that. It looks like a cosmetic
+stepped top and it is tempting to cut, but that material is the **only thing
+closing the top of the window**: shaved flat to the flange it leaves **0.72 ×
+2.8 mm open**, straight through 2.9 mm of wall to the LED behind — the exact
+opening the insert exists to close. Doing it the other way round, raising the
+flange to meet the boss, needs the pocket top at 11.47, which leaves **0.25 mm**
+of PCB ledge under the board: a standing rib well under the 0.8 mm the print
+service allows. Flange 0.88 in a 1.0 mm pocket and a 1.25 mm ledge cannot both
+clear 0.8, and that is what fixes the pocket top at 11.0. Figure:
+`RoHS/led-insert-top.svg` (`led-insert-top.py`). The step is inside the wall and
+nobody ever sees it.
+
 ✅ **The witness stub is why the cavity stays wider than the flange — verified,
 not assumed.** Breaking a V-score leaves half the tab (0.8 mm) on the insert, and
 on a middle insert there is one at **each** end. With the cavity grown by 3.5 mm

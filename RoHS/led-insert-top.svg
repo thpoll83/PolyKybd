@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1500" height="1000" viewBox="0 0 1500 1000" font-family="monospace">
+<rect width="1500" height="1000" fill="#0d1117"/>
+<text x="40.0" y="46.0" fill="#e6edf3" font-size="26" text-anchor="start" font-weight="bold">The top of the insert: what the 0.47 mm step is</text>
+<text x="40.0" y="76.0" fill="#8b949e" font-size="17" text-anchor="start" font-weight="normal">Section through D5, looking along the wall. Everything above the flange is the only thing</text>
+<text x="40.0" y="100.0" fill="#8b949e" font-size="17" text-anchor="start" font-weight="normal">closing the top of the window — the pocket cannot follow it up without eating the PCB ledge.</text>
+<rect x="40.0" y="160.0" width="690.0" height="700.0" fill="none" stroke="#21262d" stroke-width="1"/>
+<text x="60.0" y="192.0" fill="#e6edf3" font-size="19" text-anchor="start" font-weight="normal">A — as built</text>
+<text x="60.0" y="216.0" fill="#3d4756" font-size="15" text-anchor="start" font-weight="normal">green = insert, blue dashed = pocket, grey dashed = the window</text>
+<path d="M 86.95,821.00 L 426.25,821.00 L 426.25,528.50 L 262.45,528.50 L 262.45,399.80 L 86.95,399.80 Z" fill="#21262d" fill-opacity="1.0" stroke="#8b949e" stroke-width="2"/>
+<path d="M 262.45,528.50 L 584.20,528.50 L 584.20,423.20 L 262.45,423.20 Z" fill="#3d4756" fill-opacity="1.0" stroke="#8b949e" stroke-width="1.5"/>
+<path d="M 86.95,774.20 L 426.25,774.20 L 426.25,516.80 L 86.95,516.80 Z" fill="#0d1117" fill-opacity="1.0" stroke="#3d4756" stroke-width="1.5" stroke-dasharray="4 3"/>
+<path d="M 309.25,821.00 L 426.25,821.00 L 426.25,587.00 L 309.25,587.00 Z" fill="#0d1117" fill-opacity="1.0" stroke="#58a6ff" stroke-width="2" stroke-dasharray="5 3"/>
+<path d="M 86.95,760.16 L 157.15,760.16 L 157.15,744.95 L 426.25,744.95 L 426.25,546.05 L 157.15,546.05 L 157.15,530.84 L 86.95,530.84 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
+<path d="M 323.29,821.00 L 426.25,821.00 L 426.25,601.04 L 323.29,601.04 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
+<line x1="266.4" y1="528.5" x2="467.6" y2="528.5" stroke="#8b949e" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="473.6" y="533.5" fill="#8b949e" font-size="13" text-anchor="start" font-weight="normal">ledge top / PCB  11.50</text>
+<line x1="161.2" y1="530.8" x2="467.6" y2="554.5" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="473.6" y="559.5" fill="#3fb950" font-size="13" text-anchor="start" font-weight="normal">boss lip   11.48</text>
+<line x1="430.2" y1="546.0" x2="467.6" y2="580.5" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="473.6" y="585.5" fill="#3fb950" font-size="13" text-anchor="start" font-weight="normal">boss body  11.35</text>
+<line x1="313.2" y1="587.0" x2="467.6" y2="606.5" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="473.6" y="611.5" fill="#58a6ff" font-size="13" text-anchor="start" font-weight="normal">pocket top  11.00</text>
+<line x1="327.3" y1="601.0" x2="467.6" y2="632.5" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="473.6" y="637.5" fill="#3fb950" font-size="13" text-anchor="start" font-weight="normal">flange top  10.88</text>
+<text x="62.0" y="250.0" fill="#3fb950" font-size="15" text-anchor="start" font-weight="normal">the step is 0.47 mm, and it is inside the wall —</text>
+<text x="62.0" y="272.0" fill="#3fb950" font-size="15" text-anchor="start" font-weight="normal">nobody ever sees it. The pocket stops 0.5 mm below</text>
+<text x="62.0" y="294.0" fill="#3fb950" font-size="15" text-anchor="start" font-weight="normal">the ledge top so the board keeps its 1.25 mm of support.</text>
+<rect x="760.0" y="160.0" width="700.0" height="700.0" fill="none" stroke="#21262d" stroke-width="1"/>
+<text x="780.0" y="192.0" fill="#e6edf3" font-size="19" text-anchor="start" font-weight="normal">B — shaved flat to the flange</text>
+<text x="780.0" y="216.0" fill="#3d4756" font-size="15" text-anchor="start" font-weight="normal">what the 0.47 mm costs if it comes off</text>
+<path d="M 806.95,821.00 L 1146.25,821.00 L 1146.25,528.50 L 982.45,528.50 L 982.45,399.80 L 806.95,399.80 Z" fill="#21262d" fill-opacity="1.0" stroke="#8b949e" stroke-width="2"/>
+<path d="M 982.45,528.50 L 1304.20,528.50 L 1304.20,423.20 L 982.45,423.20 Z" fill="#3d4756" fill-opacity="1.0" stroke="#8b949e" stroke-width="1.5"/>
+<path d="M 806.95,774.20 L 1146.25,774.20 L 1146.25,516.80 L 806.95,516.80 Z" fill="#0d1117" fill-opacity="1.0" stroke="#3d4756" stroke-width="1.5" stroke-dasharray="4 3"/>
+<path d="M 1029.25,821.00 L 1146.25,821.00 L 1146.25,587.00 L 1029.25,587.00 Z" fill="#0d1117" fill-opacity="1.0" stroke="#58a6ff" stroke-width="2" stroke-dasharray="5 3"/>
+<path d="M 806.95,760.16 L 877.15,760.16 L 877.15,744.95 L 1146.25,744.95 L 1146.25,601.04 L 877.15,601.04 L 877.15,601.04 L 806.95,601.04 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
+<path d="M 1043.29,821.00 L 1146.25,821.00 L 1146.25,601.04 L 1043.29,601.04 Z" fill="#3fb950" fill-opacity="0.45" stroke="#3fb950" stroke-width="2"/>
+<path d="M 806.95,601.04 L 1146.25,601.04 L 1146.25,516.80 L 806.95,516.80 Z" fill="#f85149" fill-opacity="0.35" stroke="#f85149" stroke-width="2"/>
+<text x="782.0" y="250.0" fill="#f85149" font-size="15" text-anchor="start" font-weight="normal">0.72 × 2.8 mm of the window is left open,</text>
+<text x="782.0" y="272.0" fill="#f85149" font-size="15" text-anchor="start" font-weight="normal">straight through 2.9 mm of wall to the LED behind —</text>
+<text x="782.0" y="294.0" fill="#f85149" font-size="15" text-anchor="start" font-weight="normal">which is the opening the insert exists to close.</text>
+<text x="782.0" y="326.0" fill="#f0b429" font-size="15" text-anchor="start" font-weight="normal">The other way round — raising the FLANGE to meet the</text>
+<text x="782.0" y="348.0" fill="#f0b429" font-size="15" text-anchor="start" font-weight="normal">boss — needs the pocket at 11.47, leaving 0.25 mm of</text>
+<text x="782.0" y="370.0" fill="#f0b429" font-size="15" text-anchor="start" font-weight="normal">ledge under the board: a standing rib well under the</text>
+<text x="782.0" y="392.0" fill="#f0b429" font-size="15" text-anchor="start" font-weight="normal">0.8 mm the print service allows.</text>
+<text x="40.0" y="978.0" fill="#8b949e" font-size="16" text-anchor="start" font-weight="normal">parameters in case/case_polykybd_split72_lr.scad; regenerate with RoHS/led-insert-top.py.</text>
+<text x="40.0" y="954.0" fill="#8b949e" font-size="16" text-anchor="start" font-weight="normal">clear 0.8 mm — that is what fixes the pocket top at 11.0 and leaves the step. Derived from the led_*</text>
+<text x="40.0" y="930.0" fill="#8b949e" font-size="16" text-anchor="start" font-weight="normal">Flange 0.88 mm thick in a 1.0 mm pocket; ledge 1.25 mm wide, so flange + remaining ledge cannot both</text>
+</svg>
