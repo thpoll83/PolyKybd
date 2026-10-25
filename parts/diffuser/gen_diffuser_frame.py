@@ -852,7 +852,14 @@ module diffuser_frame_{side}_inserts() {{
     row_y = rail_end - led_tab_l() - led_insert_half_h();
     translate([ {ins_x:.3f}, row_y, led_insert_thk() - web_t ])
         rotate([ 180, 0, 0 ]) led_insert_strip(3, {ins_dir});
-    translate([ {ins_x:.3f}, rail_end, -web_t / 2 ]) rotate([ 0, 0, -90 ]) led_v_tab();
+    // The web between inserts runs the full height of their flange; HERE it is
+    // cut down to the rail's own width, so the stub left after the snap stays
+    // inside the notch the spacer already has for that rail.  A full-height
+    // 3.36 mm root would overhang the 2.0 mm rail by 0.68 a side, outside the
+    // notch, and foul the spacer -- which is the same mistake the insert row
+    // itself made before diffuser_frame_<side>_fitted() existed.
+    translate([ {ins_x:.3f}, rail_end, -web_t / 2 ])
+        rotate([ 0, 0, -90 ]) led_v_tab(led_tab_l(), stem_w);
 }}
 
 // What is left on the rail once the score is broken: a 0.8 mm nub.  Modelled
@@ -861,7 +868,7 @@ module diffuser_frame_{side}_inserts() {{
 // a part that is not there (and fails by ~5.7 mm3, which is how this was found).
 module diffuser_frame_{side}_insert_stub() {{
     translate([ {ins_x:.3f}, {ins_y:.3f} - stem_w / 2, -web_t / 2 ])
-        rotate([ 0, 0, -90 ]) led_v_tab_root();
+        rotate([ 0, 0, -90 ]) led_v_tab_root(led_tab_l(), stem_w);
 }}
 
 module diffuser_frame_{side}() {{

@@ -432,22 +432,50 @@ because it compares volume and bounding box, which are unaffected.
 
 ⚠️ **The breakaway features are deliberately under the frame's own minimum wall,
 so `check_frame.py` had to be taught to skip them.** `MIN_WALL` is 0.99 mm; the
-V-score is 0.6 and the insert's flange is 0.88. Measuring those as frame walls is
+score leaves 1.0 mm of **height** but the web is only as thick as the flange
+(0.88), and the flange itself is 0.88. Measuring those as frame walls is
 measuring the wrong part, so `inserts_zone()` excludes the box — and it gets that
 box by **exporting the module**, not by recomputing its arithmetic, because a
 second copy of numbers that all come from the `led_*` parameters would drift the
 first time one moved. Under `--quick` the min-wall check prints SKIP rather than
 silently passing on an un-bounded zone.
 
-⚠️ **The score is 0.6 mm, not the 0.35 the standalone strip could use.** The V
-does the work — a sharp notch root concentrates the stress — and the frame goes
-to a print service that **already refused revision r1.0 over thin walls**. A
-deliberately hair-thin ligament on that part is asking for the same answer.
+✅ **The connection is a FULL-HEIGHT WEB with a V notch, not a peg.** It spans
+the height of the flange's end face and the flange's thickness (3.26 × 0.78,
+held back by `led_tab_inset` — see below), and a V from top and bottom pinches
+its height to **`led_score_h` = 1.0 mm** at mid-span. Break area 0.78 mm²
+against 0.36 for the 0.6 × 0.6 peg it replaced — stiffer to handle, and the
+notch root is what still makes it snap where it is meant to rather than at the
+root. Nothing here is hair-thin on purpose: the frame goes to a print service
+that **already refused revision r1.0 over thin walls**.
+
+⚠️ **`led_tab_inset` = 0.05 is not cosmetic.** Flush with the flange's faces the
+web's four planes are **coplanar** with the flange's, and the export comes out
+with **8 degenerate facets and 8 non-manifold edges per joint** — 40 on the
+six-up strip. The tell was indirect: OpenSCAD then refuses to boolean the
+imported mesh at all (`Current top level object is empty` on an intersection
+that plainly overlaps), which is what sent me looking. Held back 0.05 the strip
+exports 0 degenerate, 0 non-manifold. Check it with an edge count, not with
+`shells` — a welded-vertex shell count reports 1 either way.
+
+⚠️ **`[0:n-2]` is NOT an empty range in OpenSCAD 2021.01.** At n = 1 it iterates
+{0, −1}, so `led_insert_strip(1)` came out as a single insert with a web hanging
+off **both** ends (x −5.285…5.285 instead of ±3.68). The loop is guarded with
+`if (n > 1)`.
+
+⚠️ **The ANCHOR web to the frame is cut down to the rail's own width (2.0 mm),
+and that is not a detail.** At the full 3.36 mm it would overhang the 2.0 mm rail
+by 0.68 a side — outside the notch the spacer already has for that rail — and
+foul the spacer, which is the same mistake the insert row itself made before
+`diffuser_frame_<side>_fitted()` existed. `led_v_tab(l, h)` takes the root height
+for exactly this.
 
 `export/case/led_inserts.stl` remains as the standalone fallback: all six in a
-row, 52.2 × 4.0 × 2.9 mm, one shell. The tabs meet each part on the flange
+row, 52.2 × 4.0 × 2.9 mm, one shell. The webs meet each part on the flange
 **end** face, which is buried in the pocket, so no witness mark is ever on a
-face that shows.
+face that shows — and the part still seats with a stub at **each** end (the
+difference against the cavity is a zero-volume coincident-face sliver, because
+the web is exactly flush with the flange face).
 
 ⚠️ **The fit direction was argued round TWICE, and the objection that settled
 it the first time was wrong.** Worth recording, because the wrong objection is

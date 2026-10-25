@@ -96,12 +96,22 @@ led_boss_lip = 0.6;        // how deep the close-fitting lip runs in from the ou
                            // enough to push through 2.9 mm of wall. Set 0 for a
                            // plain boss. With led_fit_from = "outside" the flange
                            // covers this region, so the lip makes no difference.
-led_sprue = 0.9;           // breakaway tab between parts: its section at the root
-led_score_t = 0.6;         // and at the V-score, where it is meant to break. The
-                           // V does the work, so this does not need to be hair
-                           // thin - and it must not be: the inserts ride on the
-                           // diffuser frame, which a print service already refused
-                           // once over thin walls.
+led_tab_inset = 0.05;      // ⚠️ how far the web is held back from the flange's own
+                           // faces. NOT cosmetic: at 0 the web's four faces are
+                           // COPLANAR with the flange's, and the export comes out
+                           // with 8 degenerate facets and 8 non-manifold edges per
+                           // joint (40 on the six-up strip). OpenSCAD then refuses
+                           // to boolean the imported mesh at all - which is how it
+                           // was noticed. Keep it well above mesh tolerance.
+led_score_h = 1.0;         // breakaway connection: the web runs the FULL height of
+                           // the flange's end face and the full flange thickness,
+                           // and a V notch from top and bottom pinches it to this
+                           // at mid-span. A full-height web is stiffer to handle
+                           // than a peg of the same break area, and the notch root
+                           // is what makes it snap where it is meant to. It is not
+                           // hair-thin on purpose: these ride on the diffuser frame,
+                           // which a print service already refused once over thin
+                           // walls.
 led_tab_len = 1.6;         // tab length, root to root
 
 text_font = "Arial:style=Bold Italic";
@@ -559,22 +569,28 @@ module led_inserts_in_place() {
     led_place_d1() led_insert();
 }
 
-// A breakaway tab with a V-score: a bar whose section pinches to led_score_t at
-// mid-span, so it snaps THERE and not at its root, and leaves a witness mark the
-// size of the score rather than the tab. It runs along +x from the origin.
-module led_v_tab(l = led_tab_len)
+// The breakaway connection: a web the full height of the flange's end face and
+// the full flange thickness, notched from top and bottom so its height pinches to
+// led_score_h at mid-span. It snaps THERE and not at its root, and the witness
+// mark is the notch rather than the whole web. Runs along +x from the origin.
+// `h` is the root height - the frame passes its rail width instead, see below.
+module led_v_tab(l = led_tab_len, h = 0)
 {
-    led_v_tab_root(l);
-    translate([ l, 0, 0 ]) rotate([ 0, 0, 180 ]) led_v_tab_root(l);
+    led_v_tab_root(l, h);
+    translate([ l, 0, 0 ]) rotate([ 0, 0, 180 ]) led_v_tab_root(l, h);
 }
-// One half of it: what stays behind on whatever the tab was anchored to once the
+// One half of it: what stays behind on whatever the web was anchored to once the
 // score has been broken. A carrier that models its own fitted state needs this -
 // see diffuser_frame_<side>_fitted() in the generated frames.
-module led_v_tab_root(l = led_tab_len)
+module led_v_tab_root(l = led_tab_len, h = 0)
 {
-    hull() { led_tab_sq(led_sprue); translate([ l / 2, 0, 0 ]) led_tab_sq(led_score_t); }
+    hull()
+    {
+        led_tab_sec(h > 0 ? h : led_tab_h());
+        translate([ l / 2, 0, 0 ]) led_tab_sec(led_score_h);
+    }
 }
-module led_tab_sq(s) { cube([ 0.01, s, s ], center = true); }
+module led_tab_sec(h) { cube([ 0.01, h - 2 * led_tab_inset, led_flange_t() - 2 * led_tab_inset ], center = true); }
 
 // n inserts in a row, chained end to end. The tab lands on the flange's END face,
 // which is buried in the pocket, so no witness mark is ever on a face that shows.
@@ -584,14 +600,19 @@ function led_strip_pitch() = 2 * led_insert_half() + led_tab_len;
 module led_insert_strip(n = 3, dir = 1)
 {
     for (i = [0:n - 1]) translate([ dir * i * led_strip_pitch(), 0, 0 ]) led_insert();
-    for (i = [0:n - 2])
+    // ⚠️ GUARD THE RANGE. With n = 1 this is [0:-1], which OpenSCAD 2021.01 does
+    // NOT treat as empty - it iterates {0, -1} and the single insert comes out
+    // with a web hanging off BOTH ends (x -5.285..5.285 instead of ±3.68).
+    if (n > 1) for (i = [0:n - 2])
         translate([ dir * (i * led_strip_pitch() + led_insert_half()), led_tab_y(), led_tab_z() ])
             rotate([ 0, 0, dir > 0 ? 0 : 180 ]) led_v_tab();
 }
-// The tab sits in the middle of the flange band, which is the only part of the
-// end face that is present for every insert.
+// The web sits ON the flange's end face - the only part of the end that is there
+// for every insert - so it takes that face's centre, height and thickness.
+function led_flange_t() = led_pocket_depth - led_insert_gap;
+function led_tab_h() = led_pocket_z1() - led_pocket_z0() - 2 * led_insert_gap;
 function led_tab_y() = (led_pocket_z0() + led_pocket_z1()) / 2 - led_insert_z_mid();
-function led_tab_z() = case_wall_thickness + pcb_edge_width - led_pocket_depth / 2;
+function led_tab_z() = led_insert_thk() - led_flange_t() / 2;
 
 module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_infill = true)
 {

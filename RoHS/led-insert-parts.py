@@ -33,7 +33,7 @@ put(1, 0, 'pB.png', 'B — the part, from inside',
 put(2, 0, 'pC.png', 'C — three of them, chained',
     'one half’s worth, on V-scored tabs')
 put(0, 1, 'pD.png', 'D — the V-score',
-    'the section pinches to 0.6 mm, so it breaks there')
+    'a full-height web, notched to 1.0 mm at mid-span')
 put(1, 1, 'pE.png', 'E — where they ride',
     'the right frame; the inserts are tinted green')
 put(2, 1, 'pF.png', 'F — the anchor, close up',
