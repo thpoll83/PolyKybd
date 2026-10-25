@@ -160,9 +160,14 @@ def min_wall(tris, norms, maxt=4.0, cell=3.0):
 # ------------------------------------------------------------ openscad utils
 def intersect_volume(placement, workdir):
     """mm^3 of overlap between the notched spacer and the frame."""
+    # The FITTED frame, not the printed one: the three ESD inserts the frame
+    # carries are snapped off before it ever meets the spacer, so measuring them
+    # here measures a part that is not there.  It is not a hypothetical -- with
+    # diffuser_frame_left() this reported a 5.726 mm3 collision, all of it the
+    # insert row.  The nub left by the broken score IS included.
     src = ('use <case_polykybd_split72_lr.scad>\n'
            'use <../diffuser/diffuser_frame_left.scad>\n'
-           f'intersection() {{ right_spacer(); {placement} diffuser_frame_left(); }}\n')
+           f'intersection() {{ right_spacer(); {placement} diffuser_frame_left_fitted(); }}\n')
     # Must live in CASE: `use <case_polykybd_split72_lr.scad>` resolves relative
     # to the scad file, not the cwd.  Unique name so two runs cannot delete each
     # other's input.
@@ -221,7 +226,47 @@ def revision_zone(side):
                 z=(-web_t, -web_t + depth), depth=depth, web_t=web_t)
 
 
-def check_meshes():
+def inserts_zone(side):
+    """Bounding box of the three ESD inserts that ride on the frame.
+
+    They are NOT the diffuser: they are a different part, hung on a V-scored tab
+    so it breaks off, and both the score (0.6 mm) and the insert's own flange
+    (0.88 mm) are deliberately under MIN_WALL.  Measuring them as frame walls
+    would be measuring the wrong part, so the zone is excluded -- the inserts are
+    verified against the case pockets they fit, not against this threshold.
+
+    The box is taken by EXPORTING the module rather than recomputing its
+    arithmetic here: every number in it comes from the led_* parameters in the
+    case file, and a second copy of that would drift the first time one moves.
+    """
+    sf = os.path.join(SRC, f'diffuser_frame_{side}.scad')
+    if not os.path.exists(sf) or '_inserts()' not in open(sf).read():
+        return None
+    fd, drv = tempfile.mkstemp(prefix='_check_tmp_', suffix='.scad', dir=SRC)
+    with os.fdopen(fd, 'w') as fh:
+        fh.write(f'use <diffuser_frame_{side}.scad>\n'
+                 f'diffuser_frame_{side}_inserts();\n')
+    ofd, of = tempfile.mkstemp(prefix='z_', suffix='.stl', dir=SRC)
+    os.close(ofd); os.remove(of)
+    try:
+        r = subprocess.run(['openscad', '-o', of, '--export-format', 'asciistl', drv],
+                           capture_output=True, text=True, cwd=SRC, timeout=900)
+        out = r.stderr + r.stdout
+        if 'Current top level object is empty' in out or not os.path.exists(of):
+            return None
+        tris, _ = load_stl(of)
+        pts = [p for t in tris for p in t]
+        return {k: (min(p[i] for p in pts) - 0.05, max(p[i] for p in pts) + 0.05)
+                for i, k in enumerate('xyz')}
+    finally:
+        for f in (drv, of):
+            try:
+                os.remove(f)
+            except FileNotFoundError:
+                pass
+
+
+def check_meshes(quick=False):
     print('\nmesh integrity and wall thickness')
     for side in ('left', 'right'):
         p = os.path.join(EXPORT, f'diffuser_frame_{side}.stl')
@@ -237,12 +282,21 @@ def check_meshes():
         zone = revision_zone(side)
         check(zone is not None, f'{side}: revision zone found in the scad source',
               '' if zone else 'min wall below would measure the engraving as a wall')
+        izone = None if quick else inserts_zone(side)
         def in_zone(c):
             return zone and all(zone[k][0] - 0.05 <= c[i] <= zone[k][1] + 0.05
                                 for i, k in enumerate('xyz'))
+        def in_inserts(c):
+            return izone and all(izone[k][0] <= c[i] <= izone[k][1]
+                                 for i, k in enumerate('xyz'))
 
+        if quick:
+            print(f'  SKIP      {side}: min wall (--quick cannot bound the insert zone)')
+            continue
+        check(izone is not None, f'{side}: insert zone measured',
+              '' if izone else 'the frame carries no _inserts() module')
         res = min_wall(tris, norms)
-        struct = [(d, c) for d, c in res if not in_zone(c)]
+        struct = [(d, c) for d, c in res if not in_zone(c) and not in_inserts(c)]
         mn = min(d for d, _ in struct)
         thin = [(d, c) for d, c in struct if d < MIN_WALL]
         ok = check(not thin, f'{side}: min wall >= {MIN_WALL} mm (excl. engraving)',
@@ -368,7 +422,7 @@ def main():
     # A gating script reports FAIL; it does not hand back a traceback.  Anything
     # raised here (unparseable STL, openscad missing or hung) becomes a failure
     # line naming the stage, and still exits non-zero.
-    for name, fn in (('mesh checks', check_meshes),
+    for name, fn in (('mesh checks', lambda: check_meshes(a.quick)),
                      ('symmetry', check_mirror),
                      ('plate trap', check_plate_trap)):
         try:

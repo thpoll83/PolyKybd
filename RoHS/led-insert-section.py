@@ -9,7 +9,7 @@ case_wall_thickness, pcb_clearance, pcb_edge_width = 1.5, 0.15, 1.4
 case_bottom_thickness, pcb_edge_height = 2, 9.5
 led_pocket_depth, led_pocket_overlap, led_pocket_down = 1.0, 3.5, 2.0
 led_ledge_keep = 0.5
-led_insert_gap, led_window_gap = 0.10, 0.25   # visible seam / buried clearance
+led_insert_gap, led_window_gap = 0.12, 0.25   # visible seam / buried clearance
 led_boss_lip = 0.6                            # close-fitting lip at the outer face
 
 OUT   = -(case_wall_thickness + pcb_clearance)      # outer wall face
@@ -76,7 +76,7 @@ A = Fig.frame(scale=SC, ox=222, oy=1189)
 draw(A, 'inside')
 f.txt(62, 242, 'the outer surface is untouched — no pocket, no seam', 15, C.GRN)
 f.txt(62, 264, 'ring, nothing for a blade to engage. The boss IS the', 15, C.GRN)
-f.txt(62, 286, 'seam here, so its outer 0.6 mm is a 0.10 mm fit and', 15, C.GRN)
+f.txt(62, 286, 'seam here, so its outer 0.6 mm is a 0.12 mm fit and', 15, C.GRN)
 f.txt(62, 308, 'only the buried remainder gets the 0.25 mm.', 15, C.GRN)
 f.dim_h(A((OUT,0))[0], A((IN_LO,0))[0], 856, C.FG, f'wall {WALL_LO:.1f} mm')
 px0, px1, _, pz1 = pocket('inside')
@@ -104,9 +104,10 @@ f.txt(782, 878, 'Outside: only the bond resists a pull. Either way', 15, C.RED)
 f.txt(782, 900, 'the bond is not optional — see the QC note.', 15, C.RED)
 
 f.footer('Derived from the led_* parameters in case/case_polykybd_split72_lr.scad — the pocket and the insert come',
-         'from the same modules, so they cannot drift. 0.10 mm per face wherever the seam can be seen (the flange in',
+         'from the same modules, so they cannot drift. 0.12 mm per face wherever the seam can be seen (the flange in',
          'its pocket, the boss lip), 0.25 mm for the buried remainder. The inside pocket stops 0.5 mm below the ledge',
-         'top so the PCB keeps its full 1.25 mm of support. Two parts per half: one spans D5+D6, one covers D1.')
+         'top so the PCB keeps its full 1.25 mm of support. ONE part, three per half: the section is the same at',
+         'D1, D5 and D6.')
 f.save(f'{REPO}/RoHS/led-insert-section.svg')
 f.png()
 print('figure written')

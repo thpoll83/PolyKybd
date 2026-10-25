@@ -30,7 +30,7 @@ def plate_path(side):
     return os.path.join(REPO, "poly_kybd", f"poly_kybd_split72_plate_{side}.kicad_pcb")
 
 
-REV  = "r1.1"          # r1.0 is the file the print service refused (pre thin-wall rework)
+REV  = "r1.2"          # r1.0 is the file the print service refused (pre thin-wall rework)
 # Revision engraving: cut into the UNDERSIDE of the longest rail, which is 2.0 mm
 # wide and 19.05 mm long -- room enough, and that face points into the spacer gap
 # where nothing sees it.  0.15 mm deep, so 0.85 mm of web is left under the
@@ -721,6 +721,18 @@ def emit_scad(side, D, path):
     rev_vertical = abs(_ra[0] - _rb[0]) < 1e-6
     rev_label = f"{side[0].upper()} {REV}"
 
+    # Where the three ESD window inserts hang.  They are not part of the frame's
+    # job; they ride on it because they are the same clear resin and the same
+    # print, and there are exactly three per half.  The anchor is the OUTERMOST
+    # vertical rail's bottom end -- the one corner of the web with nothing below
+    # or outboard of it on either half, so the row can run inboard into free
+    # space without a free-space search.  `ins_dir` keeps the parts unmirrored:
+    # the insert is the same part on both halves.
+    _vert = [(a, b) for _l, a, b in _rails if abs(a[0] - b[0]) < 1e-6]
+    ins_x = max((v[0][0] for v in _vert), key=abs)
+    ins_y = min(min(a[1], b[1]) for a, b in _vert if abs(a[0] - ins_x) < 1e-6)
+    ins_dir = -1 if ins_x > 0 else 1
+
     L.append(f"""// ===========================================================================
 //  PolyKybd split72 — one-piece LED diffuser frame ({side} half)
 //
@@ -757,6 +769,7 @@ def emit_scad(side, D, path):
 // ===========================================================================
 
 use <diffuser.scad>
+use <../case/case_polykybd_split72_lr.scad>
 
 // The web hangs below the plate (plate underside is z = 0) EXACTLY co-planar
 // with diffuser()'s bottom cap, which occupies z = -2*cap_thickness_bot .. 0
@@ -825,11 +838,50 @@ module diffuser_frame_{side}_revision() {{
                      halign = "center", valign = "center", $fn = 32);
 }}
 
+// The three ESD status-LED window inserts (EMC-700), chained on V-scored tabs
+// and hung off the outer rail's bottom end.  They are NOT part of the diffuser:
+// they ride here because they want the same clear resin and there are exactly
+// three per half.  Snap them off before the frame is offered up to the plate.
+//
+// The row sits flange-down with its flange face level with the web's underside,
+// which puts every V-score in the web plane -- so the tabs are a flat extension
+// of the web rather than something standing off it.  Everything is derived from
+// the led_* functions in the case file, so the part cannot drift from its pocket.
+module diffuser_frame_{side}_inserts() {{
+    rail_end = {ins_y:.3f} - stem_w / 2;
+    row_y = rail_end - led_tab_l() - led_insert_half_h();
+    translate([ {ins_x:.3f}, row_y, led_insert_thk() - web_t ])
+        rotate([ 180, 0, 0 ]) led_insert_strip(3, {ins_dir});
+    translate([ {ins_x:.3f}, rail_end, -web_t / 2 ]) rotate([ 0, 0, -90 ]) led_v_tab();
+}}
+
+// What is left on the rail once the score is broken: a 0.8 mm nub.  Modelled
+// separately because the SPACER check has to measure the frame as it is FITTED,
+// and by then the inserts are gone -- measuring them against the spacer measures
+// a part that is not there (and fails by ~5.7 mm3, which is how this was found).
+module diffuser_frame_{side}_insert_stub() {{
+    translate([ {ins_x:.3f}, {ins_y:.3f} - stem_w / 2, -web_t / 2 ])
+        rotate([ 0, 0, -90 ]) led_v_tab_root();
+}}
+
 module diffuser_frame_{side}() {{
     difference() {{
         union() {{
             diffuser_frame_{side}_diffusers();
             diffuser_frame_{side}_web();
+            diffuser_frame_{side}_inserts();
+        }}
+        diffuser_frame_{side}_revision();
+    }}
+}}
+
+// The frame as it goes into the keyboard: inserts snapped off, nub left behind.
+module diffuser_frame_{side}_fitted() {{
+    difference() {{
+        union() {{
+            diffuser_frame_{side}_diffusers();
+            diffuser_frame_{side}_web();
+            diffuser_frame_{side}_insert_stub();
         }}
         diffuser_frame_{side}_revision();
     }}

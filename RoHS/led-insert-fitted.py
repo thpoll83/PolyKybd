@@ -14,7 +14,7 @@ S = os.environ.get('RENDERS', '/tmp/led-renders')
 f = Fig(1520, 1010)
 f.title('Status-LED windows, from outside the case',
         'D5 and D6 on the left wall of the right half. Same camera in both panels;',
-        'the insert is tinted green — the render itself carries no colour.')
+        'the inserts are tinted green — the render itself carries no colour.')
 
 IW, IH = 712, 570
 f.panel(30, 160, 722, 700, 'A — as the case is cut',
@@ -26,7 +26,7 @@ f.panel(768, 160, 722, 700, 'B — with the insert bonded in',
 f.image(f'{S}/v1_tint.png', 773, 235, IW, IH, clip=(768, 160, 722, 700))
 
 f.footer('Window 2.8 × 2.2 mm through a 2.9 mm wall. Fitted from the inside, so the outer surface keeps the',
-         'geometry that was tested and the only line on it is the boss itself, at 0.10 mm per face. 6.4 mm of air',
+         'geometry that was tested and the only line on it is the boss itself, at 0.12 mm per face. 5.3 mm of air',
          'path through the seam before the bond closes it. Geometry from the led_* parameters in',
          'case/case_polykybd_split72_lr.scad — the pocket and the insert share the same modules.')
 f.save(f'{REPO}/RoHS/led-insert-fitted.svg'); f.png()

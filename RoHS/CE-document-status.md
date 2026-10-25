@@ -346,47 +346,108 @@ the default; the file argued itself round this twice — see the record below):
 | **Adhesive bead around the seam** | see the three reasons below. Fitted from the inside it is also the *only* thing resisting a push from outside, so it is not optional |
 | ≥1 mm in the transparent window | PMMA/PC ≈ 16–20 kV/mm, so 1 mm ≫ the 8 kV test; 0.5 mm is only 8–10 kV, i.e. at the test level |
 
-⚠️ **NOT one window for all three** — that was wrong, and the board says so. The
+⚠️ **NOT one opening for all three, and not one piece spanning them** — that was
+the first idea and the board rules it out. The
 three status LEDs are **D1, D5 and D6** (0805, all on `B.Cu`), and mapping the
 board to the case SVG through the `Edge.Cuts` bbox — offset exactly
-(−28.0995, −26.395) — puts **D5 and D6 7.95 mm apart on one wall, and D1 round
-the corner on the next**. So it is **two parts per half, four per keyboard**: one
-spanning D5+D6, one for D1. One part over D5+D6 beats two, since each slot is
-only 2.8 × 2.2 mm and separate plugs would be fragile in resin.
+(−28.0995, −26.395) — puts **D5 and D6 8.0 mm apart on one wall, and D1 round
+the corner on the next**, 33.2 mm away along the wall with a 93.4° corner between
+them.
+
+✅ **ONE part, three per half, six per keyboard.** The first version made D5+D6 a
+single piece and D1 a second, different one. It does not need to: both walls are
+**flat over the flange's footprint** (the left wall is dead straight at x = 2.448
+from y 56.4 to 129.8; the top wall runs straight from (3.75, 131.07) to
+(70.54, 135.04)), the wall is 2.9 mm thick at all three, and the windows are the
+same 2.8 × 2.2 mm. So the three differ only by a rigid transform and one geometry
+serves all of them — six identical, interchangeable chips, nothing handed and
+nothing position-specific.
+
+⚠️ **That forced the flange to shrink, and the two overlaps to split.** D5 and D6
+are only **5.2 mm apart edge to edge**, so two flanges grown by the cavity's
+3.5 mm would have each other's material inside them. `led_flange_overlap` = 2.4
+is the **part's** overlap (0.4 mm between neighbours) while `led_pocket_overlap`
+= 3.5 stays the **cavity's**, so the two pockets still merge into one recess
+rather than leaving a 0.4 mm rib of ledge between them to snap off. The leftover
+room is bond gap.
+
+⚠️ **D1's slot is 3.4° off square to its own wall**, so the shared part is not
+exactly congruent there: at a 0.10 mm clearance it fouled that cavity by
+**0.0062 mm³**, about 13 µm on one diagonal. `led_insert_gap` is **0.12** for
+that reason — 20 µm of extra seam buys an exact fit at all six. (A 0.0001 mm³
+residue survives at 0.13 and 0.15 too, so it is CGAL noise on the coincident
+faces, not a fit problem. Don't chase it.)
 
 ✅ **Built and verified.** `parts/case/case_polykybd_split72_lr.scad` carries the
 `led_*` parameters and modules, `parts/case/led_inserts.scad` selects the parts,
 and `parts/build_parts.sh led_ins` exports them. The pocket and the insert come
 from the **same modules**, so they cannot drift. Section drawing:
 `RoHS/led-insert-section.svg` (regenerate with `led-insert-section.py`, which
-derives it from those same parameters), and `RoHS/led-insert-fitted.svg` for the
-before/after view from outside the case.
+derives it from those same parameters); `RoHS/led-insert-fitted.svg` for the
+before/after view from outside the case; `RoHS/led-insert-views.svg` for the four
+views in place; and `RoHS/led-insert-parts.svg` for the part on its own, the
+chain, the V-score and where they ride on the frame.
 
 | | |
 |---|---|
 | Window, on the outer face | **2.8 × 2.2 mm** |
 | Wall there | 2.9 mm (only 1.5 mm above the PCB underside) |
-| Pocket depth / flange overlap | 1.0 mm / 3.5 mm |
+| Pocket depth | 1.0 mm |
+| Overlap — cavity / flange | 3.5 mm (`led_pocket_overlap`) / **2.4 mm** (`led_flange_overlap`) |
 | Wall left under the pocket | 1.9 mm |
 | PCB ledge left at full width above the pocket | **0.5 mm** (`led_ledge_keep`) |
-| **Clearance where the seam SHOWS** | **0.10 mm** per face (`led_insert_gap`) — flange in its pocket, and the boss's outer lip |
+| **Clearance where the seam SHOWS** | **0.12 mm** per face (`led_insert_gap`) — flange in its pocket, and the boss's outer lip |
 | **Clearance, buried** | **0.25 mm** per face (`led_window_gap`), behind a `led_boss_lip` = 0.6 mm lip |
-| **Air path through the seam** | **6.4 mm**, before the bond closes it |
+| The part | **7.4 × 4.0 × 2.9 mm, 31.3 mm³** |
+| **Air path through the seam** | **5.3 mm**, before the bond closes it |
 
-✅ **All four print as one piece.** Each insert is only a couple of hundred
-cubic millimetres of resin — small enough to lose and fiddly to place — so
-`led_plate()` lays a whole keyboard's set flat in a row and chains them on a
-breakaway spine (29.5 × 17.6 × 3.3 mm). They print, wash and cure together and
-get snapped apart at assembly. The spine meets each part on the flange **edge**,
-so the witness mark is never on the visible outer face.
+✅ **They ride on the diffuser frame — there is normally nothing to print
+separately.** A 32 mm³ chip is small enough to lose and fiddly to place one at a
+time, and the keyboard already prints **two** clear-resin diffuser frames, one
+per half, with exactly **three** inserts needed on each. So from frame **r1.2**
+each `diffuser_frame_{left,right}.stl` carries its half's three, chained on
+V-scored tabs and hung off the **bottom end of the outermost vertical rail** —
+the one corner of the web with nothing below or outboard of it on either half,
+so the row runs inboard into free space without needing a search. The anchor is
+derived in `gen_diffuser_frame.py` from the rails it already knows, so it follows
+the web if the web moves.
 
-⚠️ **The two part families are picked up on the board outline**, offset outward
-by `pcb_clearance`, precisely so both land in the same z band once laid flat.
-Which band that is depends on **which face the flange is in**, so
-`led_plate_tab_z()` is derived from `led_fit_from` rather than hard-coded. The
-spine keys off that band. Reference them any other way and the tabs miss: the
-first attempt put the spine at z = 0, where the pair has only the gap between
-its two bosses, and the plate exported happily as **three** disconnected pieces.
+Three things make it cost nothing:
+
+- **The frame's bounding box does not change** (−75.347…78.015, −41.724…58.963,
+  −1.0…2.7, both halves) — the inserts fit inside the envelope, so the print
+  plate is no bigger.
+- **The row sits flange-down with its flange face level with the web's
+  underside**, which puts every V-score **in the web plane**. The tabs are a flat
+  extension of the web rather than something standing off it.
+- **Each frame still exports as ONE shell**, +96.57 mm³ against a separate strip
+  plus tab of 96.59 mm³ — the 0.017 mm³ difference is the weld at the two joints,
+  i.e. nothing collides.
+
+⚠️ **The parts are laid out with `dir`, never mirrored.** The left frame is an
+exact x-mirror of the right, but the insert is the **same part on both halves** —
+a mirrored one fits nothing. `led_insert_strip(n, dir)` lays the row towards −x
+by translating, so the geometry is never reflected. `check_mirror()` still passes
+because it compares volume and bounding box, which are unaffected.
+
+⚠️ **The breakaway features are deliberately under the frame's own minimum wall,
+so `check_frame.py` had to be taught to skip them.** `MIN_WALL` is 0.99 mm; the
+V-score is 0.6 and the insert's flange is 0.88. Measuring those as frame walls is
+measuring the wrong part, so `inserts_zone()` excludes the box — and it gets that
+box by **exporting the module**, not by recomputing its arithmetic, because a
+second copy of numbers that all come from the `led_*` parameters would drift the
+first time one moved. Under `--quick` the min-wall check prints SKIP rather than
+silently passing on an un-bounded zone.
+
+⚠️ **The score is 0.6 mm, not the 0.35 the standalone strip could use.** The V
+does the work — a sharp notch root concentrates the stress — and the frame goes
+to a print service that **already refused revision r1.0 over thin walls**. A
+deliberately hair-thin ligament on that part is asking for the same answer.
+
+`export/case/led_inserts.stl` remains as the standalone fallback: all six in a
+row, 52.2 × 4.0 × 2.9 mm, one shell. The tabs meet each part on the flange
+**end** face, which is buried in the pocket, so no witness mark is ever on a
+face that shows.
 
 ⚠️ **The fit direction was argued round TWICE, and the objection that settled
 it the first time was wrong.** Worth recording, because the wrong objection is
@@ -466,25 +527,39 @@ take the gap off the far side only, so the part is flush with the case and the
 slack ends up behind it. Do not add a gap there to "make it easier": it would
 sink the insert below the surface.
 
-⚠️ **`led_pocket_overlap` has a floor near 3.1 mm.** At 2.0 the two flanges came
-out 5.8 mm wide with centres 8 mm apart — a "part" in two disconnected pieces
-that exports and renders perfectly happily. 3.5 merges them *and* lengthens the
-air path.
+✅ **The witness stub is why the cavity stays wider than the flange — verified,
+not assumed.** Breaking a V-score leaves half the tab (0.8 mm) on the insert, and
+on a middle insert there is one at **each** end. With the cavity grown by 3.5 mm
+and the flange by 2.4 there is 1.22 mm of tangential room beyond the flange, so
+the part still seats with both stubs on: `led_insert()` plus two
+`led_v_tab_root()`s, placed at D5 and differenced against that cavity, exports as
+**empty**. ⚠️ Widen the region box when re-running that test — with the default
+±4 mm box the stubs poke out of the *test region* and it reports a false 0.49 mm³
+protrusion.
+
+⚠️ **The two overlaps pull in OPPOSITE directions — don't collapse them back
+into one.** `led_pocket_overlap` (3.5, the cavity) wants to be **above** ~3.1 mm
+so the D5 and D6 recesses merge; below that they separate and leave a thin rib of
+ledge standing between them. `led_flange_overlap` (2.4, the part) wants to be
+**below** 2.6 so two neighbouring flanges do not overlap each other, which is what
+lets all six parts be the same. One number cannot satisfy both.
 
 ⚠️ **The pocket must not reach above the PCB underside** (z = 11.5): the wall is
 only `case_wall_thickness` there, so a pocket would leave it too thin to print.
 
-Verified rather than eyeballed: both inserts sit inside the cavity the case
-loses (the difference exports as *empty*), **five positive controls — 0.15 mm in
-±y, ±z and −x — all collide**, so the test can still fail, and the clearance
-volume is a real non-empty shell. Measured per face, by slicing the part and the
-cavity in the same slab:
+Verified rather than eyeballed. The ONE part was placed at each of the three
+windows (`led_place_d5/d6/d1`) and differenced against that window's cavity:
+**D5 and D6 export as empty, D1 leaves only the 0.0001 mm³ coincident-face
+residue**. Four positive controls — 0.2 mm in ±y and ±z, and 1.4 mm tangentially
+at D1 (where the flange has 1.1 mm of room by design, so a small shift proves
+nothing) — all collide, so the test can still fail. Measured per face, by slicing
+the part and the cavity in the same slab:
 
 | slab | part | cavity | per face |
 |---|---|---|---|
-| boss lip (outer 0.5 mm of wall) | y 88.59–99.19, z 9.5–11.5 | y 88.49–99.29, z 9.4–11.6 | **0.10** |
-| boss body (x 0.4–0.9) | y 88.74–99.04, z 9.65–11.35 | y 88.49–99.29, z 9.4–11.6 | **0.25** |
-| flange (x 1.7–2.448, between the slots) | x 1.548–2.448, z 7.5–10.9 | x 1.448–2.448, z 7.4–11.0 | **0.10** |
+| boss lip (outer 0.5 mm of wall) | y 88.61–91.17, z 9.52–11.48 | y 88.49–91.29, z 9.4–11.6 | **0.12** |
+| boss body (x 0.4–0.9) | y 88.74–91.04, z 9.65–11.35 | y 88.49–91.29, z 9.4–11.6 | **0.25** |
+| flange (between the slots) | z 7.52–10.88 | z 7.4–11.0 | **0.12** |
 
 The flange reading is the one that shows the fit is not over-constrained: it is
 flush at the ledge's inner face (2.448) with the 0.10 mm standing at the pocket

@@ -29,15 +29,15 @@ def put(px, py, img, label, note):
 put(30,  160, 'A_t.png', 'A — the corner, from outside',
     'D1 on the near wall, D5+D6 round to the right')
 put(790, 160, 'B_t.png', 'B — D5 and D6',
-    'from outside only the filled window shows — no flange ring')
+    'two of the three; each is the same part, 8.0 mm apart')
 put(30,  660, 'C_t.png', 'C — D1 on the adjacent wall',
-    'its own part, round the corner from the pair')
+    'the third — identical, 33.2 mm round a 93.4° corner')
 put(790, 660, 'D_t.png', 'D — cut through D5',
     'flange in the ledge pocket, boss filling the window')
 
-f.footer('Fitted from the INSIDE: the flange sits in a pocket cut into the PCB ledge and the outer surface keeps the',
-         'geometry that was tested. Window 2.8 × 2.2 mm through a 2.9 mm wall; pocket 1.0 mm deep, 3.5 mm overlap,',
-         'stopping 0.5 mm below the ledge top so the board keeps its support. 0.10 mm per face where the seam shows,',
-         '0.25 mm buried. All four of a keyboard’s inserts print as one chained piece and snap apart at assembly.')
+f.footer('ONE part, three per half. Fitted from the INSIDE: the flange sits in a pocket cut into the PCB ledge and the',
+         'outer surface keeps the geometry that was tested. Window 2.8 × 2.2 mm through a 2.9 mm wall; pocket 1.0 mm',
+         'deep, 3.5 mm cavity overlap and 2.4 mm on the flange, stopping 0.5 mm below the ledge top so the board keeps',
+         'its support. 0.12 mm per face where the seam shows, 0.25 mm buried. Three ride on each diffuser frame.')
 f.save(f'{REPO}/RoHS/led-insert-views.svg'); f.png()
 print('ok')

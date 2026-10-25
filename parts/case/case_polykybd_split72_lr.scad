@@ -53,7 +53,15 @@ led_slot_r = 0.9;          // grows the imported slot. !! The SVG paths are LINE
                            // so the window comes out 1.0 + 2*0.9 = 2.8 mm wide, not 1.8.
                            // Measure the import before quoting a window size.
 led_pocket_depth = 1.0;    // how much thinner the wall gets, i.e. flange thickness
-led_pocket_overlap = 3.5;  // in plan. >= 3.1 so D5 and D6 flanges merge into ONE part
+led_pocket_overlap = 3.5;  // the CASE cavity, in plan. >= 3.1 so the D5 and D6
+                           // pockets merge into one recess rather than leaving a
+                           // thin rib of ledge between them.
+led_flange_overlap = 2.4;  // the PART's flange, in plan. Smaller than the cavity so
+                           // that three IDENTICAL parts can be used: D5 and D6 are
+                           // only 5.2 mm apart edge to edge, so a flange grown by
+                           // led_pocket_overlap would have its neighbour's inside it.
+                           // 2.4 leaves 0.4 mm between the two flanges, and the rest
+                           // of the merged pocket is simply more bond gap.
 led_pocket_down = 2.0;     // and below it
 led_ledge_keep = 0.5;      // inside fit only: height of PCB ledge left at FULL
                            // width above the pocket. The ledge is what the board
@@ -64,11 +72,19 @@ led_ledge_keep = 0.5;      // inside fit only: height of PCB ledge left at FULL
 // The boss is buried in the wall where nothing is visible, so it gets the
 // margin that actually lets the part go in: it travels the full 2.9 mm wall
 // thickness, and it is the only feature that can bind on the way.
-led_insert_gap = 0.10;     // EVERY VISIBLE SEAM, per face: the flange in its
+led_insert_gap = 0.12;     // EVERY VISIBLE SEAM, per face: the flange in its
                            // pocket, and the boss's lip where it meets the outer
                            // face. If a printed part is too tight to push home,
                            // this is the number to raise - it is also the only
                            // one anybody can see.
+                           // 0.12, not 0.10, because ONE part serves all three
+                           // windows and D1's slot sits 3.4 deg off square to its
+                           // wall: at 0.10 the shared part fouled that cavity by
+                           // 0.0062 mm3, about 13 um on one diagonal. 0.12 clears
+                           // it for 20 um of extra seam. (A 0.0001 mm3 residue is
+                           // left at ANY gap - it does not shrink at 0.13 or 0.15,
+                           // so it is CGAL noise on the coincident faces, not a
+                           // fit problem. Don't chase it.)
 led_window_gap = 0.25;     // the BURIED clearance, per face: the rest of the boss
                            // inside the wall, behind the lip. Also what keeps the
                            // boss (z 9.65 .. 11.35) clear of the PCB underside at
@@ -80,8 +96,13 @@ led_boss_lip = 0.6;        // how deep the close-fitting lip runs in from the ou
                            // enough to push through 2.9 mm of wall. Set 0 for a
                            // plain boss. With led_fit_from = "outside" the flange
                            // covers this region, so the lip makes no difference.
-led_sprue = 0.9;           // breakaway tab between parts on the print plate
-led_plate_pitch = 8.5;     // part spacing on that plate
+led_sprue = 0.9;           // breakaway tab between parts: its section at the root
+led_score_t = 0.6;         // and at the V-score, where it is meant to break. The
+                           // V does the work, so this does not need to be hair
+                           // thin - and it must not be: the inserts ride on the
+                           // diffuser frame, which a print service already refused
+                           // once over thin walls.
+led_tab_len = 1.6;         // tab length, root to root
 
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
@@ -386,24 +407,24 @@ module led_window_cut(g = 0)
 }
 
 // The local thinning of the wall that makes room for the flange.
-module led_pocket_cut(g = 0)
+module led_pocket_cut(g = 0, ov = led_pocket_overlap)
 {
     intersection()
     {
         led_wall_band(led_pocket_depth, g);
         translate([ 0, 0, led_pocket_z0() + g ])
             linear_extrude(height = led_pocket_z1() - led_pocket_z0() - 2 * g, scale = 1)
-                offset(r = led_slot_r + led_pocket_overlap - g, $fn = 64)
+                offset(r = led_slot_r + ov - g, $fn = 64)
                     import(file = led_holes, dpi = 300);
     }
 }
 
 // Both cuts together - what the case loses, and (with g) what the insert is.
-module led_insert_solid(g = 0, gw = 0)
+module led_insert_solid(g = 0, gw = 0, ov = led_pocket_overlap)
 {
     union()
     {
-        led_pocket_cut(g);
+        led_pocket_cut(g, ov);
         // The boss spans the whole wall, outer face to ledge inner face, so it
         // cannot foul anything under the PCB.
         led_boss(g, gw);
@@ -427,81 +448,125 @@ module led_region(x0, svg_y0, x1, svg_y1)
     translate([ x0, led_y(svg_y1), 0 ]) cube([ x1 - x0, svg_y1 - svg_y0, case_height * 3 ]);
 }
 
-// These boxes only pick which slots go in which part. They are regions, not
-// dimensions - generous, and they do not need to track the SVG.
-// D6 (svg y 41.2) + D5 (svg y 49.2)
-module led_insert_pair(g = led_insert_gap, gw = led_window_gap)
-{
-    intersection() { led_insert_solid(g, gw); led_region(-10, 36, 10, 55); }
-}
-// D1 (svg x 12.8)
-module led_insert_single(g = led_insert_gap, gw = led_window_gap)
-{
-    intersection() { led_insert_solid(g, gw); led_region(4, -8, 22, 16); }
-}
+// ONE part, used three times per half. The three windows are geometrically
+// identical: both walls are dead straight over the flange's footprint (the left
+// wall runs x = 2.448 from y 56.4 to 129.8, the top wall from (3.75, 131.07) to
+// (70.54, 135.04)), the wall is 2.9 mm thick at all three, and the slots and the
+// pocket come from the same parameters. So these three differ only by a rigid
+// transform - which is what led_insert_congruence_test() below asserts.
+module led_insert_d5() { intersection() { led_insert_solid(led_insert_gap, led_window_gap, led_flange_overlap); led_region(-10, 45, 10, 53); } }
+module led_insert_d6() { intersection() { led_insert_solid(led_insert_gap, led_window_gap, led_flange_overlap); led_region(-10, 37, 10, 45); } }
+module led_insert_d1() { intersection() { led_insert_solid(led_insert_gap, led_window_gap, led_flange_overlap); led_region(4, -8, 22, 16); } }
 
-// --- print plate --------------------------------------------------------------
-// The parts are 2.8 x 2.2 mm slots' worth of resin - small enough to lose and
-// fiddly to place one at a time. The plate lays all four of a keyboard's inserts
-// flat in a row and chains them with breakaway tabs, so they print, wash and cure
-// as one piece and get snapped apart at assembly.
+
+// --- the part on its own, and the chain it prints on ---------------------------
+// There is ONE insert, used three times per half. The modules above build it in
+// case coordinates; these lift it out of them so it can be printed, chained, or
+// hung off the diffuser frame.
 //
-// Each part is picked up by a reference point on its own wall and laid flange-down.
 // These three are the LED centres in the SVG's own coordinates (the KiCad board
-// offset by the Edge.Cuts bbox, (-28.0995, -26.395)); they only position the part
-// for printing, the geometry still comes from the SVG.
+// offset by the Edge.Cuts bbox, (-28.0995, -26.395)).
 led_d6 = [ 4.603, 41.203 ];
 led_d5 = [ 4.553, 49.153 ];
 led_d1 = [ 12.795, 9.597 ];
 
-function led_z_mid() = (led_pocket_z0() + led_pocket_z1()) / 2;
-
-// Where each part's wall meets the board outline, in the SVG's coordinates.
+// Where the walls meet the board outline, in the SVG's coordinates.
 led_edge_x = 1.1985;   // the x of the outline's straight left edge (D5/D6 wall)
 led_edge_y = 6.234;    // the outline's front edge at D1's x (interpolated)
 
-// Both parts are picked up on the board outline offset outward by pcb_clearance,
-// so after laying them flat the flange lands in the same z band either way. That
-// band depends on WHICH face the flange is in: measured from that datum the outer
-// face is case_wall_thickness away and the ledge's inner face pcb_edge_width, in
-// the other direction. The tabs key off it, which is why the convention has to
-// match - put the spine anywhere else and the plate exports as four loose parts.
-function led_flange_face_z() = led_fit_inside() ? -pcb_edge_width : case_wall_thickness;
-function led_plate_tab_z() = led_flange_face_z()
-                             + (led_fit_inside() ? 1 : -1) * led_pocket_depth / 2;
+// D5's slot centre along its wall. MEASURED off the exported slot, not taken from
+// led_d5: the User-layer slot sits 0.047 mm from the LED centre, and the SVG is
+// what the geometry is built from.
+led_d5_slot_y = 89.89;
 
-// D5/D6 sit on a wall of constant x, so its normal is x: rotate about y to put
-// the flange face down. D1's wall runs the other way, so it rotates about x, and
-// then about z to stand its long axis alongside the others and keep the gap short.
-module led_plate_pair()
+function led_z_mid() = (led_pocket_z0() + led_pocket_z1()) / 2;
+// The part's own mid-height: the flange starts at the pocket floor and the boss
+// lip reaches the top of the window, so the two gaps cancel.
+function led_insert_z_mid() = (led_pocket_z0() + led_window_z0() + led_window_h()) / 2;
+// Half the part's length along its wall. The imported slot is a LINE with a
+// ~1.0 mm stroke (see led_slot_r), so half of it is led_slot_half.
+led_slot_half = 0.5;
+function led_insert_half() = led_slot_half + led_slot_r + led_flange_overlap - led_insert_gap;
+// The other two half-extents, as functions so a `use <>` in another part can
+// reach them - `use` imports modules and functions but NOT variables.
+function led_insert_half_h() = (led_window_z0() + led_window_h() - led_pocket_z0()) / 2 - led_insert_gap;
+function led_insert_thk() = case_wall_thickness + pcb_edge_width;
+function led_tab_l() = led_tab_len;
+
+// The insert on its own: the OUTER (visible) face on z = 0, the flange face at
+// z = 2.9, long axis along x, centred on the origin in x and y.
+// ⚠️ The matrix is a ROTATION, not a mirror - det must be +1. A reflected insert
+// looks perfectly right on a plate and fits nothing.
+module led_insert()
 {
-    rotate([ 0, 90, 0 ])
-        translate([ -(led_edge_x - pcb_clearance), -led_y((led_d5[1] + led_d6[1]) / 2), -led_z_mid() ])
-            led_insert_pair();
-}
-module led_plate_single()
-{
-    rotate([ 0, 0, 90 ]) rotate([ 90, 0, 0 ])
-        translate([ -led_d1[0], -(led_y(led_edge_y) + pcb_clearance), -led_z_mid() ])
-            led_insert_single();
+    multmatrix([ [ 0, 1, 0, -led_d5_slot_y ],
+                 [ 0, 0, 1, -led_insert_z_mid() ],
+                 [ 1, 0, 0, led_out_r() - led_edge_x ],
+                 [ 0, 0, 0, 1 ] ]) led_insert_d5();
 }
 
-module led_plate()
-{
-    parts = [ 0, 1, 2, 3 ];   // right pair, right single, left pair, left single
-    for (i = parts)
-        translate([ i * led_plate_pitch, 0, 0 ])
-        {
-            if (i == 0) led_plate_pair();
-            if (i == 1) led_plate_single();
-            if (i == 2) mirror([ 0, 1, 0 ]) led_plate_pair();
-            if (i == 3) mirror([ 0, 1, 0 ]) led_plate_single();
-        }
-    // breakaway tabs - deliberately thin, and square so they snap rather than tear
-    for (i = [0:len(parts) - 2])
-        translate([ (i + 0.5) * led_plate_pitch, 0, led_plate_tab_z() ])
-            cube([ led_plate_pitch + 1, led_sprue, led_sprue ], center = true);
+// --- where the one part goes --------------------------------------------------
+// Both walls are flat over the flange's footprint, so each location is a rigid
+// transform of the same solid. These constants are MEASURED off the exported
+// geometry rather than taken from led_d5/led_d6/led_d1 (the User-layer slots sit
+// a few hundredths from the LED centres) and off the outline polygon, whose top
+// wall runs (3.7466, 131.066) -> (70.5357, 135.035), i.e. 3.4009 deg.
+led_c_d5 = [ 1.5943, 89.8904 ];   // part centroid at D5
+led_c_d6 = [ 1.5943, 97.8904 ];   // D6 is a pure 8.0 mm translation of D5
+led_c_d1 = [ 12.8025, 132.4597 ];
+led_d1_wall_angle = -86.5991;     // the top wall relative to the left one
+
+module led_place_d5() {
+    multmatrix([ [ 0, 0, 1, led_edge_x - led_out_r() ],
+                 [ 1, 0, 0, led_d5_slot_y ],
+                 [ 0, 1, 0, led_insert_z_mid() ],
+                 [ 0, 0, 0, 1 ] ]) children();
 }
+module led_place_d6() { translate([ 0, led_c_d6[1] - led_c_d5[1], 0 ]) led_place_d5() children(); }
+module led_place_d1() {
+    translate([ led_c_d1[0], led_c_d1[1], 0 ]) rotate([ 0, 0, led_d1_wall_angle ])
+        translate([ -led_c_d5[0], -led_c_d5[1], 0 ]) led_place_d5() children();
+}
+// All three inserts where they belong, for a fit check or a render.
+module led_inserts_in_place() {
+    led_place_d5() led_insert();
+    led_place_d6() led_insert();
+    led_place_d1() led_insert();
+}
+
+// A breakaway tab with a V-score: a bar whose section pinches to led_score_t at
+// mid-span, so it snaps THERE and not at its root, and leaves a witness mark the
+// size of the score rather than the tab. It runs along +x from the origin.
+module led_v_tab(l = led_tab_len)
+{
+    led_v_tab_root(l);
+    translate([ l, 0, 0 ]) rotate([ 0, 0, 180 ]) led_v_tab_root(l);
+}
+// One half of it: what stays behind on whatever the tab was anchored to once the
+// score has been broken. A carrier that models its own fitted state needs this -
+// see diffuser_frame_<side>_fitted() in the generated frames.
+module led_v_tab_root(l = led_tab_len)
+{
+    hull() { led_tab_sq(led_sprue); translate([ l / 2, 0, 0 ]) led_tab_sq(led_score_t); }
+}
+module led_tab_sq(s) { cube([ 0.01, s, s ], center = true); }
+
+// n inserts in a row, chained end to end. The tab lands on the flange's END face,
+// which is buried in the pocket, so no witness mark is ever on a face that shows.
+function led_strip_pitch() = 2 * led_insert_half() + led_tab_len;
+// `dir` lays the row towards -x without MIRRORING anything: the insert is the
+// same part on both halves, and a mirrored one fits nothing.
+module led_insert_strip(n = 3, dir = 1)
+{
+    for (i = [0:n - 1]) translate([ dir * i * led_strip_pitch(), 0, 0 ]) led_insert();
+    for (i = [0:n - 2])
+        translate([ dir * (i * led_strip_pitch() + led_insert_half()), led_tab_y(), led_tab_z() ])
+            rotate([ 0, 0, dir > 0 ? 0 : 180 ]) led_v_tab();
+}
+// The tab sits in the middle of the flange band, which is the only part of the
+// end face that is present for every insert.
+function led_tab_y() = (led_pocket_z0() + led_pocket_z1()) / 2 - led_insert_z_mid();
+function led_tab_z() = case_wall_thickness + pcb_edge_width - led_pocket_depth / 2;
 
 module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_infill = true)
 {

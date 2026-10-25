@@ -10,7 +10,7 @@
 //  diffuser() module, used unmodified — this file adds only the web.
 //
 //  ---------------------------------------------------------------------
-//  revision   r1.1          generated 2026-08-16
+//  revision   r1.2          generated 2026-10-25
 //  source     poly_kybd/poly_kybd_split72_plate_left.kicad_pcb
 //  diffusers  36
 //  web        54 rungs + 30 rails + 5 routed links,
@@ -34,6 +34,7 @@
 // ===========================================================================
 
 use <diffuser.scad>
+use <../case/case_polykybd_split72_lr.scad>
 
 // The web hangs below the plate (plate underside is z = 0) EXACTLY co-planar
 // with diffuser()'s bottom cap, which occupies z = -2*cap_thickness_bot .. 0
@@ -224,8 +225,34 @@ module diffuser_frame_left_revision() {
     translate([-37.623, 24.026, -web_t])
         linear_extrude(0.15)
             rotate(90) mirror([1, 0, 0])
-                text("L r1.1", size = 1.0, font = "Arial:style=Bold",
+                text("L r1.2", size = 1.0, font = "Arial:style=Bold",
                      halign = "center", valign = "center", $fn = 32);
+}
+
+// The three ESD status-LED window inserts (EMC-700), chained on V-scored tabs
+// and hung off the outer rail's bottom end.  They are NOT part of the diffuser:
+// they ride here because they want the same clear resin and there are exactly
+// three per half.  Snap them off before the frame is offered up to the plate.
+//
+// The row sits flange-down with its flange face level with the web's underside,
+// which puts every V-score in the web plane -- so the tabs are a flat extension
+// of the web rather than something standing off it.  Everything is derived from
+// the led_* functions in the case file, so the part cannot drift from its pocket.
+module diffuser_frame_left_inserts() {
+    rail_end = -23.600 - stem_w / 2;
+    row_y = rail_end - led_tab_l() - led_insert_half_h();
+    translate([ 57.627, row_y, led_insert_thk() - web_t ])
+        rotate([ 180, 0, 0 ]) led_insert_strip(3, -1);
+    translate([ 57.627, rail_end, -web_t / 2 ]) rotate([ 0, 0, -90 ]) led_v_tab();
+}
+
+// What is left on the rail once the score is broken: a 0.8 mm nub.  Modelled
+// separately because the SPACER check has to measure the frame as it is FITTED,
+// and by then the inserts are gone -- measuring them against the spacer measures
+// a part that is not there (and fails by ~5.7 mm3, which is how this was found).
+module diffuser_frame_left_insert_stub() {
+    translate([ 57.627, -23.600 - stem_w / 2, -web_t / 2 ])
+        rotate([ 0, 0, -90 ]) led_v_tab_root();
 }
 
 module diffuser_frame_left() {
@@ -233,6 +260,19 @@ module diffuser_frame_left() {
         union() {
             diffuser_frame_left_diffusers();
             diffuser_frame_left_web();
+            diffuser_frame_left_inserts();
+        }
+        diffuser_frame_left_revision();
+    }
+}
+
+// The frame as it goes into the keyboard: inserts snapped off, nub left behind.
+module diffuser_frame_left_fitted() {
+    difference() {
+        union() {
+            diffuser_frame_left_diffusers();
+            diffuser_frame_left_web();
+            diffuser_frame_left_insert_stub();
         }
         diffuser_frame_left_revision();
     }
