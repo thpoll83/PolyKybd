@@ -405,12 +405,12 @@ chain, the V-score and where they ride on the frame.
 separately.** A 32 mm³ chip is small enough to lose and fiddly to place one at a
 time, and the keyboard already prints **two** clear-resin diffuser frames, one
 per half, with exactly **three** inserts needed on each. So from frame **r1.2**
-each `diffuser_frame_{left,right}.stl` carries its half's three, chained on
-V-scored tabs and hung off the **bottom end of the outermost vertical rail** —
-the one corner of the web with nothing below or outboard of it on either half,
-so the row runs inboard into free space without needing a search. The anchor is
-derived in `gen_diffuser_frame.py` from the rails it already knows, so it follows
-the web if the web moves.
+each `diffuser_frame_{left,right}.stl` carries its half's three as **one chained
+row** on V-scored webs, hung off the **lower tip of the thumb-side branch** and
+running **inboard** across the empty pocket under the main grid — the only 25 mm
+of free web this part has. The anchor is derived in `gen_diffuser_frame.py` from
+the segments it already knows (the longest non-rail one reaching below the grid),
+so it follows the web if the web moves.
 
 Three things make it cost nothing:
 
@@ -420,9 +420,12 @@ Three things make it cost nothing:
 - **The row sits flange-down with its flange face level with the web's
   underside**, which puts every V-score **in the web plane**. The tabs are a flat
   extension of the web rather than something standing off it.
-- **Each frame still exports as ONE shell**, +96.57 mm³ against a separate strip
-  plus tab of 96.59 mm³ — the 0.017 mm³ difference is the weld at the two joints,
-  i.e. nothing collides.
+- **Each frame still exports as ONE shell** — 18914 facets, 0 degenerate facets,
+  0 non-manifold edges. It gains **96.24 mm³** against a row that measures
+  **96.61 mm³** on its own; the **0.37 mm³** difference is the single weld, which
+  is the whole overlap there is. An intersection of the row against the frame's
+  web and diffusers is **empty** (and a 1.5 mm displacement finds a collision, so
+  the test is not passing for the wrong reason).
 
 ⚠️ **The parts are laid out with `dir`, never mirrored.** The left frame is an
 exact x-mirror of the right, but the insert is the **same part on both halves** —
@@ -472,18 +475,47 @@ the spacer, which is the same mistake the insert row itself made before
 `diffuser_frame_<side>_fitted()` existed. `led_v_tab(l, h)` takes the root height
 for exactly this.
 
-✅ **The three hang INDIVIDUALLY off the thumb branch's inboard leg, not as one
-chained row.** The leg is the longest segment reaching below the grid — found in
-the generator by length among the rungs and links, ⚠️ **deliberately excluding
-the rails**, since the outermost rail drops 19 mm and would win on length while
-being on the wrong side of the board entirely. They sit at y = −11, −17 and −23
-on that leg, 6.0 mm apart, each on its own web.
+✅ **The three go on as ONE chained row, left of the thumb branch.** The branch
+is the longest segment reaching below the grid — found in the generator by
+vertical extent among the rungs and links, ⚠️ **deliberately excluding the
+rails**, since the outermost rail drops 19 mm and would win on length while being
+on the wrong side of the board entirely. The row hangs off that branch's **lower
+tip** at y = −26.70 and runs inboard, x = −17.02…8.26 on the left half and
+mirrored on the right. **0.83 mm clear** of everything else on the frame, against
+the **0.75 mm** three separate inserts had — so chaining them costs nothing, and
+it is one anchor to snap instead of three.
 
-⚠️ **One chained row does not fit there — measured, not assumed.** The pocket
-left of the branch is about 25 mm and the 3-chain needs 25.36 plus clearance: the
-best placement anywhere along that leg leaves **−0.17 mm** (a row along the leg)
-or **0.06 mm** (across it), against **0.75 mm** for three separate inserts. Hung
-individually they are also independent — a bad snap orphans one part, not three.
+⚠️ **"A chained row does not fit here" was WRONG, and the way it was wrong is
+the lesson.** The earlier sweep pinned the row's end to one rung and then moved
+only `x`, which made the pocket look 0.17 mm too short. A free sweep over both
+axes finds the row with room to spare. ⚠️ **A search that holds one degree of
+freedom fixed reports the constraint it imposed, not the one the part has** —
+and it reports it as a measurement, which is what made it believable. The sweep
+that replaced it varies the row's `y` and its distance from the anchor together,
+and lands where the two diffuser caps that bound the pocket — one at each end of
+the row — come out **equal at 0.83 mm**, i.e. a true interior optimum: moving the
+row either way along its own axis makes it worse.
+
+⚠️ **The optimum is only 1.8 mm wide in `y`, so the generator MEASURES it rather
+than trusting the two constants.** `INS_DY` (−0.70 mm below the tip) and
+`INS_OVER` (0.50 mm of web root buried in it) place the row; the generator then
+measures the row's rectangle against every stem capsule and every diffuser cap —
+the same primitives it builds the frame from — prints the result, and **refuses
+to emit a colliding frame**. Any change to the web topology that walks into the
+row now fails the regeneration instead of printing a part fused to its carrier.
+
+⚠️ **The anchor web is buried 0.5 mm in the branch's rounded tip, not butted
+against it.** Butted, the root face is *tangent* to the stem — the singles got
+away with the 5 µm overlap their 0.01 mm root section happened to give them, but
+against a round tip there is no flat to sit on. Buried, the weld is a real
+1.2 × 0.9 mm of material, and the score still sits at `led_tab_l()/2` = 0.8 mm
+from the flange, which is **clear of the stem** — so it breaks at the score and
+leaves 0.3 mm standing proud of the branch.
+
+⚠️ **One anchor carries the whole 25.3 mm row, which is the one thing chaining
+costs.** Three singles each had their own web, so a bad snap orphaned one part;
+now a web that fails in the bag orphans all three. That is the trade accepted for
+one snap instead of three, and it is why the root is buried rather than butted.
 
 ⚠️ **The free-space search that picked the first spot was wrong, and silently.**
 It sampled the candidate box at a fixed 0.5 mm step with `range(int(w/0.5)+1)`,

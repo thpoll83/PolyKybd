@@ -29,6 +29,34 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 def plate_path(side):
     return os.path.join(REPO, "poly_kybd", f"poly_kybd_split72_plate_{side}.kicad_pcb")
 
+CASE_SCAD = os.path.join(REPO, "parts", "case", "case_polykybd_split72_lr.scad")
+
+
+def case_param(name):
+    """One top-level scalar out of the case file.
+
+    The ESD insert's own dimensions are defined there and nowhere else; the row
+    this file hangs on the frame has to be positioned from the same numbers or
+    the two drift apart silently -- the emitted .scad calls led_*() so it would
+    still *print*, just in the wrong place.
+    """
+    src = open(CASE_SCAD, encoding='utf-8').read()
+    m = re.search(rf'^{name}\s*=\s*([-0-9.]+)\s*;', src, re.M)
+    if not m:
+        raise SystemExit(f'case_param: {name} not found in {CASE_SCAD}')
+    return float(m.group(1))
+
+
+def seg_seg_d(p, q, r, s):
+    """Exact distance between the segments pq and rs (2D)."""
+    def cr(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    d1, d2, d3, d4 = cr(p, q, r), cr(p, q, s), cr(r, s, p), cr(r, s, q)
+    if ((d1 > 0) != (d2 > 0)) and ((d3 > 0) != (d4 > 0)):
+        return 0.0
+    return min(pt_seg_d(p, r, s), pt_seg_d(q, r, s),
+               pt_seg_d(r, p, q), pt_seg_d(s, p, q))
+
 
 REV  = "r1.2"          # r1.0 is the file the print service refused (pre thin-wall rework)
 # Revision engraving: cut into the UNDERSIDE of the longest rail, which is 2.0 mm
@@ -721,21 +749,18 @@ def emit_scad(side, D, path):
     rev_vertical = abs(_ra[0] - _rb[0]) < 1e-6
     rev_label = f"{side[0].upper()} {REV}"
 
-    # Where the three ESD window inserts hang.  They are not part of the frame's
-    # job; they ride on it because they are the same clear resin and the same
-    # print, and there are exactly three per half.  The anchor is the OUTERMOST
-    # vertical rail's bottom end -- the one corner of the web with nothing below
-    # or outboard of it on either half, so the row can run inboard into free
-    # space without a free-space search.  `ins_dir` keeps the parts unmirrored:
-    # the insert is the same part on both halves.
-    # The branch that hangs below the grid on the thumb side is the longest
-    # segment reaching under it; the three inserts stack down its INBOARD face,
-    # which is the one patch of free web this part has.  Measured there: 0.75 mm
-    # clear of anything else on the frame, against -0.17 for a single chained row
-    # (the pocket is 25 mm and the row needs more), so they hang individually.
-    # NOT the rails: the outermost one drops 19 mm and would win on length, and
-    # it is on the wrong side of the board entirely.  The branch is routed links
-    # and rungs, so those are what we look at.
+    # Where the chained row of three ESD window inserts hangs.  The row is not
+    # part of the frame's job; it rides on the frame because it is the same clear
+    # resin and the same print, and there are exactly three windows per half.
+    #
+    # It is ONE chained strip (led_insert_strip), so it has exactly ONE anchor,
+    # and that anchor is the lower TIP of the branch reaching below the grid on
+    # the thumb side -- the longest non-rail segment down there.  The row then
+    # runs INBOARD from the tip, across the empty pocket under the main grid,
+    # which is the only 25 mm of free web this part has.  NOT the rails: the
+    # outermost one drops 19 mm and would win on length, and it is on the wrong
+    # side of the board entirely.  The branch is routed links and rungs, so those
+    # are what we look at.
     _low = []
     for seg in D['segs']:
         if seg['kind'] == 'rail':
@@ -743,26 +768,73 @@ def emit_scad(side, D, path):
         pts = [S(p) for p in seg['pts']]
         _low += [(a, b) for a, b in zip(pts, pts[1:]) if min(a[1], b[1]) < -5]
     _leg = max(_low, key=lambda ab: abs(ab[0][1] - ab[1][1]))
-    (_lax, _lay), (_lbx, _lby) = _leg
-    ins_sgn = -1 if _lax > 0 else 1          # which way the inserts hang off it
-    INS_Y0, INS_PITCH = -11.0, 6.0           # top insert, and the spacing down the leg
-    ins_at = []
-    for i in range(3):
-        y = INS_Y0 - i * INS_PITCH
-        legx = _lax + (y - _lay) / (_lby - _lay) * (_lbx - _lax)
-        ins_at.append((legx + ins_sgn * D['stem_w'] / 2, y))
+    _tip = min(_leg, key=lambda p: p[1])      # the branch's lower end
+    ins_sgn = -1 if _tip[0] > 0 else 1        # which way the row runs (inboard)
+
+    # The two numbers that place the row.  Both were swept against the measured
+    # clearance below, and the optimum is where the two caps that bound the
+    # pocket -- one at each end of the row -- come out equal (0.83 mm each), so
+    # moving the row either way along x makes it worse.  That beats the 0.75 mm
+    # the three separate inserts had, which is why chaining them costs nothing.
+    INS_DY   = -0.70   # row centreline, below the tip: any higher and the
+                       # diffuser cap at the far end of the pocket fouls the row
+    INS_OVER = 0.50    # how far the anchor web's root is buried in the tip, so
+                       # the weld is ~1.2 x 0.9 mm instead of a tangent kiss --
+                       # the score is at led_tab_len/2, still clear of the stem
+    _tab  = case_param('led_tab_len')
+    _half = (case_param('led_slot_half') + case_param('led_slot_r')
+             + case_param('led_flange_overlap') - case_param('led_insert_gap'))
+    # Cross-row half extent (= led_insert_half_h()).  Derived from functions, not
+    # scalars, so it is restated here; check_frame.py measures the real bbox.
+    INS_HALF_H = 1.98
+    _free = _tab - INS_OVER                   # free span, tip surface -> flange
+    _r    = D['stem_w'] / 2
+    ins_y = _tip[1] + INS_DY
+    ins_end = _tip[0] + ins_sgn * math.sqrt((_r + _free) ** 2 - INS_DY ** 2)
+    ins_web = ins_end - ins_sgn * _tab        # the anchor web's root
+    ins_len = 3 * 2 * _half + 2 * _tab        # the chained row, end to end
+    ins_far = ins_end + ins_sgn * ins_len
+
+    # Measure the row against everything the frame puts in that pocket -- stems
+    # as 2 mm capsules, diffusers as their cap discs, exactly how the frame is
+    # built -- and refuse to emit a colliding one.  A silent collision here is a
+    # print that fuses the row to the frame and cannot be snapped off.
+    _rx0, _rx1 = min(ins_end, ins_far), max(ins_end, ins_far)
+    _ry0, _ry1 = ins_y - INS_HALF_H, ins_y + INS_HALF_H
+    _edges = [((_rx0, _ry0), (_rx1, _ry0)), ((_rx1, _ry0), (_rx1, _ry1)),
+              ((_rx1, _ry1), (_rx0, _ry1)), ((_rx0, _ry1), (_rx0, _ry0))]
+    ins_clear, ins_worst = 1e9, ''
+    for seg in D['segs']:
+        pts = [S(p) for p in seg['pts']]
+        for a, b in zip(pts, pts[1:]):
+            # The leg is NOT excluded even though the row is welded to it: the
+            # weld is the web, which is not part of this rectangle, and the leg
+            # still has to clear the row's flanks (it does, by 0.96 mm).
+            v = min(seg_seg_d(a, b, *e) for e in _edges) - _r
+            if v < ins_clear:
+                ins_clear, ins_worst = v, f'stem ({a[0]:.2f},{a[1]:.2f})-({b[0]:.2f},{b[1]:.2f})'
+    for l in D['leds']:
+        cx, cy = S((l['x'], l['y']))
+        v = math.hypot(max(_rx0 - cx, 0, cx - _rx1), max(_ry0 - cy, 0, cy - _ry1)) - CAP_R
+        if v < ins_clear:
+            ins_clear, ins_worst = v, f'diffuser cap ({cx:.2f},{cy:.2f})'
+    print(f'  insert row {ins_len:.2f} mm at y {ins_y:.2f}, x {_rx0:.2f}..{_rx1:.2f}: '
+          f'{ins_clear:.2f} mm clear ({ins_worst})')
+    if ins_clear < CLEAR:
+        raise SystemExit(f'  !! the chained insert row collides with the frame '
+                         f'({ins_clear:.2f} mm < {CLEAR} mm at {ins_worst}) -- '
+                         f're-sweep INS_DY/INS_OVER')
+
     ins_rot = 180 if ins_sgn < 0 else 0
-    ins_op = '-' if ins_sgn < 0 else '+'
-    ins_block = '\n'.join(
-        f"    translate([ {x:.3f} {ins_op} (led_tab_l() + led_insert_half()), {y:.3f},"
-        f" led_insert_thk() - web_t ])\n        rotate([ 180, 0, 0 ]) led_insert();\n"
-        f"    translate([ {x:.3f}, {y:.3f}, -web_t / 2 ])"
-        f" rotate([ 0, 0, {ins_rot} ]) led_v_tab(led_tab_l(), stem_w);"
-        for x, y in ins_at)
-    stub_block = '\n'.join(
-        f"    translate([ {x:.3f}, {y:.3f}, -web_t / 2 ])"
-        f" rotate([ 0, 0, {ins_rot} ]) led_v_tab_root(led_tab_l(), stem_w);"
-        for x, y in ins_at)
+    ins_block = (
+        f"    translate([ {ins_end + ins_sgn * _half:.3f}, {ins_y:.3f},"
+        f" led_insert_thk() - web_t ])\n"
+        f"        rotate([ 180, 0, 0 ]) led_insert_strip(3, {ins_sgn});\n"
+        f"    translate([ {ins_web:.3f}, {ins_y:.3f}, -web_t / 2 ])"
+        f" rotate([ 0, 0, {ins_rot} ]) led_v_tab(led_tab_l(), stem_w);")
+    stub_block = (
+        f"    translate([ {ins_web:.3f}, {ins_y:.3f}, -web_t / 2 ])"
+        f" rotate([ 0, 0, {ins_rot} ]) led_v_tab_root(led_tab_l(), stem_w);")
 
     L.append(f"""// ===========================================================================
 //  PolyKybd split72 — one-piece LED diffuser frame ({side} half)
@@ -869,23 +941,31 @@ module diffuser_frame_{side}_revision() {{
                      halign = "center", valign = "center", $fn = 32);
 }}
 
-// The three ESD status-LED window inserts (EMC-700), chained on V-scored tabs
-// and hung off the outer rail's bottom end.  They are NOT part of the diffuser:
-// they ride here because they want the same clear resin and there are exactly
-// three per half.  Snap them off before the frame is offered up to the plate.
+// The three ESD status-LED window inserts (EMC-700) as ONE chained strip, on
+// V-scored webs, hung off the lower tip of the thumb-side branch and running
+// inboard across the empty pocket under the main grid.  They are NOT part of the
+// diffuser: they ride here because they want the same clear resin and there are
+// exactly three per half.  Snap the strip off the frame first, then fold the
+// three apart -- a V-score breaks by folding, not by pulling.
 //
+// One anchor for the whole {ins_len:.1f} mm row, with its root buried {INS_OVER} mm in the
+// tip so the weld is real material and not a tangent kiss; the score sits at
+// led_tab_l()/2, clear of the stem, so it breaks THERE and not at the root.
 // The row sits flange-down with its flange face level with the web's underside,
-// which puts every V-score in the web plane -- so the tabs are a flat extension
+// which puts every V-score in the web plane -- so the webs are a flat extension
 // of the web rather than something standing off it.  Everything is derived from
 // the led_* functions in the case file, so the part cannot drift from its pocket.
+// Measured clearance to the rest of the frame: {ins_clear:.2f} mm ({ins_worst}).
 module diffuser_frame_{side}_inserts() {{
 {ins_block}
 }}
 
-// What is left on the rail once the score is broken: a 0.8 mm nub.  Modelled
-// separately because the SPACER check has to measure the frame as it is FITTED,
-// and by then the inserts are gone -- measuring them against the spacer measures
-// a part that is not there (and fails by ~5.7 mm3, which is how this was found).
+// What is left on the branch once the score is broken: the web's root half, so
+// led_tab_l()/2 = 0.8 mm long, of which {INS_OVER} mm is buried in the tip -- only
+// 0.3 mm of it stands clear.  Modelled separately because the SPACER check has
+// to measure the frame as it is FITTED, and by then the inserts are gone --
+// measuring them against the spacer measures a part that is not there (and
+// fails by ~5.7 mm3, which is how this was found).
 module diffuser_frame_{side}_insert_stub() {{
 {stub_block}
 }}

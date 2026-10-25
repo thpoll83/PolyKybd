@@ -229,35 +229,35 @@ module diffuser_frame_right_revision() {
                      halign = "center", valign = "center", $fn = 32);
 }
 
-// The three ESD status-LED window inserts (EMC-700), chained on V-scored tabs
-// and hung off the outer rail's bottom end.  They are NOT part of the diffuser:
-// they ride here because they want the same clear resin and there are exactly
-// three per half.  Snap them off before the frame is offered up to the plate.
+// The three ESD status-LED window inserts (EMC-700) as ONE chained strip, on
+// V-scored webs, hung off the lower tip of the thumb-side branch and running
+// inboard across the empty pocket under the main grid.  They are NOT part of the
+// diffuser: they ride here because they want the same clear resin and there are
+// exactly three per half.  Snap the strip off the frame first, then fold the
+// three apart -- a V-score breaks by folding, not by pulling.
 //
+// One anchor for the whole 25.3 mm row, with its root buried 0.5 mm in the
+// tip so the weld is real material and not a tangent kiss; the score sits at
+// led_tab_l()/2, clear of the stem, so it breaks THERE and not at the root.
 // The row sits flange-down with its flange face level with the web's underside,
-// which puts every V-score in the web plane -- so the tabs are a flat extension
+// which puts every V-score in the web plane -- so the webs are a flat extension
 // of the web rather than something standing off it.  Everything is derived from
 // the led_* functions in the case file, so the part cannot drift from its pocket.
+// Measured clearance to the rest of the frame: 0.83 mm (diffuser cap (21.02,-30.35)).
 module diffuser_frame_right_inserts() {
-    translate([ 17.571 - (led_tab_l() + led_insert_half()), -11.000, led_insert_thk() - web_t ])
-        rotate([ 180, 0, 0 ]) led_insert();
-    translate([ 17.571, -11.000, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab(led_tab_l(), stem_w);
-    translate([ 17.743 - (led_tab_l() + led_insert_half()), -17.000, led_insert_thk() - web_t ])
-        rotate([ 180, 0, 0 ]) led_insert();
-    translate([ 17.743, -17.000, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab(led_tab_l(), stem_w);
-    translate([ 17.914 - (led_tab_l() + led_insert_half()), -23.000, led_insert_thk() - web_t ])
-        rotate([ 180, 0, 0 ]) led_insert();
-    translate([ 17.914, -23.000, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab(led_tab_l(), stem_w);
+    translate([ 13.340, -26.699, led_insert_thk() - web_t ])
+        rotate([ 180, 0, 0 ]) led_insert_strip(3, -1);
+    translate([ 18.620, -26.699, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab(led_tab_l(), stem_w);
 }
 
-// What is left on the rail once the score is broken: a 0.8 mm nub.  Modelled
-// separately because the SPACER check has to measure the frame as it is FITTED,
-// and by then the inserts are gone -- measuring them against the spacer measures
-// a part that is not there (and fails by ~5.7 mm3, which is how this was found).
+// What is left on the branch once the score is broken: the web's root half, so
+// led_tab_l()/2 = 0.8 mm long, of which 0.5 mm is buried in the tip -- only
+// 0.3 mm of it stands clear.  Modelled separately because the SPACER check has
+// to measure the frame as it is FITTED, and by then the inserts are gone --
+// measuring them against the spacer measures a part that is not there (and
+// fails by ~5.7 mm3, which is how this was found).
 module diffuser_frame_right_insert_stub() {
-    translate([ 17.571, -11.000, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab_root(led_tab_l(), stem_w);
-    translate([ 17.743, -17.000, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab_root(led_tab_l(), stem_w);
-    translate([ 17.914, -23.000, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab_root(led_tab_l(), stem_w);
+    translate([ 18.620, -26.699, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab_root(led_tab_l(), stem_w);
 }
 
 module diffuser_frame_right() {

@@ -10,11 +10,11 @@ from figlib import Fig, C
 # _inserts(), since OpenSCAD drops colour() under --render=cgal. Cameras:
 #   pA insert -16,-12, 9,0,0,1.45     pB insert  16, 12, 9,0,0,1.45
 #   pC chain  -14,-26,16,8.5,0,1.45   pD score   -3.2,-4.4,2.6,3.9,0,1.45
-#   pE frame  top, CENTRE=1.3,8.6,0 DIST=520
-#   pF corner -34,-48,30,-50,-26,0
+#   pE frame  top, CENTRE=1.3,8.6,0   DIST=340
+#   pF anchor top, CENTRE=14.5,-26.9,0 DIST=24
 S = os.environ.get('RENDERS', '/tmp/led-renders')
 
-f = Fig(1540, 1230)
+f = Fig(1540, 1266)
 f.title('The ESD insert, and how six of them get printed',
         'ONE part, three per half. The boss fills the window flush with the case’s outer face; the flange',
         'behind it sits in a pocket cut into the PCB ledge. 7.4 × 4.0 × 2.9 mm, 29.8 mm³ of clear resin.')
@@ -31,17 +31,18 @@ put(0, 0, 'pA.png', 'A — the part, from outside',
 put(1, 0, 'pB.png', 'B — the part, from inside',
     'the flange face that beds into the ledge pocket')
 put(2, 0, 'pC.png', 'C — three of them, chained',
-    'the standalone strip; on the frame they hang singly')
+    'one piece — this is how the frame carries them')
 put(0, 1, 'pD.png', 'D — the V-score',
-    'V-scored on both faces, down to 0.3 mm — fold to snap')
+    'both faces, down to 0.3 mm — fold it to snap')
 put(1, 1, 'pE.png', 'E — where they ride',
-    'the right frame; the inserts are tinted green')
+    'the right frame; the row is tinted green')
 put(2, 1, 'pF.png', 'F — the anchor, close up',
-    'three, singly, down the thumb branch’s inboard leg')
+    'ONE web, into the thumb branch’s lower tip')
 
-f.footer('From frame r1.2 each diffuser frame carries its half’s three inserts: same clear resin, same print, and',
-         'the frame’s bounding box does not change. They sit flange-down with the flange face level with the web’s',
-         'underside, which puts every V-score in the web plane, and hang singly — a chained row of three needs',
-         '25.36 mm and that pocket has 25. Snap them off before fitting the frame.')
+f.footer('From frame r1.2 each diffuser frame carries its half’s three inserts as ONE chained row: same clear resin,',
+         'same print, and the frame’s bounding box does not change. The row sits flange-down with the flange face',
+         'level with the web’s underside, which puts every V-score in the web plane. It hangs on a single web welded',
+         'into the lower tip of the thumb branch and runs inboard across the empty pocket, 0.83 mm clear of the rest',
+         'of the frame. Snap the row off first, then fold the three apart.')
 f.save(f'{REPO}/RoHS/led-insert-parts.svg'); f.png()
 print('ok')
