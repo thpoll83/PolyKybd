@@ -103,15 +103,17 @@ led_tab_inset = 0.05;      // ⚠️ how far the web is held back from the flang
                            // joint (40 on the six-up strip). OpenSCAD then refuses
                            // to boolean the imported mesh at all - which is how it
                            // was noticed. Keep it well above mesh tolerance.
-led_score_h = 1.0;         // breakaway connection: the web runs the FULL height of
-                           // the flange's end face and the full flange thickness,
-                           // and a V notch from top and bottom pinches it to this
-                           // at mid-span. A full-height web is stiffer to handle
-                           // than a peg of the same break area, and the notch root
-                           // is what makes it snap where it is meant to. It is not
-                           // hair-thin on purpose: these ride on the diffuser frame,
-                           // which a print service already refused once over thin
-                           // walls.
+led_score_t = 0.3;         // breakaway connection: the web runs the full height of
+                           // the flange's end face (3.26 mm) and the V is cut into
+                           // its two FACES, pinching the THICKNESS to this at
+                           // mid-span - a PCB V-score, not a waisted bar. That is
+                           // the axis you actually break about: the two parts fold
+                           // towards each other and the thin ligament fails in
+                           // tension. 1 mm is not available in this direction - the
+                           // web is only as thick as the flange it sits on (0.88,
+                           // less the inset) and the pocket has no room for more.
+                           // At 0.3 the ligament is 3.26 x 0.3 = 0.98 mm2, slightly
+                           // MORE than the 0.78 the full-thickness version left.
 led_tab_len = 1.6;         // tab length, root to root
 
 text_font = "Arial:style=Bold Italic";
@@ -569,10 +571,10 @@ module led_inserts_in_place() {
     led_place_d1() led_insert();
 }
 
-// The breakaway connection: a web the full height of the flange's end face and
-// the full flange thickness, notched from top and bottom so its height pinches to
-// led_score_h at mid-span. It snaps THERE and not at its root, and the witness
-// mark is the notch rather than the whole web. Runs along +x from the origin.
+// The breakaway connection: a web the full height of the flange's end face,
+// V-scored on both FACES so its thickness pinches to led_score_t at mid-span -
+// the same arrangement as a V-scored PCB panel. It snaps THERE and not at its
+// root, and folding the two parts together is what breaks it. Runs along +x.
 // `h` is the root height - the frame passes its rail width instead, see below.
 module led_v_tab(l = led_tab_len, h = 0)
 {
@@ -584,13 +586,14 @@ module led_v_tab(l = led_tab_len, h = 0)
 // see diffuser_frame_<side>_fitted() in the generated frames.
 module led_v_tab_root(l = led_tab_len, h = 0)
 {
+    hr = (h > 0 ? h : led_tab_h()) - 2 * led_tab_inset;
     hull()
     {
-        led_tab_sec(h > 0 ? h : led_tab_h());
-        translate([ l / 2, 0, 0 ]) led_tab_sec(led_score_h);
+        led_tab_sec(hr, led_flange_t() - 2 * led_tab_inset);
+        translate([ l / 2, 0, 0 ]) led_tab_sec(hr, led_score_t);
     }
 }
-module led_tab_sec(h) { cube([ 0.01, h - 2 * led_tab_inset, led_flange_t() - 2 * led_tab_inset ], center = true); }
+module led_tab_sec(h, t) { cube([ 0.01, h, t ], center = true); }
 
 // n inserts in a row, chained end to end. The tab lands on the flange's END face,
 // which is buried in the pocket, so no witness mark is ever on a face that shows.

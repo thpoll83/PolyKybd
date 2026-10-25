@@ -728,10 +728,41 @@ def emit_scad(side, D, path):
     # or outboard of it on either half, so the row can run inboard into free
     # space without a free-space search.  `ins_dir` keeps the parts unmirrored:
     # the insert is the same part on both halves.
-    _vert = [(a, b) for _l, a, b in _rails if abs(a[0] - b[0]) < 1e-6]
-    ins_x = max((v[0][0] for v in _vert), key=abs)
-    ins_y = min(min(a[1], b[1]) for a, b in _vert if abs(a[0] - ins_x) < 1e-6)
-    ins_dir = -1 if ins_x > 0 else 1
+    # The branch that hangs below the grid on the thumb side is the longest
+    # segment reaching under it; the three inserts stack down its INBOARD face,
+    # which is the one patch of free web this part has.  Measured there: 0.75 mm
+    # clear of anything else on the frame, against -0.17 for a single chained row
+    # (the pocket is 25 mm and the row needs more), so they hang individually.
+    # NOT the rails: the outermost one drops 19 mm and would win on length, and
+    # it is on the wrong side of the board entirely.  The branch is routed links
+    # and rungs, so those are what we look at.
+    _low = []
+    for seg in D['segs']:
+        if seg['kind'] == 'rail':
+            continue
+        pts = [S(p) for p in seg['pts']]
+        _low += [(a, b) for a, b in zip(pts, pts[1:]) if min(a[1], b[1]) < -5]
+    _leg = max(_low, key=lambda ab: abs(ab[0][1] - ab[1][1]))
+    (_lax, _lay), (_lbx, _lby) = _leg
+    ins_sgn = -1 if _lax > 0 else 1          # which way the inserts hang off it
+    INS_Y0, INS_PITCH = -11.0, 6.0           # top insert, and the spacing down the leg
+    ins_at = []
+    for i in range(3):
+        y = INS_Y0 - i * INS_PITCH
+        legx = _lax + (y - _lay) / (_lby - _lay) * (_lbx - _lax)
+        ins_at.append((legx + ins_sgn * D['stem_w'] / 2, y))
+    ins_rot = 180 if ins_sgn < 0 else 0
+    ins_op = '-' if ins_sgn < 0 else '+'
+    ins_block = '\n'.join(
+        f"    translate([ {x:.3f} {ins_op} (led_tab_l() + led_insert_half()), {y:.3f},"
+        f" led_insert_thk() - web_t ])\n        rotate([ 180, 0, 0 ]) led_insert();\n"
+        f"    translate([ {x:.3f}, {y:.3f}, -web_t / 2 ])"
+        f" rotate([ 0, 0, {ins_rot} ]) led_v_tab(led_tab_l(), stem_w);"
+        for x, y in ins_at)
+    stub_block = '\n'.join(
+        f"    translate([ {x:.3f}, {y:.3f}, -web_t / 2 ])"
+        f" rotate([ 0, 0, {ins_rot} ]) led_v_tab_root(led_tab_l(), stem_w);"
+        for x, y in ins_at)
 
     L.append(f"""// ===========================================================================
 //  PolyKybd split72 — one-piece LED diffuser frame ({side} half)
@@ -848,18 +879,7 @@ module diffuser_frame_{side}_revision() {{
 // of the web rather than something standing off it.  Everything is derived from
 // the led_* functions in the case file, so the part cannot drift from its pocket.
 module diffuser_frame_{side}_inserts() {{
-    rail_end = {ins_y:.3f} - stem_w / 2;
-    row_y = rail_end - led_tab_l() - led_insert_half_h();
-    translate([ {ins_x:.3f}, row_y, led_insert_thk() - web_t ])
-        rotate([ 180, 0, 0 ]) led_insert_strip(3, {ins_dir});
-    // The web between inserts runs the full height of their flange; HERE it is
-    // cut down to the rail's own width, so the stub left after the snap stays
-    // inside the notch the spacer already has for that rail.  A full-height
-    // 3.36 mm root would overhang the 2.0 mm rail by 0.68 a side, outside the
-    // notch, and foul the spacer -- which is the same mistake the insert row
-    // itself made before diffuser_frame_<side>_fitted() existed.
-    translate([ {ins_x:.3f}, rail_end, -web_t / 2 ])
-        rotate([ 0, 0, -90 ]) led_v_tab(led_tab_l(), stem_w);
+{ins_block}
 }}
 
 // What is left on the rail once the score is broken: a 0.8 mm nub.  Modelled
@@ -867,8 +887,7 @@ module diffuser_frame_{side}_inserts() {{
 // and by then the inserts are gone -- measuring them against the spacer measures
 // a part that is not there (and fails by ~5.7 mm3, which is how this was found).
 module diffuser_frame_{side}_insert_stub() {{
-    translate([ {ins_x:.3f}, {ins_y:.3f} - stem_w / 2, -web_t / 2 ])
-        rotate([ 0, 0, -90 ]) led_v_tab_root(led_tab_l(), stem_w);
+{stub_block}
 }}
 
 module diffuser_frame_{side}() {{

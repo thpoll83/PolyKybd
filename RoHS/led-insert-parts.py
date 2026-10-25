@@ -31,17 +31,17 @@ put(0, 0, 'pA.png', 'A — the part, from outside',
 put(1, 0, 'pB.png', 'B — the part, from inside',
     'the flange face that beds into the ledge pocket')
 put(2, 0, 'pC.png', 'C — three of them, chained',
-    'one half’s worth, on V-scored tabs')
+    'the standalone strip; on the frame they hang singly')
 put(0, 1, 'pD.png', 'D — the V-score',
-    'a full-height web, notched to 1.0 mm at mid-span')
+    'V-scored on both faces, down to 0.3 mm — fold to snap')
 put(1, 1, 'pE.png', 'E — where they ride',
     'the right frame; the inserts are tinted green')
 put(2, 1, 'pF.png', 'F — the anchor, close up',
-    'off the outer rail’s bottom end')
+    'three, singly, down the thumb branch’s inboard leg')
 
 f.footer('From frame r1.2 each diffuser frame carries its half’s three inserts: same clear resin, same print, and',
-         'the frame’s bounding box does not change. The row sits flange-down with its flange face level with the',
-         'web’s underside, which puts every V-score in the web plane. Snap them off before fitting the frame.',
-         'export/case/led_inserts.stl is the standalone fallback — all six in a row, 52.2 × 4.0 × 2.9 mm.')
+         'the frame’s bounding box does not change. They sit flange-down with the flange face level with the web’s',
+         'underside, which puts every V-score in the web plane, and hang singly — a chained row of three needs',
+         '25.36 mm and that pocket has 25. Snap them off before fitting the frame.')
 f.save(f'{REPO}/RoHS/led-insert-parts.svg'); f.png()
 print('ok')

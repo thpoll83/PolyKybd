@@ -440,14 +440,16 @@ second copy of numbers that all come from the `led_*` parameters would drift the
 first time one moved. Under `--quick` the min-wall check prints SKIP rather than
 silently passing on an un-bounded zone.
 
-✅ **The connection is a FULL-HEIGHT WEB with a V notch, not a peg.** It spans
-the height of the flange's end face and the flange's thickness (3.26 × 0.78,
-held back by `led_tab_inset` — see below), and a V from top and bottom pinches
-its height to **`led_score_h` = 1.0 mm** at mid-span. Break area 0.78 mm²
-against 0.36 for the 0.6 × 0.6 peg it replaced — stiffer to handle, and the
-notch root is what still makes it snap where it is meant to rather than at the
-root. Nothing here is hair-thin on purpose: the frame goes to a print service
-that **already refused revision r1.0 over thin walls**.
+✅ **The connection is a full-height web V-SCORED ON ITS FACES — a PCB panel
+score, not a waisted bar.** The web spans the height of the flange's end face
+and the flange's thickness (3.26 × 0.78, held back by `led_tab_inset` — see
+below), and the V is cut into its two **faces**, pinching the **thickness** to
+**`led_score_t` = 0.3 mm** at mid-span. That is the axis you actually break
+about: the two parts fold towards each other and the thin ligament fails in
+tension, where a full-thickness waisted bar has to be twisted or cut. ⚠️ **1 mm
+is not available in this direction** — the web is only as thick as the flange it
+sits on, and the pocket has no room for more; at 0.3 the ligament is
+3.26 × 0.3 = **0.98 mm²**, slightly *more* than the 0.78 the other axis left.
 
 ⚠️ **`led_tab_inset` = 0.05 is not cosmetic.** Flush with the flange's faces the
 web's four planes are **coplanar** with the flange's, and the export comes out
@@ -463,12 +465,31 @@ exports 0 degenerate, 0 non-manifold. Check it with an edge count, not with
 off **both** ends (x −5.285…5.285 instead of ±3.68). The loop is guarded with
 `if (n > 1)`.
 
-⚠️ **The ANCHOR web to the frame is cut down to the rail's own width (2.0 mm),
-and that is not a detail.** At the full 3.36 mm it would overhang the 2.0 mm rail
-by 0.68 a side — outside the notch the spacer already has for that rail — and
-foul the spacer, which is the same mistake the insert row itself made before
+⚠️ **The anchor web is cut down to the frame stem's own width (2.0 mm), and
+that is not a detail.** At the full 3.36 mm its root would overhang the 2.0 mm
+stem by 0.68 a side — outside the notch the spacer already has for it — and foul
+the spacer, which is the same mistake the insert row itself made before
 `diffuser_frame_<side>_fitted()` existed. `led_v_tab(l, h)` takes the root height
 for exactly this.
+
+✅ **The three hang INDIVIDUALLY off the thumb branch's inboard leg, not as one
+chained row.** The leg is the longest segment reaching below the grid — found in
+the generator by length among the rungs and links, ⚠️ **deliberately excluding
+the rails**, since the outermost rail drops 19 mm and would win on length while
+being on the wrong side of the board entirely. They sit at y = −11, −17 and −23
+on that leg, 6.0 mm apart, each on its own web.
+
+⚠️ **One chained row does not fit there — measured, not assumed.** The pocket
+left of the branch is about 25 mm and the 3-chain needs 25.36 plus clearance: the
+best placement anywhere along that leg leaves **−0.17 mm** (a row along the leg)
+or **0.06 mm** (across it), against **0.75 mm** for three separate inserts. Hung
+individually they are also independent — a bad snap orphans one part, not three.
+
+⚠️ **The free-space search that picked the first spot was wrong, and silently.**
+It sampled the candidate box at a fixed 0.5 mm step with `range(int(w/0.5)+1)`,
+which stops **0.36 mm short of the far edge** — so it never tested the corner
+that was 0.24 mm inside a diffuser cup, and reported the placement as free.
+Sample to both edges (`w*i/nx`), not by stepping from one.
 
 `export/case/led_inserts.stl` remains as the standalone fallback: all six in a
 row, 52.2 × 4.0 × 2.9 mm, one shell. The webs meet each part on the flange
