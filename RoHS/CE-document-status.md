@@ -783,10 +783,12 @@ flush — **the nose length is not a free choice**, it is the wall thickness.
 | | |
 |---|---|
 | Opening | **6.0 × 3.0 mm**, 2.9 mm deep (`btn_r` = 2.5 offset on a ~1.0 mm stroke) |
-| Counterbore | **8.8 mm** (`btn_ear` = 1.4 a side) **and 2.6 mm below** the opening (`btn_under`), in the ledge only |
+| Counterbore | **8.8 mm** (`btn_ear` = 1.4 a side) **and 2.6 mm below** the opening (`btn_under`), in the ledge only; full height only at the two ends |
+| Nose chamfer | **0.5 mm at 45°** (`btn_chamfer`), on the two long sides only |
 | Sliding fit | **0.12 mm** per face (`btn_slide_gap`) |
-| Travel | **0.25 mm** (`btn_travel`), limited by the switch, never by the case |
-| The part | 16.4 × 2.5 × 5.4 mm, **80.9 mm³** — **both** plungers of a half, **two per keyboard** |
+| Travel | **0.25 mm** (`btn_travel`) of actuation, limited by the switch, never by the case |
+| Switch placement tolerance | **±0.25 mm** (`btn_switch_tol`), so the press is **0.25–0.75 mm** of plunger travel |
+| The part | 16.4 × 2.5 × 5.4 mm, **69.4 mm³** — **both** plungers of a half, **two per keyboard** |
 | **Remaining ESD path** | **2.2 mm² of 0.12 mm slot**, 2.9 mm deep, with a step and a corner on each long side — against **18 mm² wide open** |
 
 ✅ **Both plungers of a half are ONE part, so they fit in a single go** (2026-10-29,
@@ -812,6 +814,41 @@ still cut apart (`btn_sep` = 1.0) even though the pocket behind them is one.
 | Extra force to press a button | **0.16 N** at E = 2500 MPa |
 | Force it puts on the OTHER plunger | **0.16 N**, against the **~2.5 N** its switch needs — 16× |
 | Peak bending stress | **8.4 MPa**, against ~65 MPa flexural strength — 8× |
+
+✅ **The nose's root is chamfered 0.5 mm, and the bar drops into a slot**
+(2026-10-29, second round). Two assembly/strength changes that cost nothing:
+
+- **Chamfer.** The nose met the ears at a sharp 90° internal corner — the part's
+  worst stress riser, and exactly where the ears and the bridge posts take their
+  load. The hole now flares over its last **0.5 mm** from 6.0 to 7.0, **wide
+  only**: never taller, because there is no shoulder above the opening to spend
+  and the top of the gap is already the shortest ESD path there is. It leaves
+  **0.9 mm** of the 1.4 mm flat shoulder a side. ⚠️ The chamfer goes through the
+  same switch-body cut-back as the ears — it reaches 0.5 mm deeper than the
+  shoulder across the nose's full width, so at full travel its middle would sit
+  0.13 mm inside the switch.
+- **Slot.** The pocket is now **full height only at the two ends**, where the
+  bridge posts come down; along the middle it narrows to a slot just taller than
+  the bar (`btn_bar_gap` = 0.15 each side). The bar drops into it, which locates
+  the part before you line two noses up with two holes from the inside. The solid
+  left between the slot and the opening is what makes the slot a slot.
+
+⚠️ **The chamfer does cost ESD path, and it is worth being exact about where.**
+It shortens the tight 0.12 mm section on the two **side** faces from 1.5 to
+1.0 mm — but those are the faces that have the 1.4 mm step and a corner behind
+them. The **top and bottom** faces are not chamfered at all, so the one straight
+2.9 mm run through the wall, which was already the weakest part of the path, is
+untouched. The cost lands entirely on the half of the path that had the margin.
+If more root is wanted without paying even that, the other lever is `btn_ear_t`:
+the ear is 0.8 mm thick in a 1.4 mm pocket, so it can be thickened to ~1.2 with
+no effect on the opening at all.
+
+⚠️ **The slot is NOT testable by lifting the part.** The noses are already
+located in their holes to ±0.12, so they foul first whatever the pocket does and
+a lift test passes just as happily with no slot at all. What the slot adds is a
+second bearing 2.5 mm lower, against *rocking*. The check therefore measures the
+**pocket's own z profile** — solid between the slot top and the opening along the
+middle, open at the ends — with a control at each.
 
 ⚠️ **Three features sit EXACTLY on the print service's 0.8 mm floor** — the ear
 thickness, the bridge section and the posts. The vendor refuses *below* 0.8, so
@@ -852,9 +889,36 @@ undercut the board support. The step the ears catch on is therefore on the two
 long sides and the bottom, and **not** on the top — which is also where the ESD
 path is shortest: 2.9 mm straight through, no corner.
 
-⚠️ **The switch's z was read off the footprint's fab outline, not a datasheet**,
-so the actuator pocket is deliberately oversized (2.2 × 1.8 against a ~1.6 × 1.0
-actuator). Confirm against a real unit before the first production print.
+✅ **The switch's placement tolerance is designed for, not just cleared**
+(2026-10-29, third round). A soldered part does not land where the footprint
+says, and ⚠️ **this is not merely a clearance question — it changes how the
+button works.** The plunger's rest position is fixed by its ears on the
+shoulder, so a switch sitting *further out* than nominal would be held
+permanently pressed. The pocket is therefore cut to the **furthest-out**
+position (`btn_act_reach + btn_switch_tol`), which leaves up to 2 × tol of slack
+at the other extreme: the button is pressed through the slack first and then
+actuates, so the press is **0.25–0.75 mm** of plunger travel rather than a flat
+0.25. For a service button that is a feel, not a fault.
+
+⚠️ **One number covers both extremes of the body clearance, which is not a
+coincidence.** Switch out: the part travels 0.25 and the body is 0.25 nearer.
+Switch in: the part travels 0.75 and the body is 0.25 further. Either way it
+closes on the body by exactly `btn_travel + btn_switch_tol`, so the cut-back is
+that plus the sliding gap. `check_btn_plunger.py` tests both ends by moving the
+envelope rather than trusting the arithmetic — ⚠️ and calls `btn_switch_clear(0,
+0)` to do it, because the module's *default* envelope is the toleranced one the
+part was built against, and testing against that is testing the part against
+itself.
+
+⚠️ **The actuator pocket runs THROUGH the nose, top to bottom**, and that is a
+tolerance decision rather than a saving. A pocket that stops short leaves a web
+above and below it: at 2.0 mm tall in a nose only 2.76 mm tall, that web is
+**0.38 mm** — a quarter of the print service's floor. Open top and bottom there
+is no web at all, the nose becomes two columns behind a solid 0.9 mm face, and
+the z tolerance stops mattering entirely, because wherever the actuator lands in
+z it meets the same floor. That last part earns its keep: **the switch's z came
+off the footprint's fab outline, not a datasheet.** Confirm the *x* numbers
+against a real unit before the first production print; z no longer needs it.
 
 **The alternative that was not taken** is a flexible membrane or boot
 (silicone/TPU) with the same inner flange: you press *through* it and there is no

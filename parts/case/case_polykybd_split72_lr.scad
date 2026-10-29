@@ -195,16 +195,59 @@ btn_sep = 1.0;             // the gap kept BETWEEN the two plungers. At btn_ear
 btn_bridge = true;         // join the pair into one part, fitted in one go
 btn_bridge_t = 0.8;        // the bridge section, along the travel ...
 btn_bridge_h = 1.2;        // ... and in z. 0.8 is the print service's floor.
+btn_chamfer = 0.5;         // a 45 deg chamfer where the nose steps out to the
+                           // ears. The hole flares over its last 0.5 mm from 6.0
+                           // to 7.0 WIDE ONLY - never taller, because there is no
+                           // shoulder above the opening to spend (the counterbore
+                           // grows sideways and down, see btn_under) and the top
+                           // of the gap is already the shortest ESD path there is.
+                           // It turns the part's sharpest internal corner into a
+                           // taper, so the ears and the bridge posts grow a root
+                           // instead of meeting the nose at 90 deg. Costs 0.5 mm
+                           // of the 1.4 mm flat shoulder a side; 0.9 mm is left.
+btn_bar_gap = 0.15;        // clearance above and below the bar in its slot. The
+                           // pocket is full height only at the two ends where
+                           // the posts come down; along the middle it narrows to
+                           // a SLOT just taller than the bar, so the bar drops
+                           // into it and the part is located in z before you
+                           // push the noses home. Without that the pocket is
+                           // 5.6 mm tall and the part hangs from nothing while
+                           // you line two noses up with two holes from inside.
 btn_post = 1.6;            // the bridge is attached ONLY at the two outer ends:
                            // that makes it a fixed-guided beam spanning 15.2 mm
                            // rather than the 0.44 mm between the plungers, which
                            // is the difference between a flexure and a weld.
 btn_travel = 0.25;         // the switch's own, so the plunger never bottoms out
 btn_act_reach = 0.38;      // how far the actuator pokes past the wall's inner
-                           // face; the pocket that receives it is this deep
-btn_act_w = 2.2;           // the pocket, generously oversized in both directions
-btn_act_h = 1.8;           // - the switch's z is read off the board, not modelled
-btn_body_w = 5.1;          // clearance the ears leave for the switch BODY (4.7)
+                           // face, NOMINALLY
+btn_switch_tol = 0.25;     // and how far from nominal the soldered switch may
+                           // actually sit. ⚠️ This is not just a clearance - it
+                           // changes how the button WORKS. The plunger's rest
+                           // position is fixed by its ears on the shoulder, so a
+                           // switch sitting further out would be held pressed.
+                           // The pocket is therefore cut to the FURTHEST-OUT
+                           // position (btn_act_reach + this), which leaves a
+                           // free gap of up to 2x this at the other extreme: the
+                           // button is pressed through the slack first and then
+                           // actuates, so the press is 0.25..0.75 mm of plunger
+                           // travel rather than a flat 0.25. For a service
+                           // button that is a feel, not a fault - but it is why
+                           // the figure says 'up to', and why the switch-body
+                           // cut-back below carries this on top of the travel.
+btn_act_w = 2.2;           // the pocket, oversized in y by btn_switch_tol a side
+btn_act_h = 3.2;           // ⚠️ deliberately TALLER than the opening: the pocket
+                           // runs through the nose top to bottom. A pocket that
+                           // stops short leaves a web above and below it - at
+                           // 2.0 that web is 0.38 mm, a quarter of the print
+                           // service's floor, in a nose only 2.76 mm tall. Open
+                           // top and bottom there is no web at all, the nose
+                           // becomes two columns behind a solid 0.9 mm face, and
+                           // the z tolerance stops mattering: wherever the
+                           // actuator lands in z it meets the same floor. That
+                           // last part matters because the switch's z came off
+                           // the footprint's fab outline, not a datasheet.
+btn_body_w = 5.1;          // clearance the ears leave for the switch BODY (4.7),
+                           // likewise widened by btn_switch_tol a side
 btn_body_front = -0.47;    // and where that body starts, as an offset from the
                            // board outline: MEASURED off the footprint (body
                            // 210.83, board edge 211.298 on the right board), not
@@ -799,6 +842,39 @@ module btn_counterbore(g = 0)
     {
         led_band_r(led_hi_r(), led_in_r());
         btn_slot(btn_r + btn_ear, btn_h + btn_under, g, btn_z0 - btn_under);
+        // ... but not at full height everywhere: see btn_under_profile().
+        btn_under_profile();
+    }
+}
+
+// The pocket's z profile. Full height across the opening itself, full height at
+// the two ends where the bridge posts have to come down, and in between only the
+// slot the bar rests in. The solid left between the slot and the opening is what
+// makes the slot a slot: without it the bar can ride 1.3 mm up and the part has
+// nothing to sit on while it is being offered in.
+module btn_under_profile()
+{
+    union()
+    {
+        // the opening's own height, and everything above it
+        translate([ 0, 0, btn_z0 - 0.01 ])
+            linear_extrude(height = btn_h + 1) square(600, center = true);
+        // the bar's slot, the whole length of the pocket
+        translate([ 0, 0, btn_z0 - btn_under ])
+            linear_extrude(height = btn_bridge_h + 2 * btn_bar_gap)
+                square(600, center = true);
+        // full height at the two ends, for the posts. Wider than the posts by
+        // the sliding gap so they are not what the pocket's length measures.
+        translate([ 0, 0, btn_z0 - btn_under ])
+            linear_extrude(height = btn_under + 0.02)
+                difference()
+                {
+                    square(600, center = true);
+                    translate([ 0, btn_mid() ])
+                        square([ 600, btn_c[1] - btn_c[0] + 2 * btn_pocket_half()
+                                      - 2 * (btn_post + btn_slide_gap) ],
+                               center = true);
+                }
     }
 }
 
@@ -822,7 +898,10 @@ module btn_bridge_beam(g = 0)
     {
         led_band_r(led_hi_r() - 0.2, led_hi_r() - 0.2 - btn_bridge_t);
         btn_counterbore(g);
-        translate([ 0, 0, btn_z0 - btn_under + 0.4 ])
+        // sitting IN the slot: btn_bar_gap of clearance under it, the same
+        // above, so dropping the part in locates it rather than leaving it to
+        // be held at the right height by hand.
+        translate([ 0, 0, btn_z0 - btn_under + btn_bar_gap ])
             linear_extrude(height = btn_bridge_h) square(600, center = true);
     }
 }
@@ -852,13 +931,45 @@ module btn_bridge_posts(g = 0)
 // plate's bridge - the piece spanning the middle between the shoulder and the
 // body - reads as a clean fit at rest and drives 0.25 mm into the switch when
 // pressed, which is the one position nothing static would ever test.
-module btn_switch_clear(extra = 0)
+module btn_switch_clear(extra = 0, tol = btn_switch_tol)
 {
     intersection()
     {
-        led_band_r(btn_body_front + extra, led_in_r() - 1);
-        btn_slot((btn_body_w - 1.0) / 2, btn_h + 1, 0, btn_z0 - 0.5);
+        led_band_r(btn_body_front + tol + extra, led_in_r() - 1);
+        btn_slot((btn_body_w + 2 * tol - 1.0) / 2, btn_h + 1, 0, btn_z0 - 0.5);
     }
+}
+
+// The chamfer at the nose's root: a 45 deg taper over the last btn_chamfer of
+// the wall, from the opening's width out to btn_chamfer more. Built as a hull of
+// two thin slabs at different depths, which is the one way to taper along x when
+// everything else here is a 2D profile extruded along z.
+// ⚠️ The hull has to be clipped PER BUTTON. The switch_holes SVG carries both, so
+// hulling the slabs hulls all four of them and bridges a solid slab between the
+// two buttons. The clip is +-(0.5 + btn_r + btn_chamfer) = 3.5 mm, which contains
+// one button's chamfer and still leaves 0.8 mm between the two clips.
+module btn_nose_chamfer(g = 0)
+{
+    for (c = btn_c)
+        intersection()
+        {
+            translate([ 0, c, 0 ])
+                cube([ 600, 2 * (0.5 + btn_r + btn_chamfer), 600 ], center = true);
+            hull()
+            {
+                intersection()
+                {
+                    led_band_r(led_hi_r() + btn_chamfer,
+                               led_hi_r() + btn_chamfer - 0.01);
+                    btn_slot(btn_r, btn_h, g);
+                }
+                intersection()
+                {
+                    led_band_r(led_hi_r() + 0.01, led_hi_r());
+                    btn_slot(btn_r + btn_chamfer, btn_h, g);
+                }
+            }
+        }
 }
 
 // The plunger. Nose through the wall, two ears behind the shoulder, and a blind
@@ -874,24 +985,40 @@ module btn_plunger(g = btn_slide_gap)
             intersection() { led_band_r(led_out_r(), led_hi_r()); btn_opening(g); }
             difference()
             {
-                intersection()
+                union()
                 {
-                    led_band_r(led_hi_r(), led_hi_r() - btn_ear_t);
-                    btn_counterbore(g);
-                    // the ears stay at the opening's own height; the pocket's
-                    // extension below them is for the bridge, not for material
-                    btn_slot(btn_r + btn_ear, btn_h, g);
+                    intersection()
+                    {
+                        led_band_r(led_hi_r(), led_hi_r() - btn_ear_t);
+                        btn_counterbore(g);
+                        // the ears stay at the opening's own height; the pocket's
+                        // extension below them is for the bridge, not material
+                        btn_slot(btn_r + btn_ear, btn_h, g);
+                    }
+                    btn_nose_chamfer(g);
                 }
-                btn_switch_clear(btn_travel + btn_slide_gap);
+                // ⚠️ the chamfer goes through the SAME cut-back as the ears. It
+                // reaches 0.5 mm deeper than the shoulder across the full width
+                // of the nose, so at full travel its middle would be inside the
+                // switch body - and only where the switch is, i.e. nowhere near
+                // the ears it exists to thicken.
+                // The allowance is travel + tol: at BOTH tolerance extremes the
+                // part closes on the body by exactly travel + btn_switch_tol
+                // (out: it travels 0.25 and the body is 0.25 nearer; in: it
+                // travels 0.75 and the body is 0.25 further), so one number
+                // covers both.
+                btn_switch_clear(btn_travel + btn_switch_tol + btn_slide_gap);
             }
             if (btn_bridge) { btn_bridge_beam(g); btn_bridge_posts(g); }
         }
         if (btn_bridge) btn_sep_cut();
-        // the actuator pocket, from the back face outward
+        // The actuator pocket, from the back face outward. Cut to the
+        // FURTHEST-OUT actuator, so a switch at that extreme just touches the
+        // pocket's floor rather than holding the button down.
         intersection()
         {
-            led_band_r(led_hi_r() + btn_act_reach, led_in_r());
-            btn_slot((btn_act_w - 1.0) / 2, btn_act_h, 0,
+            led_band_r(led_hi_r() + btn_act_reach + btn_switch_tol, led_in_r());
+            btn_slot((btn_act_w + 2 * btn_switch_tol - 1.0) / 2, btn_act_h, 0,
                      btn_z0 + (btn_h - btn_act_h) / 2);
         }
     }
@@ -1006,7 +1133,7 @@ module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_i
         // cut out switch (and, with btn_insert, the counterbore the plunger's
         // retaining ears sit behind)
         btn_opening();
-        if (btn_insert) btn_counterbore();
+        if (btn_insert) { btn_counterbore(); btn_nose_chamfer(); }
     
 
         // cut out USB

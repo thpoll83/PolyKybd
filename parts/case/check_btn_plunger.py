@@ -112,11 +112,17 @@ def run_scad(body):
 # The cavity the plunger lives in, and the part, both from the case's own
 # modules. `dx` slides the part along the travel axis: the wall's outer face is
 # at the larger x, so pressing it is -x.
-CAVITY = 'module _cavity() { btn_opening(); btn_counterbore(); }'
+# ⚠️ every cut the case makes, or the part reads as not fitting its own hole.
+# The chamfer was added to the case and not to this line, and the two fit
+# checks below went red by exactly the chamfer's volume - which is the
+# check doing its job, but it looks like a geometry bug for a minute.
+CAVITY = ('module _cavity() { btn_opening(); btn_counterbore(); '
+          'btn_nose_chamfer(); }')
 
 
-def outside(dx):
-    return run_scad(CAVITY + f'difference() {{ translate([{dx},0,0]) btn_plunger(); _cavity(); }}')
+def outside(dx, dz=0.0):
+    return run_scad(CAVITY + f'difference() {{ translate([{dx},0,{dz}]) btn_plunger(); '
+                             f'_cavity(); }}')
 
 
 def main():
@@ -143,28 +149,77 @@ def main():
     check(out > 0.5, 'it cannot be pushed OUT (the ears catch)',
           f'{out:.3f} mm3 outside the cavity when displaced 0.3 mm')
 
-    # The switch body and actuator share the cavity. btn_plunger() already
-    # subtracts them, so this measures whether that subtraction actually bites
-    # at full travel, where the part is closest to the switch.
-    clash = run_scad('difference() { translate([%f,0,0]) btn_plunger(); '
-                     'btn_switch_clear(); }' % -travel)
-    whole = run_scad('translate([%f,0,0]) btn_plunger();' % -travel)
-    check(abs(clash - whole) <= EPS, 'it clears the switch body at full travel',
-          f'{whole - clash:.6f} mm3 of the part is inside the switch envelope')
-
-    # --- the bridge -------------------------------------------------------
-    # The two plungers ship as ONE part so they fit in a single go, which only
-    # works if the thing joining them is a FLEXURE and not a weld: reset and
-    # boot have to work independently (pressing both at once is the RP2040
-    # bootloader gesture). Two things make it one, and both are measured here
-    # rather than argued - the plungers must be cut apart above the bridge, and
-    # the bridge must touch them only at its two ends.
     c0, c1 = pair('btn_c')
     # ⚠️ btn_z0 is an EXPRESSION in the scad (pcb_edge_height - 0.4), so it is
     # recomputed here rather than read; param() only sees numeric literals.
     z0, h = param('pcb_edge_height') - 0.4, param('btn_h')
     post, half = param('btn_post'), 0.5 + param('btn_r') + param('btn_ear')
     mid = (c0 + c1) / 2
+
+    # The bar's slot. ⚠️ This is NOT testable by lifting the part: the noses are
+    # already located in their holes to +-0.12, so they foul first whatever the
+    # pocket does, and a lift test passes just as happily with no slot at all.
+    # What the slot adds is a SECOND bearing 2.5 mm lower, which is what stops
+    # the part rocking while two noses are lined up with two holes from inside.
+    # So measure the pocket's own z profile instead: along the middle there must
+    # be solid case between the slot's top and the opening.
+    bar_gap, bh = param('btn_bar_gap'), param('btn_bridge_h')
+    slot_top = z0 - param('btn_under') + bh + 2 * bar_gap
+    mid_band = (f'translate([0,0,{slot_top + 0.05}]) '
+                f'linear_extrude({z0 - slot_top - 0.1}) '
+                f'translate([0,{mid}]) square([600,2], center=true)')
+    waist = run_scad(CAVITY + f'intersection() {{ _cavity(); {mid_band}; }}')
+    check(waist <= EPS, 'the pocket narrows to a slot along the middle',
+          f'{waist:.6f} mm3 of cavity between the slot top and the opening')
+    # control: at the ends the same band MUST be open, or the posts could not
+    # reach down to the bar and this check would be passing on a solid block.
+    end_band = mid_band.replace(f'translate([0,{mid}])',
+                                f'translate([0,{c0 - half + post / 2}])')
+    ends = run_scad(CAVITY + f'intersection() {{ _cavity(); {end_band}; }}')
+    check(ends > 0.5, 'control: and stays full height at the ends, for the posts',
+          f'{ends:.3f} mm3 of cavity there')
+
+    # The switch body and actuator share the cavity. btn_plunger() already
+    # subtracts them, so this measures whether that subtraction actually bites
+    # where the part is closest to the switch.
+    # ⚠️ btn_switch_clear() defaults to the TOLERANCED envelope, which is what
+    # the part is built against. Testing against that is testing the part
+    # against itself, so these pass tol = 0 and move the envelope by hand.
+    tol = param('btn_switch_tol')
+
+    def clears(dx, env_dx, label):
+        c = run_scad(f'difference() {{ translate([{dx},0,0]) btn_plunger(); '
+                     f'translate([{env_dx},0,0]) btn_switch_clear(0, 0); }}')
+        w = run_scad(f'translate([{dx},0,0]) btn_plunger();')
+        check(abs(c - w) <= EPS, label,
+              f'{w - c:.6f} mm3 of the part is inside the switch envelope')
+
+    clears(-travel, 0.0, 'it clears the switch at nominal, at full travel')
+    # The two extremes. Out: the actuator meets the pocket floor, so the press is
+    # just the switch's own travel, against a body that is tol nearer. In: the
+    # press is travel + 2 tol through the slack, against a body tol further.
+    clears(-travel, +tol, f'... and with the switch {tol} mm toward the wall')
+    clears(-(travel + 2 * tol), -tol, f'... and {tol} mm away, through the slack')
+
+    # At the recessed extreme the plunger has to travel travel + 2 tol, which is
+    # more than the counterbore is deep - it pushes past the ledge's inner face
+    # and into the case. That is free space, not a wall, but _cavity() does not
+    # know about it, so the deep-travel test needs it added or it fails for the
+    # wrong reason.
+    deep = run_scad(CAVITY + f'difference() {{ '
+                             f'translate([{-(travel + 2 * tol)},0,0]) btn_plunger(); '
+                             f'_cavity(); led_band_r(led_in_r(), led_in_r() - 20); }}')
+    check(deep <= EPS,
+          f'it has room for the full {travel + 2 * tol:.2f} mm of travel',
+          f'{deep:.6f} mm3 outside the cavity and the case interior together')
+
+    # --- the bridge and its slot -------------------------------------------------------
+    # The two plungers ship as ONE part so they fit in a single go, which only
+    # works if the thing joining them is a FLEXURE and not a weld: reset and
+    # boot have to work independently (pressing both at once is the RP2040
+    # bootloader gesture). Two things make it one, and both are measured here
+    # rather than argued - the plungers must be cut apart above the bridge, and
+    # the bridge must touch them only at its two ends.
     # a thin slab on the separation plane, over the plungers' own height
     sep = param('btn_sep')
     slab = (f'translate([0,0,{z0 - 0.2}]) linear_extrude({h + 0.4}) '
@@ -204,6 +259,13 @@ def main():
           f'{sig:.1f} MPa of bending stress,')
     print(f'            against ~2.5 N to actuate the other switch and ~65 MPa '
           f'flexural strength.')
+
+    print()
+    print(f'  NOTE      switch tolerance +-{tol} mm in the actuation axis. The pocket is cut to')
+    print(f'            the furthest-OUT position, so at the other extreme the press runs '
+          f'through')
+    print(f'            up to {2 * tol:.2f} mm of slack first: {travel:.2f}..{travel + 2 * tol:.2f} mm '
+          f'of plunger travel, not a flat {travel:.2f}.')
 
     # What is left as an ESD path, reported not asserted.
     print()
