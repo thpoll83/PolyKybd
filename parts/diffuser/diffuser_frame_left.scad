@@ -243,9 +243,9 @@ module diffuser_frame_left_revision() {
 // which puts every V-score in the web plane -- so the webs are a flat extension
 // of the web rather than something standing off it.  Everything is derived from
 // the led_* functions in the case file, so the part cannot drift from its pocket.
-// Measured clearance to the rest of the frame: 0.90 mm (stem (-18.50,-8.50)-(-19.00,-26.00)).
+// Measured clearance to the rest of the frame: 0.68 mm (stem (-18.50,-8.50)-(-19.00,-26.00)).
 module diffuser_frame_left_inserts() {
-    translate([ -17.102, -26.081, 0 ]) rotate([ 0, 0, -2.50 ]) {
+    translate([ -17.020, -23.015, 0 ]) rotate([ 0, 0, -8.00 ]) {
         translate([ 3.680, 0, led_insert_thk() - web_t ])
             rotate([ 180, 0, 0 ]) led_insert_strip(3, 1);
         translate([ -1.600, 0, -web_t / 2 ]) rotate([ 0, 0, 0 ]) led_v_tab(led_tab_l(), stem_w);
@@ -259,7 +259,7 @@ module diffuser_frame_left_inserts() {
 // measuring them against the spacer measures a part that is not there (and
 // fails by ~5.7 mm3, which is how this was found).
 module diffuser_frame_left_insert_stub() {
-    translate([ -17.102, -26.081, 0 ]) rotate([ 0, 0, -2.50 ])
+    translate([ -17.020, -23.015, 0 ]) rotate([ 0, 0, -8.00 ])
         translate([ -1.600, 0, -web_t / 2 ]) rotate([ 0, 0, 0 ]) led_v_tab_root(led_tab_l(), stem_w);
 }
 

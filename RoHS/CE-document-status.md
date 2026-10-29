@@ -420,9 +420,9 @@ Three things make it cost nothing:
 - **The row sits flange-down with its flange face level with the web's
   underside**, which puts every V-score **in the web plane**. The tabs are a flat
   extension of the web rather than something standing off it.
-- **Each frame still exports as ONE shell** — 18902 facets, 0 degenerate facets,
-  0 non-manifold edges. It gains **95.92 mm³** against a row that measures
-  **96.61 mm³** on its own; the **0.69 mm³** difference is the single weld, which
+- **Each frame still exports as ONE shell** — 18866 facets, 0 degenerate facets,
+  0 non-manifold edges. It gains **95.84 mm³** against a row that measures
+  **96.61 mm³** on its own; the **0.77 mm³** difference is the single weld, which
   is the whole overlap there is. An intersection of the row against the frame's
   web and diffusers is **empty** (and a 1.5 mm displacement finds a collision, so
   the test is not passing for the wrong reason).
@@ -480,21 +480,23 @@ is the longest segment reaching below the grid — found in the generator by
 vertical extent among the rungs and links, ⚠️ **deliberately excluding the
 rails**, since the outermost rail drops 19 mm and would win on length while being
 on the wrong side of the board entirely. The row hangs off that branch's **lower
-tip** and runs inboard, (−17.10, −26.08) → (8.15, −27.18) on the left half and
-mirrored on the right. **0.90 mm clear** of everything else on the frame, against
-the **0.75 mm** three separate inserts had — so chaining them costs nothing, and
-it is one anchor to snap instead of three.
+flank**, 3.25 mm up from its lower end, and runs inboard,
+(−17.02, −23.02) → (8.01, −26.53) on the left half and mirrored on the right.
+**0.68 mm clear** of everything else on the frame — it is one anchor to snap
+instead of three, and one that sits on the branch proper.
 
-✅ **The row is TILTED 2.5°, and that is load-bearing rather than styling.**
-Square to the frame it has to hang ~0.7 mm *below* the tip to keep its far end
-clear of the diffuser cap bounding the far side of the pocket — which leaves the
-anchor web half off the bottom of the tip's rounded end, welded over 1.2 mm of
-its 1.9 mm root. Tilting instead drops the far **end**, where there is 25 mm of
-lever, and lets the web come in **on the tip's centreline** so the whole root
-face is buried. It buys both things at once: clearance 0.83 → **0.90 mm** and the
-weld volume 0.37 → **0.69 mm³**. ⚠️ Swept, not guessed: clearance rises to 2° and
-then **flattens**, because past that the branch's own flank and the stub below it
-bind, and no tilt can move those — 2.5° sits in the middle of that plateau.
+✅ **The row is TILTED 8°, and that is load-bearing rather than styling.** Level,
+its far end fouls the diffuser cap bounding the far side of the pocket, so the
+row has to hang below the branch's lower END and takes the anchor down with it.
+The tilt drops the far **end** instead, where there is 25 mm of lever, and that
+is what frees the anchor to climb the **flank**. Worth having for its own sake: a
+root face butted against a flat 2.0 mm flank is fully engaged by construction,
+where against the branch's rounded end it is engaged only where the circle is.
+The weld grew **0.37 → 0.77 mm³** across the two moves (tip-hanging → centred on
+the tip → square on the flank). ⚠️ The cost is clearance, and it was swept rather
+than guessed: 0.90 mm with the anchor at the tip, 0.68 mm at 3.25 mm up (bound by
+the branch's own flank, which the row's near corner has to pass), 0.60 mm at
+4.25 mm up, and nothing reaches 0.60 above that.
 
 ⚠️ **"A chained row does not fit here" was WRONG, and the way it was wrong is
 the lesson.** The earlier sweep pinned the row's end to one rung and then moved
@@ -515,14 +517,20 @@ the same primitives it builds the frame from — prints the result, and **refuse
 to emit a colliding frame**. Any change to the web topology that walks into the
 row now fails the regeneration instead of printing a part fused to its carrier.
 
-⚠️ **The anchor web is buried 0.70 mm in the branch's rounded tip, not butted
-against it.** Butted, the root face is *tangent* to the stem — the singles got
-away with the 5 µm overlap their 0.01 mm root section happened to give them, but
-against a round tip there is no flat to sit on. Buried, the **whole** 1.9 mm root
-face is inside the tip, and the score still sits at `led_tab_l()/2` = 0.8 mm from
-the flange, which is **clear of the stem** — so it breaks at the score and leaves
-0.1 mm standing proud of the branch. ⚠️ The burial depth must stay **under**
-`led_tab_len/2`, or the break would land inside the branch.
+⚠️ **The anchor web is buried 0.70 mm in the branch, not butted against it.**
+Butted, the root face is *tangent* to the stem — the singles got away with the
+5 µm overlap their 0.01 mm root section happened to give them, but that is a
+coincidence, not a joint. Buried, the whole 1.9 mm root face is inside, and the
+score still sits at `led_tab_l()/2` = 0.8 mm from the flange, which is **clear of
+the stem** — so it breaks at the score and leaves 0.1 mm standing proud. ⚠️ The
+burial depth must stay **under** `led_tab_len/2`, or the break would land inside
+the branch.
+
+⚠️ **How far along the row the branch's surface sits is `r / sin(angle between
+them)`, NOT `stem_w/2`.** The row crosses the branch obliquely — 8° of tilt plus
+the branch's own 1.6° lean — so using the half-width directly buries the root by
+the cosine error and the weld quietly shrinks. It is the kind of mistake that
+leaves a part that still prints and still looks right.
 
 ⚠️ **One anchor carries the whole 25.3 mm row, which is the one thing chaining
 costs.** Three singles each had their own web, so a bad snap orphaned one part;

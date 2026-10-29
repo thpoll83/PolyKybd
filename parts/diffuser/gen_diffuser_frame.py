@@ -769,30 +769,30 @@ def emit_scad(side, D, path):
         _low += [(a, b) for a, b in zip(pts, pts[1:]) if min(a[1], b[1]) < -5]
     _leg = max(_low, key=lambda ab: abs(ab[0][1] - ab[1][1]))
     _tip = min(_leg, key=lambda p: p[1])      # the branch's lower end
+    _top = max(_leg, key=lambda p: p[1])      # and its upper end
     ins_sgn = -1 if _tip[0] > 0 else 1        # which way the row runs (inboard)
 
     # The three numbers that place the row.  The row is TILTED: it leaves the
-    # tip along its own axis and drops as it runs inboard.  That is not styling.
-    # Square to the frame, the row has to hang ~0.7 mm BELOW the tip to keep its
-    # far end clear of the diffuser cap that bounds the far side of the pocket --
-    # which leaves the anchor web half off the bottom of the tip's rounded end,
-    # welded over 1.2 mm of its 1.9 mm root.  Tilting instead drops the far END
-    # (25 mm of lever) and lets the web come in ON the tip's centreline, so the
-    # whole root face is buried.  Swept: clearance rises from 0.83 mm (square) to
-    # 0.90 mm at 2 deg and then flattens -- past that the branch's own flank and
-    # the stub below it bind, and no tilt can move those.  2.5 deg sits in the
-    # middle of that plateau.
-    INS_TILT = 2.5     # deg, dropping away from the branch as the row runs inboard
-    INS_OVER = 0.70    # how far the anchor web's root is buried in the tip.  The
-                       # score is at led_tab_len/2 = 0.8, so this must stay under
-                       # it or the break would land inside the branch.
+    # branch along its own axis and drops as it runs inboard.  That is not
+    # styling -- level, its far end fouls the diffuser cap that bounds the far
+    # side of the pocket, so the row would have to hang below the branch's lower
+    # END and take the anchor with it.  The tilt drops the far END instead, where
+    # there is 25 mm of lever, which frees the anchor to climb the branch's
+    # straight FLANK.  That is worth having for its own sake: a root face butted
+    # against a flat 2.0 mm flank is fully engaged by construction, where against
+    # the branch's rounded end it is only engaged where the circle is.
+    INS_TILT = 8.0     # deg, dropping away from the branch as the row runs inboard
+    INS_UP   = 3.25    # mm up the branch from its lower end, to the anchor
+    INS_OVER = 0.70    # how far the anchor web's root is buried in the branch.
+                       # The score is at led_tab_len/2 = 0.8, so this must stay
+                       # under it or the break would land inside the branch.
     _tab  = case_param('led_tab_len')
     _half = (case_param('led_slot_half') + case_param('led_slot_r')
              + case_param('led_flange_overlap') - case_param('led_insert_gap'))
     # Cross-row half extent (= led_insert_half_h()).  Derived from functions, not
     # scalars, so it is restated here; check_frame.py measures the real bbox.
     INS_HALF_H = 1.98
-    _free = _tab - INS_OVER                   # free span, tip surface -> flange
+    _free = _tab - INS_OVER                   # free span, branch surface -> flange
     _r    = D['stem_w'] / 2
     # The row's own axis, and the frame-z rotation that produces it.  Mirrored
     # halves tilt the same way about their own inboard direction, so the x
@@ -800,10 +800,17 @@ def emit_scad(side, D, path):
     ins_ang = -ins_sgn * INS_TILT
     _th = math.radians(INS_TILT)
     _ux, _uy = ins_sgn * math.cos(_th), -math.sin(_th)
-    # The near flange end face sits on the ray from the tip CENTRE along that
-    # axis, so the web root lands on the tip's centreline and the full root face
-    # is inside it.
-    ins_end = (_tip[0] + _ux * (_r + _free), _tip[1] + _uy * (_r + _free))
+    # Where on the branch the web lands, and how far along the row's own axis the
+    # branch's surface is from there.  ⚠️ NOT stem_w/2: the row crosses the branch
+    # obliquely, so the distance along the row to the flank is r / sin(angle
+    # between them).  Getting that wrong buries the root by the cosine error and
+    # the weld quietly shrinks.
+    _bl = math.dist(_tip, _top)
+    _ax, _ay = (_top[0] - _tip[0]) / _bl, (_top[1] - _tip[1]) / _bl
+    _anchor = (_tip[0] + _ax * INS_UP, _tip[1] + _ay * INS_UP)
+    _sin = abs(_ux * _ay - _uy * _ax)
+    _d = _r / _sin
+    ins_end = (_anchor[0] + _ux * (_d + _free), _anchor[1] + _uy * (_d + _free))
     ins_web = (ins_end[0] - _ux * _tab, ins_end[1] - _uy * _tab)
     ins_len = 3 * 2 * _half + 2 * _tab        # the chained row, end to end
     ins_far = (ins_end[0] + _ux * ins_len, ins_end[1] + _uy * ins_len)
@@ -822,8 +829,9 @@ def emit_scad(side, D, path):
         pts = [S(p) for p in seg['pts']]
         for a, b in zip(pts, pts[1:]):
             # The branch is NOT excluded even though the row is welded to it: the
-            # weld is the web, which is not part of this rectangle, and the branch
-            # still has to clear the row's flanks (it does, by 0.90 mm).
+            # weld is the web, which is not part of this rectangle, and once the
+            # anchor climbs the flank the branch IS what binds -- the row's near
+            # corner has to pass it.
             v = min(seg_seg_d(a, b, *e) for e in _edges) - _r
             if v < ins_clear:
                 ins_clear, ins_worst = v, f'stem ({a[0]:.2f},{a[1]:.2f})-({b[0]:.2f},{b[1]:.2f})'
@@ -835,13 +843,13 @@ def emit_scad(side, D, path):
                        max(abs(_ly) - INS_HALF_H, 0.0)) - CAP_R
         if v < ins_clear:
             ins_clear, ins_worst = v, f'diffuser cap ({p[0]:.2f},{p[1]:.2f})'
-    print(f'  insert row {ins_len:.2f} mm at {INS_TILT} deg off the branch tip '
-          f'({ins_end[0]:.2f},{ins_end[1]:.2f}) -> ({ins_far[0]:.2f},{ins_far[1]:.2f}): '
+    print(f'  insert row {ins_len:.2f} mm at {INS_TILT} deg, anchored {INS_UP} mm up the '
+          f'branch at ({_anchor[0]:.2f},{_anchor[1]:.2f}): '
           f'{ins_clear:.2f} mm clear ({ins_worst})')
     if ins_clear < CLEAR:
         raise SystemExit(f'  !! the chained insert row collides with the frame '
                          f'({ins_clear:.2f} mm < {CLEAR} mm at {ins_worst}) -- '
-                         f're-sweep INS_TILT/INS_OVER')
+                         f're-sweep INS_TILT/INS_UP/INS_OVER')
 
     ins_rot = 180 if ins_sgn < 0 else 0
     # Everything is placed in the ROW's own frame: translate to the near flange
