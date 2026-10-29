@@ -116,6 +116,35 @@ led_score_t = 0.3;         // breakaway connection: the web runs the full height
                            // MORE than the 0.78 the full-thickness version left.
 led_tab_len = 1.6;         // tab length, root to root
 
+// --- the window itself --------------------------------------------------------
+led_window_mode = "cone";  // "cone" (shipped) | "slot" (the as-tested opening)
+                           // "slot" is the rectangular 2.8 x 2.2 window the EMC
+                           // sample had: a stepped boss fills it, positioned by
+                           // led_boss_lip and led_window_gap. "cone" replaces the
+                           // boss with a truncated cone seated in a matching
+                           // countersink, and shrinks the outer aperture.
+led_cone_d = 1.6;          // the OUTER aperture, round. 2.0 mm2 against the
+                           // slot's 6.2 - a third of the opening, which is a
+                           // smaller ESD target as well as a smaller mark. Still
+                           // a normal indicator dot, and the cone behind it
+                           // funnels the LED into it rather than letting it
+                           // spill sideways the way a straight slot does.
+led_cone_gap = 0.08;       // the insert's clearance ON THE CONE, perpendicular.
+                           // Its own number, not led_insert_gap, because a cone
+                           // does not use a gap the way a parallel-sided boss
+                           // does: there the gap sets the position and has to
+                           // swallow the print tolerance sideways, here the taper
+                           // centres the part and the tolerance comes out as a
+                           // few hundredths of depth. So the gap is only a bond
+                           // line - and since it is also what you SEE as a ring
+                           // round the aperture, 0.08 beats the slot's 0.12.
+led_cone_half_angle = 20;  // of the countersink. NOT a standard 41-45 deg
+                           // countersink: that wide, the cone's base outgrows
+                           // the flange it has to sit inside (3.96 mm tall) and
+                           // leaves a knife edge round it. At 20 deg the base is
+                           // 2.69 and the flange keeps 0.63 mm a side. Shallower
+                           // is also a longer seam and a better light pipe.
+
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
 text_height = 0.35;
@@ -397,30 +426,86 @@ module led_wall_band(d, g = 0)
     else led_band_r(led_out_r(), led_out_r() - d + g);
 }
 
-// The boss: the part of the insert that fills the slot. Two clearances along its
-// length - a short lip at the outer face at `g`, the buried remainder at `gw`.
-// With both at 0 this is just the slot through the wall, which is what the case
-// subtracts, so the cut and the part still come from one definition.
-module led_boss(g = 0, gw = 0)
+// --- the conical boss ---------------------------------------------------------
+// A cone cannot be built from led_band_r(): that offsets the board outline, which
+// follows the wall but knows nothing about a particular window's axis. So the
+// cone is built in the CANONICAL insert frame (outer face at z = 0, +z inward,
+// the window's axis) and placed by led_place_d5/d6/d1 - the same transforms
+// led_insert() inverts, so the part and the cut cannot disagree about where the
+// axis is.
+function led_cone_wall() = led_out_r() - led_hi_r();     // 1.50, the wall proper
+function led_cone_thru() = led_out_r() - led_in_r();     // 2.90, wall + ledge
+function led_cone_base_d() = led_cone_d + 2 * led_cone_wall() * tan(led_cone_half_angle);
+
+// The cone seats in the WALL; behind it a plain cylinder passes through the PCB
+// ledge to the flange. Running the cone the whole 2.9 mm instead would open it to
+// 3.71 mm, against a flange only 3.96 mm tall - a knife-edge lip all round.
+// `g` is the gap on the cone, `gw` the buried one on the cylinder, `over` the
+// overshoot that keeps the CUT from ending exactly on the outer surface.
+module led_cone_boss_local(g = 0, gw = 0, over = 0)
 {
-    intersection()
+    // ⚠️ A gap measured PERPENDICULAR to a cone is a bigger one measured
+    // radially: dr = g / cos(half angle). Shrinking the radius by g itself
+    // leaves only g*cos = 0.94 g of bond line, and the part sits proud by the
+    // difference. Same trap as measuring a countersink's diameter instead of
+    // its depth.
+    dr = g / cos(led_cone_half_angle);
+    union()
     {
-        led_band_r(led_out_r(), led_out_r() - led_boss_lip);
-        led_window_cut(g);
-    }
-    intersection()
-    {
-        led_band_r(led_out_r() - led_boss_lip, led_in_r());
-        led_window_cut(gw);
+        translate([ 0, 0, -over ])
+            cylinder(h = led_cone_wall() + over, $fn = 96,
+                     d1 = led_cone_d - 2 * dr,
+                     d2 = led_cone_base_d() - 2 * dr);
+        translate([ 0, 0, led_cone_wall() ])
+            cylinder(h = led_cone_thru() - led_cone_wall(), $fn = 96,
+                     d = led_cone_base_d() - 2 * gw);
     }
 }
 
-// The slot itself, through the whole wall.
+module led_cone_boss(g = 0, gw = 0, over = 0)
+{
+    led_place_d5() led_cone_boss_local(g, gw, over);
+    led_place_d6() led_cone_boss_local(g, gw, over);
+    led_place_d1() led_cone_boss_local(g, gw, over);
+}
+
+// The boss: the part of the insert that fills the window. In "slot" mode, two
+// clearances along its length - a short lip at the outer face at `g`, the buried
+// remainder at `gw`. In "cone" mode the taper IS the fit, so there is no lip to
+// grade: `g` is the perpendicular gap on the cone and `gw` the buried one behind
+// it. With both at 0 this is just the opening through the wall, which is what the
+// case subtracts, so the cut and the part still come from one definition.
+module led_boss(g = 0, gw = 0)
+{
+    // ⚠️ `g` only says cut-or-part here; the cone has its own gap (see
+    // led_cone_gap). Passing led_insert_gap straight through would widen the
+    // visible ring to 0.128 mm radially, since a perpendicular gap on a 20 deg
+    // cone is 1.06x that measured across the aperture.
+    if (led_window_mode == "cone") led_cone_boss(g > 0 ? led_cone_gap : 0, gw);
+    else
+    {
+        intersection()
+        {
+            led_band_r(led_out_r(), led_out_r() - led_boss_lip);
+            led_window_cut(g);
+        }
+        intersection()
+        {
+            led_band_r(led_out_r() - led_boss_lip, led_in_r());
+            led_window_cut(gw);
+        }
+    }
+}
+
+// The opening itself, through the whole wall. This is what the case subtracts,
+// so it is also what defines the shape the boss above has to match.
 module led_window_cut(g = 0)
 {
-    translate([ 0, 0, led_window_z0() + g ])
-        linear_extrude(height = led_window_h() - 2 * g, scale = 1)
-            offset(r = led_slot_r - g, $fn = 64) import(file = led_holes, dpi = 300);
+    if (led_window_mode == "cone") led_cone_boss(g, g, 0.05);
+    else
+        translate([ 0, 0, led_window_z0() + g ])
+            linear_extrude(height = led_window_h() - 2 * g, scale = 1)
+                offset(r = led_slot_r - g, $fn = 64) import(file = led_holes, dpi = 300);
 }
 
 // The local thinning of the wall that makes room for the flange.

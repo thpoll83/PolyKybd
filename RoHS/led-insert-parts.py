@@ -16,8 +16,8 @@ S = os.environ.get('RENDERS', '/tmp/led-renders')
 
 f = Fig(1540, 1320)
 f.title('The ESD insert, and how six of them get printed',
-        'ONE part, three per half. The boss fills the window flush with the case’s outer face; the flange',
-        'behind it sits in a pocket cut into the PCB ledge. 7.4 × 4.0 × 2.9 mm, 29.8 mm³ of clear resin.')
+        'ONE part, three per half. A truncated cone seats in a matching countersink and fills the Ø1.6 mm',
+        'aperture flush; the flange behind it sits in a pocket cut into the PCB ledge. 28.4 mm³ of clear resin.')
 
 PW, PH = 486, 470
 IW, IH = 450, 345
@@ -27,7 +27,7 @@ def put(col, row, img, label, note=''):
     f.image(f'{S}/{img}', px + 18, py + 78, IW, IH, clip=(px, py, PW, PH))
 
 put(0, 0, 'pA.png', 'A — the part, from outside',
-    'the boss, 2.0 mm proud of the flange')
+    'the cone, 1.9 mm proud of the flange')
 put(1, 0, 'pB.png', 'B — the part, from inside',
     'the flange face that beds into the ledge pocket')
 put(2, 0, 'pC.png', 'C — three of them, chained',

@@ -390,16 +390,57 @@ chain, the V-score and where they ride on the frame.
 
 | | |
 |---|---|
-| Window, on the outer face | **2.8 × 2.2 mm** |
+| Aperture, on the outer face | **Ø1.6 mm** (`led_cone_d`) — 2.0 mm², against the slot's 6.2 |
+| Countersink | **20°** half-angle (`led_cone_half_angle`), opening to Ø2.69 at the wall's inner face |
 | Wall there | 2.9 mm (only 1.5 mm above the PCB underside) |
 | Pocket depth | 1.0 mm |
 | Overlap — cavity / flange | 3.5 mm (`led_pocket_overlap`) / **2.4 mm** (`led_flange_overlap`) |
 | Wall left under the pocket | 1.9 mm |
 | PCB ledge left at full width above the pocket | **0.5 mm** (`led_ledge_keep`) |
-| **Clearance where the seam SHOWS** | **0.12 mm** per face (`led_insert_gap`) — flange in its pocket, and the boss's outer lip |
-| **Clearance, buried** | **0.25 mm** per face (`led_window_gap`), behind a `led_boss_lip` = 0.6 mm lip |
-| The part | **7.4 × 4.0 × 2.9 mm, 29.8 mm³** |
-| **Air path through the seam** | **5.3 mm**, before the bond closes it |
+| **Clearance on the cone** | **0.08 mm** perpendicular (`led_cone_gap`) — 0.085 mm as the ring you see |
+| **Clearance on the flange** | **0.12 mm** per face (`led_insert_gap`), in its pocket |
+| **Clearance, buried** | **0.25 mm** per face (`led_window_gap`), on the cylinder behind the cone |
+| The part | **7.4 × 3.4 × 2.9 mm, 28.4 mm³** |
+
+✅ **The window is a CONE, and the aperture shrinks from 2.8 × 2.2 to Ø1.6**
+(decided 2026-10-29). A truncated cone seated in a matching countersink beats a
+stepped plug in a rectangular slot on every axis that matters here:
+
+- **It seats on its own taper.** A parallel-sided boss is positioned by its
+  clearance, so the gap has to swallow the print tolerance *sideways*; a cone
+  converts the same tolerance into a few hundredths of depth. That is why the
+  gap on the cone can be **0.08 mm** where the slot needed 0.12 — and the gap is
+  also what you see as a ring round the aperture, so the visible seam shrinks
+  too.
+- **It is drillable.** The metal and POM case variants carry the plain window
+  with no pocket; a countersink is a second op with a standard tool, where a
+  rectangular pocket with sharp inside corners is not.
+- **It funnels the LED.** A cone is a reflector: the light that a straight slot
+  lets spill sideways into the wall comes out of the aperture instead, which is
+  what makes a Ø1.6 dot bright enough to replace a 2.8 × 2.2 slot.
+- **No feature under 1 mm.** The slot's boss had a 0.6 mm lip; the cone has no
+  step at all, and the only thin section left on the part is the flange.
+
+⚠️ **The cone stops at the WALL's inner face, not at the ledge's.** Run the full
+2.9 mm it opens to Ø3.71, against a flange only 3.96 mm tall — a knife-edge lip
+all round it. Over the wall's 1.5 mm it opens to Ø2.69 and the flange keeps
+0.63 mm a side. Behind the cone a plain cylinder passes through the ledge.
+
+⚠️ **This DOES change the tested enclosure, and the file has to say so.** §6e2's
+argument is that the only difference between the EMC sample and the shipped unit
+is the *addition* of inserts. A round aperture is not an addition. The
+justification still holds, but it is now a different sentence: the opening is
+**smaller** (2.0 mm² against 6.2 mm², a third of the area) **and** it is filled
+and bonded. Every other ESD point passed on the as-tested case and none of them
+is touched — no wall thickness, no plate mounting, no new seam anywhere else.
+⚠️ Put that in the technical file explicitly; "we also shrank the holes" is
+better evidence than the original wording, but only if a later reader can see
+that it was deliberate.
+
+⚠️ **A perpendicular gap on a cone is a bigger radial one** — `dr = g / cos(half
+angle)`, so 0.08 perpendicular is 0.085 across the aperture. Shrinking the
+radius by `g` itself leaves only `g·cos` = 0.94 g of bond line and the part sits
+proud by the difference.
 
 ✅ **They ride on the diffuser frame — there is normally nothing to print
 separately.** A 32 mm³ chip is small enough to lose and fiddly to place one at a
