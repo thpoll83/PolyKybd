@@ -63,6 +63,22 @@ def gltf(aid, part=None):
         for o in [o for o in new if o not in keep]:
             bpy.data.objects.remove(o)
         new = keep
+    for m in {sl.material for o in new if o.type == "MESH" for sl in o.material_slots if sl.material}:
+        b_ = next((n for n in m.node_tree.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
+        bc = b_.inputs["Base Color"] if b_ else None
+        if not (bc and bc.is_linked and bc.links[0].from_node.bl_idname == "ShaderNodeTexImage"):
+            continue
+        img = bc.links[0].from_node.image
+        ap = bpy.path.abspath(img.filepath).replace("_diff_", "_alpha_") if img and "_diff_" in img.filepath else ""
+        if ap and os.path.exists(ap):              # its leaf mask (workspace_assets.fetch_model): the cards' dark
+            at = m.node_tree.nodes.new("ShaderNodeTexImage")    # surround cut away instead of drawn as a black rim
+            at.image = bpy.data.images.load(ap, check_existing=True)
+            at.image.colorspace_settings.name = "Non-Color"
+            m.node_tree.links.new(bc.links[0].from_node.inputs["Vector"].links[0].from_socket
+                                  if bc.links[0].from_node.inputs["Vector"].is_linked else
+                                  m.node_tree.nodes.new("ShaderNodeTexCoord").outputs["UV"], at.inputs["Vector"])
+            m.node_tree.links.new(at.outputs["Color"], b_.inputs["Alpha"])
+            m.blend_method = "CLIP"
     tops = [o for o in new if o.parent is None or o.parent not in new]
     g = bpy.data.objects.new(f"{aid}:{part if isinstance(part, str) else 'parts' if part else 'all'}", None)
     sc.collection.objects.link(g)
@@ -134,18 +150,7 @@ def counter():
     front = lacquer
     if S.get("counter_dents"):                     # the body's lacquer, knocked by chairs and bags: soft shallow dents
         front = lacquer.copy()
-        ft = front.node_tree
-        tcd = ft.nodes.new("ShaderNodeTexCoord")
-        vo = ft.nodes.new("ShaderNodeTexVoronoi"); vo.feature = "SMOOTH_F1"
-        vo.inputs["Scale"].default_value = 14.0; vo.inputs["Smoothness"].default_value = 1.0
-        ft.links.new(tcd.outputs["Object"], vo.inputs["Vector"])
-        nz = ft.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 3.0
-        ft.links.new(tcd.outputs["Object"], nz.inputs["Vector"])
-        add = ft.nodes.new("ShaderNodeMath"); add.operation = "MULTIPLY_ADD"; add.inputs[1].default_value = 0.4
-        ft.links.new(vo.outputs["Distance"], add.inputs[0]); ft.links.new(nz.outputs["Fac"], add.inputs[2])
-        bm = ft.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = S["counter_dents"]
-        ft.links.new(add.outputs[0], bm.inputs["Height"])
-        ft.links.new(bm.outputs["Normal"], ft.nodes["Principled BSDF"].inputs["Normal"])
+        dent_material(front, S["counter_dents"])
     parts = [cube("counter body", (-0.9, -0.40, 0.08), (0.9, 0.42, 0.73), front),
              cube("counter plinth", (-0.88, -0.37, 0.0), (0.88, 0.40, 0.08), plinth),
              cube("counter top", (-0.92, -0.43, 0.73), (0.92, 0.43, 0.76), oak, bevel=0.004),
@@ -345,6 +350,288 @@ def black_desk():
                   cube("desk foot", (x - 0.035, -0.36, 0.0), (x + 0.035, 0.36, 0.04), steel, 0.004)]
     parts.append(cube("desk rail", (-0.68, -0.025, 0.66), (0.68, 0.025, 0.71), steel, 0.004))
     g = bpy.data.objects.new("@black_desk", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def industrial_desk():
+    """An industrial desk, 1.8 x 0.85 m, top at 0.75 m: a 30 mm birch plywood top (the
+    Poly Haven plywood texture on its faces, its edges showing the plies as pale and
+    darker bands, 1.5 mm each), on a black powder-coated frame of 50 mm square steel
+    tube: four legs with levelling feet, a rail round under the top, a stretcher low at
+    the back. The top dented and spotted by use; the steel rubbed."""
+    import bmesh
+    if S.get("desk_wood"):
+        face = wall_texture(dict(S["desk_wood"], axes="box"))
+        matte_material(face, 0.5)
+    else:
+        face = wood("plywood face", (0.62, 0.50, 0.34), 0.55, grain=30.0)
+    dent_material(face, S.get("desk_dents", 0.1))
+    edge = bpy.data.materials.new("plywood edge")
+    edge.use_nodes = True
+    en = edge.node_tree
+    eb = en.nodes["Principled BSDF"]
+    eb.inputs["Roughness"].default_value = 0.7
+    tc = en.nodes.new("ShaderNodeTexCoord")
+    sep = en.nodes.new("ShaderNodeSeparateXYZ")
+    en.links.new(tc.outputs["Object"], sep.inputs[0])
+    mul = en.nodes.new("ShaderNodeMath"); mul.operation = "MULTIPLY"; mul.inputs[1].default_value = 1 / 0.003
+    en.links.new(sep.outputs["Z"], mul.inputs[0])
+    fr = en.nodes.new("ShaderNodeMath"); fr.operation = "FRACT"
+    en.links.new(mul.outputs[0], fr.inputs[0])
+    st = en.nodes.new("ShaderNodeMath"); st.operation = "GREATER_THAN"; st.inputs[1].default_value = 0.5
+    en.links.new(fr.outputs[0], st.inputs[0])
+    mix = en.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"
+    mix.inputs[6].default_value = (0.70, 0.58, 0.40, 1)    # birch ply
+    mix.inputs[7].default_value = (0.42, 0.31, 0.19, 1)    # the darker veneer between
+    en.links.new(st.outputs[0], mix.inputs["Factor"])
+    en.links.new(mix.outputs[2], eb.inputs["Base Color"])
+    top = cube("desk top", (-0.9, -0.425, 0.72), (0.9, 0.425, 0.75), face, 0.0015)
+    top.data.materials.append(edge)
+    for pl in top.data.polygons:                   # the four sides show the plies
+        if abs(pl.normal.z) < 0.5:
+            pl.material_index = 1
+    parts = [top] + steel_frame(0.72)
+    g = bpy.data.objects.new("@industrial_desk", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def steel_frame(z_top):
+    """A black powder-coated desk frame of 50 mm square steel tube under a top whose
+    underside is at z_top: four legs with levelling feet, a rail round under the top,
+    a stretcher low at the back, the steel rubbed here and there."""
+    steel = principled("desk frame steel", (0.035, 0.036, 0.04), 0.5)
+    steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.6
+    foot_m = principled("desk feet", (0.01, 0.01, 0.01), 0.7)
+    parts = []
+    t, xl, yl = 0.05, 0.84, 0.37
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            x, y = sx * xl, sy * yl
+            parts.append(cube("desk leg", (x - t / 2, y - t / 2, 0.015), (x + t / 2, y + t / 2, z_top), steel, 0.004))
+            bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.02, depth=0.015, location=(x, y, 0.0075))
+            fo = bpy.context.active_object
+            fo.name = "desk foot"
+            fo.data.materials.append(foot_m)
+            parts.append(fo)
+    for sy in (-1, 1):                             # the rails under the top
+        parts.append(cube("desk rail", (-xl, sy * yl - t / 2, z_top - 0.06), (xl, sy * yl + t / 2, z_top - 0.01), steel, 0.004))
+    for sx in (-1, 1):
+        parts.append(cube("desk rail", (sx * xl - t / 2, -yl, z_top - 0.06), (sx * xl + t / 2, yl, z_top - 0.01), steel, 0.004))
+    parts.append(cube("desk stretcher", (-xl, yl - t / 2, 0.12), (xl, yl + t / 2, 0.17), steel, 0.004))
+    spots(parts, 0.3, scale=140, lo=0.68, tint=(0.14, 0.14, 0.15), mode="MIX", detail=4.0)   # rubbed steel
+    return parts
+
+
+def concrete_desk():
+    """A concrete desk, 1.8 x 0.85 m, top at 0.75 m: a 50 mm cast slab with 6 mm rounded
+    edges, sealed (a slight sheen), in a Poly Haven concrete texture (S["desk_concrete"])
+    mapped per face, with a scatter of small dark pinholes, on the black steel frame."""
+    cast = (S.get("desk_concrete") or {}).get("cast")
+    if cast:                                       # cast concrete, procedural: light grey with soft mottling at
+        cm = principled("desk concrete", cast["color"], cast.get("rough", 0.55))    # two sizes and a fine sandy
+        ct = cm.node_tree                          # surface (the floor textures' scratches read as marble veins)
+        cb = ct.nodes["Principled BSDF"]
+        tcc = ct.nodes.new("ShaderNodeTexCoord")
+        fac = None
+        for sc_, w_ in ((2.5, 1.0), (11.0, 0.5)):
+            nz = ct.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = sc_
+            nz.inputs["Detail"].default_value = 4.0; nz.inputs["Roughness"].default_value = 0.55
+            ct.links.new(tcc.outputs["Object"], nz.inputs["Vector"])
+            mr = ct.nodes.new("ShaderNodeMapRange")
+            mr.inputs["From Min"].default_value, mr.inputs["From Max"].default_value = 0.3, 0.7
+            mr.inputs["To Min"].default_value = 1.0 - cast.get("mottle", 0.12) * w_
+            ct.links.new(nz.outputs["Fac"], mr.inputs["Value"])
+            if fac is None:
+                fac = mr
+            else:
+                mm = ct.nodes.new("ShaderNodeMath"); mm.operation = "MULTIPLY"
+                ct.links.new(fac.outputs[0], mm.inputs[0]); ct.links.new(mr.outputs[0], mm.inputs[1])
+                fac = mm
+        seam = None
+        if cast.get("seams"):                      # formwork joints: every `seams` m along x a 1.5 mm line, a
+            sx_ = ct.nodes.new("ShaderNodeSeparateXYZ")    # little darker, and a ridge in the bump, across the top
+            ct.links.new(tcc.outputs["Object"], sx_.inputs[0])     # and down the edges
+            off = ct.nodes.new("ShaderNodeMath"); off.operation = "ADD"; off.inputs[1].default_value = cast["seams"] / 2
+            ct.links.new(sx_.outputs["X"], off.inputs[0])
+            pp = ct.nodes.new("ShaderNodeMath"); pp.operation = "PINGPONG"; pp.inputs[1].default_value = cast["seams"] / 2
+            ct.links.new(off.outputs[0], pp.inputs[0])
+            seam = ct.nodes.new("ShaderNodeMapRange"); seam.interpolation_type = "SMOOTHSTEP"
+            seam.inputs["From Min"].default_value, seam.inputs["From Max"].default_value = 0.0, 0.0012
+            seam.inputs["To Min"].default_value, seam.inputs["To Max"].default_value = 1.0, 0.0
+            ct.links.new(pp.outputs[0], seam.inputs["Value"])
+            dk = ct.nodes.new("ShaderNodeMapRange")
+            dk.inputs["To Min"].default_value, dk.inputs["To Max"].default_value = 1.0, 0.82
+            ct.links.new(seam.outputs[0], dk.inputs["Value"])
+            mm = ct.nodes.new("ShaderNodeMath"); mm.operation = "MULTIPLY"
+            ct.links.new(fac.outputs[0], mm.inputs[0]); ct.links.new(dk.outputs[0], mm.inputs[1])
+            fac = mm
+        cc = ct.nodes.new("ShaderNodeCombineColor")
+        for k in ("Red", "Green", "Blue"):
+            ct.links.new(fac.outputs[0], cc.inputs[k])
+        mx_ = ct.nodes.new("ShaderNodeMix"); mx_.data_type = "RGBA"; mx_.blend_type = "MULTIPLY"
+        mx_.inputs["Factor"].default_value = 1.0
+        mx_.inputs[6].default_value = (*cast["color"], 1)
+        ct.links.new(cc.outputs[0], mx_.inputs[7])
+        ct.links.new(mx_.outputs[2], cb.inputs["Base Color"])
+        sand = ct.nodes.new("ShaderNodeTexNoise"); sand.inputs["Scale"].default_value = 900.0
+        ct.links.new(tcc.outputs["Object"], sand.inputs["Vector"])
+        bm = ct.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = 0.05
+        ct.links.new(sand.outputs["Fac"], bm.inputs["Height"])
+        nrm_out = bm.outputs["Normal"]
+        if seam is not None:                       # the ridge: 0.4 mm proud, over the sand's bump
+            bs = ct.nodes.new("ShaderNodeBump"); bs.inputs["Distance"].default_value = 0.0004
+            bs.inputs["Strength"].default_value = 1.0
+            ct.links.new(seam.outputs[0], bs.inputs["Height"]); ct.links.new(nrm_out, bs.inputs["Normal"])
+            nrm_out = bs.outputs["Normal"]
+        ct.links.new(nrm_out, cb.inputs["Normal"])
+    elif S.get("desk_concrete"):
+        cm = wall_texture(dict(S["desk_concrete"], axes="box"))
+        matte_material(cm, S["desk_concrete"].get("rough", 0.45))
+    else:
+        cm = principled("desk concrete", (0.40, 0.40, 0.39), 0.5)
+    nt2 = cm.node_tree                             # pinholes: the centres of small Voronoi cells, darkened
+    b = nt2.nodes["Principled BSDF"]
+    mk = (S.get("desk_concrete") or {}).get("marks")
+    if mk:                                         # white concrete: the texture is flat (p2..p98 of its linear
+        inp0 = b.inputs["Base Color"]              # brightness is 0.076..0.106), so blending it towards white
+        (lo_, hi_), depth = mk["range"], mk["depth"]   # lost the marks. Its brightness stretched from that range to
+        bw = nt2.nodes.new("ShaderNodeRGBToBW")    # 0..1 darkens a white base by up to `depth` instead.
+        nt2.links.new(inp0.links[0].from_socket, bw.inputs[0])
+        st_ = nt2.nodes.new("ShaderNodeMapRange")
+        st_.inputs["From Min"].default_value, st_.inputs["From Max"].default_value = lo_, hi_
+        st_.inputs["To Min"].default_value, st_.inputs["To Max"].default_value = 1.0 - depth, 1.0
+        nt2.links.new(bw.outputs[0], st_.inputs["Value"])
+        cl = nt2.nodes.new("ShaderNodeTexNoise"); cl.inputs["Scale"].default_value = 4.0; cl.inputs["Detail"].default_value = 6.0
+        nt2.links.new(nt2.nodes.new("ShaderNodeTexCoord").outputs["Object"], cl.inputs["Vector"])
+        cr_ = nt2.nodes.new("ShaderNodeMapRange")  # and a broad cloudiness, a few per cent, as cast concrete has
+        cr_.inputs["To Min"].default_value, cr_.inputs["To Max"].default_value = 1.0 - mk.get("cloud", 0.08), 1.0
+        nt2.links.new(cl.outputs["Fac"], cr_.inputs["Value"])
+        mu = nt2.nodes.new("ShaderNodeMath"); mu.operation = "MULTIPLY"
+        nt2.links.new(st_.outputs[0], mu.inputs[0]); nt2.links.new(cr_.outputs[0], mu.inputs[1])
+        wc = nt2.nodes.new("ShaderNodeMix"); wc.data_type = "RGBA"; wc.blend_type = "MULTIPLY"
+        wc.inputs["Factor"].default_value = 1.0
+        wc.inputs[6].default_value = (*mk.get("white", (0.80, 0.80, 0.79)), 1)
+        cc = nt2.nodes.new("ShaderNodeCombineColor")
+        for k in ("Red", "Green", "Blue"):
+            nt2.links.new(mu.outputs[0], cc.inputs[k])
+        nt2.links.new(cc.outputs[0], wc.inputs[7])
+        nt2.links.new(wc.outputs[2], inp0)
+    tc = nt2.nodes.new("ShaderNodeTexCoord")
+    vo = nt2.nodes.new("ShaderNodeTexVoronoi"); vo.inputs["Scale"].default_value = 45.0
+    nt2.links.new(tc.outputs["Object"], vo.inputs["Vector"])
+    ph = nt2.nodes.new("ShaderNodeMapRange")        # 1 to 2 mm holes, one in about every 3 cm square
+    ph.inputs["From Min"].default_value, ph.inputs["From Max"].default_value = 0.0, 0.05
+    ph.inputs["To Min"].default_value, ph.inputs["To Max"].default_value = 0.25, 1.0
+    nt2.links.new(vo.outputs["Distance"], ph.inputs["Value"])
+    mix = nt2.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"; mix.blend_type = "MULTIPLY"
+    mix.inputs["Factor"].default_value = 1.0
+    inp = b.inputs["Base Color"]
+    if inp.is_linked:
+        nt2.links.new(inp.links[0].from_socket, mix.inputs[6])
+    else:
+        mix.inputs[6].default_value = inp.default_value
+    cr = nt2.nodes.new("ShaderNodeCombineColor")
+    for k in ("Red", "Green", "Blue"):
+        nt2.links.new(ph.outputs[0], cr.inputs[k])
+    nt2.links.new(cr.outputs[0], mix.inputs[7])
+    nt2.links.new(mix.outputs[2], inp)
+    top = cube("desk top", (-0.9, -0.425, 0.70), (0.9, 0.425, 0.75), cm, 0.006)
+    top.modifiers["bevel"].segments = 5
+    parts = [top] + steel_frame(0.70)
+    g = bpy.data.objects.new("@concrete_desk", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def brushed_steel(name, rgb=(0.52, 0.53, 0.55), rough=0.30):
+    """Brushed sheet steel: metallic, its roughness and a faint bump streaked along x
+    (a noise stretched 80:1), fine random scratches (Voronoi cell edges, thin and
+    shinier), and a few darker handling smudges."""
+    m = principled(name, rgb, rough)
+    nt2 = m.node_tree
+    b = nt2.nodes["Principled BSDF"]
+    b.inputs["Metallic"].default_value = 1.0
+    tc = nt2.nodes.new("ShaderNodeTexCoord")
+    mp = nt2.nodes.new("ShaderNodeMapping"); mp.inputs["Scale"].default_value = (1.0, 80.0, 80.0)
+    nt2.links.new(tc.outputs["Object"], mp.inputs["Vector"])
+    br = nt2.nodes.new("ShaderNodeTexNoise"); br.inputs["Scale"].default_value = 30.0; br.inputs["Detail"].default_value = 6.0
+    nt2.links.new(mp.outputs["Vector"], br.inputs["Vector"])
+    rr = nt2.nodes.new("ShaderNodeMapRange")       # the brushing: roughness between rough-0.08 and rough+0.10
+    rr.inputs["To Min"].default_value, rr.inputs["To Max"].default_value = rough - 0.08, rough + 0.10
+    nt2.links.new(br.outputs["Fac"], rr.inputs["Value"])
+    stx = nt2.nodes.new("ShaderNodeTexImage")      # the scratches: steel_scratches.png, one tile a metre
+    stx.image = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", "steel_scratches.png"), check_existing=True)
+    stx.image.colorspace_settings.name = "Non-Color"
+    nt2.links.new(tc.outputs["Object"], stx.inputs["Vector"])
+    sc_ = nt2.nodes.new("ShaderNodeMapRange")      # a scratch is shinier: up to 0.15 off the roughness
+    sc_.inputs["To Min"].default_value, sc_.inputs["To Max"].default_value = 0.0, 0.15
+    nt2.links.new(stx.outputs["Color"], sc_.inputs["Value"])
+    sub = nt2.nodes.new("ShaderNodeMath"); sub.operation = "SUBTRACT"
+    nt2.links.new(rr.outputs[0], sub.inputs[0]); nt2.links.new(sc_.outputs[0], sub.inputs[1])
+    nt2.links.new(sub.outputs[0], b.inputs["Roughness"])
+    bm = nt2.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = 0.04
+    nt2.links.new(br.outputs["Fac"], bm.inputs["Height"])
+    nt2.links.new(bm.outputs["Normal"], b.inputs["Normal"])
+    return m
+
+
+def steel_bench():
+    """A steel workbench, 1.8 x 0.85 m, top at 0.75 m: a 40 mm top of brushed sheet steel
+    (its folded edge the same sheet), on a frame of 50 x 50 x 5 mm angle iron painted
+    dark grey and chipped to the steel at the edges: four legs, an angle round under the
+    top and another 150 mm off the floor carrying a scaffold-plank shelf, hex bolts where
+    the angles meet the legs."""
+    top_m = brushed_steel("bench top steel")
+    paint = principled("bench frame paint", (0.045, 0.047, 0.05), 0.55)
+    plank = wood("bench shelf plank", (0.42, 0.33, 0.22), 0.8, grain=18.0)
+    bolt_m = principled("bench bolts", (0.30, 0.30, 0.31), 0.35)
+    bolt_m.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    parts = [cube("bench top", (-0.9, -0.425, 0.71), (0.9, 0.425, 0.75), top_m, 0.003)]
+    a, t, xl, yl = 0.05, 0.005, 0.86, 0.39         # angle size, wall, leg centres
+    frame = []
+    for sx in (-1, 1):                             # each leg an L, its corner outwards
+        for sy in (-1, 1):
+            x, y = sx * xl, sy * yl
+            xo, yo = x + sx * a / 2, y + sy * a / 2
+            frame.append(cube("bench leg", (min(xo, xo - sx * a), yo - sy * t if sy > 0 else yo, 0.0),
+                              (max(xo, xo - sx * a), yo if sy > 0 else yo - sy * t, 0.71), paint, 0.001))
+            frame.append(cube("bench leg", (xo - sx * t if sx > 0 else xo, min(yo, yo - sy * a), 0.0),
+                              (xo if sx > 0 else xo - sx * t, max(yo, yo - sy * a), 0.71), paint, 0.001))
+    for z0 in (0.66, 0.15):                        # the angles round the frame, under the top and low down
+        for sy in (-1, 1):
+            yo = sy * (yl + a / 2)
+            frame.append(cube("bench rail", (-xl, min(yo, yo - sy * t), z0 + a - t), (xl, max(yo, yo - sy * t), z0 + a), paint, 0.001))
+            frame.append(cube("bench rail", (-xl, min(yo, yo - sy * a), z0), (xl, max(yo, yo - sy * a), z0 + t), paint, 0.001))
+        for sx in (-1, 1):
+            xo = sx * (xl + a / 2)
+            frame.append(cube("bench rail", (min(xo, xo - sx * t), -yl, z0 + a - t), (max(xo, xo - sx * t), yl, z0 + a), paint, 0.001))
+            frame.append(cube("bench rail", (min(xo, xo - sx * a), -yl, z0), (max(xo, xo - sx * a), yl, z0 + t), paint, 0.001))
+    parts += frame
+    for k in range(5):                             # the shelf: five scaffold planks on the low angles
+        y0 = -yl + 0.01 + k * (2 * yl - 0.02) / 5
+        parts.append(cube("bench shelf", (-xl + 0.01, y0 + 0.003, 0.155), (xl - 0.01, y0 + (2 * yl - 0.02) / 5 - 0.003, 0.18), plank, 0.002))
+    for sx in (-1, 1):                             # hex bolts on the legs' outer faces, two per joint
+        for sy in (-1, 1):
+            for z in (0.685, 0.175):
+                for dz in (-0.01, 0.01):
+                    bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.007, depth=0.005,
+                                                        location=(sx * (xl + a / 2) + sx * 0.0025, sy * (yl - 0.06), z + dz),
+                                                        rotation=(0, math.pi / 2, 0))
+                    bo = bpy.context.active_object
+                    bo.name = "bench bolt"
+                    bo.data.materials.append(bolt_m)
+                    parts.append(bo)
+    spots(frame, 0.6, scale=90, lo=0.66, tint=(0.40, 0.41, 0.43), mode="MIX", detail=4.0)   # chipped paint, steel under
+    spots(parts[:1], 0.35, scale=5, lo=0.55, tint=(0.62, 0.62, 0.64), detail=3.0)          # handling smudges on the top
+    g = bpy.data.objects.new("@steel_bench", None)
     sc.collection.objects.link(g)
     for o in parts:
         o.parent = g
@@ -721,6 +1008,48 @@ def white_pot(r_top=0.075, r_bot=0.058, h=0.13):
     return g, [o]
 
 
+def dent_material(m, strength, scale=14.0):
+    """Soft shallow dents in m's bump: the smooth cells of a Voronoi (scale per m of the
+    object's own coordinates) with a long gentle noise over them. Any bump the material
+    already has stays under it."""
+    ft = m.node_tree
+    b = next((n for n in ft.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
+    if b is None:
+        return
+    tcd = ft.nodes.new("ShaderNodeTexCoord")
+    vo = ft.nodes.new("ShaderNodeTexVoronoi"); vo.feature = "SMOOTH_F1"
+    vo.inputs["Scale"].default_value = scale; vo.inputs["Smoothness"].default_value = 1.0
+    ft.links.new(tcd.outputs["Object"], vo.inputs["Vector"])
+    nz = ft.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = scale / 4.7
+    ft.links.new(tcd.outputs["Object"], nz.inputs["Vector"])
+    add = ft.nodes.new("ShaderNodeMath"); add.operation = "MULTIPLY_ADD"; add.inputs[1].default_value = 0.4
+    ft.links.new(vo.outputs["Distance"], add.inputs[0]); ft.links.new(nz.outputs["Fac"], add.inputs[2])
+    bm = ft.nodes.new("ShaderNodeBump"); bm.inputs["Strength"].default_value = strength
+    ft.links.new(add.outputs[0], bm.inputs["Height"])
+    nin = b.inputs["Normal"]
+    if nin.is_linked:                              # the texture's own normal map under the dents
+        ft.links.new(nin.links[0].from_socket, bm.inputs["Normal"])
+    ft.links.new(bm.outputs["Normal"], nin)
+
+
+def matte_material(m, rough, specular=0.35):
+    """Less glossy: m's roughness raised to at least rough, its specular capped."""
+    nt2 = m.node_tree
+    b_ = next((n for n in nt2.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
+    if b_ is None:
+        return
+    inp = b_.inputs["Roughness"]
+    mx = nt2.nodes.new("ShaderNodeMath"); mx.operation = "MAXIMUM"; mx.inputs[1].default_value = rough
+    if inp.is_linked:
+        nt2.links.new(inp.links[0].from_socket, mx.inputs[0])
+    else:
+        mx.inputs[0].default_value = inp.default_value
+    nt2.links.new(mx.outputs[0], inp)
+    b_.inputs["Specular IOR Level"].default_value = min(b_.inputs["Specular IOR Level"].default_value, specular)
+    if "Coat Weight" in b_.inputs:
+        b_.inputs["Coat Weight"].default_value = min(b_.inputs["Coat Weight"].default_value, 0.1)
+
+
 def spots(objs, amount, scale=9.0, tint=(0.86, 0.83, 0.78), lo=0.60, mode="MULTIPLY", detail=2.0):
     """Faint spots on a surface (objs' materials, copies): where a noise of `scale` rises
     past `lo` the colour turns towards tint (MULTIPLY: darkens; MIX: dust on a dark
@@ -761,8 +1090,19 @@ def wear(objs, marks):
     {"band": (axis, lo, hi), "amount": a} (a darker band, as grime's) or {"edges": a}."""
     for mk in marks or []:
         mk = dict(mk)
+        only, oname = mk.pop("mat", None), mk.pop("obj", None)   # a mark on the parts whose material (mat) or
+        objs_ = [o for o in objs if o.type == "MESH" and (oname is None or oname in o.name) and   # object (obj)
+                 (only is None or any(only in (sl.material.name if sl.material else "") for sl in o.material_slots))]
+        only = only or oname                       # name has this, only
         if "spots" in mk:
-            spots(objs, mk.pop("spots"), **mk)
+            spots(objs_, mk.pop("spots"), **mk)
+            continue
+        if only:
+            if "band" in mk:
+                grime(objs_, mk.get("amount", 0.5), tuple(mk["band"]))
+            elif "edges" in mk:
+                grime(objs_, mk["edges"])
+            continue
         elif "band" in mk:
             grime(objs, mk.get("amount", 0.5), tuple(mk["band"]))
         elif "edges" in mk:
@@ -891,6 +1231,32 @@ def card_holder():
     return g, parts
 
 
+def eraser_crumbs():
+    """Eraser crumbs: 40 rolled crumbs, 1-3 mm, grey-pink and darkened with graphite,
+    scattered over about 8 x 5 cm, thicker at one end."""
+    import random
+    rnd = random.Random(23)
+    mats = [principled(f"crumb {k}", c, 0.8) for k, c in enumerate(((0.42, 0.30, 0.31), (0.28, 0.24, 0.25), (0.55, 0.40, 0.40)))]
+    parts = []
+    for i in range(40):
+        t = rnd.random() ** 1.6
+        x, y = -0.04 + 0.08 * t + rnd.gauss(0, 0.006), rnd.gauss(0, 0.012) * (1.2 - t)
+        r, ln = rnd.uniform(0.0005, 0.0012), rnd.uniform(0.0015, 0.004)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=8, radius=r, depth=ln, location=(x, y, r),
+                                            rotation=(math.pi / 2, 0, rnd.uniform(0, math.pi)))
+        o = bpy.context.active_object
+        o.name = "eraser crumb"
+        o.data.materials.append(rnd.choice(mats))
+        for p_ in o.data.polygons:
+            p_.use_smooth = True
+        parts.append(o)
+    g = bpy.data.objects.new("@eraser_crumbs", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
 def name_card():
     """A name-card stand: a dark acrylic foot 120 x 30 mm holding a clear acrylic
     sleeve, leaning back 10 deg, with a printed card (name_card.jpg) in it, the same
@@ -1008,7 +1374,7 @@ def nfc_reader():
     return g, [body, pr, card]
 
 
-BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(), "@nfc_reader": lambda: nfc_reader(),
+BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(), "@nfc_reader": lambda: nfc_reader(), "@eraser_crumbs": lambda: eraser_crumbs(),
          "@name_card": lambda: name_card(), "@card_reader": lambda: card_reader(),
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
@@ -1602,8 +1968,15 @@ def panel(screen, inches, aspect=(16, 9), curve=None, glow=1.6, finish="silver",
         ny = -0.0006 - (curve - math.sqrt(curve * curve - nx * nx) if curve else 0.0)
         im = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", img), check_existing=True)
         w = n[3] if len(n) > 3 else 0.051
-        parts.append(sheet(f"monitor note {i}", img, nx, -sh / 2 - ch * 0.25 - 0.012, w, w * im.size[1] / im.size[0],
-                           ny, rot, 0.010))
+        note = sheet(f"monitor note {i}", img, nx, -sh / 2 - ch * 0.25 - 0.012, w, w * im.size[1] / im.size[0],
+                     ny, rot, 0.010)
+        if curve:                                  # on a curved bezel: turned to the tangent where it is stuck
+            a_ = math.atan2(-nx, math.sqrt(curve * curve - nx * nx))   # (flat, its inner edge sank 4 mm in)
+            ca, sa = math.cos(a_), math.sin(a_)
+            for v in note.data.vertices:
+                dx, dy = v.co.x - nx, v.co.y - ny
+                v.co.x, v.co.y = nx + dx * ca - dy * sa, ny + dx * sa + dy * ca
+        parts.append(note)
     for o in parts:
         o.parent = head
     return head, parts, sw, sh
@@ -1724,6 +2097,12 @@ if S["desk"] == "@counter":
     desk, desk_objs = counter()
 elif S["desk"] == "@black_desk":
     desk, desk_objs = black_desk()
+elif S["desk"] == "@industrial_desk":
+    desk, desk_objs = industrial_desk()
+elif S["desk"] == "@steel_bench":
+    desk, desk_objs = steel_bench()
+elif S["desk"] == "@concrete_desk":
+    desk, desk_objs = concrete_desk()
 else:
     desk, desk_objs = gltf(S["desk"])
     lo, hi = box(desk_objs)
@@ -1735,8 +2114,71 @@ else:
         desk.scale.x = S["desk_width"] / (hi.x - lo.x)
 if S.get("desk_color"):                            # (r, g, b, f): blend the desk's colours f towards rgb
     tint(desk_objs, S["desk_color"][:3], "MIX", S["desk_color"][3])
+if (S.get("desk_matte") or S.get("desk_dents")) and not S["desk"].startswith("@"):   # a varnished model made matte, dented
+    for o in desk_objs:
+        for slot in (o.material_slots if o.type == "MESH" else []):
+            if slot.material is None:
+                continue
+            slot.material = slot.material.copy()
+            if S.get("desk_matte"):
+                matte_material(slot.material, S["desk_matte"])
+            if S.get("desk_dents"):
+                dent_material(slot.material, S["desk_dents"], S.get("desk_dent_scale", 14.0))
 if S.get("desk_spots"):                            # faint marks of use: a few soft, slightly darker spots
     spots(desk_objs, S["desk_spots"])
+
+
+def desk_stains(stains, top, kb_y):
+    """Soft dark rings on the desk top where a wet pot or cup stood: each a disc
+    (x, y from the keyboard, r, strength) 0.2 mm above the top, darker at its rim than
+    inside, the rim broken up by noise, alpha-blended."""
+    for k, st in enumerate(stains):
+        x, y, r, a_ = st["x"], kb_y + st["y"], st["r"], st.get("strength", 0.35)
+        m = bpy.data.materials.new(f"desk stain {k}")
+        m.use_nodes = True
+        m.blend_method = "BLEND"
+        nt2 = m.node_tree
+        b = nt2.nodes["Principled BSDF"]
+        b.inputs["Base Color"].default_value = (*st.get("color", (0.10, 0.09, 0.08)), 1)
+        b.inputs["Roughness"].default_value = 0.6
+        tc = nt2.nodes.new("ShaderNodeTexCoord")
+        vl = nt2.nodes.new("ShaderNodeVectorMath"); vl.operation = "LENGTH"    # distance from the centre, 0..1 at r
+        nt2.links.new(tc.outputs["Object"], vl.inputs[0])
+        sc_ = nt2.nodes.new("ShaderNodeMath"); sc_.operation = "DIVIDE"; sc_.inputs[1].default_value = r
+        nt2.links.new(vl.outputs["Value"], sc_.inputs[0])
+        nz = nt2.nodes.new("ShaderNodeTexNoise"); nz.noise_dimensions = "4D"     # (W exists only in 4D)
+        nz.inputs["Scale"].default_value = 14.0 + 3 * k; nz.inputs["Detail"].default_value = 5.0
+        nz.inputs["W"].default_value = 1.7 * k                                     # each ring its own wobble
+        nt2.links.new(tc.outputs["Object"], nz.inputs["Vector"])
+        jit = nt2.nodes.new("ShaderNodeMath"); jit.operation = "MULTIPLY_ADD"       # the outline wanders +-9 %
+        jit.inputs[1].default_value, jit.inputs[2].default_value = 0.18, -0.09
+        nt2.links.new(nz.outputs["Fac"], jit.inputs[0])
+        dd = nt2.nodes.new("ShaderNodeMath"); dd.operation = "ADD"
+        nt2.links.new(sc_.outputs[0], dd.inputs[0]); nt2.links.new(jit.outputs[0], dd.inputs[1])
+        rim = nt2.nodes.new("ShaderNodeFloatCurve")                  # inside 0.25, a soft rim near 0.93, nothing past 1
+        cu = rim.mapping.curves[0]
+        cu.points[0].location, cu.points[1].location = (0.0, 0.06), (1.0, 0.0)    # inside nearly clear
+        for px_, py_ in ((0.75, 0.10), (0.92, 1.0), (0.98, 0.35)):
+            cu.points.new(px_, py_)
+        rim.mapping.update()
+        nt2.links.new(dd.outputs[0], rim.inputs["Value"])
+        br = nt2.nodes.new("ShaderNodeTexNoise"); br.noise_dimensions = "4D"  # the rim fades in and out
+        br.inputs["Scale"].default_value = 9.0; br.inputs["W"].default_value = 3.1 * k + 0.5   # along its length, parts
+        nt2.links.new(tc.outputs["Object"], br.inputs["Vector"])                   # of it nearly gone
+        bm_ = nt2.nodes.new("ShaderNodeMapRange"); bm_.interpolation_type = "SMOOTHSTEP"
+        bm_.inputs["From Min"].default_value, bm_.inputs["From Max"].default_value = 0.38, 0.62
+        bm_.inputs["To Min"].default_value = 0.08
+        nt2.links.new(br.outputs["Fac"], bm_.inputs["Value"])
+        mb = nt2.nodes.new("ShaderNodeMath"); mb.operation = "MULTIPLY"
+        nt2.links.new(rim.outputs[0], mb.inputs[0]); nt2.links.new(bm_.outputs[0], mb.inputs[1])
+        am = nt2.nodes.new("ShaderNodeMath"); am.operation = "MULTIPLY"; am.inputs[1].default_value = a_
+        nt2.links.new(mb.outputs[0], am.inputs[0])
+        nt2.links.new(am.outputs[0], b.inputs["Alpha"])
+        bpy.ops.mesh.primitive_circle_add(vertices=64, radius=r * 1.05, fill_type="NGON", location=(x, y, top + 0.0002))
+        o = bpy.context.active_object
+        o.name = f"desk stain {k}"
+        o.data.materials.append(m)
+        o.visible_shadow = False
 lo, hi = box(desk_objs)
 desk.location += mathutils.Vector((-(lo.x + hi.x) / 2, -(lo.y + hi.y) / 2, -lo.z))
 dlo, dhi = box(desk_objs)
@@ -1931,6 +2373,8 @@ if S.get("desk_mat"):                              # the mat first; keyboard, mo
     MAT_RECT, MAT_T = mat_rect, mat_t
 kb.location = (0.0, kb_y, top + mat_t)
 bpy.context.view_layer.update()
+if S.get("desk_stains"):                           # (after the keyboard group took the loose objects, or it takes these)
+    desk_stains(S["desk_stains"], top, kb_y)
 if S.get("wall"):            # the desk against a wall, 40 mm behind its back edge (built after the keyboard
     wall(S["wall"], dhi.y + 0.04, (dlo.x + dhi.x) / 2, top)   # group took the loose objects)
 if S.get("room"):                                  # a plain bright room instead: a matte floor and, room["wall_y"] m
@@ -2039,32 +2483,82 @@ for aid, part, x, y, turn, height, flat, *more in S["props"]:
     if extra.get("grip"):                          # (axis, lo, hi, amount): where it is held
         grime(objs, extra["grip"][3], extra["grip"][:3])
     wear(objs, extra.get("wear"))
+    if extra.get("leaf"):                          # real leaves pass light: the masked materials get a translucent
+        for o in objs:                             # layer in their own colour, and each leaf a slightly different hue
+            for slot in (o.material_slots if o.type == "MESH" else []):
+                m = slot.material
+                b_ = next((n for n in m.node_tree.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None) if m else None
+                if b_ is None or not b_.inputs["Alpha"].is_linked or m.get("pk_leaf"):
+                    continue
+                m["pk_leaf"] = True
+                nt2 = m.node_tree
+                bc = b_.inputs["Base Color"]
+                src = bc.links[0].from_socket
+                tcl = nt2.nodes.new("ShaderNodeTexCoord")   # the hue and brightness wander across the plant (a noise
+                nzl = nt2.nodes.new("ShaderNodeTexNoise")   # in its own coordinates), so no two leaves match
+                nzl.inputs["Scale"].default_value = 6.0
+                nt2.links.new(tcl.outputs["Object"], nzl.inputs["Vector"])
+                hv = nt2.nodes.new("ShaderNodeHueSaturation")
+                mh = nt2.nodes.new("ShaderNodeMapRange")
+                mh.inputs["To Min"].default_value, mh.inputs["To Max"].default_value = 0.47, 0.53
+                nt2.links.new(nzl.outputs["Fac"], mh.inputs["Value"])
+                nt2.links.new(mh.outputs[0], hv.inputs["Hue"])
+                sat_, val_ = extra.get("leaf_sv", (1.0, 1.0))      # leaf_sv: a paler model's leaves greener, darker
+                hv.inputs["Saturation"].default_value = sat_
+                mv = nt2.nodes.new("ShaderNodeMapRange")
+                mv.inputs["To Min"].default_value, mv.inputs["To Max"].default_value = val_ * 0.88, val_ * 1.06
+                nt2.links.new(nzl.outputs["Fac"], mv.inputs["Value"])
+                nt2.links.new(mv.outputs[0], hv.inputs["Value"])
+                nt2.links.new(src, hv.inputs["Color"])
+                nt2.links.new(hv.outputs["Color"], bc)
+                tr = nt2.nodes.new("ShaderNodeBsdfTranslucent")
+                tint_ = nt2.nodes.new("ShaderNodeMix"); tint_.data_type = "RGBA"; tint_.blend_type = "MULTIPLY"
+                tint_.inputs["Factor"].default_value = 1.0
+                tint_.inputs[7].default_value = (1.0, 1.15, 0.55, 1)        # light through a leaf: yellower
+                nt2.links.new(hv.outputs["Color"], tint_.inputs[6])
+                nt2.links.new(tint_.outputs[2], tr.inputs["Color"])
+                out_ = next(n for n in nt2.nodes if n.bl_idname == "ShaderNodeOutputMaterial")
+                surf = out_.inputs["Surface"].links[0].from_socket
+                ms = nt2.nodes.new("ShaderNodeMixShader"); ms.inputs["Fac"].default_value = extra["leaf"]
+                nt2.links.new(surf, ms.inputs[1]); nt2.links.new(tr.outputs[0], ms.inputs[2])
+                tp = nt2.nodes.new("ShaderNodeBsdfTransparent")     # keep the mask: transparent where alpha is 0
+                ma = nt2.nodes.new("ShaderNodeMixShader")
+                nt2.links.new(b_.inputs["Alpha"].links[0].from_socket, ma.inputs["Fac"])
+                nt2.links.new(tp.outputs[0], ma.inputs[1]); nt2.links.new(ms.outputs[0], ma.inputs[2])
+                nt2.links.new(ma.outputs[0], out_.inputs["Surface"])
+    for oname, k in extra.get("darken", []):       # darken: [(object name part, factor)], e.g. a pot's soil
+        for o in objs:
+            if o.type == "MESH" and oname in o.name:
+                for slot in o.material_slots:
+                    if slot.material is None:
+                        continue
+                    slot.material = slot.material.copy()
+                    nt2 = slot.material.node_tree
+                    b_ = next((n for n in nt2.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
+                    inp = b_.inputs["Base Color"]
+                    mx = nt2.nodes.new("ShaderNodeMix"); mx.data_type = "RGBA"; mx.blend_type = "MULTIPLY"
+                    mx.inputs["Factor"].default_value = 1.0
+                    mx.inputs[7].default_value = (k, k * 0.95, k * 0.9, 1)
+                    if inp.is_linked:
+                        nt2.links.new(inp.links[0].from_socket, mx.inputs[6])
+                    else:
+                        mx.inputs[6].default_value = inp.default_value
+                    nt2.links.new(mx.outputs[2], inp)
     if extra.get("matte"):                         # less glossy: the roughness raised to at least this
         for o in objs:
             for slot in (o.material_slots if o.type == "MESH" else []):
-                if slot.material is None:
-                    continue
-                slot.material = slot.material.copy()
-                nt2 = slot.material.node_tree
-                b_ = next((n for n in nt2.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
-                if b_ is None:
-                    continue
-                inp = b_.inputs["Roughness"]
-                mx = nt2.nodes.new("ShaderNodeMath"); mx.operation = "MAXIMUM"; mx.inputs[1].default_value = extra["matte"]
-                if inp.is_linked:
-                    nt2.links.new(inp.links[0].from_socket, mx.inputs[0])
-                else:
-                    mx.inputs[0].default_value = inp.default_value
-                nt2.links.new(mx.outputs[0], inp)
-                b_.inputs["Specular IOR Level"].default_value = min(b_.inputs["Specular IOR Level"].default_value, 0.35)
+                if slot.material is not None:
+                    slot.material = slot.material.copy()
+                    matte_material(slot.material, extra["matte"])
     if extra.get("scale"):
         g.scale = [extra["scale"]] * 3
     if extra.get("at_back"):                         # y from the desk's back edge instead
         y = back_rel - y
     on_mat = mat_rect and mat_rect[0] < x < mat_rect[1] and mat_rect[2] < kb_y + y < mat_rect[3]
     floor_z = extra.get("z", 0.0) if extra.get("floor") else None     # floor=True: it stands on the floor
+    # (0.4 mm above the top otherwise: a sheet with no thickness exactly on it is coplanar, and the top shadows it black)
     place(g, objs, (x, kb_y + y), turn, height, flat,
-          base_z=floor_z if floor_z is not None else top + (mat_t if on_mat else 0.0) + extra.get("z", 0.0),
+          base_z=floor_z if floor_z is not None else top + (mat_t if on_mat else 0.0) + extra.get("z", 0.0) + 0.0004,
           origin=extra.get("origin", False))
     if extra.get("page"):                          # (image, width, depth, curl m): its top page, peeling up
         img_, pw, pd, curl = extra["page"]           # at the bottom (near) edge

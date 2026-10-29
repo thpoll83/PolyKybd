@@ -41,6 +41,12 @@ def fetch_model(aid, res="2k"):
         p = os.path.join(d, rel)
         if not os.path.exists(p):
             get(inc["url"], p)
+    for key, v in files.items():                   # leaf masks: the glTF's JPG colour map has no alpha, so
+        if key.endswith("_alpha") and isinstance(v, dict) and res in v:   # the mask comes as its own map
+            u = v[res]["jpg"]["url"]
+            p = os.path.join(d, "textures", os.path.basename(u))
+            if not os.path.exists(p):
+                get(u, p)
     return path
 
 
@@ -89,7 +95,7 @@ def fetch_font(name):
     return path
 
 
-PHOTOS = ["bell_park_pier"]                                   # the office calendar's picture (workspace_screens.py)
+PHOTOS = ["bell_park_pier", "canary_wharf", "konzerthaus", "hamburg_hbf", "dresden_square", "zwinger_night"]                                   # the office calendar's picture (workspace_screens.py)
 
 
 def main():
