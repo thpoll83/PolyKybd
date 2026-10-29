@@ -50,6 +50,15 @@ def param(name):
     return float(m.group(1))
 
 
+def pair(name):
+    """A two-element list parameter, e.g. btn_c = [ 83.69, 91.49 ];"""
+    src = open(os.path.join(HERE, CASE_SCAD), encoding='utf-8').read()
+    m = re.search(rf'^{name}\s*=\s*\[\s*([-0-9.]+)\s*,\s*([-0-9.]+)\s*\]\s*;', src, re.M)
+    if not m:
+        raise SystemExit(f'{name} not found in {CASE_SCAD}')
+    return float(m.group(1)), float(m.group(2))
+
+
 def load_stl(path):
     tris, cur = [], []
     for ln in open(path, encoding='ascii', errors='replace'):
@@ -142,6 +151,59 @@ def main():
     whole = run_scad('translate([%f,0,0]) btn_plunger();' % -travel)
     check(abs(clash - whole) <= EPS, 'it clears the switch body at full travel',
           f'{whole - clash:.6f} mm3 of the part is inside the switch envelope')
+
+    # --- the bridge -------------------------------------------------------
+    # The two plungers ship as ONE part so they fit in a single go, which only
+    # works if the thing joining them is a FLEXURE and not a weld: reset and
+    # boot have to work independently (pressing both at once is the RP2040
+    # bootloader gesture). Two things make it one, and both are measured here
+    # rather than argued - the plungers must be cut apart above the bridge, and
+    # the bridge must touch them only at its two ends.
+    c0, c1 = pair('btn_c')
+    # ⚠️ btn_z0 is an EXPRESSION in the scad (pcb_edge_height - 0.4), so it is
+    # recomputed here rather than read; param() only sees numeric literals.
+    z0, h = param('pcb_edge_height') - 0.4, param('btn_h')
+    post, half = param('btn_post'), 0.5 + param('btn_r') + param('btn_ear')
+    mid = (c0 + c1) / 2
+    # a thin slab on the separation plane, over the plungers' own height
+    sep = param('btn_sep')
+    slab = (f'translate([0,0,{z0 - 0.2}]) linear_extrude({h + 0.4}) '
+            f'translate([0,{mid}]) square([600,{sep - 0.01}], center=true)')
+    joined = run_scad(f'intersection() {{ btn_plunger(); {slab}; }}')
+    check(joined <= EPS,
+          f'the two plungers are cut apart above the bridge ({sep} mm)',
+          f'{joined:.6f} mm3 bridging them at the separation plane')
+    # ⚠️ control for BOTH slab checks: the counterbore is continuous across that
+    # plane, so if the slab were mislaid or the boolean broken this reads 0 too.
+    ctrl = run_scad(f'intersection() {{ btn_counterbore(); {slab}; }}')
+    check(ctrl > 1.0, 'control: the slab does find the counterbore there',
+          f'{ctrl:.3f} mm3')
+
+    # and a slab between the bridge's top and the plungers' bottom, in the span
+    # between the posts: anything here is the bridge touching what it must not.
+    bz = z0 - param('btn_under') + 0.4 + param('btn_bridge_h')
+    span_lo, span_hi = c0 - half + post, c1 + half - post
+    free = run_scad(f'intersection() {{ btn_plunger(); '
+                    f'translate([0,0,{bz + 0.05}]) linear_extrude({z0 - bz - 0.1}) '
+                    f'translate([0,{mid}]) square([600,{span_hi - span_lo}], center=true); }}')
+    check(free <= EPS, 'the bridge is free of them between its posts',
+          f'{free:.6f} mm3 of contact along the span')
+
+    # The flexure, from the geometry rather than from intent. E and the flexural
+    # strength are material properties this cannot measure, so the numbers are
+    # REPORTED with the assumption named, not asserted.
+    span = span_hi - span_lo
+    t, bh = param('btn_bridge_t'), param('btn_bridge_h')
+    E = 2500.0            # MPa, a typical SLA resin
+    F = 12 * E * (bh * t ** 3 / 12.0) * travel / span ** 3
+    sig = 6 * E * (t / 2) * travel / span ** 2
+    print()
+    print(f'  NOTE      bridge: {span:.2f} mm free span, {t} x {bh} mm section, '
+          f'{travel} mm deflection.')
+    print(f'            At E = {E:.0f} MPa that is {F:.2f} N of extra force and '
+          f'{sig:.1f} MPa of bending stress,')
+    print(f'            against ~2.5 N to actuate the other switch and ~65 MPa '
+          f'flexural strength.')
 
     # What is left as an ESD path, reported not asserted.
     print()

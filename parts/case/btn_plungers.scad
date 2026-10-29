@@ -22,27 +22,25 @@
 // hole it slides in can never drift apart - edit the btn_* parameters there.
 // !! -D on the command line sets a variable in THIS file, not in a use<>'d one.
 //
-//   openscad -o ../export/case/btn_plungers.stl               btn_plungers.scad
-//   openscad -o ../export/case/btn_plunger.stl -D 'part="one"' btn_plungers.scad
+//   openscad -o ../export/case/btn_plungers.stl  btn_plungers.scad
 //
-// FOUR per keyboard (two per half; both halves use the same part). Verify with
-// parts/case/check_btn_plunger.py. Assemble from the INSIDE, before the board
-// goes in - the ears are wider than the hole, so it cannot be fitted later.
+// The two plungers of one half ship as ONE part, joined by a bridge along the
+// bottom of the counterbore so they go in together - TWO of these per keyboard,
+// not four loose pieces. The bridge is attached only at the two OUTER ends, so
+// it spans 13.4 mm rather than the 1.0 mm between the plungers: that makes it a
+// flexure, and pressing one button costs ~0.16 N of extra force while putting
+// ~0.16 N on the other, against the ~2.5 N its switch needs. ⚠️ They MUST stay
+// independent - pressing reset and boot at once is the RP2040 bootloader
+// gesture - which is why the ears are cut apart even though the counterbore
+// behind them is one pocket.
+//
+// Verify with parts/case/check_btn_plunger.py. Assemble from the INSIDE, before
+// the board goes in - the ears are wider than the hole, so it cannot be fitted
+// afterwards. Set btn_bridge = false in the case file for two loose plungers.
 
 use <case_polykybd_split72_lr.scad>
 
-part = "pair";   // "pair" (one half's worth, as placed) | "one"
-
-if (part == "pair") btn_plunger();
-if (part == "one")
-    intersection()
-    {
-        btn_plunger();
-        // the lower of the two, isolated: the switch_holes SVG carries both, so
-        // a single part is cut out of the pair rather than placed on its own
-        translate([ 0, 0, -50 ]) linear_extrude(100)
-            // ⚠️ 7.8 wide, not more: that is the pitch between the two, so a
-            // wider window clips a slice off its neighbour and the part reads
-            // 0.8 mm too wide.
-            translate([ 183, 83.69 ]) square([ 20, 7.8 ], center = true);
-    }
+// One option only, deliberately: cutting a single plunger out of the pair would
+// sever the bridge and leave half of it hanging off a part that is not what gets
+// printed. btn_bridge in the case file is the switch, not a selector here.
+btn_plunger();

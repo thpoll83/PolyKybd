@@ -783,11 +783,49 @@ flush — **the nose length is not a free choice**, it is the wall thickness.
 | | |
 |---|---|
 | Opening | **6.0 × 3.0 mm**, 2.9 mm deep (`btn_r` = 2.5 offset on a ~1.0 mm stroke) |
-| Counterbore | 7.6 mm (`btn_ear` = 0.8 a side), in the ledge only |
+| Counterbore | **8.8 mm** (`btn_ear` = 1.4 a side) **and 2.6 mm below** the opening (`btn_under`), in the ledge only |
 | Sliding fit | **0.12 mm** per face (`btn_slide_gap`) |
 | Travel | **0.25 mm** (`btn_travel`), limited by the switch, never by the case |
-| The part | 7.4 × 2.3 × 2.8 mm, **30.7 mm³**; four per keyboard |
+| The part | 16.4 × 2.5 × 5.4 mm, **80.9 mm³** — **both** plungers of a half, **two per keyboard** |
 | **Remaining ESD path** | **2.2 mm² of 0.12 mm slot**, 2.9 mm deep, with a step and a corner on each long side — against **18 mm² wide open** |
+
+✅ **Both plungers of a half are ONE part, so they fit in a single go** (2026-10-29,
+on review of the first version). At `btn_ear` 1.4 the two counterbore stadiums —
+8.8 mm wide on a 7.8 mm pitch — **merge into one pocket**, and extending it
+2.6 mm **downward** (never upward: the opening's top is already 0.6 mm above the
+ledge the board rests on) makes room along the bottom for a bridge. The result
+is two parts per keyboard instead of four loose ones, each impossible to fit the
+wrong way round, and the retention more than doubled (6.7 mm³ of interference
+when pushed out, against 2.3).
+
+⚠️ **The bridge has to be a FLEXURE, not a weld — reset and boot must work
+independently, because pressing both at once is the RP2040 bootloader gesture.**
+The two plungers sit only **1.0 mm** apart, so a bridge *between* them would
+couple them rigidly. Instead it runs along the bottom of the merged pocket and
+is attached **only at the two outer ends** (`btn_post` = 1.6 mm each), which
+makes it a fixed-guided beam of **13.4 mm** rather than 1.0 mm. The ears are
+still cut apart (`btn_sep` = 1.0) even though the pocket behind them is one.
+
+| the flexure | |
+|---|---|
+| Free span / section | **13.40 mm** / 0.8 × 1.2 mm (0.8 is the print service's floor) |
+| Extra force to press a button | **0.16 N** at E = 2500 MPa |
+| Force it puts on the OTHER plunger | **0.16 N**, against the **~2.5 N** its switch needs — 16× |
+| Peak bending stress | **8.4 MPa**, against ~65 MPa flexural strength — 8× |
+
+⚠️ **Three features sit EXACTLY on the print service's 0.8 mm floor** — the ear
+thickness, the bridge section and the posts. The vendor refuses *below* 0.8, so
+this is legal with zero margin. Taking all three to 0.9 costs 0.07 N of extra
+press force and 1 MPa of bending stress (both still an order of magnitude inside
+their limits) and is a one-line change; it has not been made because nobody has
+printed one yet and the floor is the floor.
+
+⚠️ **E and the flexural strength are material properties the model cannot
+measure**, so `check_btn_plunger.py` *reports* those four numbers with the
+assumption named and *asserts* only the geometry: that the plungers are cut
+apart above the bridge, and that the bridge touches them nowhere along its span.
+Both of those have a control (the counterbore is continuous across the same
+plane) so a broken boolean cannot read as a pass.
 
 ⚠️ **Read the trade honestly, and put it in the file this way.** A bonded insert's
 protection is **structural** — there is no gap. A plunger's is **dimensional** —
@@ -801,11 +839,18 @@ drives **0.25 mm into the switch** when pressed — the one position a static fi
 check never looks at. `btn_switch_clear(extra)` carries the allowance; the
 checker calls it with `0` so it still measures the *real* envelope.
 
-⚠️ **The counterbore widens the opening in PLAN only.** Growing it vertically
-would cut into the ledge the board rests on — the opening's top is already
-0.6 mm above the ledge — so the step the ears catch on is on the two long sides
-and there is **none top or bottom**. That is also where the ESD path is
-shortest: 2.9 mm straight through, no corner.
+⚠️ **The merged pocket takes the 1.8 mm of ledge that used to sit BETWEEN the
+two openings.** The board's edge support there goes from two 6.0 mm gaps with an
+island between them to one **16.6 mm** gap. Nothing screws the board down within
+37 mm of that spot either way, so it already spanned most of it — and the
+plunger loads the board *horizontally*, into the switch, not downwards. Recorded
+because it is a real change to the board support and not visible from the part.
+
+⚠️ **The counterbore grows sideways and DOWNWARD, never up.** The opening's top
+is already 0.6 mm above the ledge the board rests on, so growing it upward would
+undercut the board support. The step the ears catch on is therefore on the two
+long sides and the bottom, and **not** on the top — which is also where the ESD
+path is shortest: 2.9 mm straight through, no corner.
 
 ⚠️ **The switch's z was read off the footprint's fab outline, not a datasheet**,
 so the actuator pocket is deliberately oversized (2.2 × 1.8 against a ~1.6 × 1.0

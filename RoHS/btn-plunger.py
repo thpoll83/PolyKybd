@@ -4,9 +4,9 @@ REPO = subprocess.run(['git','rev-parse','--show-toplevel'], cwd='/home/user/Pol
 sys.path.insert(0, f'{REPO}/.claude/skills/explain-geometry-figure')
 from figlib import Fig, C
 
-# Two 900x690 OpenSCAD renders of parts/case/btn_plungers.scad (part="one").
-# Build artefacts, not committed - point RENDERS at wherever they were made.
-#   pG outside  14,-17,11,0,0,0      pH inside  -14,-17,11,0,0,0
+# Two 900x690 OpenSCAD renders of the exported btn_plungers.stl, recentred on
+# the pair. Build artefacts, not committed - point RENDERS at where they were
+# made.  pG outside 20,-26,16,0,0,0      pH inside -20,-26,16,0,0,0
 S = os.environ.get('RENDERS', '/tmp/btn-renders')
 
 # ---- geometry, READ from the case parameters -------------------------------
@@ -21,6 +21,8 @@ def P(name):
 
 wall, clr, ledge = P('case_wall_thickness'), P('pcb_clearance'), P('pcb_edge_width')
 gap, ear, ear_t = P('btn_slide_gap'), P('btn_ear'), P('btn_ear_t')
+under, sep = P('btn_under'), P('btn_sep')
+br_t, br_h, post = P('btn_bridge_t'), P('btn_bridge_h'), P('btn_post')
 travel, act_reach = P('btn_travel'), P('btn_act_reach')
 body_front, body_w, act_w = P('btn_body_front'), P('btn_body_w'), P('btn_act_w')
 
@@ -37,10 +39,10 @@ print(f'  nose {IN_HI - OUT:.2f} long, ears {ear_t} thick, pocket {act_reach} de
 print(f'  actuator tip at {ACT:+.2f}, switch body front at {BODY:+.2f}, travel {travel}')
 print(f'  gap area {2 * (W + 3.0) * gap:.2f} mm2 against {W * 3.0:.1f} mm2 open')
 
-f = Fig(1540, 1340)
+f = Fig(1540, 1410)
 f.title('Reset / boot opening: the plunger that closes it',
-        'Plan section through one button. EMC-700 left ±8 kV air discharge NOT RATED here — these are',
-        'the points where the keyboard RESTARTED, and at 6.0 × 3.0 mm they are the biggest holes in the case.')
+        'Plan section through one button. EMC-700 left ±8 kV air discharge NOT RATED here — these are the points',
+        'where it RESTARTED, and at 6.0 × 3.0 mm the biggest holes in the case. Both plungers of a half are ONE part.')
 
 
 EXT = 4.8      # how much case to draw either side of the opening
@@ -81,7 +83,7 @@ def draw(A, dx, show_dims):
 
 SC = 40
 f.panel(40, 170, 720, 540, 'A — at rest',
-        'the switch spring holds the ears on the shoulder, so the nose is flush')
+        'the spring holds the ears on the shoulder; the pocket is shared')
 A = Fig.frame(scale=SC, ox=300, oy=430)
 draw(A, 0.0, True)
 
@@ -90,21 +92,27 @@ f.panel(780, 170, 720, 540, f'B — pressed {travel} mm',
 B = Fig.frame(scale=SC, ox=1040, oy=430)
 draw(B, travel, False)
 
-f.panel(40, 730, 720, 390, 'C — the part, from outside', 'nose 6.0 × 3.0, the face you press')
+f.panel(40, 730, 720, 390, 'C — the pair, from outside',
+        'two noses 6.0 × 3.0, the faces you press')
 f.image(f'{S}/pG.png', 70, 796, 660, 316, clip=(40, 730, 720, 390))
-f.panel(780, 730, 720, 390, 'D — the part, from inside',
-        'two ears, and the blind pocket the actuator pushes on')
+f.panel(780, 730, 720, 390, 'D — the pair, from inside',
+        f'cut apart above, joined by a {post} mm-anchored beam below')
 f.image(f'{S}/pH.png', 810, 796, 660, 316, clip=(780, 730, 720, 390))
 
 f.footer(f'The only path left is the sliding fit: {gap} mm per face, {2*(W+3.0)*gap:.1f} mm² of slot against '
-         f'{W*3.0:.0f} mm² of open window, {IN_LO-OUT:.1f} mm deep,',
-         f'with a {ear} mm step and a corner on each long side. The part is cut back by travel + {gap} mm where '
-         'the switch body is, so the ear plate clears it at',
-         'FULL travel and not just at rest — the one position a static check never sees.',
+         f'{W*3.0:.0f} mm² of open window, {IN_LO-OUT:.1f} mm deep, with a {ear} mm step',
+         'and a corner on each long side. The part is cut back by travel + '
+         f'{gap} mm where the switch body is, so the ear plate clears it at FULL travel',
+         'and not just at rest — the one position a static check never sees.',
+         f'The two plungers are cut {sep} mm apart above the bridge and the bridge touches them only at its two '
+         f'ends, {post} mm each: that makes it a',
+         f'13.4 mm flexure rather than a 1.0 mm weld, so pressing one costs ~0.16 N and puts ~0.16 N on the other '
+         'against the ~2.5 N its switch needs.',
          'READ from the btn_* parameters in case/case_polykybd_split72_lr.scad — the plunger and the hole come from',
          'the same modules, so they cannot drift. Switch: Panasonic EVQPUC02K side-push on the board underside',
-         '(SW2/SW3), actuator 1.0 mm proud of its body and landing 0.53 mm outboard of the board edge. FOUR per',
-         'keyboard; fit from the inside before the board. ⚠️ Unlike the bonded LED inserts, the protection here is',
-         'DIMENSIONAL — it is the gap, and it is only as good as the print tolerance. Verify with check_btn_plunger.py.')
+         '(SW2/SW3), actuator 1.0 mm proud of its body and landing 0.53 mm outboard of the board edge. TWO parts per',
+         'keyboard, one per half, each carrying both of that half\u2019s plungers; fit from the inside,',
+         'before the board goes in. ⚠️ Unlike the bonded LED inserts, the protection here is',
+         'DIMENSIONAL — it is the gap, and only as good as the print tolerance. Verify with check_btn_plunger.py.')
 f.save(f'{REPO}/RoHS/btn-plunger.svg'); f.png()
 print('figure written')

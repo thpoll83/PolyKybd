@@ -173,8 +173,32 @@ btn_r = 2.5;               // not chosen: the opening is offset(2.5) on a line
 btn_slide_gap = 0.12;      // per face. A SLIDING fit, so it cannot be bonded and
                            // cannot be closed up: this gap IS the remaining ESD
                            // path, and the same 0.12 the resin holds elsewhere.
-btn_ear = 0.8;             // how far each retaining ear reaches past the opening
+btn_ear = 1.4;             // how far each retaining ear reaches past the opening
 btn_ear_t = 0.8;           // and how thick it is, along the travel
+btn_under = 2.6;           // how far the counterbore reaches BELOW the opening.
+                           // Only downward: the opening's top is already 0.6 mm
+                           // above the ledge, so growing it upward would cut the
+                           // ledge the board rests on. Below it there is 7 mm of
+                           // ledge, and that is where the bridge lives.
+btn_c = [ 83.69, 91.49 ];  // the two button centres in y, MEASURED off the cut
+                           // (the SVG lines at 47.60 and 55.40, flipped). Only y
+                           // is needed - x comes from the wall bands - and y is
+                           // unaffected by left_case()'s mirror, so one list
+                           // serves both halves.
+btn_sep = 1.0;             // the gap kept BETWEEN the two plungers. At btn_ear
+                           // 1.4 the counterbore stadiums merge into one pocket,
+                           // which is what makes room for the bridge - but the
+                           // ears would merge with it and rigidly couple the two
+                           // buttons, so they are cut apart again here.
+                           // ⚠️ Reset and boot must work independently: pressing
+                           // both AT ONCE is the RP2040 bootloader gesture.
+btn_bridge = true;         // join the pair into one part, fitted in one go
+btn_bridge_t = 0.8;        // the bridge section, along the travel ...
+btn_bridge_h = 1.2;        // ... and in z. 0.8 is the print service's floor.
+btn_post = 1.6;            // the bridge is attached ONLY at the two outer ends:
+                           // that makes it a fixed-guided beam spanning 15.2 mm
+                           // rather than the 0.44 mm between the plungers, which
+                           // is the difference between a flexure and a weld.
 btn_travel = 0.25;         // the switch's own, so the plunger never bottoms out
 btn_act_reach = 0.38;      // how far the actuator pokes past the wall's inner
                            // face; the pocket that receives it is this deep
@@ -765,16 +789,59 @@ module btn_slot(r, h, g = 0, z0 = undef)
 // The hole through the wall: what the case has always cut.
 module btn_opening(g = 0) { btn_slot(btn_r, btn_h, g); }
 
-// The counterbore behind it, in the PCB ledge only. Note it widens the opening
-// in the PLAN directions only - the extrusion height is unchanged - so the step
-// the ears catch on is on the two long sides and there is none top or bottom.
-// Growing it vertically instead would cut the ledge the board rests on.
+// The counterbore behind it, in the PCB ledge only: wider in plan AND extended
+// downward by btn_under. At btn_ear 1.4 the two stadiums are 8.8 wide on a
+// 7.8 pitch, so they MERGE into one pocket spanning both buttons - deliberate,
+// because that pocket is what the bridge runs through.
 module btn_counterbore(g = 0)
 {
     intersection()
     {
         led_band_r(led_hi_r(), led_in_r());
-        btn_slot(btn_r + btn_ear, btn_h, g);
+        btn_slot(btn_r + btn_ear, btn_h + btn_under, g, btn_z0 - btn_under);
+    }
+}
+
+// How far the merged pocket reaches either side of a button centre.
+function btn_pocket_half() = 0.5 + btn_r + btn_ear;
+function btn_mid() = (btn_c[0] + btn_c[1]) / 2;
+
+// The slot that keeps the two plungers independent. Confined to the opening's
+// own height: it must NOT reach the bridge below, which has to stay continuous.
+module btn_sep_cut()
+{
+    translate([ 0, 0, btn_z0 - 0.3 ]) linear_extrude(height = btn_h + 0.6)
+        translate([ 0, btn_mid() ]) square([ 600, btn_sep ], center = true);
+}
+
+// The bridge: one beam along the bottom of the merged pocket, well below the
+// switch, joined to the plungers by posts at the two OUTER ends only.
+module btn_bridge_beam(g = 0)
+{
+    intersection()
+    {
+        led_band_r(led_hi_r() - 0.2, led_hi_r() - 0.2 - btn_bridge_t);
+        btn_counterbore(g);
+        translate([ 0, 0, btn_z0 - btn_under + 0.4 ])
+            linear_extrude(height = btn_bridge_h) square(600, center = true);
+    }
+}
+
+module btn_bridge_posts(g = 0)
+{
+    intersection()
+    {
+        led_band_r(led_hi_r(), led_hi_r() - btn_ear_t);
+        btn_counterbore(g);
+        translate([ 0, 0, btn_z0 - btn_under ])
+            linear_extrude(height = btn_h + btn_under)
+                difference()
+                {
+                    square(600, center = true);
+                    translate([ 0, btn_mid() ])
+                        square([ 600, btn_c[1] - btn_c[0] + 2 * btn_pocket_half()
+                                      - 2 * btn_post ], center = true);
+                }
     }
 }
 
@@ -811,10 +878,15 @@ module btn_plunger(g = btn_slide_gap)
                 {
                     led_band_r(led_hi_r(), led_hi_r() - btn_ear_t);
                     btn_counterbore(g);
+                    // the ears stay at the opening's own height; the pocket's
+                    // extension below them is for the bridge, not for material
+                    btn_slot(btn_r + btn_ear, btn_h, g);
                 }
                 btn_switch_clear(btn_travel + btn_slide_gap);
             }
+            if (btn_bridge) { btn_bridge_beam(g); btn_bridge_posts(g); }
         }
+        if (btn_bridge) btn_sep_cut();
         // the actuator pocket, from the back face outward
         intersection()
         {
