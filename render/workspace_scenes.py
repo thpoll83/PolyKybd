@@ -14,10 +14,13 @@ Props are (asset, part, x, y, turn deg, height m or None, lie flat):
   lamp: its origin is the desk top, the clamp hangs below), at_back=True measures y
   from the desk's back edge, towards the viewer, z lifts it (a cup onto its saucer),
   on=True leaves it out of the overlap check (it stands on another prop).
-"@tablet", "@ruler" (300 mm steel) and "@set_square" (45 deg acrylic) are built in
-workspace_scene.py; desk "@black_desk" is a gaming desk. desk_mat: an extended mat under
+"@tablet", "@ruler" (300 mm steel), "@set_square" (45 deg acrylic), "@mug",
+"@mug_dark", "@puzzle_cube" and "@clips" are built in workspace_scene.py; tint=(r, g, b)
+in the last dict multiplies a prop's colours, scale=k resizes it; desk "@black_desk" is a gaming desk. desk_mat: an extended mat under
 keyboard and mouse in color at rough, glow=(r, g, b) lights its edge. wall: the desk
-stands against a painted wall (color), with an LED strip (led=(r, g, b)) and a poster.
+stands against a painted wall (color), with an LED strip (led=(r, g, b)), a poster, and
+items: a cork "board" with pinned "sheets", a "sheet" on the wall itself, a "clock"
+(workspace_scene.wall_item(); x from the keyboard's centre, z from the desk top).
 desk_height, desk_depth and desk_width stretch a desk's height, depth or width only (WoodenTable_01 is a
 0.55 m low table, 0.66 m deep). mouse: a built mouse on a pad, x, y from the keyboard; wired=True gives it a cable
 over the desk's back edge.
@@ -27,25 +30,76 @@ screens each, dual) at glow. legend_glow: the key displays' light, against the
 room's. The camera looks at the keyboard's centre plus (0, aim_y, aim_z) and focuses
 there.
 """
+BOOKS = [  # (title, author, cover rgb, ink rgb, height m, thickness m, spine style), the office shelf
+    # left to right; workspace_screens.py draws spine_<i>.jpg, cover_<i>.jpg and back_<i>.jpg. Spine
+    # styles, after real books: 0 title down the spine, author and a publisher mark below; 1 serif
+    # title between two colour bands; 2 short words stacked across a thick spine; 3 condensed
+    # capitals with a rule and a series number
+    ("Embedded C", "M. Barr", (0.10, 0.18, 0.32), (235, 225, 200), 0.195, 0.030, 0),
+    ("PCB Design", "R. Kehl", (0.55, 0.12, 0.08), (240, 235, 220), 0.205, 0.038, 3),
+    ("Typography", "E. Ruder", (0.86, 0.82, 0.70), (40, 40, 45), 0.180, 0.022, 1),
+    ("The Art of Electronics", "Horowitz & Hill", (0.12, 0.24, 0.16), (220, 200, 140), 0.215, 0.050, 2),
+    ("QMK Notes", "", (0.95, 0.62, 0.12), (30, 30, 35), 0.170, 0.018, 0),
+    ("Ergonomics", "K. Kroemer", (0.30, 0.30, 0.33), (230, 230, 230), 0.190, 0.028, 1),
+    ("Rust", "S. Klabnik", (0.62, 0.28, 0.12), (245, 240, 230), 0.198, 0.032, 3)]
+
 SCENES = {
     "office": dict(
-        hdri="blender_institute", hdri_turn=140, hdri_strength=0.8,
-        desk="metal_office_desk", desk_height=None,
+        hdri="poly_haven_studio", hdri_turn=0, hdri_strength=0.55, exposure=0.25,
+        look="AgX - Punchy", sun=dict(**{"from": (-1.0, -0.3, 0.6)}, strength=4.0, angle=1.5),
+        post=dict(vignette=0.35, glare=0.15, sat=0.95),
+        desk="metal_office_desk", desk_height=None, desk_color=(0.88, 0.88, 0.86, 0.75), desk_spots=0.6,
         kb_from_front=0.26,                       # m from the desk's front edge to the keyboard's centre
-        props=[("potted_plant_02", None, -0.90, 0.40, 0, 0.40, False),
-               ("office_notepads", "office_notepads_yellow_pad", 0.58, 0.02, 12, None, False),
-               ("stationery_supplies", "stationery_supplies_pen_blue", 0.56, 0.0, 74, None, True, dict(z=0.011, on=True)),
-               ("stationery_supplies", "stationery_supplies_pencilcup", -0.52, 0.24, 0, None, False),
-               ("@mug_dark", None, -0.42, 0.04, 140, None, False),
-               ("round_spectacles", None, 0.50, -0.13, -24, None, False),
-               ("vintage_stapler", None, -0.62, -0.02, 20, None, False),
-               ("stationery_supplies", "stationery_supplies_pencil_new_b", 0.72, -0.10, 82, None, True),
-               ("stationery_supplies", "stationery_supplies_eraser", 0.64, -0.18, 30, None, False)],
-        desk_mat=dict(w=0.76, d=0.34, x=0.06, y=0.0, color=(0.08, 0.085, 0.09), rough=0.95),
-        monitor=dict(style="dual", y=0.42, inches=27, finish="black",
-                     screens=["screen_code.jpg", "screen_polykybd_org.jpg"], gap=0.16),
-        mouse=dict(x=0.32, y=0.0, turn=-6, wired=True),
-        camera=dict(distance=1.65, elev=15, azim=-10, lens=40, fstop=4.0, aim_y=0.14, aim_z=0.17)),
+        props=[("planter_pot_clay", None, -0.90, 0.30, 0, 0.14, False),
+               ("@pot_soil", None, -0.90, 0.30, 0, None, False, dict(z=0.112, on=True)),
+               ("calathea_orbifolia_01", "calathea_orbifolia_01_b", -0.90, 0.30, 110, 0.32, False, dict(z=0.10, on=True)),
+               ("office_notepads", "office_notepads_a4_stack", 0.78, 0.08, 10, None, False, dict(tint=(1.0, 0.93, 0.78), grime=0.6, page=("notepad_page.jpg", 0.205, 0.285, 0.010))),
+               ("stationery_supplies", "stationery_supplies_pen_fancy", 0.76, 0.06, 70, None, True, dict(z=0.011, on=True, grip=("auto", 0.12, 0.40, 0.35))),
+               ("stationery_supplies", "stationery_supplies_pencil_new_a", 0.84, 0.28, 12, None, True, dict(grip=("auto", 0.12, 0.40, 0.35))),
+               ("stationery_supplies", "stationery_supplies_pencil_used", 0.86, 0.31, -8, None, True, dict(grip=("auto", 0.12, 0.45, 0.45))),
+               ("stationery_supplies", "stationery_supplies_pen_red", -0.40, -0.11, 20, None, True, dict(grip=("auto", 0.12, 0.40, 0.35))),
+               ("@clips", None, 0.56, -0.03, 0, None, False),
+               ("@puzzle_cube", None, -0.58, 0.17, 22, None, False),
+               ("@mug_dark", None, -0.52, 0.03, 140, None, False),
+               ("vintage_stapler", None, -0.70, 0.02, 20, None, False, dict(scale=0.62, grime=0.55)),
+               ("stationery_supplies", "stationery_supplies_eraser", 0.68, 0.30, 30, None, False, dict(grime=0.8)),
+               ("@usb_hub", None, -0.39, 0.13, 6, None, False, dict(cable=dict(dx=-0.17))),
+               ("rubber_duck_toy", None, 0.56, 0.24, -30, 0.065, False, dict(hsv=(0.545, 1.3, 0.6, 0.3))),
+               ("planter_pot_clay", None, -1.18, 0.46, 0, 0.42, False, dict(floor=True)),
+               ("pachira_aquatica_01", ("pachira_aquatica_01_bark_d", "pachira_aquatica_01_leaves_d"), -1.18, 0.46, 30, 1.60,
+                False, dict(floor=True, z=0.30))],
+        desk_mat=dict(w=0.76, d=0.34, x=0.06, y=0.0, image="mat_topo.jpg", rough=0.95),
+        wall=dict(color=(0.56, 0.54, 0.50), texture=dict(id="painted_plaster_wall", tile=2.0, tint=(1.15, 1.12, 1.08), bump=0.6),
+                  items=[
+            dict(kind="board", x=-0.40, z=0.63, w=0.80, h=0.40,
+                 loose_pins=[(0.33, 0.165, (0.85, 0.1, 0.1)), (0.345, 0.15, (0.1, 0.3, 0.85)), (-0.36, -0.17, (0.95, 0.8, 0.1)),
+                             (0.15, -0.16, (0.1, 0.6, 0.2)), (-0.02, 0.17, (0.85, 0.1, 0.1))], sheets=[
+                dict(img="paper_sprint.jpg", x=-0.29, z=0.13, w=0.16, rot=-3, pin=(0.85, 0.1, 0.1)),
+                dict(img="print_pcb_rev33.jpg", x=-0.08, z=0.14, w=0.20, rot=3, pin=(0.1, 0.3, 0.85)),
+                dict(img="print_stems.jpg", x=0.13, z=0.14, w=0.16, rot=-4, pin=(0.95, 0.8, 0.1)),
+                dict(img="print_pcb_split42.jpg", x=0.30, z=0.12, w=0.13, rot=5, pin=(0.1, 0.6, 0.2)),
+                dict(img="paper_schematic.jpg", x=-0.10, z=-0.03, w=0.19, rot=-2, pin=(0.85, 0.1, 0.1)),
+                dict(img="print_rgb.jpg", x=0.10, z=-0.02, w=0.15, rot=2, pin=(0.1, 0.3, 0.85)),
+                dict(img="print_emoji.jpg", x=0.27, z=-0.04, w=0.10, rot=-6, pin=(0.85, 0.1, 0.1)),
+                dict(img="sticky_yellow.jpg", x=-0.30, z=-0.08, w=0.076, rot=6, pin=(0.95, 0.8, 0.1))]),
+            dict(kind="shelf", x=0.36, z=0.56, w=0.62, d=0.19, books=True, lean=10,
+                 pins=[(0.16, -0.06, (0.85, 0.1, 0.1), 30), (0.19, -0.075, (0.1, 0.3, 0.85), 110), (0.05, -0.07, (0.95, 0.8, 0.1), 200)], things=[
+                ("standing_picture_frame_01", None, 0.10, 0.16, -8),
+                ("potted_plant_04", None, 0.24, 0.15, 0)]),
+            dict(kind="sheet", img="paper_month.jpg", x=0.86, z=0.76, w=0.28, rot=0, pin=(0.2, 0.2, 0.22), pages=8, bow=0.006, dents=0.25),
+            dict(kind="sheet", img="print_halves.jpg", x=0.94, z=0.37, w=0.14, rot=-3, bow=0.0, pin=(0.1, 0.3, 0.85)),
+            dict(kind="sheet", img="sticky_blue.jpg", x=0.90, z=0.22, w=0.076, rot=3, bow=0.008)]),
+        monitor=dict(style="dual", y=0.42, inches=30, finish="black",
+                     screens=["screen_sheet.jpg", "screen_mail.jpg"], gap=0.022,
+                     notes=[(0, -0.36, "sticky_green.jpg", -4), (0, 0.12, "sticky_wide.jpg", 2, 0.076),
+                            (1, 0.28, "sticky_pink.jpg", -3, 0.038)], screen_rough=0.06, cables=True),
+        mouse=dict(x=0.32, y=0.0, turn=-6, wired=True, color=(0.016, 0.016, 0.017), side=(0.008, 0.008, 0.009), rough=0.85, coat=0.0, specular=0.2),
+        lights=[dict(at=(0.1, 0.1, 1.5), size=(1.2, 0.6), energy=40, color=(1.0, 0.80, 0.55)),
+                dict(at=(-0.1, -1.5, 1.75), size=(1.2, 0.3), energy=90, color=(1.0, 0.84, 0.62)),
+                dict(at=(1.35, -0.1, 0.95), size=(0.9, 0.9), energy=70, color=(1.0, 0.93, 0.84), rot=(0, 60, 0))],
+        glints=[dict(at=(0.30, -2.5, 0.78), size=(1.1, 0.07), strength=5.0, color=(1.0, 0.88, 0.70)),
+                dict(at=(1.15, -2.4, 0.66), size=(0.6, 0.05), strength=3.0, color=(1.0, 0.92, 0.80))],
+        camera=dict(distance=2.6, elev=13, azim=-10, lens=52, fstop=11.0, aim_y=0.16, aim_z=0.33)),
     "front_desk": dict(
         hdri="entrance_hall", hdri_turn=90, hdri_strength=1.2,
         desk="@counter", desk_height=None,

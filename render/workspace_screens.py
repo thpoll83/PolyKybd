@@ -6,19 +6,34 @@ Drawn with Pillow at 2560 x 1440, generic on purpose (no product's look or name)
 - screen_code.jpg: a dark code editor on the firmware's process_record_user()
   (../qmk_firmware/keyboards/polykybd/poly_keymap.c), coloured by token,
 - screen_calendar.jpg: a reception's day planner, five rooms by the hour,
+- screen_sheet.jpg: a spreadsheet, quarterly figures with a chart; screen_mail.jpg: an inbox
+  beside an open message,
 - screen_plan.jpg: a CAD floor plan, walls, doors, rooms with their areas, dimensions,
 - screen_design.jpg: a vector illustration app with a poster in progress,
 - screen_game.jpg: a made-up synthwave racing game with its HUD,
-- ruler.jpg: a steel rule's millimetre scale, poster_road.jpg: the game's road as a poster.
+- ruler.jpg: a steel rule's millimetre scale, poster_road.jpg: the game's road as a poster,
+- the office wall: cork.jpg (a pinboard's cork), paper_layout.jpg (a keymap sketch),
+  paper_sprint.jpg (a week's task list), paper_chart.jpg (a bar chart printout),
+  paper_month.jpg (a month calendar), photo_keyboard.jpg (a print of the docs page's
+  photo), sticky_<colour>.jpg (sticky notes), clock_face.jpg (a wall clock's dial),
+  print_<name>.jpg (photo prints of pictures from polykybd-docs/src/assets, DOC_PRINTS),
+  paper_schematic.jpg (the left half's schematic on A4).
+wall_scuff.png: rub marks and scratches where cables go down behind a desk;
+notepad_writing.png: pen notes for the notepad's top page, some struck through
+(transparent, laid over the pad as a decal); mat_topo.jpg: a desk mat's print, topographic contour lines on charcoal.
+The calendar's photo is a crop of Poly Haven's bell_park_pier (CC0): a lake and hills at dusk,
+fetched by workspace_assets.py.
 screen_polykybd_org.jpg is the docs site's front page (a Chromium screenshot of
 polykybd-docs/dist, served locally) and is not made here.
 """
 import os
 import re
+import sys
 
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
 OUT = os.path.join(HERE, "textures", "workspace")
 W, H = 2560, 1440
 MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
@@ -108,6 +123,330 @@ def calendar():
     d.line((x0, y, W - 60, y), fill=(230, 70, 70), width=4)
     d.ellipse((x0 - 10, y - 10, x0 + 10, y + 10), fill=(230, 70, 70))
     return im
+
+
+def sheet_full():
+    """A spreadsheet app at 3840 x 2160 (a 30-inch 4K panel at 100 % scaling, so the
+    type is as small as on a real one): ribbon, formula bar, a budget table by month
+    with totals, two charts beside it, sheet tabs at the bottom."""
+    import random
+    rnd = random.Random(8)
+    W4, H4 = 3840, 2160
+    im = Image.new("RGB", (W4, H4), (255, 255, 255))
+    d = ImageDraw.Draw(im)
+    green = (33, 115, 70)
+    f, fb = font(SANS, 24), font(BOLD, 24)
+    d.rectangle((0, 0, W4, 56), fill=green)
+    d.text((30, 12), "Budget 2026.xlsx  -  Saved", font=font(BOLD, 28), fill=(255, 255, 255))
+    for k, t in enumerate(["File", "Home", "Insert", "Page Layout", "Formulas", "Data", "Review", "View", "Help"]):
+        d.text((700 + k * 210, 15), t, font=font(SANS, 26), fill=(230, 245, 235))
+    d.rectangle((0, 56, W4, 150), fill=(243, 243, 243))
+    for k in range(34):
+        x = 30 + k * 88
+        d.rounded_rectangle((x, 72, x + 66, 134), 6, fill=(230, 230, 230), outline=(208, 208, 208))
+    d.rectangle((0, 150, W4, 196), fill=(255, 255, 255))
+    d.text((30, 160), "P26", font=f, fill=(60, 60, 60))
+    d.text((170, 160), "fx   =SUM(P4:P25)", font=font(MONO, 24), fill=(60, 60, 60))
+    d.line((0, 196, W4, 196), fill=(200, 200, 200), width=2)
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    head = ["Cost centre"] + months + ["Total", "Plan", "Δ %"]
+    cw = [250] + [118] * 12 + [140, 140, 100]
+    x0, y0, rh = 56, 236, 40
+    xs = [x0]
+    for w_ in cw:
+        xs.append(xs[-1] + w_)
+    d.rectangle((0, 196, W4, 236), fill=(240, 240, 240))
+    for i in range(len(cw) + 6):
+        xc = xs[i] if i < len(xs) else xs[-1] + (i - len(xs) + 1) * 118
+        d.text((xc + 50, 202), chr(65 + i), font=font(SANS, 22), fill=(100, 100, 100))
+    names = ["Hardware", "Software licences", "Cloud services", "Office supplies", "Furniture", "Travel",
+             "Training", "Conferences", "Facilities", "Cleaning", "Energy", "Marketing", "Print", "Contractors",
+             "Recruiting", "Shipping", "Insurance", "Phones", "Catering", "Team events", "Misc."]
+    nrows = (H4 - 60 - y0) // rh
+    for r in range(nrows):
+        y = y0 + r * rh
+        d.rectangle((0, y, x0, y + rh), fill=(240, 240, 240))
+        d.text((10, y + 8), str(r + 1), font=font(SANS, 20), fill=(110, 110, 110))
+        d.line((x0, y + rh, 2300, y + rh), fill=(228, 228, 228), width=1)
+    for xv in xs:
+        d.line((xv, y0, xv, y0 + nrows * rh), fill=(228, 228, 228), width=1)
+    d.text((xs[0] + 10, y0 + 8), "Department budget 2026, EUR", font=font(BOLD, 26), fill=(30, 30, 30))
+    for i, t in enumerate(head):
+        d.rectangle((xs[i], y0 + 2 * rh, xs[i + 1], y0 + 3 * rh), fill=(226, 239, 218))
+        d.text((xs[i] + 10, y0 + 2 * rh + 8), t, font=fb, fill=(30, 30, 30))
+
+    def num(i, y, v, bold=False, col=(30, 30, 30)):
+        t = v if isinstance(v, str) else f"{v:,}"
+        ff = fb if bold else f
+        d.text((xs[i + 1] - 10 - d.textlength(t, font=ff), y), t, font=ff, fill=col)
+    tot = [0] * 14
+    for r, n in enumerate(names):
+        y = y0 + (r + 3) * rh + 8
+        vals = [rnd.randint(2, 48) * 50 for _ in range(12)]
+        plan_ = int(sum(vals) * rnd.uniform(0.85, 1.15) / 100) * 100
+        d.text((xs[0] + 10, y), n, font=f, fill=(30, 30, 30))
+        for k, v in enumerate(vals + [sum(vals), plan_]):
+            num(k + 1, y, v)
+            tot[k] += v
+        pct = (sum(vals) / plan_ - 1) * 100
+        num(15, y, f"{pct:+.1f}", col=(40, 140, 60) if pct <= 0 else (200, 50, 40))
+    y = y0 + (len(names) + 3) * rh
+    d.rectangle((xs[0], y, xs[-1], y + rh), fill=(245, 245, 245))
+    d.text((xs[0] + 10, y + 8), "Total", font=fb, fill=(30, 30, 30))
+    for k, v in enumerate(tot):
+        num(k + 1, y + 8, v, bold=True)
+    d.rectangle((xs[13], y, xs[14], y + rh), outline=green, width=3)
+    cx0 = 2420                                                     # two charts to the right
+    for c, (title, ty) in enumerate((("Spend by month", 260), ("Top cost centres", 1180))):
+        cy0, cy1 = ty, ty + 820
+        d.rectangle((cx0, cy0, W4 - 80, cy1), fill=(255, 255, 255), outline=(200, 200, 200), width=2)
+        d.text((cx0 + 24, cy0 + 16), title, font=font(BOLD, 28), fill=(40, 40, 40))
+        if c == 0:
+            mx = max(tot[:12])
+            for k in range(12):
+                bh = (cy1 - cy0 - 150) * tot[k] / mx
+                bx = cx0 + 70 + k * 108
+                d.rectangle((bx, cy1 - 56 - bh, bx + 70, cy1 - 56), fill=(68, 114, 196))
+                d.text((bx + 12, cy1 - 46), months[k], font=font(SANS, 20), fill=(80, 80, 80))
+        else:
+            for k in range(8):
+                bw = rnd.randint(300, 1100)
+                yy = cy0 + 90 + k * 86
+                d.text((cx0 + 30, yy + 10), names[k], font=font(SANS, 22), fill=(60, 60, 60))
+                d.rectangle((cx0 + 280, yy, cx0 + 280 + bw, yy + 52), fill=(237, 125, 49))
+    d.rectangle((0, H4 - 50, W4, H4), fill=(240, 240, 240))
+    for k, t in enumerate(["Summary", "By month", "Travel", "Plan vs. actual", "+"]):
+        x = 30 + k * 240
+        if k == 0:
+            d.rectangle((x - 10, H4 - 50, x + 200, H4), fill=(255, 255, 255))
+        d.text((x, H4 - 40), t, font=fb if k == 0 else f, fill=green if k == 0 else (90, 90, 90))
+    return im
+
+
+def mail_full():
+    """A mail client at 3840 x 2160 (30-inch 4K, 100 % scaling): folders, a long inbox
+    list (some unread, one selected) and the open message beside it."""
+    W4, H4 = 3840, 2160
+    im = Image.new("RGB", (W4, H4), (255, 255, 255))
+    d = ImageDraw.Draw(im)
+    blue = (0, 95, 184)
+    d.rectangle((0, 0, W4, 64), fill=blue)
+    d.text((30, 14), "Mail", font=font(BOLD, 32), fill=(255, 255, 255))
+    d.rounded_rectangle((1100, 12, 2400, 52), 20, fill=(230, 240, 250))
+    d.text((1130, 18), "Search mail", font=font(SANS, 24), fill=(110, 120, 135))
+    d.rectangle((0, 64, 330, H4), fill=(243, 245, 248))
+    d.rounded_rectangle((24, 90, 300, 146), 10, fill=blue)
+    d.text((70, 102), "New mail", font=font(BOLD, 26), fill=(255, 255, 255))
+    folders = [("Inbox", "4"), ("Drafts", "1"), ("Sent", ""), ("Scheduled", ""), ("Archive", ""), ("Junk", "12"),
+               ("Deleted", ""), ("", ""), ("Projects", ""), ("  Budget 2026", ""), ("  Office move", ""), ("Invoices", ""),
+               ("Travel", ""), ("Newsletters", "7")]
+    for k, (t, n) in enumerate(folders):
+        y = 180 + k * 58
+        if k == 0:
+            d.rounded_rectangle((16, y - 10, 314, y + 42), 8, fill=(222, 232, 245))
+        d.text((44, y), t, font=font(BOLD if k == 0 else SANS, 26), fill=(40, 44, 56))
+        if n:
+            d.text((280, y), n, font=font(BOLD, 24), fill=blue)
+    mails = [("Anna Weber", "Re: Q4 budget draft", "Thanks, the numbers look good. One question on travel…", "09:41", True),
+             ("IT Service Desk", "VPN certificate renewal", "Your certificate expires on Friday. Please…", "09:12", True),
+             ("Facilities", "Desk move, 3rd floor", "The movers come on Tuesday at 8:00. Please pack…", "08:55", True),
+             ("Marco Rossi", "Release review agenda", "Attached is the agenda for Thursday. Please add…", "08:30", True),
+             ("Jonas K.", "Team lunch Thursday", "Table for 8 at 12:30 is booked. Who is in?", "Yesterday", False),
+             ("Supplier GmbH", "Order 44812 shipped", "Your order of USB-C cables has shipped and will…", "Yesterday", False),
+             ("Lena Hofmann", "Onboarding doc", "I added the new section on accounts. Can you…", "Yesterday", False),
+             ("HR", "Holiday planning 2027", "Please enter your planned holidays by the end of…", "Tue", False),
+             ("Calendar", "Accepted: Release review", "Marco accepted your invitation for Thu 14:00", "Mon", False),
+             ("Sara Lind", "Photos from the offsite", "Here is the link to the album. Some great ones…", "Mon", False),
+             ("Accounting", "Expense report approved", "Your report for September (EUR 214.80) was…", "Mon", False),
+             ("Building", "Fire drill on Wednesday", "There will be a fire drill at 10:00. Please…", "Sun", False),
+             ("Newsletter", "October update", "What's new this month: the new canteen menu…", "Sun", False),
+             ("Tom B.", "Re: keyboard layouts", "The split one works great, my wrists thank you…", "Sat", False),
+             ("Delivery", "Your parcel is on its way", "Expected delivery: Monday between 10 and 14…", "Fri", False),
+             ("Anna Weber", "Q3 numbers", "Final numbers for Q3 are in the shared folder…", "Fri", False),
+             ("IT Service Desk", "Patch day", "Updates will be installed tonight after 20:00…", "Thu", False)]
+    x0, x1 = 330, 1500
+    for k, (who, subj, prev, when, unread) in enumerate(mails):
+        y = 80 + k * 120
+        if y + 120 > H4:
+            break
+        if k == 0:
+            d.rectangle((x0, y, x1, y + 120), fill=(222, 232, 245))
+            d.rectangle((x0, y, x0 + 6, y + 120), fill=blue)
+        d.text((x0 + 34, y + 12), who, font=font(BOLD if unread else SANS, 26), fill=(30, 34, 46))
+        d.text((x1 - 30 - d.textlength(when, font=font(SANS, 22)), y + 16), when, font=font(SANS, 22), fill=(110, 116, 130))
+        d.text((x0 + 34, y + 48), subj, font=font(BOLD if unread else SANS, 24), fill=blue if unread else (50, 54, 66))
+        d.text((x0 + 34, y + 82), prev, font=font(SANS, 22), fill=(120, 126, 140))
+        d.line((x0, y + 120, x1, y + 120), fill=(225, 228, 234), width=2)
+    d.line((x1, 64, x1, H4), fill=(210, 214, 222), width=2)
+    x = x1 + 80
+    d.text((x, 110), "Re: Q4 budget draft", font=font(BOLD, 40), fill=(30, 34, 46))
+    d.ellipse((x, 190, x + 70, 260), fill=(200, 120, 90))
+    d.text((x + 18, 204), "AW", font=font(BOLD, 26), fill=(255, 255, 255))
+    d.text((x + 96, 192), "Anna Weber", font=font(BOLD, 28), fill=(30, 34, 46))
+    d.text((x + 96, 230), "to me, Marco Rossi  ·  Today 09:41", font=font(SANS, 22), fill=(110, 116, 130))
+    body = ["Hi,", "", "thanks for the draft. The numbers look good overall.",
+            "One question on travel: Q3 is about 20 % over plan,", "is that the trade fair in September?", "",
+            "Could you add a short note to the summary sheet", "before Thursday's review? Marco will present the",
+            "plan-vs-actual chart, so the notes should match it.", "", "Thanks,", "Anna", "",
+            "———", "On Wed, Marco Rossi wrote:", "> Draft is in the shared folder, please have a look", "> before Friday."]
+    for k, line in enumerate(body):
+        d.text((x, 320 + k * 46), line, font=font(SANS, 28), fill=(40, 44, 56) if not line.startswith(">") else (110, 116, 130))
+    d.rounded_rectangle((x, 1160, x + 280, 1220), 8, outline=(190, 196, 206), width=2)
+    d.text((x + 26, 1174), "Budget 2026.xlsx", font=font(SANS, 24), fill=(33, 115, 70))
+    for k, t in enumerate(["Reply", "Reply all", "Forward"]):
+        bx = x + k * 220
+        d.rounded_rectangle((bx, 1300, bx + 190, 1360), 10, fill=blue if k == 0 else (235, 238, 244))
+        d.text((bx + 30, 1314), t, font=font(BOLD if k == 0 else SANS, 26), fill=(255, 255, 255) if k == 0 else (40, 44, 56))
+    return im
+
+
+def window(base, content, x, y, w, title, accent=(60, 64, 76)):
+    """Paste content (an Image) onto base as an app window at (x, y), w wide: a soft drop
+    shadow, a title bar with the title and three window buttons, a thin border."""
+    from PIL import ImageFilter
+    h = int(content.height * w / content.width)
+    bar = 44
+    sh = Image.new("L", base.size, 0)
+    ImageDraw.Draw(sh).rectangle((x + 10, y + 18, x + w + 10, y + h + bar + 18), fill=120)
+    sh = sh.filter(ImageFilter.GaussianBlur(22))
+    base.paste((0, 0, 0), (0, 0), sh)
+    d = ImageDraw.Draw(base)
+    d.rectangle((x, y, x + w, y + bar), fill=accent)
+    d.text((x + 20, y + 8), title, font=font(SANS, 24), fill=(240, 240, 240))
+    for k, c in enumerate(("-", "o", "x")):
+        d.text((x + w - 150 + k * 50, y + 6), c, font=font(SANS, 26), fill=(230, 230, 230))
+    base.paste(content.convert("RGB").resize((w, h), Image.LANCZOS), (x, y + bar))
+    d.rectangle((x, y, x + w, y + h + bar), outline=(120, 124, 134), width=2)
+    return base
+
+
+def chat():
+    """A team chat: channels on the left, a thread of short messages, a reply box."""
+    im = Image.new("RGB", (1400, 1100), (255, 255, 255))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 330, 1100), fill=(50, 48, 76))
+    for k, t in enumerate(["# general", "# office-move", "# budget-2026", "# random", "", "Anna Weber", "Marco Rossi", "Jonas K."]):
+        if k == 2:
+            d.rectangle((0, 90 + k * 64 - 12, 330, 90 + k * 64 + 44), fill=(90, 86, 130))
+        d.text((30, 90 + k * 64), t, font=font(BOLD if k == 2 else SANS, 28), fill=(235, 232, 245))
+    d.text((370, 30), "# budget-2026", font=font(BOLD, 34), fill=(30, 30, 40))
+    d.line((330, 90, 1400, 90), fill=(225, 225, 232), width=2)
+    msgs = [("Marco Rossi", "10:02", "Review moved to 14:00 on Thursday", (90, 140, 210)),
+            ("Anna Weber", "10:05", "ok! can someone check the travel line?", (200, 120, 90)),
+            ("Jonas K.", "10:07", "Q3 is the trade fair, I'll add a note", (110, 170, 110)),
+            ("Anna Weber", "10:08", "thanks :)", (200, 120, 90)),
+            ("Lena Hofmann", "10:15", "who has the projector adapter?", (180, 110, 180))]
+    for k, (who, t, msg, col) in enumerate(msgs):
+        y = 130 + k * 170
+        d.ellipse((370, y, 440, y + 70), fill=col)
+        d.text((390, y + 16), who[0], font=font(BOLD, 32), fill=(255, 255, 255))
+        d.text((470, y), who, font=font(BOLD, 28), fill=(30, 30, 40))
+        d.text((470 + d.textlength(who, font=font(BOLD, 28)) + 20, y + 4), t, font=font(SANS, 24), fill=(130, 130, 140))
+        d.text((470, y + 44), msg, font=font(SANS, 28), fill=(40, 40, 50))
+    d.rounded_rectangle((370, 980, 1360, 1060), 12, outline=(200, 200, 210), width=2)
+    d.text((400, 1004), "Message #budget-2026", font=font(SANS, 26), fill=(150, 150, 160))
+    return im
+
+
+def toast(base, x, y, title, line):
+    """A system notification card at (x, y)."""
+    from PIL import ImageFilter
+    w, h = 620, 150
+    sh = Image.new("L", base.size, 0)
+    ImageDraw.Draw(sh).rounded_rectangle((x + 6, y + 10, x + w + 6, y + h + 10), 14, fill=110)
+    base.paste((0, 0, 0), (0, 0), sh.filter(ImageFilter.GaussianBlur(14)))
+    d = ImageDraw.Draw(base)
+    d.rounded_rectangle((x, y, x + w, y + h), 14, fill=(250, 250, 252), outline=(210, 212, 220), width=2)
+    d.rounded_rectangle((x + 24, y + 30, x + 94, y + 100), 12, fill=(0, 95, 184))
+    d.text((x + 120, y + 30), title, font=font(BOLD, 28), fill=(30, 30, 40))
+    d.text((x + 120, y + 76), line, font=font(SANS, 24), fill=(90, 92, 104))
+    return base
+
+
+def calculator():
+    """A desktop calculator: a display with the running sum, a 4 x 5 key grid."""
+    im = Image.new("RGB", (560, 820), (36, 38, 44))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 560, 200), fill=(28, 30, 34))
+    d.text((40, 30), "2,450 + 1,725 =", font=font(SANS, 30), fill=(150, 154, 166))
+    t = "4,175"
+    d.text((520 - d.textlength(t, font=font(SANS, 84)), 80), t, font=font(SANS, 84), fill=(245, 245, 248))
+    keys = ["C", "+/-", "%", "/", "7", "8", "9", "x", "4", "5", "6", "-", "1", "2", "3", "+", "0", ".", "<", "="]
+    for k, key in enumerate(keys):
+        cx, cy = 20 + (k % 4) * 132, 220 + (k // 4) * 118
+        col = (240, 140, 40) if k % 4 == 3 else ((80, 84, 94) if k < 4 else (58, 61, 70))
+        d.rounded_rectangle((cx, cy, cx + 118, cy + 104), 14, fill=col)
+        d.text((cx + 59 - d.textlength(key, font=font(SANS, 40)) / 2, cy + 28), key, font=font(SANS, 40), fill=(245, 245, 248))
+    return im
+
+
+def screen_note(base, x, y, rgb, lines, rot):
+    """An on-screen sticky note (a desktop notes app): a coloured square with a thin top
+    bar, handwriting, a soft shadow, turned rot deg."""
+    from PIL import ImageFilter
+    n = Image.new("RGBA", (330, 330), (*rgb, 255))
+    d = ImageDraw.Draw(n)
+    d.rectangle((0, 0, 330, 28), fill=tuple(max(0, c - 30) for c in rgb) + (255,))
+    d.text((298, -2), "x", font=font(SANS, 26), fill=(60, 60, 60))
+    for k, line in enumerate(lines):
+        d.text((24, 48 + k * 54), line, font=hand(46), fill=(40, 44, 70))
+    n = n.rotate(rot, resample=Image.BICUBIC, expand=True)
+    sh = Image.new("L", base.size, 0)
+    sh.paste(n.getchannel("A").point(lambda v: v // 2), (x + 8, y + 12))
+    base.paste((0, 0, 0), (0, 0), sh.filter(ImageFilter.GaussianBlur(14)))
+    base.paste(n, (x, y), n)
+    return base
+
+
+def taskbar(base, apps, active):
+    """A generic Linux desktop panel along the bottom (56 px): an app menu, launcher icons
+    (apps, the active one underlined), and tray icons with the clock on the right."""
+    d = ImageDraw.Draw(base)
+    W4, H4 = base.size
+    y = H4 - 56
+    d.rectangle((0, y, W4, H4), fill=(30, 32, 38))
+    d.rounded_rectangle((16, y + 10, 52, y + 46), 8, fill=(70, 130, 220))
+    d.text((70, y + 13), "Activities", font=font(SANS, 24), fill=(225, 228, 236))
+    for k, col in enumerate(apps):
+        x = 260 + k * 70
+        d.rounded_rectangle((x, y + 8, x + 40, y + 48), 9, fill=col)
+        if k == active:
+            d.rectangle((x + 6, y + 51, x + 34, y + 54), fill=(225, 228, 236))
+    for k in range(4):                                  # tray: network, volume, battery, bell
+        x = W4 - 420 + k * 52
+        d.ellipse((x, y + 16, x + 24, y + 40), outline=(200, 204, 212), width=3)
+    d.text((W4 - 180, y + 6), "14:32", font=font(BOLD, 24), fill=(235, 238, 244))
+    d.text((W4 - 180, y + 30), "Thu 22 Oct", font=font(SANS, 18), fill=(180, 184, 194))
+    return base
+
+
+APPS = [(33, 115, 70), (0, 95, 184), (50, 48, 76), (220, 110, 40), (120, 120, 130), (170, 40, 40), (90, 160, 90)]
+
+
+def sheet():
+    """The spreadsheet with a chat window over its lower right, a calculator at the lower
+    left, a notification, and the desktop panel along the bottom."""
+    im = sheet_full().resize((3840, 2104), Image.LANCZOS)
+    full = Image.new("RGB", (3840, 2160))
+    full.paste(im, (0, 0))
+    window(full, chat(), 2280, 1060, 1300, "Chat - #budget-2026", accent=(50, 48, 76))
+    window(full, calculator(), 140, 1180, 520, "Calculator", accent=(46, 48, 56))
+    toast(full, 3150, 90, "Meeting in 10 min", "Release review, Room 2")
+    return taskbar(full, APPS, 0)
+
+
+def mail():
+    """The mail client with a calendar window and a PDF open over it, three on-screen
+    sticky notes at the right, and the desktop panel."""
+    im = mail_full().resize((3840, 2104), Image.LANCZOS)
+    full = Image.new("RGB", (3840, 2160))
+    full.paste(im, (0, 0))
+    window(full, calendar(), 1200, 1160, 1500, "Calendar - Thursday", accent=(0, 95, 184))
+    window(full, paper_chart(), 2900, 420, 700, "Tickets_2026.pdf - 1 / 3", accent=(170, 40, 40))
+    screen_note(full, 3060, 1330, (255, 236, 120), ["VPN cert", "renew Fri!"], 3)
+    screen_note(full, 3430, 1250, (170, 225, 245), ["Q3 travel", "= trade fair"], -4)
+    screen_note(full, 3360, 1640, (250, 175, 200), ["call Anna", "after 3"], 2)
+    return taskbar(full, APPS, 1)
 
 
 def plan():
@@ -276,10 +615,572 @@ def poster():
     return game().crop((720, 0, 1840, 1440))
 
 
+PAPER = (244, 242, 236)
+INK = (40, 44, 60)
+
+
+def cork():
+    """A pinboard's cork, 4400 x 2000 px across a 0.76 x 0.36 m board (5.8 px a mm):
+    granules of 0.3 to 1.5 mm in five shades over dark gaps, drawn largest first."""
+    import random
+    rnd = random.Random(5)
+    W_, H_ = 4400, 2000
+    im = Image.new("RGB", (W_, H_), (100, 68, 40))
+    d = ImageDraw.Draw(im)
+    shades = [(178, 128, 82), (160, 112, 70), (140, 96, 58), (196, 148, 100), (122, 82, 48)]
+    for r_hi, n in ((9, 90000), (5, 260000), (3, 420000)):
+        for _ in range(n):
+            x, y, r = rnd.uniform(0, W_), rnd.uniform(0, H_), rnd.uniform(r_hi / 2, r_hi)
+            pts = [(x + r * rnd.uniform(0.6, 1.0) * c, y + r * rnd.uniform(0.6, 1.0) * s_)
+                   for c, s_ in ((1, 0), (0.5, 0.87), (-0.5, 0.87), (-1, 0), (-0.5, -0.87), (0.5, -0.87))]
+            c0 = rnd.choice(shades)
+            v = rnd.randint(-12, 12)
+            d.polygon(pts, fill=(c0[0] + v, c0[1] + v, c0[2] + v // 2))
+    return im
+
+
+def paper_layout():
+    """An A4 sheet, landscape: a split keyboard's layer sketched in pen, keys labelled."""
+    im = Image.new("RGB", (1414, 1000), PAPER)
+    d = ImageDraw.Draw(im)
+    d.text((60, 40), "Layer 2  (nav + num)", font=font(BOLD, 44), fill=INK)
+    labels = "1234567890" "←↓↑→" "HPEUD" "+-*/=" "()[]{}" "<>"
+    k, i = 70, 0
+    for half, x0 in ((0, 70), (1, 760)):
+        for r in range(4):
+            for c in range(6):
+                x, y = x0 + c * (k + 8), 160 + r * (k + 8) + (abs(c - 2.5) < 1.5) * -14
+                d.rounded_rectangle((x, y, x + k, y + k), 8, outline=INK, width=3)
+                d.text((x + 20, y + 12), labels[i % len(labels)], font=font(SANS, 34), fill=(30, 70, 160))
+                i += 1
+    for j, line in enumerate(["- move arrows to the home row?", "- F-keys on Fn only", "- try it for a week"]):
+        d.text((80, 520 + j * 70), line, font=font(SANS, 38), fill=(60, 60, 70))
+    d.ellipse((900, 520, 1300, 760), outline=(200, 40, 40), width=5)
+    d.text((960, 600), "ask the team", font=font(SANS, 40), fill=(200, 40, 40))
+    return im
+
+
+def paper_sprint():
+    """An A4 sheet: a week's tasks in a table, some ticked."""
+    im = Image.new("RGB", (1000, 1414), PAPER)
+    d = ImageDraw.Draw(im)
+    d.text((70, 60), "Week 42", font=font(BOLD, 64), fill=INK)
+    tasks = ["Review layout feedback", "Order USB-C cables", "Q4 budget draft", "Team lunch (Thu)",
+             "Update onboarding doc", "Call supplier", "Desk move, 3rd floor", "Backup check", "Plan offsite"]
+    for i, t in enumerate(tasks):
+        y = 200 + i * 120
+        d.line((70, y + 90, 930, y + 90), fill=(190, 190, 195), width=2)
+        d.rectangle((80, y + 20, 130, y + 70), outline=INK, width=4)
+        if i in (0, 1, 3, 7):
+            d.line((88, y + 45, 104, y + 64, 128, y + 14), fill=(30, 120, 60), width=7)
+        d.text((160, y + 18), t, font=font(SANS, 44), fill=INK)
+    return im
+
+
+def paper_chart():
+    """An A4 printout: a bar chart, quarterly numbers."""
+    im = Image.new("RGB", (1000, 1414), PAPER)
+    d = ImageDraw.Draw(im)
+    d.text((70, 60), "Tickets closed", font=font(BOLD, 58), fill=INK)
+    d.text((70, 140), "per month, 2026", font=font(SANS, 38), fill=(110, 110, 120))
+    base, vals = 1150, [310, 420, 380, 520, 610, 560, 700, 760, 690]
+    d.line((90, base, 940, base), fill=INK, width=4)
+    for i, v in enumerate(vals):
+        x = 110 + i * 92
+        d.rectangle((x, base - v * 1.2, x + 62, base), fill=(52, 104, 180) if i < 8 else (230, 140, 40))
+        d.text((x + 14, base + 20), "JFMAMJJAS"[i], font=font(SANS, 38), fill=INK)
+    for j in range(1, 5):
+        y = base - j * 200
+        d.line((90, y, 940, y), fill=(210, 210, 215), width=2)
+    return im
+
+
+def paper_month():
+    """A wall calendar's month page: a landscape photo above a grid, a few days marked.
+    The photo is a crop of the bell_park_pier HDRI's tonemapped JPG, near its horizon where
+    the equirectangular projection barely bends."""
+    import workspace_assets
+    im = Image.new("RGB", (1000, 1300), (250, 249, 245))
+    d = ImageDraw.Draw(im)
+    Image.MAX_IMAGE_PIXELS = None
+    src = Image.open(workspace_assets.fetch_photo("bell_park_pier"))
+    w, h = src.size
+    cx = int(w * PHOTO_X)
+    ph = src.crop((cx - int(w * 0.07), int(h * 0.405), cx + int(w * 0.07), int(h * 0.405) + int(w * 0.14 * 0.52)))
+    im.paste(ph.resize((1000, 520), Image.LANCZOS), (0, 0))
+    d.text((60, 560), "October", font=font(BOLD, 72), fill=INK)
+    for i, n in enumerate("MTWTFSS"):
+        d.text((80 + i * 128, 680), n, font=font(BOLD, 36), fill=(120, 120, 130))
+    day, cells = 1, {}
+    for r in range(5):
+        for c in range(7):
+            if r == 0 and c < 3 or day > 31:
+                continue
+            x, y = 70 + c * 128, 740 + r * 108
+            d.rectangle((x, y, x + 120, y + 100), outline=(200, 200, 205), width=2)
+            d.text((x + 10, y + 6), str(day), font=font(SANS, 34), fill=INK)
+            if day in (9, 16, 23):
+                d.ellipse((x + 4, y + 2, x + 70, y + 54), outline=(210, 40, 40), width=4)
+            cells[day] = (x, y)
+            day += 1
+    scribble(im, cells)
+    return im
+
+
+SCRIBBLES = [  # (day, text, ink, tilt deg): pen notes in the calendar's day boxes
+    (6, "dentist\n9:30", (30, 50, 140), 4), (9, "demo!", (200, 30, 30), -6), (13, "PCB\norder", (30, 50, 140), 3),
+    (16, "ship\nv1.8", (200, 30, 30), -4), (20, "Mia's\nbday", (40, 110, 60), 6), (23, "team\nlunch", (30, 50, 140), -3),
+    (28, "taxes", (30, 30, 35), 5), (30, "trip ->", (30, 50, 140), -2)]
+
+
+HL = {"yellow": (255, 240, 60), "pink": (255, 120, 190), "green": (130, 240, 110), "orange": (255, 175, 60)}
+
+
+def highlighted(fn, marks):
+    """fn's sheet with highlighter strokes: marks = [(box, colour name)], each a
+    translucent band multiplied onto the paper, its edges a little ragged."""
+    import random
+    from PIL import ImageChops
+
+    def draw():
+        im = fn()
+        layer = Image.new("RGB", im.size, (255, 255, 255))
+        d = ImageDraw.Draw(layer)
+        rnd = random.Random(len(marks))
+        for (x0, y0, x1, y1), col in marks:
+            c = HL[col]
+            top = [(x, y0 + rnd.randint(-3, 3)) for x in range(x0, x1 + 1, 24)]
+            bot = [(x, y1 + rnd.randint(-3, 3)) for x in range(x1, x0 - 1, -24)]
+            d.polygon(top + bot, fill=tuple(int(255 - (255 - v) * 0.75) for v in c))
+        return ImageChops.multiply(im.convert("RGB"), layer)
+    return draw
+
+
+def worn(fn, seed, amount=1.0):
+    """fn's sheet handled for a while: grime in two corners, a thumb smudge near an
+    edge, a faint crease and a touch of yellowing (all multiplied, so ink stays)."""
+    import math
+    import random
+    from PIL import ImageChops, ImageFilter
+
+    def draw():
+        im = fn().convert("RGB")
+        w, h = im.size
+        rnd = random.Random(seed)
+        layer = Image.new("L", (w, h), 255)
+        d = ImageDraw.Draw(layer)
+        r = int(min(w, h) * 0.22)
+        for cx, cy in rnd.sample([(0, 0), (w, 0), (0, h), (w, h)], 2):
+            for k in range(r, 0, -6):
+                v = int(255 - 38 * amount * (1 - k / r) ** 1.6)
+                d.ellipse((cx - k, cy - k, cx + k, cy + k), fill=v)
+        fx, fy = rnd.randint(int(w * 0.6), int(w * 0.9)), rnd.randint(int(h * 0.75), int(h * 0.95))
+        for k in range(10):                        # a thumb print: faint ridges
+            d.ellipse((fx - 40 + k * 3, fy - 55 + k * 4, fx + 40 - k * 3, fy + 55 - k * 4),
+                      outline=int(255 - 14 * amount), width=2)
+        a = rnd.uniform(-0.3, 0.3)
+        y0 = h * rnd.uniform(0.4, 0.6)
+        d.line((0, y0, w, y0 + w * math.tan(a)), fill=int(255 - 16 * amount), width=3)
+        layer = layer.filter(ImageFilter.GaussianBlur(2.5))
+        tint = Image.merge("RGB", (layer, layer.point(lambda v: int(v * 0.985)), layer.point(lambda v: int(v * 0.95))))
+        return ImageChops.multiply(im, tint)
+    return draw
+
+
+NOTEPAD = [  # (text, struck through, ink)
+    ("Mon - todo", False, (25, 35, 90)), ("macro for git commit", True, (25, 35, 90)),
+    ("layer 3: arrows on HJKL?", False, (25, 35, 90)), ("order 2nd keycap set", True, (25, 35, 90)),
+    ("ask IT about VPN", True, (25, 35, 90)), ("tenting angle 8 deg?", False, (25, 35, 90)),
+    ("call back 14:00", False, (180, 30, 30))]
+
+
+def notepad_page():
+    """The notepad's top page (1400 x 1980 px): ivory paper, the pen notes written on it,
+    handled at the edges."""
+    def draw():
+        im = Image.new("RGBA", (1400, 1980), (236, 226, 198, 255))
+        im.alpha_composite(notepad_writing())
+        return im.convert("RGB")
+    return worn(draw, 23, 0.7)()
+
+
+def wall_scuff():
+    """Rub marks on a wall where cables go down behind a desk (800 x 1040 px,
+    transparent; the desk top sits 60 % down): a grey smudge band along that line and
+    short near-vertical scratches, densest right at it, thinning above and below."""
+    import math
+    import random
+    from PIL import ImageFilter
+    rnd = random.Random(31)
+    w, h = 800, 1040
+    edge = h * 0.60
+    smudge = Image.new("L", (w, h), 0)
+    d = ImageDraw.Draw(smudge)
+    for _ in range(70):
+        x, y = rnd.gauss(w / 2, w / 5), edge + rnd.gauss(0, h / 18)
+        r = rnd.uniform(15, 45)
+        d.ellipse((x - r * 0.7, y - r * 1.4, x + r * 0.7, y + r * 1.4), fill=rnd.randint(10, 24))
+    smudge = smudge.filter(ImageFilter.GaussianBlur(18))
+    im = Image.new("RGBA", (w, h), (60, 58, 55, 0))
+    im.putalpha(smudge)
+    d2 = ImageDraw.Draw(im)
+    for _ in range(200):
+        x = rnd.gauss(w / 2, w / 5)
+        y = edge + rnd.gauss(0, h / 14) * (1.0 if rnd.random() < 0.8 else 2.2)
+        ln, a = rnd.uniform(12, 70), math.radians(90 + rnd.gauss(0, 9))
+        c = rnd.choice([(70, 68, 64), (90, 87, 82), (205, 203, 197)])
+        d2.line((x, y - ln / 2 * math.sin(a), x + ln * math.cos(a), y + ln / 2 * math.sin(a)),
+                fill=(*c, rnd.randint(40, 110)), width=rnd.choice([1, 1, 2, 2]))
+    return im
+
+
+from workspace_scenes import BOOKS  # noqa: E402  (the shelf's books: data shared with the scene)
+
+
+SERIF = "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
+SERIF_B = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
+COND_B = "/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-Bold.ttf"
+PX = 7600                                           # texture pixels per metre of book
+
+
+def _fit(path, text, size, width):
+    while size > 8 and font(path, size).getlength(text) > width:
+        size -= 2
+    return font(path, size)
+
+
+def _rgb(c):
+    return tuple(int(v * 255) for v in c)
+
+
+def book_spine(i):
+    """Book i's spine (BOOKS) in one of four layouts after real spines: drawn lying
+    (height along x), then turned to read top to bottom."""
+    def draw():
+        title, author, cover, ink, hgt, th, style = BOOKS[i]
+        w, h = max(140, int(th * PX * 2.4)), int(hgt * PX)
+        bg = _rgb(cover)
+        im = Image.new("RGB", (h, w), bg)
+        d = ImageDraw.Draw(im)
+        if style == 2:                                 # stacked words across a thick spine: drawn upright
+            im = Image.new("RGB", (w, h), bg)
+            d = ImageDraw.Draw(im)
+            y = int(h * 0.08)
+            for word in title.upper().split():
+                f = _fit(SERIF_B, word, int(w * 0.30), w * 0.86)
+                d.text(((w - d.textlength(word, font=f)) / 2, y), word, font=f, fill=ink)
+                y += int(f.size * 1.15)
+            d.line((w * 0.2, y + 20, w * 0.8, y + 20), fill=ink, width=4)
+            f = _fit(SERIF, author, int(w * 0.13), w * 0.9)
+            d.text(((w - d.textlength(author, font=f)) / 2, h * 0.80), author, font=f, fill=ink)
+            d.ellipse((w / 2 - w * 0.10, h * 0.87, w / 2 + w * 0.10, h * 0.87 + w * 0.20), outline=ink, width=4)
+            return im
+        if style == 1:                                 # serif title between colour bands
+            band = tuple(max(0, v - 60) for v in bg)
+            d.rectangle((0, 0, h * 0.10, w), fill=band)
+            d.rectangle((h * 0.86, 0, h, w), fill=band)
+            f = _fit(SERIF, title, int(w * 0.46), h * 0.46)
+            d.text((h * 0.14, (w - f.size * 1.2) / 2), title, font=f, fill=ink)
+            fa = _fit(SERIF, author, int(w * 0.30), h * 0.17)
+            d.text((h * 0.84 - d.textlength(author, font=fa), (w - fa.size * 1.2) / 2), author, font=fa, fill=ink)
+        elif style == 3:                               # condensed capitals, a rule, a series number
+            f = _fit(COND_B, title.upper(), int(w * 0.52), h * 0.58)
+            d.text((h * 0.06, (w - f.size * 1.2) / 2), title.upper(), font=f, fill=ink)
+            x1 = h * 0.06 + d.textlength(title.upper(), font=f) + 30
+            d.line((x1, w / 2, h * 0.80, w / 2), fill=ink, width=3)
+            fn = font(BOLD, int(w * 0.36))
+            d.rectangle((h * 0.84, w * 0.18, h * 0.96, w * 0.82), fill=ink)
+            d.text((h * 0.865, w * 0.22), str(i + 3), font=fn, fill=bg)
+        else:                                          # title down the spine, author and a mark below
+            f = _fit(BOLD if i % 2 else SANS, title, int(w * 0.44), h * 0.56)
+            d.text((h * 0.07, (w - f.size * 1.2) / 2), title, font=f, fill=ink)
+            if author:
+                fa = _fit(SANS, author, int(w * 0.30), h * 0.16)
+                d.text((h * 0.72, (w - fa.size * 1.2) / 2), author, font=fa, fill=ink)
+            d.polygon([(h * 0.95, w * 0.25), (h * 0.95, w * 0.75), (h * 0.91, w * 0.5)], fill=ink)
+        return im.rotate(270, expand=True)             # read top to bottom, as English spines are
+    return draw
+
+
+COVER_ART = ["chip", "traces", "letters", "wave", "keys", "hand", "gear"]
+
+
+def book_cover(i):
+    """Book i's front cover: its colour, a simple graphic for the subject, the title
+    and the author."""
+    import math
+    def draw():
+        title, author, cover, ink, hgt, th, style = BOOKS[i]
+        dep = 0.16 + 0.01 * (i % 3)
+        w, h = int(dep * PX), int(hgt * PX)
+        bg = _rgb(cover)
+        im = Image.new("RGB", (w, h), bg)
+        d = ImageDraw.Draw(im)
+        art, lw = COVER_ART[i % len(COVER_ART)], 6
+        cx, cy, r = w / 2, h * 0.58, w * 0.28
+        if art == "chip":
+            d.rectangle((cx - r * 0.6, cy - r * 0.6, cx + r * 0.6, cy + r * 0.6), outline=ink, width=lw)
+            for k in range(-3, 4):
+                for sx in (-1, 1):
+                    d.line((cx + sx * r * 0.6, cy + k * r * 0.15, cx + sx * r, cy + k * r * 0.15), fill=ink, width=lw)
+                    d.line((cx + k * r * 0.15, cy + sx * r * 0.6, cx + k * r * 0.15, cy + sx * r), fill=ink, width=lw)
+        elif art == "traces":
+            for k in range(7):
+                y0 = cy - r + k * r / 3
+                d.line((w * 0.1, y0, cx, y0, cx + r * 0.4, y0 - r * 0.4, w * 0.9, y0 - r * 0.4), fill=ink, width=lw)
+                d.ellipse((w * 0.9 - 12, y0 - r * 0.4 - 12, w * 0.9 + 12, y0 - r * 0.4 + 12), fill=ink)
+        elif art == "letters":
+            f = font(SERIF_B, int(r * 1.6))
+            d.text((cx - r * 1.1, cy - r), "Ag", font=f, fill=ink)
+        elif art == "wave":
+            pts = [(w * 0.1 + t * w * 0.8 / 200, cy + r * 0.6 * math.sin(t / 200 * 4 * math.pi) * math.exp(-t / 260))
+                   for t in range(201)]
+            d.line(pts, fill=ink, width=lw)
+            d.line((w * 0.1, cy, w * 0.9, cy), fill=ink, width=2)
+        elif art == "keys":
+            for kx in range(4):
+                for ky in range(3):
+                    x0, y0 = cx - r + kx * r * 0.52, cy - r * 0.6 + ky * r * 0.52
+                    d.rounded_rectangle((x0, y0, x0 + r * 0.44, y0 + r * 0.44), 10, outline=ink, width=lw)
+        elif art == "hand":
+            d.ellipse((cx - r, cy - r * 0.5, cx + r, cy + r * 1.1), outline=ink, width=lw)
+            for k in range(4):
+                d.rounded_rectangle((cx - r * 0.8 + k * r * 0.42, cy - r * 1.3, cx - r * 0.5 + k * r * 0.42, cy - r * 0.3),
+                                    20, outline=ink, width=lw)
+        else:
+            for k in range(12):
+                a = k * math.pi / 6
+                d.line((cx + r * 0.6 * math.cos(a), cy + r * 0.6 * math.sin(a), cx + r * math.cos(a), cy + r * math.sin(a)),
+                       fill=ink, width=lw * 3)
+            d.ellipse((cx - r * 0.7, cy - r * 0.7, cx + r * 0.7, cy + r * 0.7), outline=ink, width=lw * 2)
+        ft = _fit(SERIF_B if style in (1, 2) else BOLD, title, int(w * 0.13), w * 0.84)
+        d.text((w * 0.08, h * 0.08), title, font=ft, fill=ink)
+        if author:
+            fa = _fit(SANS, author, int(w * 0.06), w * 0.84)
+            d.text((w * 0.08, h * 0.08 + ft.size * 1.4), author, font=fa, fill=ink)
+        return im
+    return draw
+
+
+def book_back(i):
+    """Book i's back cover: a blurb in small type, a barcode."""
+    import random
+    def draw():
+        title, author, cover, ink, hgt, th, style = BOOKS[i]
+        dep = 0.16 + 0.01 * (i % 3)
+        w, h = int(dep * PX), int(hgt * PX)
+        rnd = random.Random(i)
+        im = Image.new("RGB", (w, h), _rgb(cover))
+        d = ImageDraw.Draw(im)
+        words = ("the a practical guide to every chapter builds on real examples from the bench with clear "
+                 "figures and worked problems for engineers students and makers who want to understand "
+                 "how and why it works in practice").split()
+        f = font(SANS, int(w * 0.034))
+        y = h * 0.12
+        for _ in range(18):
+            line = ""
+            while True:                                  # words until the line would pass 80 % of the width
+                nxt = (line + " " + rnd.choice(words)).strip()
+                if d.textlength(nxt, font=f) > w * 0.8:
+                    break
+                line = nxt
+            d.text((w * 0.1, y), line.strip().capitalize(), font=f, fill=ink)
+            y += f.size * 1.5
+        bx, by = w * 0.58, h * 0.82
+        d.rectangle((bx - 10, by - 10, bx + w * 0.32 + 10, by + h * 0.10 + 10), fill=(250, 250, 248))
+        x = bx
+        while x < bx + w * 0.32:
+            bw = rnd.choice([2, 3, 5, 7])
+            d.rectangle((x, by, x + bw, by + h * 0.08), fill=(20, 20, 20))
+            x += bw + rnd.choice([3, 4, 6])
+        return im
+    return draw
+
+
+def notepad_writing():
+    """Pen notes for the A4 pad (1400 x 1980 px, transparent): a list in a handwriting
+    face, every line a little crooked, three struck through with a wobbly stroke."""
+    import random
+    rnd = random.Random(21)
+    im = Image.new("RGBA", (1400, 1980), (0, 0, 0, 0))
+    f = hand(96, 560)
+    for i, (text, struck, ink) in enumerate(NOTEPAD):
+        layer = Image.new("RGBA", (1300, 200), (0, 0, 0, 0))
+        d = ImageDraw.Draw(layer)
+        d.text((10, 30), text, font=f, fill=(*ink, 240))
+        if struck:
+            w = d.textlength(text, font=f)
+            pts = [(x, 95 + rnd.uniform(-5, 5)) for x in range(0, int(w) + 30, 40)]
+            d.line(pts, fill=(*ink, 230), width=7, joint="curve")
+        layer = layer.rotate(rnd.uniform(-2.0, 2.0), resample=Image.BICUBIC)
+        im.alpha_composite(layer, (110 + rnd.randint(-15, 15), 140 + i * 210))
+    return im
+
+
+def hand(size, weight=520):
+    """Caveat, a handwriting face (SIL OFL), fetched by workspace_assets.py."""
+    import workspace_assets
+    f = ImageFont.truetype(workspace_assets.fetch_font("Caveat.ttf"), size)
+    try:
+        f.set_variation_by_axes([weight])
+    except Exception:
+        pass
+    return f
+
+
+def scribble(im, cells):
+    """Pen notes on the calendar page: each text drawn on its own layer in a
+    handwriting face, turned a few degrees and pasted into its day box."""
+    f = hand(42, 600)
+    for day, text, ink, tilt in SCRIBBLES:
+        if day not in cells:
+            continue
+        x, y = cells[day]
+        layer = Image.new("RGBA", (140, 100), (0, 0, 0, 0))
+        ImageDraw.Draw(layer).multiline_text((6, 0), text, font=f, fill=(*ink, 235), spacing=-6)
+        layer = layer.rotate(tilt, resample=Image.BICUBIC, expand=False)
+        im.paste(layer, (x - 4, y + 18), layer)
+
+
+def mat_topo():
+    """A desk mat's print, 3040 x 1360 px (4 px a mm on a 760 x 340 mm mat): contour
+    lines of a made-up terrain (a sum of sines), every fifth line heavier, light grey
+    on charcoal. Plain Python at half size, then scaled up (the system numpy is not
+    usable here, and nothing is installed outside a venv)."""
+    import math
+    w, h = 1520, 680
+    s_ = 200.0
+    def z(x, y):
+        x, y = x / s_, y / s_
+        return 9.0 * (math.sin(x * 0.9 + 0.3) * math.cos(y * 1.1) + 0.6 * math.sin(x * 1.7 - y * 1.3 + 1.0)
+                      + 0.35 * math.cos(x * 2.9 + y * 2.3) + 0.2 * math.sin(x * 4.1 - y * 3.7 + 2.0))
+    base, ink = (50, 52, 56), (140, 142, 147)
+    im = Image.new("RGB", (w, h))
+    px = im.load()
+    for j in range(h):
+        for i in range(w):
+            v = z(i, j)
+            gx, gy = z(i + 1, j) - v, z(i, j + 1) - v
+            k = round(v)
+            d = abs(v - k) / (math.hypot(gx, gy) + 1e-6)     # distance to the nearest line, in pixels
+            major = k % 5 == 0
+            a_ = max(0.0, min(1.0, 1.0 - (d - (0.9 if major else 0.35)))) * (1.0 if major else 0.6)
+            px[i, j] = tuple(int(base[c] + (ink[c] - base[c]) * a_) for c in range(3))
+    return im.resize((3040, 1360), Image.BICUBIC)
+
+
+PHOTO_X = 0.85            # where across the panorama the calendar's crop is centred
+
+
+def framed_print(path, size=(1300, 1000), border=50, bg=None, zoom=1.0):
+    """A photo print: the image filling size minus a white border (zoom > 1 crops in)."""
+    src = Image.open(path).convert("RGB")
+    if bg:
+        flat = Image.new("RGB", src.size, bg)
+        flat.paste(src, (0, 0))
+        src = flat
+    iw, ih = size[0] - 2 * border, size[1] - 2 * border
+    s_ = max(iw / src.width, ih / src.height) * zoom
+    src = src.resize((int(src.width * s_), int(src.height * s_)), Image.LANCZOS)
+    x0, y0 = (src.width - iw) // 2, (src.height - ih) // 2
+    im = Image.new("RGB", size, (250, 250, 248))
+    im.paste(src.crop((x0, y0, x0 + iw, y0 + ih)), (border, border))
+    return im
+
+
+DOCS = os.path.join(HERE, "..", "..", "polykybd-docs", "src", "assets")
+
+
+DOC_PRINTS = {             # print name: (docs asset, print size in px, zoom)
+    "pcb_rev33": ("assembly/pcb-render-rev3.3.jpg", (1300, 860), 1.0),
+    "pcb_split42": ("firmware/split42-pcb-render.jpg", (1300, 1000), 1.15),
+    "stems": ("assembly/keys-assembled.jpg", (1300, 1000), 1.0),
+    "rgb": ("landing/rgb-both-halves.jpg", (1300, 1000), 1.0),
+    "emoji": ("using/emoji-keycap.jpg", (1000, 1000), 1.1),
+    "halves": ("assembly/split72-both-halves.jpg", (1300, 1000), 1.0),
+    "displays": ("assembly/display-modules.jpg", (1300, 1000), 1.2),
+    "greek": ("using/legends-greek.jpg", (1300, 1000), 1.0),
+}
+
+
+def doc_print(name):
+    path, size, zoom = DOC_PRINTS[name]
+    return lambda: framed_print(os.path.join(DOCS, path), size, zoom=zoom)
+
+
+def paper_schematic():
+    """The left half's schematic printed on A4 landscape, a margin all round."""
+    return framed_print(os.path.join(DOCS, "schematics", "schematic_left.png"), (1414, 1000), 60, bg=(255, 255, 255))
+
+
+def photo_keyboard():
+    """A photo print: the keyboard picture from the docs page screenshot, white border."""
+    src = Image.open(os.path.join(OUT, "screen_polykybd_org.jpg"))
+    w, h = src.size
+    ph = src.crop((int(w * 0.31), int(h * 0.665), int(w * 0.70), int(h * 0.99))).resize((1200, 900))
+    im = Image.new("RGB", (1300, 1000), (250, 250, 248))
+    im.paste(ph, (50, 50))
+    return im
+
+
+def sticky(rgb, lines, size=(760, 760)):
+    def draw():
+        im = Image.new("RGB", size, rgb)
+        d = ImageDraw.Draw(im)
+        for j, line in enumerate(lines):
+            d.text((60, 70 + j * 130), line, font=hand(110), fill=(30, 40, 90))
+        return im
+    return draw
+
+
+def clock_face():
+    """A wall clock's dial, 1200 px square: ticks, numbers, hands at ten past ten."""
+    import math
+    im = Image.new("RGB", (1200, 1200), (248, 248, 245))
+    d = ImageDraw.Draw(im)
+    c = 600
+    for m in range(60):
+        a = math.radians(m * 6)
+        r0 = 500 if m % 5 else 460
+        d.line((c + r0 * math.sin(a), c - r0 * math.cos(a), c + 540 * math.sin(a), c - 540 * math.cos(a)),
+               fill=(25, 25, 28), width=14 if m % 5 == 0 else 5)
+    for h in range(1, 13):
+        a = math.radians(h * 30)
+        t = str(h)
+        f = font(BOLD, 90)
+        tw = d.textlength(t, font=f)
+        d.text((c + 370 * math.sin(a) - tw / 2, c - 370 * math.cos(a) - 55), t, font=f, fill=(25, 25, 28))
+    for ang, ln, wd in ((305, 280, 30), (60, 420, 20)):
+        a = math.radians(ang)
+        d.line((c, c, c + ln * math.sin(a), c - ln * math.cos(a)), fill=(20, 20, 22), width=wd)
+    a = math.radians(200)
+    d.line((c - 80 * math.sin(a), c + 80 * math.cos(a), c + 460 * math.sin(a), c - 460 * math.cos(a)),
+           fill=(200, 30, 30), width=8)
+    d.ellipse((c - 30, c - 30, c + 30, c + 30), fill=(20, 20, 22))
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for name, fn in (("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_plan.jpg", plan),
+    for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_sheet.jpg", sheet), ("screen_mail.jpg", mail), ("screen_plan.jpg", plan),
                      ("screen_design.jpg", design), ("screen_game.jpg", game), ("ruler.jpg", ruler),
-                     ("poster_road.jpg", poster)):
-        fn().save(os.path.join(OUT, name), quality=88)
+                     ("poster_road.jpg", poster), ("cork.jpg", cork), ("paper_layout.jpg", worn(highlighted(paper_layout, [((70, 585, 430, 642), "green")]), 7)),
+                     ("paper_sprint.jpg", worn(highlighted(paper_sprint, [((150, 454, 520, 512), "yellow"), ((150, 814, 470, 872), "pink")]), 3)), ("paper_chart.jpg", worn(paper_chart, 13)),
+                     ("paper_month.jpg", worn(highlighted(paper_month, [((584, 958, 700, 1054), "yellow"), ((328, 1174, 444, 1270), "orange")]), 5, 0.7)), ("photo_keyboard.jpg", photo_keyboard),
+                     ("sticky_yellow.jpg", sticky((250, 230, 110), ["pick up", "badges", "@ 9:30"])),
+                     ("sticky_pink.jpg", sticky((248, 160, 190), ["call IT", "re: VPN"])),
+                     ("sticky_blue.jpg", sticky((150, 210, 240), ["Fri:", "demo day!"])),
+                     ("clock_face.jpg", clock_face), ("paper_schematic.jpg", worn(highlighted(paper_schematic, [((320, 300, 760, 345), "orange"), ((880, 620, 1180, 662), "yellow")]), 11)),
+                     ("sticky_green.jpg", sticky((170, 230, 140), ["backup", "Friday"])),
+                     ("sticky_orange.jpg", sticky((250, 180, 100), ["pw reset", "ext. 214"])),
+                     ("mat_topo.jpg", mat_topo), ("notepad_writing.png", notepad_writing), ("notepad_page.jpg", notepad_page),
+                     ("wall_scuff.png", wall_scuff),
+                     ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
+                     ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))))
+                     + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
+                     + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))
+                     + tuple((f"cover_{i}.jpg", book_cover(i)) for i in range(len(BOOKS)))
+                     + tuple((f"back_{i}.jpg", book_back(i)) for i in range(len(BOOKS)))):
+        im_ = fn()
+        im_.save(os.path.join(OUT, name), **({} if name.endswith(".png") else {"quality": 88}))
         print("wrote", os.path.join("render", "textures", "workspace", name))
