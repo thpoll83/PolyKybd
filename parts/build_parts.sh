@@ -25,6 +25,7 @@ PARTS="
 legs      yes  parts/legs/legs.scad         parts/export/legs/legs_r2_8p.stl
 led_caps  no   parts/diffuser/led_caps.scad parts/export/diffuser/led_caps_4x19p.stl
 led_ins   yes  parts/case/led_inserts.scad  parts/export/case/led_inserts.stl
+btn_plg   yes  parts/case/btn_plungers.scad parts/export/case/btn_plungers.stl
 "
 # led_caps is the superseded earlier diffuser generation and no mesh for it is
 # committed, so it is opt-in: name it explicitly to build it.

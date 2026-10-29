@@ -760,15 +760,64 @@ flush at the ledge's inner face (2.448) with the 0.10 mm standing at the pocket
 floor, so the part is positioned by pushing it until the boss is flush from
 outside and the print tolerance lands in the bond gap.
 
-**The buttons need a different part from the LEDs, because they must move.** Any
-clearance is an air path unless it is long or sealed, so the protection should be
-a **flexible membrane or boot** (silicone/TPU) with the same inner flange: you
-press *through* it and there is no gap at all. A rigid plunger with an inside
-flange also works, but its protection is the length of the annular clearance —
-a dimensional argument that degrades with tolerance, where the membrane is a
-structural one. These points made the board **restart**, so prefer structural.
-If the LEDs and buttons share a face, one moulded piece can do both regions with
-no seam between them.
+### ✅ DECIDED 2026-10-29: the reset/boot openings get a RIGID PLUNGER
+
+Figure: `RoHS/btn-plunger.svg`. Part: `parts/case/btn_plungers.scad` →
+`export/case/btn_plungers.stl`, **four per keyboard**. Verified by
+`parts/case/check_btn_plunger.py`.
+
+**The buttons need a different part from the LEDs, because they must move.**
+Measured, not assumed: each opening is **6.0 × 3.0 mm straight through 2.9 mm of
+side wall**, two per half — **18 mm² apiece against the LED window's ~6**, and
+the biggest holes in the enclosure. The switch behind them is a **Panasonic
+EVQPUC02K** side-push (SW2/SW3 on the board **underside**): body 4.7 × 3.5 × 2.5,
+actuator **1.0 mm proud** of it, **0.25 mm** travel, and its tip lands **0.53 mm
+outboard of the board edge** — i.e. 0.38 mm *inside* the wall, which is why the
+plunger needs a blind pocket in its back face and not a flat one.
+
+The plunger is a nose that fills the hole on a **0.12 mm sliding fit**, with two
+**0.8 mm ears** behind a counterbore cut in the PCB ledge. The switch's own
+return spring holds the ears against the shoulder, which is what puts the nose
+flush — **the nose length is not a free choice**, it is the wall thickness.
+
+| | |
+|---|---|
+| Opening | **6.0 × 3.0 mm**, 2.9 mm deep (`btn_r` = 2.5 offset on a ~1.0 mm stroke) |
+| Counterbore | 7.6 mm (`btn_ear` = 0.8 a side), in the ledge only |
+| Sliding fit | **0.12 mm** per face (`btn_slide_gap`) |
+| Travel | **0.25 mm** (`btn_travel`), limited by the switch, never by the case |
+| The part | 7.4 × 2.3 × 2.8 mm, **30.7 mm³**; four per keyboard |
+| **Remaining ESD path** | **2.2 mm² of 0.12 mm slot**, 2.9 mm deep, with a step and a corner on each long side — against **18 mm² wide open** |
+
+⚠️ **Read the trade honestly, and put it in the file this way.** A bonded insert's
+protection is **structural** — there is no gap. A plunger's is **dimensional** —
+the gap *is* the protection, and it is only as good as the print tolerance. This
+is an **8× reduction in open area** and a path with two turns in it, not an
+elimination. If the ±8 kV re-test ever happens, these are the points to watch.
+
+⚠️ **The part is cut back by travel + a gap where the switch body is, not just by
+the body.** Checked at rest only, the ear plate's bridge fits perfectly and then
+drives **0.25 mm into the switch** when pressed — the one position a static fit
+check never looks at. `btn_switch_clear(extra)` carries the allowance; the
+checker calls it with `0` so it still measures the *real* envelope.
+
+⚠️ **The counterbore widens the opening in PLAN only.** Growing it vertically
+would cut into the ledge the board rests on — the opening's top is already
+0.6 mm above the ledge — so the step the ears catch on is on the two long sides
+and there is **none top or bottom**. That is also where the ESD path is
+shortest: 2.9 mm straight through, no corner.
+
+⚠️ **The switch's z was read off the footprint's fab outline, not a datasheet**,
+so the actuator pocket is deliberately oversized (2.2 × 1.8 against a ~1.6 × 1.0
+actuator). Confirm against a real unit before the first production print.
+
+**The alternative that was not taken** is a flexible membrane or boot
+(silicone/TPU) with the same inner flange: you press *through* it and there is no
+gap at all — structural protection, like the LED inserts. It was rejected for
+process reasons, not technical ones: it needs a second material and a second
+print or a moulding tool, where the plunger is the same resin, the same job and
+the same machine. If the plunger's dimensional argument is ever challenged, the
+boot is the fallback and the opening geometry does not have to change for it.
 
 ⚠️ **Three independent reasons the seam is bonded rather than merely fitted:**
 1. **Resin is brittle** — an interference fit in the thin wall around an opening

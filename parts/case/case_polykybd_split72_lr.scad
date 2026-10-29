@@ -145,6 +145,51 @@ led_cone_half_angle = 20;  // of the countersink. NOT a standard 41-45 deg
                            // 2.69 and the flange keeps 0.63 mm a side. Shallower
                            // is also a longer seam and a better light pipe.
 
+// ============================================================================
+//  Reset / boot buttons (EMC-700)
+// ============================================================================
+// The two service buttons are reached through a 6.0 x 3.0 mm rectangular hole in
+// the side wall, two per half - three times the area of a status-LED window, and
+// the points the report says made the board RESTART at +-8 kV. They cannot be
+// plugged solid like the LEDs, because they have to move, so they get a rigid
+// plunger retained by ears behind the wall.
+//
+// ⚠️ Read the trade honestly: a bonded insert's protection is STRUCTURAL (there
+// is no gap), a plunger's is DIMENSIONAL (the gap is as long and as thin as the
+// fit allows, and degrades with print tolerance). This turns an 18 mm2 open
+// window into ~1.8 mm2 of 0.12 mm slot 2.9 mm deep, with a step and a corner on
+// the two long sides. That is a large improvement and not an elimination.
+//
+// The switch is a Panasonic EVQPUC02K side-push: body 4.7 x 3.5 x 2.5, actuator
+// 1.0 mm proud of the body, 0.25 mm travel, sitting on the UNDERSIDE of the
+// board (SW2/SW3 in poly_kybd_split72_{left,right}.kicad_pcb). Its tip lands
+// 0.53 mm outboard of the board edge, i.e. 0.38 mm INSIDE the wall - which is
+// why the plunger needs a blind pocket in its back face rather than a flat one.
+btn_insert = true;         // cut the counterbore; false = the pre-plunger case
+btn_z0 = pcb_edge_height - 0.4;   // 9.1, where the case has always cut the hole
+btn_h = 3.0;               // and how tall. Both MEASURED off the existing cut,
+btn_r = 2.5;               // not chosen: the opening is offset(2.5) on a line
+                           // the SVG imports with a ~1.0 mm stroke, so 6.0 wide.
+btn_slide_gap = 0.12;      // per face. A SLIDING fit, so it cannot be bonded and
+                           // cannot be closed up: this gap IS the remaining ESD
+                           // path, and the same 0.12 the resin holds elsewhere.
+btn_ear = 0.8;             // how far each retaining ear reaches past the opening
+btn_ear_t = 0.8;           // and how thick it is, along the travel
+btn_travel = 0.25;         // the switch's own, so the plunger never bottoms out
+btn_act_reach = 0.38;      // how far the actuator pokes past the wall's inner
+                           // face; the pocket that receives it is this deep
+btn_act_w = 2.2;           // the pocket, generously oversized in both directions
+btn_act_h = 1.8;           // - the switch's z is read off the board, not modelled
+btn_body_w = 5.1;          // clearance the ears leave for the switch BODY (4.7)
+btn_body_front = -0.47;    // and where that body starts, as an offset from the
+                           // board outline: MEASURED off the footprint (body
+                           // 210.83, board edge 211.298 on the right board), not
+                           // the wall's inner face. ⚠️ Reserving the whole ledge
+                           // depth instead reads as a 5.1 mm3 clash at full
+                           // travel - the nose crossing a line the switch is not
+                           // actually behind.
+
+
 text_font = "Arial:style=Bold Italic";
 text_size = 12;
 text_height = 0.35;
@@ -702,6 +747,84 @@ function led_tab_h() = led_pocket_z1() - led_pocket_z0() - 2 * led_insert_gap;
 function led_tab_y() = (led_pocket_z0() + led_pocket_z1()) / 2 - led_insert_z_mid();
 function led_tab_z() = led_insert_thk() - led_flange_t() / 2;
 
+// ---------------------------------------------------------------------------
+//  Reset / boot plunger geometry
+// ---------------------------------------------------------------------------
+// Everything rides on the same switch_holes SVG the opening has always been cut
+// from, so both halves and both buttons come out of one definition and nothing
+// is placed by hand. `g` shrinks a shape by the sliding gap, exactly as the
+// led_* modules use it: 0 builds the cut, btn_slide_gap builds the part.
+module btn_slot(r, h, g = 0, z0 = undef)
+{
+    zz = (z0 == undef) ? btn_z0 : z0;
+    translate([ 0, 0, zz + g ])
+        linear_extrude(height = h - 2 * g, scale = 1)
+            offset(r = r - g, $fn = 64) import(file = switch_holes, dpi = 300);
+}
+
+// The hole through the wall: what the case has always cut.
+module btn_opening(g = 0) { btn_slot(btn_r, btn_h, g); }
+
+// The counterbore behind it, in the PCB ledge only. Note it widens the opening
+// in the PLAN directions only - the extrusion height is unchanged - so the step
+// the ears catch on is on the two long sides and there is none top or bottom.
+// Growing it vertically instead would cut the ledge the board rests on.
+module btn_counterbore(g = 0)
+{
+    intersection()
+    {
+        led_band_r(led_hi_r(), led_in_r());
+        btn_slot(btn_r + btn_ear, btn_h, g);
+    }
+}
+
+// What the plunger has to keep clear of: the switch body, and the actuator.
+// `extra` holds the cut back from the body's real front face. The PART is built
+// with travel + a gap of it, so at full travel it still clears; a checker that
+// wants the true envelope calls this with 0. ⚠️ Without that allowance the ear
+// plate's bridge - the piece spanning the middle between the shoulder and the
+// body - reads as a clean fit at rest and drives 0.25 mm into the switch when
+// pressed, which is the one position nothing static would ever test.
+module btn_switch_clear(extra = 0)
+{
+    intersection()
+    {
+        led_band_r(btn_body_front + extra, led_in_r() - 1);
+        btn_slot((btn_body_w - 1.0) / 2, btn_h + 1, 0, btn_z0 - 0.5);
+    }
+}
+
+// The plunger. Nose through the wall, two ears behind the shoulder, and a blind
+// pocket in the nose's back face for the actuator. At rest the switch's own
+// return spring holds the ears against the shoulder, which is what puts the nose
+// flush with the outer face - so the nose length is not a free choice.
+module btn_plunger(g = btn_slide_gap)
+{
+    difference()
+    {
+        union()
+        {
+            intersection() { led_band_r(led_out_r(), led_hi_r()); btn_opening(g); }
+            difference()
+            {
+                intersection()
+                {
+                    led_band_r(led_hi_r(), led_hi_r() - btn_ear_t);
+                    btn_counterbore(g);
+                }
+                btn_switch_clear(btn_travel + btn_slide_gap);
+            }
+        }
+        // the actuator pocket, from the back face outward
+        intersection()
+        {
+            led_band_r(led_hi_r() + btn_act_reach, led_in_r());
+            btn_slot((btn_act_w - 1.0) / 2, btn_act_h, 0,
+                     btn_z0 + (btn_h - btn_act_h) / 2);
+        }
+    }
+}
+
 module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_infill = true)
 {
 
@@ -808,9 +931,10 @@ module right_side_modular(mirror_text, fdm_print, with_shrink_protection, grid_i
         led_window_cut();
         if (led_insert) led_pocket_cut();
 
-        // cut out switch
-        translate([ 0, 0, pcb_edge_height - 0.4 ]) linear_extrude(height = 3, scale = 1) offset(r = 2.5)
-            import(file = switch_holes, dpi = 300);
+        // cut out switch (and, with btn_insert, the counterbore the plunger's
+        // retaining ears sit behind)
+        btn_opening();
+        if (btn_insert) btn_counterbore();
     
 
         // cut out USB
