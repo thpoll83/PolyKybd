@@ -449,6 +449,174 @@ def mail():
     return taskbar(full, APPS, 1)
 
 
+def reception_full():
+    """A visitor-management app at 3840 x 2104: today's visitors as a table (time, name,
+    company, host, badge, status), the rooms' day plan beside it."""
+    W4, H4 = 3840, 2104
+    im = Image.new("RGB", (W4, H4), (246, 247, 250))
+    d = ImageDraw.Draw(im)
+    teal = (0, 120, 130)
+    d.rectangle((0, 0, W4, 64), fill=teal)
+    d.text((30, 14), "Front Desk  -  Visitors", font=font(BOLD, 30), fill=(255, 255, 255))
+    for k, t in enumerate(["Today", "Upcoming", "Deliveries", "Rooms", "Reports"]):
+        d.text((900 + k * 230, 18), t, font=font(BOLD if k == 0 else SANS, 26), fill=(230, 245, 246))
+    d.rounded_rectangle((30, 100, 330, 160), 10, fill=teal)
+    d.text((62, 114), "+ Sign in visitor", font=font(BOLD, 24), fill=(255, 255, 255))
+    cols = [("Time", 140), ("Visitor", 330), ("Company", 300), ("Host", 260), ("Badge", 130), ("Status", 220)]
+    x0, y0, rh = 30, 200, 64
+    xs = [x0]
+    for _, w_ in cols:
+        xs.append(xs[-1] + w_)
+    d.rectangle((x0, y0, xs[-1], y0 + rh), fill=(226, 236, 238))
+    for i, (t, _) in enumerate(cols):
+        d.text((xs[i] + 14, y0 + 18), t, font=font(BOLD, 24), fill=(40, 44, 56))
+    rows = [("08:30", "J. Meyer", "Courier", "Reception", "-", "Left"), ("09:00", "S. Patel", "Brightline", "Anna Weber", "V-104", "In"),
+            ("09:15", "L. Novak", "Northwind", "Marco Rossi", "V-105", "In"), ("09:30", "Delivery", "Office supplies", "Facilities", "-", "Left"),
+            ("10:00", "K. Ito", "Studio Ko", "Lena Hofmann", "V-106", "Waiting"), ("10:30", "M. Garcia", "Garcia & Co", "Anna Weber", "", "Expected"),
+            ("11:00", "Interview", "", "HR", "", "Expected"), ("12:00", "Courier pick-up", "", "Reception", "", "Expected"),
+            ("13:00", "T. Berg", "City Council", "Jonas K.", "", "Expected"), ("14:00", "Site tour (6)", "Partner school", "Facilities", "", "Expected"),
+            ("15:30", "R. Okafor", "Brightline", "Marco Rossi", "", "Expected"), ("16:00", "Window cleaning", "CleanCo", "Facilities", "", "Expected")]
+    stc = {"In": (40, 150, 80), "Left": (130, 134, 146), "Waiting": (220, 140, 30), "Expected": (60, 110, 200)}
+    for r, row in enumerate(rows):
+        y = y0 + (r + 1) * rh
+        if r == 4:
+            d.rectangle((x0, y, xs[-1], y + rh), fill=(255, 244, 222))
+        d.line((x0, y + rh, xs[-1], y + rh), fill=(222, 225, 232), width=2)
+        for i, t in enumerate(row):
+            if i == 5:
+                d.rounded_rectangle((xs[i] + 10, y + 12, xs[i] + 160, y + 52), 18, fill=stc[t])
+                d.text((xs[i] + 30, y + 18), t, font=font(BOLD, 22), fill=(255, 255, 255))
+            else:
+                d.text((xs[i] + 14, y + 18), t, font=font(SANS, 24), fill=(40, 44, 56))
+    plan_ = calendar().resize((3840 - xs[-1] - 90, int((3840 - xs[-1] - 90) * 1440 / 2560)), Image.LANCZOS)
+    im.paste(plan_, (xs[-1] + 50, 100))
+    d.text((x0, y0 + 14 * rh), "Deliveries today: 3   ·   Badges out: 3   ·   Parking: 2 of 6 free", font=font(SANS, 26), fill=(80, 86, 100))
+    return im
+
+
+def badge_dialog():
+    """A small dialog: print a visitor badge, a badge preview, two buttons."""
+    im = Image.new("RGB", (900, 620), (250, 250, 252))
+    d = ImageDraw.Draw(im)
+    d.text((40, 30), "Print visitor badge", font=font(BOLD, 34), fill=(30, 34, 46))
+    d.rounded_rectangle((40, 100, 400, 520), 16, fill=(255, 255, 255), outline=(200, 204, 212), width=3)
+    d.rectangle((40, 100, 400, 170), fill=(0, 64, 160))
+    d.text((120, 116), "VISITOR", font=font(BOLD, 36), fill=(255, 255, 255))
+    d.text((70, 220), "Kenji Ito", font=font(BOLD, 34), fill=(30, 34, 46))
+    d.text((70, 270), "Studio Ko", font=font(SANS, 28), fill=(90, 94, 106))
+    d.text((70, 330), "Host: Lena Hofmann", font=font(SANS, 24), fill=(90, 94, 106))
+    d.text((70, 370), "V-106   22 Oct", font=font(SANS, 24), fill=(90, 94, 106))
+    for k, (t, prim) in enumerate((("Print", True), ("Cancel", False))):
+        d.rounded_rectangle((460, 400 + k * 90, 840, 470 + k * 90), 12, fill=(0, 120, 130) if prim else (232, 234, 240))
+        d.text((600, 414 + k * 90), t, font=font(BOLD if prim else SANS, 30), fill=(255, 255, 255) if prim else (40, 44, 56))
+    d.text((460, 120), "Printer: Badge-01", font=font(SANS, 24), fill=(90, 94, 106))
+    d.text((460, 160), "Paper: 54 x 86 mm", font=font(SANS, 24), fill=(90, 94, 106))
+    return im
+
+
+def reception():
+    """The front desk's screen: the visitor app, a badge dialog and a chat window over it,
+    a notification, the desktop panel."""
+    full = Image.new("RGB", (3840, 2160))
+    full.paste(reception_full(), (0, 0))
+    window(full, badge_dialog(), 600, 1180, 900, "Print badge", accent=(0, 120, 130))
+    window(full, chat(), 2560, 1240, 1100, "Chat - #budget-2026", accent=(50, 48, 76))
+    toast(full, 3150, 90, "Visitor arrived", "K. Ito for Lena Hofmann")
+    return taskbar(full, APPS, 3)
+
+
+def parcels_full():
+    """A parcel log at 3840 x 2104: today's deliveries (time, carrier, tracking, for,
+    shelf, status), a barcode scan box above it, and the week's counts beside it."""
+    W4, H4 = 3840, 2104
+    im = Image.new("RGB", (W4, H4), (248, 248, 246))
+    d = ImageDraw.Draw(im)
+    brown = (150, 96, 40)
+    d.rectangle((0, 0, W4, 64), fill=brown)
+    d.text((30, 14), "Mailroom  -  Parcels", font=font(BOLD, 30), fill=(255, 255, 255))
+    for k, t in enumerate(["Incoming", "Outgoing", "Collected", "Carriers"]):
+        d.text((900 + k * 230, 18), t, font=font(BOLD if k == 0 else SANS, 26), fill=(250, 238, 222))
+    d.rounded_rectangle((30, 100, 1400, 170), 10, outline=(200, 190, 175), width=3, fill=(255, 255, 255))
+    d.text((60, 118), "Scan or type a tracking number", font=font(SANS, 26), fill=(150, 150, 155))
+    cols = [("Time", 130), ("Carrier", 220), ("Tracking", 380), ("For", 300), ("Shelf", 130), ("Status", 230)]
+    x0, y0, rh = 30, 220, 64
+    xs = [x0]
+    for _, w_ in cols:
+        xs.append(xs[-1] + w_)
+    d.rectangle((x0, y0, xs[-1], y0 + rh), fill=(238, 228, 214))
+    for i, (t, _) in enumerate(cols):
+        d.text((xs[i] + 14, y0 + 18), t, font=font(BOLD, 24), fill=(50, 44, 40))
+    rows = [("07:55", "DHL", "JD0146 0021 774", "Facilities", "A2", "Collected"), ("08:40", "UPS", "1Z 999 AA1 0123", "Anna Weber", "B1", "Waiting"),
+            ("09:10", "Post", "RR 4470 1185 DE", "HR", "A1", "Collected"), ("09:35", "DPD", "0150 2234 8812", "Marco Rossi", "B3", "Waiting"),
+            ("10:05", "GLS", "ZK7 5521 009", "IT", "C1", "Waiting"), ("10:20", "Courier", "same-day", "Lena Hofmann", "-", "Signed"),
+            ("11:30", "UPS", "1Z 999 AA1 0457", "Jonas K.", "", "Expected"), ("14:00", "DHL Express", "pick-up 3 boxes", "Reception", "", "Expected")]
+    stc = {"Collected": (130, 134, 146), "Waiting": (220, 140, 30), "Signed": (40, 150, 80), "Expected": (60, 110, 200)}
+    for r, row in enumerate(rows):
+        y = y0 + (r + 1) * rh
+        if r == 3:
+            d.rectangle((x0, y, xs[-1], y + rh), fill=(255, 244, 222))
+        d.line((x0, y + rh, xs[-1], y + rh), fill=(226, 222, 216), width=2)
+        for i, t in enumerate(row):
+            if i == 5:
+                d.rounded_rectangle((xs[i] + 10, y + 12, xs[i] + 180, y + 52), 18, fill=stc[t])
+                d.text((xs[i] + 28, y + 18), t, font=font(BOLD, 22), fill=(255, 255, 255))
+            else:
+                d.text((xs[i] + 14, y + 18), t, font=font(MONO if i == 2 else SANS, 24), fill=(40, 44, 56))
+    bx = xs[-1] + 80                                    # this week, a bar per day
+    d.text((bx, 230), "This week", font=font(BOLD, 34), fill=(50, 44, 40))
+    for k, (day, n) in enumerate(zip(["Mon", "Tue", "Wed", "Thu", "Fri"], [14, 9, 17, 8, 0])):
+        y = 320 + k * 110
+        d.text((bx, y + 14), day, font=font(SANS, 28), fill=(80, 80, 90))
+        d.rounded_rectangle((bx + 110, y, bx + 110 + n * 42, y + 70), 8, fill=brown if k != 3 else (220, 140, 30))
+        d.text((bx + 130 + n * 42, y + 16), str(n) if n else "", font=font(BOLD, 28), fill=(50, 44, 40))
+    return im
+
+
+def softphone():
+    """A desk phone app mid-call: caller, a running timer, mute / hold / transfer / end."""
+    im = Image.new("RGB", (760, 900), (32, 36, 44))
+    d = ImageDraw.Draw(im)
+    d.ellipse((290, 70, 470, 250), fill=(70, 120, 180))
+    d.text((380, 160), "TB", font=font(BOLD, 64), fill=(255, 255, 255), anchor="mm")
+    d.text((380, 300), "Tobias Berg", font=font(BOLD, 44), fill=(240, 240, 245), anchor="mm")
+    d.text((380, 360), "City Council  ·  +49 30 1234 567", font=font(SANS, 26), fill=(170, 176, 190), anchor="mm")
+    d.text((380, 440), "03:41", font=font(BOLD, 60), fill=(120, 210, 140), anchor="mm")
+    for k, t in enumerate(["Mute", "Hold", "Transfer"]):
+        x = 120 + k * 260
+        d.ellipse((x - 70, 540, x + 70, 680), fill=(58, 62, 74))
+        d.text((x, 720), t, font=font(SANS, 26), fill=(200, 204, 214), anchor="mm")
+    d.rounded_rectangle((180, 780, 580, 870), 45, fill=(210, 50, 50))
+    d.text((380, 825), "End call", font=font(BOLD, 32), fill=(255, 255, 255), anchor="mm")
+    return im
+
+
+def rooms():
+    """Meeting-room status: a row per room, free or busy until a time."""
+    im = Image.new("RGB", (900, 560), (255, 255, 255))
+    d = ImageDraw.Draw(im)
+    d.text((30, 24), "Rooms now", font=font(BOLD, 36), fill=(40, 44, 56))
+    for k, (n, st, t) in enumerate([("Meeting 1", "busy", "until 11:00"), ("Meeting 2", "free", "until 13:30"),
+                                    ("Studio", "busy", "until 10:45"), ("Lounge", "free", "all day")]):
+        y = 110 + k * 108
+        d.rounded_rectangle((30, y, 870, y + 90), 12, fill=(246, 247, 250))
+        d.ellipse((56, y + 28, 90, y + 62), fill=(210, 60, 60) if st == "busy" else (40, 160, 80))
+        d.text((120, y + 22), n, font=font(BOLD, 32), fill=(40, 44, 56))
+        d.text((560, y + 26), t, font=font(SANS, 28), fill=(110, 114, 126))
+    return im
+
+
+def reception2():
+    """The front desk's second screen: the parcel log, the phone app mid-call and the
+    room status over it, a note, a notification, the desktop panel."""
+    full = Image.new("RGB", (3840, 2160))
+    full.paste(parcels_full(), (0, 0))
+    window(full, mail_full().resize((1920, 1080), Image.LANCZOS), 70, 1020, 1280, "Mail - Inbox", accent=(0, 95, 184))
+    window(full, rooms(), 2300, 980, 1000, "Rooms", accent=(0, 120, 130))
+    screen_note(full, 3360, 1500, (250, 230, 110), ["UPS for Anna", "-> shelf B1", "call her!"], -3)
+    toast(full, 3150, 90, "Courier at the door", "DHL Express, 3 boxes to collect")
+    return taskbar(full, APPS, 5)
+
+
 def plan():
     im = Image.new("RGB", (W, H), (236, 238, 242))
     d = ImageDraw.Draw(im)
@@ -724,6 +892,130 @@ def paper_month():
             cells[day] = (x, y)
             day += 1
     scribble(im, cells)
+    return im
+
+
+def paper_rota():
+    """A4 landscape, the front desk's rota for the week: three shifts a day, a
+    colour per person, one shift swapped by hand."""
+    im = Image.new("RGB", (1414, 1000), PAPER)
+    d = ImageDraw.Draw(im)
+    d.text((60, 50), "Front desk rota", font=font(BOLD, 60), fill=INK)
+    d.text((60, 130), "Week 43  -  20 to 24 October", font=font(SANS, 34), fill=(110, 110, 120))
+    who = {"Anna": (150, 200, 240), "Marco": (250, 200, 120), "Lea": (170, 220, 150), "Jonas": (240, 170, 190)}
+    plan = [["Anna", "Anna", "Marco", "Anna", "Lea"], ["Marco", "Lea", "Lea", "Jonas", "Marco"],
+            ["Jonas", "Jonas", "Anna", "Marco", "Jonas"]]
+    x0, y0, cw, ch = 300, 230, 210, 200
+    for c, day in enumerate(["Mon", "Tue", "Wed", "Thu", "Fri"]):
+        d.text((x0 + c * cw + 70, y0), day, font=font(BOLD, 36), fill=INK)
+    for r, shift in enumerate(["7:30 - 12:00", "12:00 - 16:30", "16:30 - 19:00"]):
+        y = y0 + 70 + r * ch
+        d.text((60, y + 75), shift, font=font(SANS, 34), fill=INK)
+        for c in range(5):
+            x = x0 + c * cw
+            d.rectangle((x + 6, y + 6, x + cw - 6, y + ch - 6), fill=who[plan[r][c]])
+            d.text((x + 30, y + 75), plan[r][c], font=font(SANS, 38), fill=INK)
+    x, y = x0 + 3 * cw, y0 + 70 + 2 * ch               # Thu evening: Marco crossed out, Lea written in
+    d.line((x + 26, y + 98, x + 140, y + 98), fill=(200, 30, 30), width=6)
+    layer = Image.new("RGBA", (200, 90), (0, 0, 0, 0))
+    ImageDraw.Draw(layer).text((4, 0), "Lea!", font=hand(64, 650), fill=(200, 30, 30, 240))
+    layer = layer.rotate(-5, resample=Image.BICUBIC)
+    im.paste(layer, (x + 60, y + 112), layer)
+    return im
+
+
+def paper_phone():
+    """A5 portrait: the internal phone list."""
+    im = Image.new("RGB", (700, 1000), (252, 252, 250))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 700, 120), fill=(40, 90, 150))
+    d.text((40, 32), "Extensions", font=font(BOLD, 52), fill=(255, 255, 255))
+    rows = [("Reception", "100"), ("IT helpdesk", "214"), ("Facilities", "230"), ("HR", "305"),
+            ("Accounts", "410"), ("Meeting rm 1", "501"), ("Meeting rm 2", "502"), ("Security", "999")]
+    for i, (n, e) in enumerate(rows):
+        y = 170 + i * 92
+        d.text((40, y), n, font=font(SANS, 38), fill=INK)
+        d.text((560, y), e, font=font(BOLD, 38), fill=INK)
+        d.line((40, y + 68, 660, y + 68), fill=(210, 210, 215), width=2)
+    d.text((40, 920), "Emergency  112", font=font(BOLD, 40), fill=(200, 30, 30))
+    return im
+
+
+def paper_desk_month():
+    """A small tear-off month calendar: November, a bar on top, the 3rd circled."""
+    im = Image.new("RGB", (800, 760), (253, 252, 249))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 800, 150), fill=(190, 60, 50))
+    d.text((40, 30), "November 2026", font=font(BOLD, 64), fill=(255, 255, 255))
+    for i, n in enumerate("MTWTFSS"):
+        d.text((60 + i * 102, 180), n, font=font(BOLD, 34), fill=(120, 120, 130) if i < 5 else (190, 60, 50))
+    day = 1
+    for r in range(6):
+        for c in range(7):
+            if (r == 0 and c < 6) or day > 30:
+                continue
+            x, y = 50 + c * 102, 240 + r * 84
+            d.text((x + 10, y), str(day), font=font(SANS, 38), fill=INK if c < 5 else (190, 60, 50))
+            if day == 3:
+                d.ellipse((x - 4, y - 8, x + 74, y + 56), outline=(30, 50, 140), width=4)
+            day += 1
+    return im
+
+
+def name_card():
+    """A desk name card, 3:1: the name large, the role under it, a teal bar at the left."""
+    im = Image.new("RGB", (1200, 400), (252, 252, 250))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 40, 400), fill=(0, 120, 130))
+    d.text((110, 70), "Lea Brandt", font=font(BOLD, 120), fill=INK)
+    d.text((114, 250), "Reception  ·  Empfang", font=font(SANS, 56), fill=(0, 120, 130))
+    return im
+
+
+def nfc_pad():
+    """The print on a contactless reader's pad: dark grey, the contactless mark (four
+    arcs) in light grey, four status lights along the bottom edge, the first one lit."""
+    im = Image.new("RGB", (760, 880), (22, 23, 26))
+    d = ImageDraw.Draw(im)
+    cx, cy = 330, 400
+    for k in range(4):                             # the arcs, opening to the right
+        r = 70 + k * 70
+        d.arc((cx - r, cy - r, cx + r, cy + r), -50, 50, fill=(205, 208, 214), width=34)
+    for k in range(4):
+        x = 230 + k * 100
+        d.ellipse((x - 18, 790 - 18, x + 18, 790 + 18), fill=(70, 255, 120) if k == 0 else (60, 62, 68))
+    return im
+
+
+def paper_wifi():
+    """A guest Wi-Fi card, the password partly handwritten over a printed blank."""
+    im = Image.new("RGB", (900, 560), (252, 252, 250))
+    d = ImageDraw.Draw(im)
+    d.text((50, 40), "Guest Wi-Fi", font=font(BOLD, 64), fill=INK)
+    d.text((50, 170), "Network", font=font(SANS, 36), fill=(120, 120, 130))
+    d.text((300, 162), "Visitors", font=font(BOLD, 46), fill=INK)
+    d.text((50, 280), "Password", font=font(SANS, 36), fill=(120, 120, 130))
+    d.line((300, 350, 820, 350), fill=(180, 180, 185), width=3)
+    d.text((310, 262), "welcome-2026", font=hand(70, 600), fill=(30, 50, 140))
+    d.text((50, 440), "Ask at the desk if it does not connect.", font=font(SANS, 30), fill=(120, 120, 130))
+    return im
+
+
+def art_arches():
+    """A large print for the lobby wall: mid-century arches and a sun in terracotta,
+    sage, ochre and ink on warm paper, with a white margin."""
+    im = Image.new("RGB", (1400, 1000), (246, 240, 228))
+    d = ImageDraw.Draw(im)
+    d.rectangle((70, 70, 1330, 930), fill=(236, 226, 206))
+    d.ellipse((860, 150, 1120, 410), fill=(222, 160, 60))                     # the sun
+    for (x0, w, col) in ((120, 420, (186, 92, 62)), (430, 360, (128, 150, 120)), (760, 300, (40, 52, 70)), (1010, 270, (196, 130, 90))):
+        top_ = 930 - int(w * 1.25)
+        d.rectangle((x0, top_ + w // 2, x0 + w, 930), fill=col)
+        d.ellipse((x0, top_, x0 + w, top_ + w), fill=col)
+    for k in range(5):                                                         # thin rings in the first arch
+        r = 60 + k * 34
+        d.arc((330 - r, 615 - r, 330 + r, 615 + r), 180, 360, fill=(246, 240, 228), width=8)
+    d.rectangle((70, 900, 1330, 930), fill=(40, 52, 70))
     return im
 
 
@@ -1099,7 +1391,7 @@ DOC_PRINTS = {             # print name: (docs asset, print size in px, zoom)
     "emoji": ("using/emoji-keycap.jpg", (1000, 1000), 1.1),
     "halves": ("assembly/split72-both-halves.jpg", (1300, 1000), 1.0),
     "displays": ("assembly/display-modules.jpg", (1300, 1000), 1.2),
-    "greek": ("using/legends-greek.jpg", (1300, 1000), 1.0),
+    "greek": ("using/legends-greek-render.jpg", (1300, 1000), 1.0),
 }
 
 
@@ -1162,7 +1454,7 @@ def clock_face():
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_sheet.jpg", sheet), ("screen_mail.jpg", mail), ("screen_plan.jpg", plan),
+    for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_sheet.jpg", sheet), ("screen_reception.jpg", reception), ("screen_reception2.jpg", reception2), ("screen_mail.jpg", mail), ("screen_plan.jpg", plan),
                      ("screen_design.jpg", design), ("screen_game.jpg", game), ("ruler.jpg", ruler),
                      ("poster_road.jpg", poster), ("cork.jpg", cork), ("paper_layout.jpg", worn(highlighted(paper_layout, [((70, 585, 430, 642), "green")]), 7)),
                      ("paper_sprint.jpg", worn(highlighted(paper_sprint, [((150, 454, 520, 512), "yellow"), ((150, 814, 470, 872), "pink")]), 3)), ("paper_chart.jpg", worn(paper_chart, 13)),
@@ -1176,7 +1468,10 @@ if __name__ == "__main__":
                      ("mat_topo.jpg", mat_topo), ("notepad_writing.png", notepad_writing), ("notepad_page.jpg", notepad_page),
                      ("wall_scuff.png", wall_scuff),
                      ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
-                     ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))))
+                     ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))),
+                     ("art_arches.jpg", art_arches), ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
+                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("nfc_pad.jpg", nfc_pad),
+                     ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))
                      + tuple((f"cover_{i}.jpg", book_cover(i)) for i in range(len(BOOKS)))
