@@ -38,7 +38,9 @@ def fetch_model(aid, res="2k"):
     d = os.path.join(OUT, aid)
     path = os.path.join(d, os.path.basename(top["url"]))
     for rel, inc in [(os.path.basename(top["url"]), top)] + list(top.get("include", {}).items()):
-        p = os.path.join(d, rel)
+        p = os.path.realpath(os.path.join(d, rel))
+        if not p.startswith(os.path.realpath(d) + os.sep):   # an include key with ../ or an absolute path
+            raise ValueError(f"{aid}: include path {rel!r} leaves {d}")
         if not os.path.exists(p):
             get(inc["url"], p)
     for key, v in files.items():                   # leaf masks: the glTF's JPG colour map has no alpha, so
@@ -105,9 +107,11 @@ def main():
         p = fetch_hdri(sc["hdri"])
         used[sc["hdri"]] = p
         print(f"{name}: room {os.path.relpath(p, HERE)}")
-        if sc.get("wall", {}).get("texture"):
-            used[sc["wall"]["texture"]["id"]] = fetch_texture(sc["wall"]["texture"]["id"])["diff"]
-        for aid in [sc["desk"]] + [pr[0] for pr in sc["props"]] + [t[0] for t in sc.get("room", {}).get("things", [])] + sc.get("fetch", []):
+        for tex in (sc.get("wall", {}).get("texture"), sc.get("counter_wood")):
+            if tex:
+                used[tex["id"]] = fetch_texture(tex["id"])["diff"]
+        things = sc.get("room", {}).get("things", []) + [t for it in sc.get("wall", {}).get("items", []) for t in it.get("things", [])]
+        for aid in [sc["desk"]] + [pr[0] for pr in sc["props"]] + [t[0] for t in things] + sc.get("fetch", []):
             if aid.startswith("@"):                   # built in the scene script, not fetched
                 continue
             if aid not in used:
