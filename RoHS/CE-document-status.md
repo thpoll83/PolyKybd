@@ -420,9 +420,9 @@ Three things make it cost nothing:
 - **The row sits flange-down with its flange face level with the web's
   underside**, which puts every V-score **in the web plane**. The tabs are a flat
   extension of the web rather than something standing off it.
-- **Each frame still exports as ONE shell** — 18914 facets, 0 degenerate facets,
-  0 non-manifold edges. It gains **96.24 mm³** against a row that measures
-  **96.61 mm³** on its own; the **0.37 mm³** difference is the single weld, which
+- **Each frame still exports as ONE shell** — 18902 facets, 0 degenerate facets,
+  0 non-manifold edges. It gains **95.92 mm³** against a row that measures
+  **96.61 mm³** on its own; the **0.69 mm³** difference is the single weld, which
   is the whole overlap there is. An intersection of the row against the frame's
   web and diffusers is **empty** (and a 1.5 mm displacement finds a collision, so
   the test is not passing for the wrong reason).
@@ -480,10 +480,21 @@ is the longest segment reaching below the grid — found in the generator by
 vertical extent among the rungs and links, ⚠️ **deliberately excluding the
 rails**, since the outermost rail drops 19 mm and would win on length while being
 on the wrong side of the board entirely. The row hangs off that branch's **lower
-tip** at y = −26.70 and runs inboard, x = −17.02…8.26 on the left half and
-mirrored on the right. **0.83 mm clear** of everything else on the frame, against
+tip** and runs inboard, (−17.10, −26.08) → (8.15, −27.18) on the left half and
+mirrored on the right. **0.90 mm clear** of everything else on the frame, against
 the **0.75 mm** three separate inserts had — so chaining them costs nothing, and
 it is one anchor to snap instead of three.
+
+✅ **The row is TILTED 2.5°, and that is load-bearing rather than styling.**
+Square to the frame it has to hang ~0.7 mm *below* the tip to keep its far end
+clear of the diffuser cap bounding the far side of the pocket — which leaves the
+anchor web half off the bottom of the tip's rounded end, welded over 1.2 mm of
+its 1.9 mm root. Tilting instead drops the far **end**, where there is 25 mm of
+lever, and lets the web come in **on the tip's centreline** so the whole root
+face is buried. It buys both things at once: clearance 0.83 → **0.90 mm** and the
+weld volume 0.37 → **0.69 mm³**. ⚠️ Swept, not guessed: clearance rises to 2° and
+then **flattens**, because past that the branch's own flank and the stub below it
+bind, and no tilt can move those — 2.5° sits in the middle of that plateau.
 
 ⚠️ **"A chained row does not fit here" was WRONG, and the way it was wrong is
 the lesson.** The earlier sweep pinned the row's end to one rung and then moved
@@ -504,13 +515,14 @@ the same primitives it builds the frame from — prints the result, and **refuse
 to emit a colliding frame**. Any change to the web topology that walks into the
 row now fails the regeneration instead of printing a part fused to its carrier.
 
-⚠️ **The anchor web is buried 0.5 mm in the branch's rounded tip, not butted
+⚠️ **The anchor web is buried 0.70 mm in the branch's rounded tip, not butted
 against it.** Butted, the root face is *tangent* to the stem — the singles got
 away with the 5 µm overlap their 0.01 mm root section happened to give them, but
-against a round tip there is no flat to sit on. Buried, the weld is a real
-1.2 × 0.9 mm of material, and the score still sits at `led_tab_l()/2` = 0.8 mm
-from the flange, which is **clear of the stem** — so it breaks at the score and
-leaves 0.3 mm standing proud of the branch.
+against a round tip there is no flat to sit on. Buried, the **whole** 1.9 mm root
+face is inside the tip, and the score still sits at `led_tab_l()/2` = 0.8 mm from
+the flange, which is **clear of the stem** — so it breaks at the score and leaves
+0.1 mm standing proud of the branch. ⚠️ The burial depth must stay **under**
+`led_tab_len/2`, or the break would land inside the branch.
 
 ⚠️ **One anchor carries the whole 25.3 mm row, which is the one thing chaining
 costs.** Three singles each had their own web, so a bad snap orphaned one part;
@@ -522,6 +534,29 @@ It sampled the candidate box at a fixed 0.5 mm step with `range(int(w/0.5)+1)`,
 which stops **0.36 mm short of the far edge** — so it never tested the corner
 that was 0.24 mm inside a diffuser cup, and reported the placement as free.
 Sample to both edges (`w*i/nx`), not by stepping from one.
+
+✅ **The insert still seats with the BROKEN-OFF V-webs attached, measured
+rather than assumed** (`parts/case/check_led_insert.py`). This is not covered by
+"the part and the pocket come from the same modules": once the row is snapped off
+and folded apart, every insert keeps the **root half** of each web it was joined
+by — `led_tab_l()/2` = **0.80 mm** standing proud of its flange end face, two of
+them on the middle one — and the pocket's own arithmetic knows nothing about
+them. Against the real cavity the stubbed part leaves **0.000000 mm³** outside
+it, with a control (a stub 1.2 mm too long) that reports 4.0 mm³. The budget: the
+cavity is 1.22 mm longer than the flange at each end *square to the wall*, and
+the stub first fouls between **1.10 and 1.20 mm** — the difference is **D1's
+3.4° skew**, which is where both margins run out first. So `led_tab_len` has
+about 0.6 mm of room left.
+
+⚠️ **The first version of that check PASSED while testing nothing**, and the
+mechanism is the one this repo already documents: `use <>` imports modules and
+functions but **NOT variables**. The test rig said `led_v_tab_root(led_tab_len +
+2*GROW)`; `led_tab_len` came back **undef**, the module collapsed to a 0.01 mm
+sliver, and the stubs it was built to check were simply absent — the part
+measured 89.37 mm³, exactly three bare inserts. The tell was the **positive
+control**: growing the stub by 1.2 mm changed the volume by nothing at all. Say
+`led_tab_l()`, the function. ⚠️ And never read a green result from a boolean test
+whose control has not been shown to bite.
 
 `export/case/led_inserts.stl` remains as the standalone fallback: all six in a
 row, 52.2 × 4.0 × 2.9 mm, one shell. The webs meet each part on the flange

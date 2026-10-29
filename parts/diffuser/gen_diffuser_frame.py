@@ -771,16 +771,21 @@ def emit_scad(side, D, path):
     _tip = min(_leg, key=lambda p: p[1])      # the branch's lower end
     ins_sgn = -1 if _tip[0] > 0 else 1        # which way the row runs (inboard)
 
-    # The two numbers that place the row.  Both were swept against the measured
-    # clearance below, and the optimum is where the two caps that bound the
-    # pocket -- one at each end of the row -- come out equal (0.83 mm each), so
-    # moving the row either way along x makes it worse.  That beats the 0.75 mm
-    # the three separate inserts had, which is why chaining them costs nothing.
-    INS_DY   = -0.70   # row centreline, below the tip: any higher and the
-                       # diffuser cap at the far end of the pocket fouls the row
-    INS_OVER = 0.50    # how far the anchor web's root is buried in the tip, so
-                       # the weld is ~1.2 x 0.9 mm instead of a tangent kiss --
-                       # the score is at led_tab_len/2, still clear of the stem
+    # The three numbers that place the row.  The row is TILTED: it leaves the
+    # tip along its own axis and drops as it runs inboard.  That is not styling.
+    # Square to the frame, the row has to hang ~0.7 mm BELOW the tip to keep its
+    # far end clear of the diffuser cap that bounds the far side of the pocket --
+    # which leaves the anchor web half off the bottom of the tip's rounded end,
+    # welded over 1.2 mm of its 1.9 mm root.  Tilting instead drops the far END
+    # (25 mm of lever) and lets the web come in ON the tip's centreline, so the
+    # whole root face is buried.  Swept: clearance rises from 0.83 mm (square) to
+    # 0.90 mm at 2 deg and then flattens -- past that the branch's own flank and
+    # the stub below it bind, and no tilt can move those.  2.5 deg sits in the
+    # middle of that plateau.
+    INS_TILT = 2.5     # deg, dropping away from the branch as the row runs inboard
+    INS_OVER = 0.70    # how far the anchor web's root is buried in the tip.  The
+                       # score is at led_tab_len/2 = 0.8, so this must stay under
+                       # it or the break would land inside the branch.
     _tab  = case_param('led_tab_len')
     _half = (case_param('led_slot_half') + case_param('led_slot_r')
              + case_param('led_flange_overlap') - case_param('led_insert_gap'))
@@ -789,51 +794,72 @@ def emit_scad(side, D, path):
     INS_HALF_H = 1.98
     _free = _tab - INS_OVER                   # free span, tip surface -> flange
     _r    = D['stem_w'] / 2
-    ins_y = _tip[1] + INS_DY
-    ins_end = _tip[0] + ins_sgn * math.sqrt((_r + _free) ** 2 - INS_DY ** 2)
-    ins_web = ins_end - ins_sgn * _tab        # the anchor web's root
+    # The row's own axis, and the frame-z rotation that produces it.  Mirrored
+    # halves tilt the same way about their own inboard direction, so the x
+    # component carries ins_sgn and the y component does not.
+    ins_ang = -ins_sgn * INS_TILT
+    _th = math.radians(INS_TILT)
+    _ux, _uy = ins_sgn * math.cos(_th), -math.sin(_th)
+    # The near flange end face sits on the ray from the tip CENTRE along that
+    # axis, so the web root lands on the tip's centreline and the full root face
+    # is inside it.
+    ins_end = (_tip[0] + _ux * (_r + _free), _tip[1] + _uy * (_r + _free))
+    ins_web = (ins_end[0] - _ux * _tab, ins_end[1] - _uy * _tab)
     ins_len = 3 * 2 * _half + 2 * _tab        # the chained row, end to end
-    ins_far = ins_end + ins_sgn * ins_len
+    ins_far = (ins_end[0] + _ux * ins_len, ins_end[1] + _uy * ins_len)
 
     # Measure the row against everything the frame puts in that pocket -- stems
     # as 2 mm capsules, diffusers as their cap discs, exactly how the frame is
     # built -- and refuse to emit a colliding one.  A silent collision here is a
     # print that fuses the row to the frame and cannot be snapped off.
-    _rx0, _rx1 = min(ins_end, ins_far), max(ins_end, ins_far)
-    _ry0, _ry1 = ins_y - INS_HALF_H, ins_y + INS_HALF_H
-    _edges = [((_rx0, _ry0), (_rx1, _ry0)), ((_rx1, _ry0), (_rx1, _ry1)),
-              ((_rx1, _ry1), (_rx0, _ry1)), ((_rx0, _ry1), (_rx0, _ry0))]
+    _cx, _cy = (ins_end[0] + ins_far[0]) / 2, (ins_end[1] + ins_far[1]) / 2
+    _corner = [(_cx + _ux * (ins_len / 2) * sx - _uy * INS_HALF_H * sy,
+                _cy + _uy * (ins_len / 2) * sx + _ux * INS_HALF_H * sy)
+               for sx, sy in ((1, 1), (1, -1), (-1, -1), (-1, 1))]
+    _edges = [(_corner[i], _corner[(i + 1) % 4]) for i in range(4)]
     ins_clear, ins_worst = 1e9, ''
     for seg in D['segs']:
         pts = [S(p) for p in seg['pts']]
         for a, b in zip(pts, pts[1:]):
-            # The leg is NOT excluded even though the row is welded to it: the
-            # weld is the web, which is not part of this rectangle, and the leg
-            # still has to clear the row's flanks (it does, by 0.96 mm).
+            # The branch is NOT excluded even though the row is welded to it: the
+            # weld is the web, which is not part of this rectangle, and the branch
+            # still has to clear the row's flanks (it does, by 0.90 mm).
             v = min(seg_seg_d(a, b, *e) for e in _edges) - _r
             if v < ins_clear:
                 ins_clear, ins_worst = v, f'stem ({a[0]:.2f},{a[1]:.2f})-({b[0]:.2f},{b[1]:.2f})'
     for l in D['leds']:
-        cx, cy = S((l['x'], l['y']))
-        v = math.hypot(max(_rx0 - cx, 0, cx - _rx1), max(_ry0 - cy, 0, cy - _ry1)) - CAP_R
+        p = S((l['x'], l['y']))
+        _lx = (p[0] - _cx) * _ux + (p[1] - _cy) * _uy
+        _ly = -(p[0] - _cx) * _uy + (p[1] - _cy) * _ux
+        v = math.hypot(max(abs(_lx) - ins_len / 2, 0.0),
+                       max(abs(_ly) - INS_HALF_H, 0.0)) - CAP_R
         if v < ins_clear:
-            ins_clear, ins_worst = v, f'diffuser cap ({cx:.2f},{cy:.2f})'
-    print(f'  insert row {ins_len:.2f} mm at y {ins_y:.2f}, x {_rx0:.2f}..{_rx1:.2f}: '
+            ins_clear, ins_worst = v, f'diffuser cap ({p[0]:.2f},{p[1]:.2f})'
+    print(f'  insert row {ins_len:.2f} mm at {INS_TILT} deg off the branch tip '
+          f'({ins_end[0]:.2f},{ins_end[1]:.2f}) -> ({ins_far[0]:.2f},{ins_far[1]:.2f}): '
           f'{ins_clear:.2f} mm clear ({ins_worst})')
     if ins_clear < CLEAR:
         raise SystemExit(f'  !! the chained insert row collides with the frame '
                          f'({ins_clear:.2f} mm < {CLEAR} mm at {ins_worst}) -- '
-                         f're-sweep INS_DY/INS_OVER')
+                         f're-sweep INS_TILT/INS_OVER')
 
     ins_rot = 180 if ins_sgn < 0 else 0
+    # Everything is placed in the ROW's own frame: translate to the near flange
+    # end face, rotate to the row's axis, then lay the strip out along local +x.
+    # ⚠️ rotate() is a proper rotation (det +1); the row must never be MIRRORED,
+    # the insert is the same part on both halves.
     ins_block = (
-        f"    translate([ {ins_end + ins_sgn * _half:.3f}, {ins_y:.3f},"
-        f" led_insert_thk() - web_t ])\n"
-        f"        rotate([ 180, 0, 0 ]) led_insert_strip(3, {ins_sgn});\n"
-        f"    translate([ {ins_web:.3f}, {ins_y:.3f}, -web_t / 2 ])"
-        f" rotate([ 0, 0, {ins_rot} ]) led_v_tab(led_tab_l(), stem_w);")
+        f"    translate([ {ins_end[0]:.3f}, {ins_end[1]:.3f}, 0 ])"
+        f" rotate([ 0, 0, {ins_ang:.2f} ]) {{\n"
+        f"        translate([ {ins_sgn * _half:.3f}, 0, led_insert_thk() - web_t ])\n"
+        f"            rotate([ 180, 0, 0 ]) led_insert_strip(3, {ins_sgn});\n"
+        f"        translate([ {-ins_sgn * _tab:.3f}, 0, -web_t / 2 ])"
+        f" rotate([ 0, 0, {ins_rot} ]) led_v_tab(led_tab_l(), stem_w);\n"
+        f"    }}")
     stub_block = (
-        f"    translate([ {ins_web:.3f}, {ins_y:.3f}, -web_t / 2 ])"
+        f"    translate([ {ins_end[0]:.3f}, {ins_end[1]:.3f}, 0 ])"
+        f" rotate([ 0, 0, {ins_ang:.2f} ])\n"
+        f"        translate([ {-ins_sgn * _tab:.3f}, 0, -web_t / 2 ])"
         f" rotate([ 0, 0, {ins_rot} ]) led_v_tab_root(led_tab_l(), stem_w);")
 
     L.append(f"""// ===========================================================================

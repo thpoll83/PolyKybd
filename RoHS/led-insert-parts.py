@@ -11,10 +11,10 @@ from figlib import Fig, C
 #   pA insert -16,-12, 9,0,0,1.45     pB insert  16, 12, 9,0,0,1.45
 #   pC chain  -14,-26,16,8.5,0,1.45   pD score   -3.2,-4.4,2.6,3.9,0,1.45
 #   pE frame  top, CENTRE=1.3,8.6,0   DIST=340
-#   pF anchor top, CENTRE=14.5,-26.9,0 DIST=24
+#   pF anchor top, CENTRE=14.5,-26.4,0 DIST=24
 S = os.environ.get('RENDERS', '/tmp/led-renders')
 
-f = Fig(1540, 1266)
+f = Fig(1540, 1296)
 f.title('The ESD insert, and how six of them get printed',
         'ONE part, three per half. The boss fills the window flush with the case’s outer face; the flange',
         'behind it sits in a pocket cut into the PCB ledge. 7.4 × 4.0 × 2.9 mm, 29.8 mm³ of clear resin.')
@@ -37,12 +37,13 @@ put(0, 1, 'pD.png', 'D — the V-score',
 put(1, 1, 'pE.png', 'E — where they ride',
     'the right frame; the row is tinted green')
 put(2, 1, 'pF.png', 'F — the anchor, close up',
-    'ONE web, into the thumb branch’s lower tip')
+    'ONE web, on the branch tip’s centreline')
 
 f.footer('From frame r1.2 each diffuser frame carries its half’s three inserts as ONE chained row: same clear resin,',
          'same print, and the frame’s bounding box does not change. The row sits flange-down with the flange face',
          'level with the web’s underside, which puts every V-score in the web plane. It hangs on a single web welded',
-         'into the lower tip of the thumb branch and runs inboard across the empty pocket, 0.83 mm clear of the rest',
-         'of the frame. Snap the row off first, then fold the three apart.')
+         'into the lower tip of the thumb branch and runs inboard across the empty pocket, tilted 2.5° so it drops',
+         'away from the diffuser cap at its far end — which buys both 0.90 mm of clearance and a web that comes in',
+         'on the tip’s centreline. Snap the row off first, then fold the three apart.')
 f.save(f'{REPO}/RoHS/led-insert-parts.svg'); f.png()
 print('ok')

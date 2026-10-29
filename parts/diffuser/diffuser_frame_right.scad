@@ -10,7 +10,7 @@
 //  diffuser() module, used unmodified — this file adds only the web.
 //
 //  ---------------------------------------------------------------------
-//  revision   r1.2          generated 2026-10-25
+//  revision   r1.2          generated 2026-10-29
 //  source     poly_kybd/poly_kybd_split72_plate_right.kicad_pcb
 //  diffusers  36
 //  web        54 rungs + 30 rails + 5 routed links,
@@ -236,28 +236,31 @@ module diffuser_frame_right_revision() {
 // exactly three per half.  Snap the strip off the frame first, then fold the
 // three apart -- a V-score breaks by folding, not by pulling.
 //
-// One anchor for the whole 25.3 mm row, with its root buried 0.5 mm in the
+// One anchor for the whole 25.3 mm row, with its root buried 0.7 mm in the
 // tip so the weld is real material and not a tangent kiss; the score sits at
 // led_tab_l()/2, clear of the stem, so it breaks THERE and not at the root.
 // The row sits flange-down with its flange face level with the web's underside,
 // which puts every V-score in the web plane -- so the webs are a flat extension
 // of the web rather than something standing off it.  Everything is derived from
 // the led_* functions in the case file, so the part cannot drift from its pocket.
-// Measured clearance to the rest of the frame: 0.83 mm (diffuser cap (21.02,-30.35)).
+// Measured clearance to the rest of the frame: 0.90 mm (stem (18.50,-8.50)-(19.00,-26.00)).
 module diffuser_frame_right_inserts() {
-    translate([ 13.340, -26.699, led_insert_thk() - web_t ])
-        rotate([ 180, 0, 0 ]) led_insert_strip(3, -1);
-    translate([ 18.620, -26.699, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab(led_tab_l(), stem_w);
+    translate([ 17.102, -26.081, 0 ]) rotate([ 0, 0, 2.50 ]) {
+        translate([ -3.680, 0, led_insert_thk() - web_t ])
+            rotate([ 180, 0, 0 ]) led_insert_strip(3, -1);
+        translate([ 1.600, 0, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab(led_tab_l(), stem_w);
+    }
 }
 
 // What is left on the branch once the score is broken: the web's root half, so
-// led_tab_l()/2 = 0.8 mm long, of which 0.5 mm is buried in the tip -- only
+// led_tab_l()/2 = 0.8 mm long, of which 0.7 mm is buried in the tip -- only
 // 0.3 mm of it stands clear.  Modelled separately because the SPACER check has
 // to measure the frame as it is FITTED, and by then the inserts are gone --
 // measuring them against the spacer measures a part that is not there (and
 // fails by ~5.7 mm3, which is how this was found).
 module diffuser_frame_right_insert_stub() {
-    translate([ 18.620, -26.699, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab_root(led_tab_l(), stem_w);
+    translate([ 17.102, -26.081, 0 ]) rotate([ 0, 0, 2.50 ])
+        translate([ 1.600, 0, -web_t / 2 ]) rotate([ 0, 0, 180 ]) led_v_tab_root(led_tab_l(), stem_w);
 }
 
 module diffuser_frame_right() {
