@@ -299,9 +299,9 @@ def main():
           f'round a 6.0 x 3.0 opening')
     print(f'            = {2 * (6.0 + 3.0) * gap:.2f} mm2 of slot against the '
           f'{6.0 * 3.0:.1f} mm2 the open window had, 2.9 mm deep,')
-    print(f'            with a {ear} mm step and a corner on the two long sides. '
-          f'DIMENSIONAL protection - see the')
-    print(f'            note in the case file.')
+    print(f'            with a {ear} mm counterbore step and a corner on the two '
+          f'long sides. DIMENSIONAL protection -')
+    print(f'            see the note in the case file.')
     cham = param('btn_chamfer')
     print(f'            The {cham} mm chamfer at the nose root shortens the tight '
           f'section on the two')

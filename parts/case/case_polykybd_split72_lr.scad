@@ -170,9 +170,21 @@ btn_z0 = pcb_edge_height - 0.4;   // 9.1, where the case has always cut the hole
 btn_h = 3.0;               // and how tall. Both MEASURED off the existing cut,
 btn_r = 2.5;               // not chosen: the opening is offset(2.5) on a line
                            // the SVG imports with a ~1.0 mm stroke, so 6.0 wide.
-btn_slide_gap = 0.12;      // per face. A SLIDING fit, so it cannot be bonded and
+btn_slide_gap = 0.20;      // per face. A SLIDING fit, so it cannot be bonded and
                            // cannot be closed up: this gap IS the remaining ESD
-                           // path, and the same 0.12 the resin holds elsewhere.
+                           // path. ⚠️ So it is the one tolerance here that is
+                           // NOT free, and it is deliberately ONE number for
+                           // the nose and for everything behind it rather than
+                           // two: the gaps behind the wall cost nothing for ESD
+                           // and could be opened up on their own, but a part
+                           // that binds binds at the nose, and a second
+                           // parameter would not help that while giving every
+                           // later reader two places to look. 0.20 rather than
+                           // the 0.12 the resin holds elsewhere because this
+                           // part has to SLIDE in a printed hole, not sit in a
+                           // bonded one: 3.6 mm2 of slot against 18 mm2 wide
+                           // open, still 5x down, and the 2.9 mm depth, the
+                           // step and the corner are unchanged.
 btn_ear = 1.4;             // how far each retaining ear reaches past the opening
 btn_ear_t = 0.8;           // and how thick it is, along the travel
 btn_under = 2.6;           // how far the counterbore reaches BELOW the opening.
@@ -195,19 +207,26 @@ btn_sep = 1.0;             // the gap kept BETWEEN the two plungers. At btn_ear
 btn_bridge = true;         // join the pair into one part, fitted in one go
 btn_bridge_t = 0.8;        // the bridge section, along the travel ...
 btn_bridge_h = 1.2;        // ... and in z. 0.8 is the print service's floor.
-btn_chamfer = 0.7;         // a 45 deg chamfer where the nose steps out to the
-                           // ears. The hole flares over its last 0.7 mm from 6.0
-                           // to 7.4 WIDE ONLY - never taller, because there is no
+btn_chamfer = 0.8;         // a 45 deg chamfer where the nose steps out to the
+                           // ears. The hole flares over its last 0.8 mm from 6.0
+                           // to 7.6 WIDE ONLY - never taller, because there is no
                            // shoulder above the opening to spend (the counterbore
                            // grows sideways and down, see btn_under) and the top
                            // of the gap is already the shortest ESD path there is.
                            // It turns the part's sharpest internal corner into a
                            // taper, so the ears and the bridge posts grow a root
-                           // instead of meeting the nose at 90 deg. Costs 0.7 mm
-                           // of the 1.4 mm flat shoulder a side; 0.7 mm is left.
-                           // ⚠️ It cannot grow much further: the per-button clip
-                           // below is +-(0.5 + btn_r + btn_chamfer), and at a
-                           // 7.8 mm pitch the two clips meet at btn_chamfer 0.9.
+                           // instead of meeting the nose at 90 deg. Costs 0.8 mm
+                           // of the 1.4 mm flat shoulder a side, leaving 0.6 -
+                           // 0.4 once the sliding gap is taken off. The 45 deg
+                           // face bears too, so that is not the whole contact.
+                           // ⚠️ 0.8 is as far as this goes. At 0.9 the two
+                           // flared holes MEET: each is 6.0 + 2*btn_chamfer wide
+                           // on a 7.8 mm pitch, so the rib of wall between reset
+                           // and boot thins from 1.8 mm at the outer face to
+                           // 1.8 - 2*btn_chamfer at the inner one - 0.2 mm here.
+                           // That is a feather edge on a wedge whose root is the
+                           // full 1.5 mm wall, not a 0.2 mm wall, so it prints;
+                           // but there is nothing left to spend.
 btn_bar_gap = 0.15;        // clearance above and below the bar in its slot. The
                            // pocket is full height only at the two ends where
                            // the posts come down; along the middle it narrows to
@@ -998,9 +1017,12 @@ module btn_switch_clear(extra = 0, tol = btn_switch_tol)
 // everything else here is a 2D profile extruded along z.
 // ⚠️ The hull has to be clipped PER BUTTON. The switch_holes SVG carries both, so
 // hulling the slabs hulls all four of them and bridges a solid slab between the
-// two buttons. The clip is +-(0.5 + btn_r + btn_chamfer) = 3.7 mm, which contains
-// one button's chamfer (btn_r + btn_chamfer = 3.2) and still leaves 0.4 mm
+// two buttons. The clip is +-(0.5 + btn_r + btn_chamfer) = 3.8 mm, which contains
+// one button's chamfer (btn_r + btn_chamfer = 3.3) and still leaves 0.2 mm
 // between the two clips on the 7.8 mm pitch.
+// ⚠️ Clipping the hull INPUTS per button instead would not buy any more room:
+// the limit is not the clip, it is that the flared holes themselves overlap
+// once btn_chamfer passes 0.9.
 module btn_nose_chamfer(g = 0)
 {
     for (c = btn_c)

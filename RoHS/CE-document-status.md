@@ -778,7 +778,7 @@ actuator **1.0 mm proud** of it, **0.25 mm** travel, and its tip lands **0.53 mm
 outboard of the board edge** — i.e. 0.38 mm *inside* the wall, which is why the
 plunger needs a blind pocket in its back face and not a flat one.
 
-The plunger is a nose that fills the hole on a **0.12 mm sliding fit**, with two
+The plunger is a nose that fills the hole on a **0.20 mm sliding fit**, with two
 **0.8 mm ears** behind a counterbore cut in the PCB ledge. The switch's own
 return spring holds the ears against the shoulder, which is what puts the nose
 flush — **the nose length is not a free choice**, it is the wall thickness.
@@ -787,13 +787,13 @@ flush — **the nose length is not a free choice**, it is the wall thickness.
 |---|---|
 | Opening | **6.0 × 3.0 mm**, 2.9 mm deep (`btn_r` = 2.5 offset on a ~1.0 mm stroke) |
 | Counterbore | **8.8 mm** (`btn_ear` = 1.4 a side) **and 2.6 mm below** the opening (`btn_under`), in the ledge only; full height only at the two ends |
-| Nose chamfer | **0.7 mm at 45°** (`btn_chamfer`) — it flares the hole in **width** (the 6.0 mm direction) only, never in height |
-| Sliding fit | **0.12 mm** per face (`btn_slide_gap`) |
+| Nose chamfer | **0.8 mm at 45°** (`btn_chamfer`) — it flares the hole in **width** (the 6.0 mm direction) only, never in height. **0.9 is the ceiling**: there the two flared holes meet |
+| Sliding fit | **0.20 mm** per face (`btn_slide_gap`), nose and pocket alike |
 | Travel | **0.25 mm** (`btn_travel`) of actuation, limited by the switch, never by the case |
 | Switch placement tolerance | **±0.25 mm** (`btn_switch_tol`), so the press is **0.25–0.75 mm** of plunger travel |
 | Board clearance | **0.4 mm** (`btn_pcb_gap`) under the ledge top — the ears and posts only; the nose is deliberately not capped |
-| The part | 16.4 × 2.5 × 5.4 mm, **67.7 mm³** — **both** plungers of a half, **two per keyboard** |
-| **Remaining ESD path** | **2.2 mm² of 0.12 mm slot**, 2.9 mm deep, with a step and a corner on each long side — against **18 mm² wide open** |
+| The part | 16.4 × 2.5 × 5.2 mm, **63.6 mm³** — **both** plungers of a half, **two per keyboard** |
+| **Remaining ESD path** | **3.6 mm² of 0.20 mm slot**, 2.9 mm deep, with a step and a corner on each long side — against **18 mm² wide open** |
 
 ✅ **Both plungers of a half are ONE part, so they fit in a single go** (2026-10-29,
 on review of the first version). At `btn_ear` 1.4 the two counterbore stadiums —
@@ -838,8 +838,8 @@ still cut apart (`btn_sep` = 1.0) even though the pocket behind them is one.
   left between the slot and the opening is what makes the slot a slot.
 
 ⚠️ **The chamfer does cost ESD path, and it is worth being exact about where.**
-It shortens the tight 0.12 mm section on the two **side** faces from 1.5 to
-1.0 mm — but those are the faces that have the 1.4 mm step and a corner behind
+It shortens the tight 0.20 mm section on the two **side** faces from 1.5 to
+0.7 mm — but those are the faces that have the 1.4 mm step and a corner behind
 them. The **top and bottom** faces are not chamfered at all, so the one straight
 2.9 mm run through the wall, which was already the weakest part of the path, is
 untouched. The cost lands entirely on the half of the path that had the margin.
@@ -847,8 +847,28 @@ If more root is wanted without paying even that, the other lever is `btn_ear_t`:
 the ear is 0.8 mm thick in a 1.4 mm pocket, so it can be thickened to ~1.2 with
 no effect on the opening at all.
 
+⚠️ **0.8 is the end of this lever** (raised 0.5 → 0.7 → 0.8 over two rounds of
+review). At **0.9** the two flared holes *meet*: each is 6.0 + 2×`btn_chamfer`
+wide on a **7.8 mm pitch**, so the rib of wall between reset and boot thins from
+1.8 mm at the outer face to 1.8 − 2×`btn_chamfer` at the inner one — **0.2 mm**
+at 0.8. That is a feather edge on a wedge whose root is the full 1.5 mm wall,
+not a 0.2 mm wall, so it prints; but there is nothing left to spend. It also
+takes the ears' **flat** bearing to 1.4 − 0.8 − 0.20 = **0.4 mm** a side (the
+45° face bears as well, so that is not the whole contact).
+
+✅ **The sliding fit went 0.12 → 0.20 per face, deliberately as ONE number**
+(2026-10-29, maintainer's call). The gaps *behind* the wall — ears, posts, bar
+— cost nothing for ESD and could have been opened on their own, which was the
+alternative offered. It was declined for a good reason: **a part that binds
+binds at the nose**, and a second parameter would not have helped that while
+giving every later reader two places to look. 0.12 is what the resin holds for a
+*bonded* flange sitting in a pocket; this part has to **slide** in a printed
+hole. The price is the whole of the ESD change: **3.6 mm² of slot instead of
+2.2**, i.e. a 5× reduction in open area rather than 8×. The depth (2.9 mm), the
+step and the corner are unchanged.
+
 ⚠️ **The slot is NOT testable by lifting the part.** The noses are already
-located in their holes to ±0.12, so they foul first whatever the pocket does and
+located in their holes to ±0.20, so they foul first whatever the pocket does and
 a lift test passes just as happily with no slot at all. What the slot adds is a
 second bearing 2.5 mm lower, against *rocking*. The check therefore measures the
 **pocket's own z profile** — solid between the slot top and the opening along the
@@ -871,7 +891,7 @@ plane) so a broken boolean cannot read as a pass.
 ⚠️ **Read the trade honestly, and put it in the file this way.** A bonded insert's
 protection is **structural** — there is no gap. A plunger's is **dimensional** —
 the gap *is* the protection, and it is only as good as the print tolerance. This
-is an **8× reduction in open area** and a path with two turns in it, not an
+is a **5× reduction in open area** and a path with two turns in it, not an
 elimination. If the ±8 kV re-test ever happens, these are the points to watch.
 
 ⚠️ **The part is cut back by travel + a gap where the switch body is, not just by
