@@ -4,7 +4,7 @@
     python3 parts/case/check_btn_plunger.py
 
 Unlike the status-LED insert, this part MOVES, so "it fits" is not one question
-but four, and three of them are about where it is allowed to go:
+but five, and four of them are about where it is allowed to go:
 
   it fits at rest          the nose in the wall, the ears behind the shoulder
   it can be pressed        still inside the cavity after btn_travel inward, so
@@ -13,6 +13,11 @@ but four, and three of them are about where it is allowed to go:
                            their job, and the only thing holding the part in
   it clears the switch     the body and the actuator are in that cavity too, and
                            the board goes in after the plunger
+  it clears the BOARD      which fitting its own cavity does NOT imply: the
+                           cavity stops at the ledge top because there is no
+                           case material above it to cut, so a part built to
+                           the opening's full height fits perfectly and still
+                           stands in the board's seat
 
 ⚠️ The protection here is DIMENSIONAL, not structural: a sliding fit cannot be
 bonded, so the remaining ESD path is just the gap. This script reports its
@@ -213,6 +218,27 @@ def main():
           f'it has room for the full {travel + 2 * tol:.2f} mm of travel',
           f'{deep:.6f} mm3 outside the cavity and the case interior together')
 
+    # --- the board ---------------------------------------------------------
+    # The board goes in AFTER the plunger and rests on the ledge, whose top face
+    # sits BELOW the top of the opening (btn_ledge_top() 11.5 against 12.1). So
+    # anything built to the opening's full height that also reaches inboard of
+    # the wall stands in the board's seat - the ears did, by 0.48 mm, and no
+    # check above could have caught it: a part is measured against the cavity,
+    # and the cavity simply stops there because the case has no material up
+    # there to remove. Hence a check against the BOARD, not against the hole.
+    pcb_gap = param('btn_pcb_gap')
+    foul = run_scad('intersection() { btn_plunger(); btn_board_stub(); }')
+    check(foul <= EPS, 'it clears the board on its ledge',
+          f'{foul:.6f} mm3 of the part inside the board')
+    # ⚠️ control. Raised by the gap it MUST foul - and note the nose cannot:
+    # it is in the wall, outboard of the board's edge, so whatever this finds
+    # is the ears and the posts, which is exactly what is capped.
+    lift = pcb_gap + 0.2
+    ctl = run_scad(f'intersection() {{ translate([0,0,{lift}]) btn_plunger(); '
+                   f'btn_board_stub(); }}')
+    check(ctl > 0.1, f'control: raised {lift:.1f} mm it does foul the board',
+          f'{ctl:.3f} mm3')
+
     # --- the bridge and its slot -------------------------------------------------------
     # The two plungers ship as ONE part so they fit in a single go, which only
     # works if the thing joining them is a FLEXURE and not a weld: reset and
@@ -276,6 +302,12 @@ def main():
     print(f'            with a {ear} mm step and a corner on the two long sides. '
           f'DIMENSIONAL protection - see the')
     print(f'            note in the case file.')
+    cham = param('btn_chamfer')
+    print(f'            The {cham} mm chamfer at the nose root shortens the tight '
+          f'section on the two')
+    print(f'            SHORT faces from 1.5 to {1.5 - cham:.1f} mm. The long faces '
+          f'keep their full run:')
+    print(f'            it flares the hole in width only, never in height.')
 
     print()
     if FAILURES:

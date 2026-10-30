@@ -195,16 +195,19 @@ btn_sep = 1.0;             // the gap kept BETWEEN the two plungers. At btn_ear
 btn_bridge = true;         // join the pair into one part, fitted in one go
 btn_bridge_t = 0.8;        // the bridge section, along the travel ...
 btn_bridge_h = 1.2;        // ... and in z. 0.8 is the print service's floor.
-btn_chamfer = 0.5;         // a 45 deg chamfer where the nose steps out to the
-                           // ears. The hole flares over its last 0.5 mm from 6.0
-                           // to 7.0 WIDE ONLY - never taller, because there is no
+btn_chamfer = 0.7;         // a 45 deg chamfer where the nose steps out to the
+                           // ears. The hole flares over its last 0.7 mm from 6.0
+                           // to 7.4 WIDE ONLY - never taller, because there is no
                            // shoulder above the opening to spend (the counterbore
                            // grows sideways and down, see btn_under) and the top
                            // of the gap is already the shortest ESD path there is.
                            // It turns the part's sharpest internal corner into a
                            // taper, so the ears and the bridge posts grow a root
-                           // instead of meeting the nose at 90 deg. Costs 0.5 mm
-                           // of the 1.4 mm flat shoulder a side; 0.9 mm is left.
+                           // instead of meeting the nose at 90 deg. Costs 0.7 mm
+                           // of the 1.4 mm flat shoulder a side; 0.7 mm is left.
+                           // ⚠️ It cannot grow much further: the per-button clip
+                           // below is +-(0.5 + btn_r + btn_chamfer), and at a
+                           // 7.8 mm pitch the two clips meet at btn_chamfer 0.9.
 btn_bar_gap = 0.15;        // clearance above and below the bar in its slot. The
                            // pocket is full height only at the two ends where
                            // the posts come down; along the middle it narrows to
@@ -255,6 +258,22 @@ btn_body_front = -0.47;    // and where that body starts, as an offset from the
                            // depth instead reads as a 5.1 mm3 clash at full
                            // travel - the nose crossing a line the switch is not
                            // actually behind.
+btn_pcb_gap = 0.4;         // clearance between the part and the BOARD'S SEAT.
+                           // ⚠️ The opening's top is 0.6 mm above the ledge top
+                           // (btn_ledge_top(), the face the board rests on), so
+                           // anything built to the opening's full height and
+                           // reaching INBOARD of the wall stands in the board's
+                           // seat: the ears did, by 0.48 mm. Capping them is
+                           // free - retention is the ears' overhang in y, not
+                           // their height - and the nose is deliberately NOT
+                           // capped, because it sits in the wall, which carries
+                           // on above the ledge, and a notch at the top of the
+                           // nose would widen the one gap that is the remaining
+                           // ESD path. 0.4 rather than a flush 0: this stacks a
+                           // printed ledge, a printed part and a board that is
+                           // not perfectly flat, and a part that fouls the board
+                           // does not fail visibly - it lifts the board off its
+                           // ledge at one end and nothing says why.
 
 
 text_font = "Arial:style=Bold Italic";
@@ -882,6 +901,38 @@ module btn_under_profile()
 function btn_pocket_half() = 0.5 + btn_r + btn_ear;
 function btn_mid() = (btn_c[0] + btn_c[1]) / 2;
 
+// The top face of the PCB ledge - the seat the board rests on. The case is built
+// by subtracting everything inboard of the outline from here up, so above this z
+// there is wall and nothing else. MEASURED back off the model: at y clear of the
+// pocket the slice runs x 182.0..184.85 below 11.5 and 183.35..184.85 above it.
+function btn_ledge_top() = case_bottom_thickness + pcb_edge_height;
+
+// How high anything reaching INBOARD of the wall's inner face may be built.
+// ⚠️ Applied to the ears and the bridge posts ONLY, never to the nose or to the
+// chamfer at its root: both of those sit in the wall, which carries on above the
+// ledge, and capping them would cut a notch out of the top of the nose - i.e.
+// widen the one gap that is the whole point of the part, to clear a collision
+// that only ever happens behind the wall.
+// ⚠️ It is a PLAIN half-space for the same reason. Writing it as 'the wall, plus
+// everything below the seat' makes it self-documenting and puts a face at exactly
+// r = led_hi_r(), which is also the outer bound of the band the ears are cut
+// from - and that coincident face is enough to make the export non-manifold.
+module btn_below_board()
+{
+    translate([ 0, 0, btn_ledge_top() - btn_pcb_gap - case_height * 3 ])
+        linear_extrude(height = case_height * 3) square(600, center = true);
+}
+
+// The board itself, as the case already models it: the bare outline, sitting on
+// the ledge. Not used by any part - it exists so a check and a figure can both
+// ask 'does this touch the board?' of the same solid.
+module btn_board_stub(t = 1.6)
+{
+    translate([ 0, 0, btn_ledge_top() ])
+        linear_extrude(height = t) offset(r = 0, $fn = 128)
+            import(file = pcb_outline, dpi = 300);
+}
+
 // The slot that keeps the two plungers independent. Confined to the opening's
 // own height: it must NOT reach the bridge below, which has to stay continuous.
 module btn_sep_cut()
@@ -912,6 +963,7 @@ module btn_bridge_posts(g = 0)
     {
         led_band_r(led_hi_r(), led_hi_r() - btn_ear_t);
         btn_counterbore(g);
+        btn_below_board();
         translate([ 0, 0, btn_z0 - btn_under ])
             linear_extrude(height = btn_h + btn_under)
                 difference()
@@ -946,8 +998,9 @@ module btn_switch_clear(extra = 0, tol = btn_switch_tol)
 // everything else here is a 2D profile extruded along z.
 // ⚠️ The hull has to be clipped PER BUTTON. The switch_holes SVG carries both, so
 // hulling the slabs hulls all four of them and bridges a solid slab between the
-// two buttons. The clip is +-(0.5 + btn_r + btn_chamfer) = 3.5 mm, which contains
-// one button's chamfer and still leaves 0.8 mm between the two clips.
+// two buttons. The clip is +-(0.5 + btn_r + btn_chamfer) = 3.7 mm, which contains
+// one button's chamfer (btn_r + btn_chamfer = 3.2) and still leaves 0.4 mm
+// between the two clips on the 7.8 mm pitch.
 module btn_nose_chamfer(g = 0)
 {
     for (c = btn_c)
@@ -994,6 +1047,9 @@ module btn_plunger(g = btn_slide_gap)
                         // the ears stay at the opening's own height; the pocket's
                         // extension below them is for the bridge, not material
                         btn_slot(btn_r + btn_ear, btn_h, g);
+                        // ... and stop below the board's seat, which the top of
+                        // the opening is already above
+                        btn_below_board();
                     }
                     btn_nose_chamfer(g);
                 }

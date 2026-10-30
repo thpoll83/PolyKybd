@@ -4,10 +4,23 @@ REPO = subprocess.run(['git','rev-parse','--show-toplevel'], cwd='/home/user/Pol
 sys.path.insert(0, f'{REPO}/.claude/skills/explain-geometry-figure')
 from figlib import Fig, C
 
-# Two 900x690 OpenSCAD renders of the exported btn_plungers.stl, recentred on
-# the pair. Build artefacts, not committed - point RENDERS at where they were
-# made.  pG outside 20,-26,16,0,0,0      pH inside -20,-26,16,0,0,0
-S = os.environ.get('RENDERS', '/tmp/btn-renders')
+# Panel D is a render of the EXPORTED part, made here rather than by hand: a
+# figure that depends on a build artefact someone made once cannot be redrawn
+# when the part changes, and this one could not (the /tmp renders were gone the
+# first time the part moved). Preview mode, not --render=cgal: the colour is the
+# point, and with the CSG already resolved into an STL there is nothing left for
+# OpenCSG to tint.
+S = os.environ.get('WORK', '/tmp/btn-plunger-fig')
+os.makedirs(S, exist_ok=True)
+if not os.path.exists(f'{S}/pH.png') or os.environ.get('FORCE'):
+    open(f'{S}/pH.scad', 'w').write(
+        f'color("#3fb950") import("{REPO}/parts/export/case/btn_plungers.stl");\n')
+    subprocess.run(['xvfb-run', '-a', 'openscad', '-o', f'{S}/pH.png',
+                    '--imgsize=900,700', '--camera=183.6,87.6,9.3,62,0,300,44',
+                    '--colorscheme=Tomorrow Night', f'{S}/pH.scad'],
+                   check=True, capture_output=True)
+    if os.path.getsize(f'{S}/pH.png') == 0:
+        raise SystemExit('empty PNG - no display?')
 
 # ---- geometry, READ from the case parameters -------------------------------
 # Not restated: this drawing is what the CE file cites for the fit, and a second
@@ -33,6 +46,9 @@ Z0 = P('pcb_edge_height') - 0.4        # btn_z0, an expression in the scad
 HH = 3.0                                # btn_h
 travel, act_reach = P('btn_travel'), P('btn_act_reach')
 body_front, body_w, act_w = P('btn_body_front'), P('btn_body_w'), P('btn_act_w')
+pcb_gap = P('btn_pcb_gap')
+LEDGE = P('case_bottom_thickness') + P('pcb_edge_height')   # btn_ledge_top(), 11.5
+CAP = LEDGE - pcb_gap        # how high anything inboard of the wall may be built
 
 # x runs INWARD from the outer face, as in led-insert-section.py
 OUT   = -(wall + clr)          # -1.65  outer face
@@ -47,7 +63,7 @@ print(f'  nose {IN_HI - OUT:.2f} long, ears {ear_t} thick, pocket {act_reach} de
 print(f'  actuator tip at {ACT:+.2f}, switch body front at {BODY:+.2f}, travel {travel}')
 print(f'  gap area {2 * (W + 3.0) * gap:.2f} mm2 against {W * 3.0:.1f} mm2 open')
 
-f = Fig(1540, 1440)
+f = Fig(1540, 1620)
 f.title('Reset / boot opening: the plunger that closes it',
         'Plan section through one button. EMC-700 left ±8 kV air discharge NOT RATED here — these are the points',
         'where it RESTARTED, and at 6.0 × 3.0 mm the biggest holes in the case. Both plungers of a half are ONE part.')
@@ -92,8 +108,8 @@ def draw(A, dx, show_dims):
             A((nose_f, hw - g))],
            C.GRN, C.GRN, sw=2, op=.45)
     if show_dims:
-        f.dim_h(A((OUT, 0))[0], A((IN_HI, 0))[0], 648, C.GRN, f'nose {IN_HI-OUT:.1f}')
-        f.dim_h(A((IN_HI, 0))[0], A((IN_LO, 0))[0], 690, C.BLU,
+        f.dim_h(A((OUT, 0))[0], A((IN_HI, 0))[0], 656, C.GRN, f'nose {IN_HI-OUT:.1f}')
+        f.dim_h(A((IN_HI, 0))[0], A((IN_LO, 0))[0], 700, C.BLU,
                 f'counterbore {IN_LO-IN_HI:.1f}')
 
 
@@ -112,44 +128,87 @@ def elevation(E):
             E((hi, Z0 + HH)), E((lo, Z0 + HH))], C.BG, C.BLU, sw=1.6, dash='5 3')
     f.poly([E((lo + post, slot_t)), E((hi - post, slot_t)),
             E((hi - post, Z0)), E((lo + post, Z0))], C.BOX, C.DIM, sw=1.6)
-    # the two noses in their holes
+    # The EARS, behind the shoulder and therefore inboard of the wall: these are
+    # what the board's seat caps. Drawn first and dimmer, with the noses over
+    # them, because that is the order the eye needs to read the step.
+    mid = (C0 + C1) / 2
+    for a, b in ((lo + gap, mid - sep / 2), (mid + sep / 2, hi - gap)):
+        f.poly([E((a, Z0 + gap)), E((b, Z0 + gap)), E((b, CAP)), E((a, CAP))],
+               C.GRN, C.GRN, sw=1.6, op=.22)
+    # the two noses in their holes - NOT capped: they are in the wall, which
+    # carries on above the ledge, so they fill the opening to its full height
     for c in (C0, C1):
         f.poly([E((c - hw + gap, Z0 + gap)), E((c + hw - gap, Z0 + gap)),
                 E((c + hw - gap, Z0 + HH - gap)), E((c - hw + gap, Z0 + HH - gap))],
                C.GRN, C.GRN, sw=2, op=.45)
+    # The board on its ledge. A BAND, not a line: at 0.4 mm apart the seat and
+    # the cap are 10 px apart at this scale, and two labelled lines there land
+    # on top of each other and on the noses.
+    f.poly([E((lo - 3.4, LEDGE)), E((hi + 3.4, LEDGE)),
+            E((hi + 3.4, LEDGE + 1.6)), E((lo - 3.4, LEDGE + 1.6))],
+           C.BLU, C.BLU, sw=1.6, op=.28)
+    f.txt(*E((lo - 3.0, LEDGE + 1.05)), 'the board, on its ledge', 15, C.BLU)
+    f.line(E((hi + 1.2, CAP)), E((hi + 1.2, LEDGE)), C.AMB, 2)
+    for z in (CAP, LEDGE):
+        f.line(E((hi + 0.9, z)), E((hi + 1.5, z)), C.AMB, 2)
+    f.txt(*E((hi + 1.8, CAP + 0.05)), f'{pcb_gap}', 15, C.AMB, bold=True)
     # the bar in its slot, and the posts reaching down to it
     f.poly([E((lo + gap, Z0 - under + bar_gap)), E((hi - gap, Z0 - under + bar_gap)),
             E((hi - gap, Z0 - under + bar_gap + br_h)),
             E((lo + gap, Z0 - under + bar_gap + br_h))], C.GRN, C.GRN, sw=2, op=.45)
     for x0 in (lo + gap, hi - post - gap):
         f.poly([E((x0, Z0 - under + bar_gap)), E((x0 + post, Z0 - under + bar_gap)),
-                E((x0 + post, Z0 + HH - gap)), E((x0, Z0 + HH - gap))],
+                E((x0 + post, CAP)), E((x0, CAP))],
                C.GRN, C.GRN, sw=2, op=.45)
 
 
 SC = 40
-f.panel(40, 170, 720, 540, 'A — at rest',
+f.panel(40, 170, 720, 580, 'A — at rest',
         'the spring holds the ears on the shoulder; the pocket is shared')
 A = Fig.frame(scale=SC, ox=300, oy=430)
 draw(A, 0.0, True)
 
-f.panel(780, 170, 720, 540, f'B — pressed {travel + tol:.2f} mm',
+f.panel(780, 170, 720, 580, f'B — pressed {travel + tol:.2f} mm',
         f'{tol} mm of slack for the switch, then its own {travel} mm of travel')
 B = Fig.frame(scale=SC, ox=1040, oy=430)
 draw(B, travel + tol, False)
 
-f.panel(40, 730, 720, 390, 'C — elevation, through the wall',
-        'full height only at the ends; the bar drops into a slot along the bottom')
-EL = Fig.frame(scale=25, ox=400 - 25 * (C0 + C1) / 2, oy=1188)
+f.panel(40, 790, 720, 430, 'C — elevation, through the wall',
+        'the ears stop under the board; the bar drops into a slot along the bottom')
+EL = Fig.frame(scale=25, ox=400 - 25 * (C0 + C1) / 2, oy=1225)
 elevation(EL)
-f.panel(780, 730, 720, 390, 'D — the pair, from inside',
+f.panel(780, 790, 720, 430, 'D — the pair, from inside',
         f'cut apart above, joined by a {post} mm-anchored beam below')
-f.image(f'{S}/pH.png', 810, 796, 660, 316, clip=(780, 730, 720, 390))
+# Fit the render by its own INK box, not by its frame: OpenSCAD leaves a wide
+# dark margin around a part this shape, and placing by the frame puts most of
+# the panel's area into that margin.
+def _place(path, area):
+    from PIL import Image
+    im = Image.open(path).convert('RGB')
+    px, (sw, sh) = im.load(), im.size
+    bg = px[2, 2]
+    x0, y0, x1, y1 = sw, sh, 0, 0
+    for y in range(0, sh, 2):
+        for x in range(0, sw, 2):
+            q = px[x, y]
+            if abs(q[0]-bg[0]) + abs(q[1]-bg[1]) + abs(q[2]-bg[2]) > 24:
+                x0, y0 = min(x0, x), min(y0, y)
+                x1, y1 = max(x1, x), max(y1, y)
+    cw, ch = x1 - x0, y1 - y0
+    ax, ay, aw, ah = area
+    k = min(aw / cw, ah / ch)
+    f.image(path, ax + (aw - cw*k)/2 - x0*k, ay + (ah - ch*k)/2 - y0*k,
+            sw*k, sh*k, clip=(780, 866, 720, 348))
+
+_place(f'{S}/pH.png', (800, 876, 680, 320))
 
 f.footer(f'The only path left is the sliding fit: {gap} mm per face, {2*(W+3.0)*gap:.1f} mm² of slot against '
          f'{W*3.0:.0f} mm² of open window, {IN_LO-OUT:.1f} mm deep, with a {ear} mm step',
-         f'and a corner on each long side. The part is cut back by travel + {tol} + {gap} mm where the switch body '
-         'is, so the ear plate',
+         f'and a corner on each long side. The board rests on a ledge {12.1 - LEDGE:.1f} mm below the top of the opening, so the '
+         f'ears stop {pcb_gap} mm under its seat;',
+         'the nose does not, because it is in the wall, which carries on above the ledge — and a notch at the top of the nose '
+         'would widen that gap.',
+         f'The part is cut back by travel + {tol} + {gap} mm where the switch body is, so the ear plate',
          f'clears it at FULL travel AND at either end of the switch\u2019s own \u00b1{tol} mm placement tolerance '
          '— positions a static check never sees.',
          f'The two plungers are cut {sep} mm apart above the bridge and the bridge touches them only at its two '
@@ -163,7 +222,7 @@ f.footer(f'The only path left is the sliding fit: {gap} mm per face, {2*(W+3.0)*
          f'before the board goes in. The pocket is cut to the furthest-out actuator, so the press runs through up '
          f'to {2*tol:.1f} mm of slack',
          f'first: {travel:.2f}–{travel + 2*tol:.2f} mm of plunger travel, not a flat {travel:.2f}. '
-         '⚠️ Unlike the bonded LED inserts, the protection here is',
+         'Unlike the bonded LED inserts, the protection here is',
          'DIMENSIONAL — it is the gap, and only as good as the print tolerance. Verify with check_btn_plunger.py.')
 f.save(f'{REPO}/RoHS/btn-plunger.svg'); f.png()
 print('figure written')

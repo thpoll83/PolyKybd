@@ -762,8 +762,11 @@ outside and the print tolerance lands in the bond gap.
 
 ### ✅ DECIDED 2026-10-29: the reset/boot openings get a RIGID PLUNGER
 
-Figure: `RoHS/btn-plunger.svg`. Part: `parts/case/btn_plungers.scad` →
-`export/case/btn_plungers.stl`, **four per keyboard**. Verified by
+Figures: `RoHS/btn-plunger.svg` (dimensioned, from the parameters) and
+`RoHS/btn-plunger-in-case.svg` (rendered from the real geometry, with the
+board). Part: `parts/case/btn_plungers.scad` →
+`export/case/btn_plungers.stl`, **two per keyboard** (each carries both of a
+half's plungers). Verified by
 `parts/case/check_btn_plunger.py`.
 
 **The buttons need a different part from the LEDs, because they must move.**
@@ -784,11 +787,12 @@ flush — **the nose length is not a free choice**, it is the wall thickness.
 |---|---|
 | Opening | **6.0 × 3.0 mm**, 2.9 mm deep (`btn_r` = 2.5 offset on a ~1.0 mm stroke) |
 | Counterbore | **8.8 mm** (`btn_ear` = 1.4 a side) **and 2.6 mm below** the opening (`btn_under`), in the ledge only; full height only at the two ends |
-| Nose chamfer | **0.5 mm at 45°** (`btn_chamfer`), on the two long sides only |
+| Nose chamfer | **0.7 mm at 45°** (`btn_chamfer`) — it flares the hole in **width** (the 6.0 mm direction) only, never in height |
 | Sliding fit | **0.12 mm** per face (`btn_slide_gap`) |
 | Travel | **0.25 mm** (`btn_travel`) of actuation, limited by the switch, never by the case |
 | Switch placement tolerance | **±0.25 mm** (`btn_switch_tol`), so the press is **0.25–0.75 mm** of plunger travel |
-| The part | 16.4 × 2.5 × 5.4 mm, **69.4 mm³** — **both** plungers of a half, **two per keyboard** |
+| Board clearance | **0.4 mm** (`btn_pcb_gap`) under the ledge top — the ears and posts only; the nose is deliberately not capped |
+| The part | 16.4 × 2.5 × 5.4 mm, **67.7 mm³** — **both** plungers of a half, **two per keyboard** |
 | **Remaining ESD path** | **2.2 mm² of 0.12 mm slot**, 2.9 mm deep, with a step and a corner on each long side — against **18 mm² wide open** |
 
 ✅ **Both plungers of a half are ONE part, so they fit in a single go** (2026-10-29,
@@ -883,6 +887,39 @@ island between them to one **16.6 mm** gap. Nothing screws the board down within
 plunger loads the board *horizontally*, into the switch, not downwards. Recorded
 because it is a real change to the board support and not visible from the part.
 
+✅ **The ears are capped under the board's seat — and fitting the cavity
+perfectly did not imply it** (2026-10-29, fourth round, spotted off the in-case
+render). The ledge top (`btn_ledge_top()`, **11.5**) is where the board sits,
+and the opening runs **9.1–12.1**, so its top is 0.6 mm *above* that seat.
+Anything built to the opening's full height that also reaches **inboard of the
+wall's inner face** therefore stands in the board's seat — and the ear plates
+did, **by 0.48 mm**.
+
+⚠️ **No fit check could have caught it, and that is the generalisable part.**
+A part is measured against its cavity; the cavity is cut out of the case; and
+the case has **no material above the ledge top to cut**, so the counterbore
+simply stops there. The part fitted its own hole perfectly while standing in a
+solid the hole knows nothing about. The fix is a check against the **board**
+(`btn_board_stub()`, the same outline the case already subtracts), with a
+control that raises the part and requires it to foul.
+
+⚠️ **The nose is deliberately NOT capped.** It sits in the wall, which carries
+on above the ledge, so it is free to fill the opening to its full height — and
+must, because a notch at the top of the nose would widen the one gap the whole
+part exists to close. The cap applies to the ears and the bridge posts only.
+Retention is unaffected: it comes from the ears' overhang in **y**, not from
+their height.
+
+⚠️ **0.4 mm rather than a flush 0.** This stacks a printed ledge, a printed
+part and a board that is not perfectly flat, and the failure is silent: a part
+that fouls lifts the board off its ledge at one end, and nothing says why.
+
+⚠️ **Writing the cap as 'the wall, plus everything below the seat' breaks the
+export.** That reading is self-documenting and was the first version, but it
+puts a face at exactly `led_hi_r()` — which is also the outer bound of the band
+the ears are cut from. The coincident face was enough to make the part
+non-manifold. It is a plain half-space, applied only where it is needed.
+
 ⚠️ **The counterbore grows sideways and DOWNWARD, never up.** The opening's top
 is already 0.6 mm above the ledge the board rests on, so growing it upward would
 undercut the board support. The step the ears catch on is therefore on the two
@@ -919,6 +956,9 @@ the z tolerance stops mattering entirely, because wherever the actuator lands in
 z it meets the same floor. That last part earns its keep: **the switch's z came
 off the footprint's fab outline, not a datasheet.** Confirm the *x* numbers
 against a real unit before the first production print; z no longer needs it.
+It is also why the switch sitting on the board **underside** — its 2.5 mm body
+hanging *down* from the ledge top, so its actuator is 0.35 mm **below** the
+opening's centre rather than on it — costs nothing.
 
 **The alternative that was not taken** is a flexible membrane or boot
 (silicone/TPU) with the same inner flange: you press *through* it and there is no

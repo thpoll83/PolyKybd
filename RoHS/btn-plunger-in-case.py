@@ -34,6 +34,8 @@ def P(n):
 gap, ear, ear_t = P('btn_slide_gap'), P('btn_ear'), P('btn_ear_t')
 post, br_h, br_t = P('btn_post'), P('btn_bridge_h'), P('btn_bridge_t')
 cham, tol = P('btn_chamfer'), P('btn_switch_tol')
+pcb_gap = P('btn_pcb_gap')
+LEDGE = P('case_bottom_thickness') + P('pcb_edge_height')   # btn_ledge_top(), 11.5
 _m = re.search(r'^btn_c\s*=\s*\[\s*([-0-9.]+)\s*,\s*([-0-9.]+)', _SRC, re.M)
 C0 = float(_m.group(1))
 
@@ -85,17 +87,36 @@ scad('slice_full', f'intersection() {{ right_case(); {BOX} }}')
 scad('slice_cut', f'intersection() {{ right_case(); {BOX} {HALF} }}')
 scad('plg_full', 'btn_plunger();')
 scad('plg_cut', f'intersection() {{ btn_plunger(); {HALF} }}')
+# ⚠️ The board goes through the SAME export, not into the view as live CSG.
+# Preview mode is what makes the per-part color() reliable, and OpenCSG's
+# depth-buffer CSG does not survive being mixed with imported meshes: the
+# clipped board rendered as the WHOLE board, in front of everything, and the
+# two imported solids came out as dotted z-fighting noise.
+scad('board_full', f'intersection() {{ btn_board_stub(1.6); {BOX} }}')
+scad('board_cut', f'intersection() {{ btn_board_stub(1.6); {BOX} {HALF} }}')
+
+# The board, from the case file's own stub so the figure and the check ask the
+# same solid.  Translucent in the two pair views or it hides the pocket it is
+# the whole point of; clipped to the slice, since it is a 182 mm board.
+def board(which, alpha):
+    return f'color("#7f9ec7", {alpha}) import("board_{which}.stl");\n'
 
 PAIR = ('color("#8b949e") import("slice_full.stl");\n'
-        'color("#3fb950") import("plg_full.stl");\n')
+        'color("#3fb950") import("plg_full.stl");\n' + board('full', 0.30))
 # The switch is NOT modelled anywhere in the case file - only the envelope it
 # must be kept out of is.  Drawn here from the EVQPUC02K datasheet box so the
 # section reads, and coloured as context, not as geometry.
+# ⚠️ The switch is on the board's UNDERSIDE, so its 2.5 mm body hangs DOWN from
+# the ledge top: it is NOT centred on the opening, and its actuator therefore
+# sits 0.35 mm below the opening's centre. That is exactly why the plunger's
+# actuator pocket is a through slot rather than a blind one - wherever the
+# actuator lands in z it meets the same floor.
 SECT = (f'color("#8b949e") import("slice_cut.stl");\n'
         f'color("#3fb950") import("plg_cut.stl");\n'
+        + board('cut', 1.0) +
         f'color("#f0b429") {{\n'
-        f'  translate([{X(-0.47) - 3.5:.3f}, {C0 - 2.35:.2f}, 9.35]) cube([3.5, 4.7, 2.5]);\n'
-        f'  translate([{X(-0.47):.3f}, {C0 - 1.1:.2f}, 10.1]) cube([1.0, 2.2, 1.0]);\n'
+        f'  translate([{X(-0.47) - 3.5:.3f}, {C0 - 2.35:.2f}, {LEDGE - 2.5:.2f}]) cube([3.5, 4.7, 2.5]);\n'
+        f'  translate([{X(-0.47):.3f}, {C0 - 1.1:.2f}, {LEDGE - 1.75:.2f}]) cube([1.0, 2.2, 1.0]);\n'
         f'}}\n')
 PART = 'color("#3fb950") import("plg_full.stl");\n'
 
@@ -122,7 +143,7 @@ def content(path):
     return im.size, (x0, y0, x1 - x0, y1 - y0)
 
 
-f = Fig(1480, 1300)
+f = Fig(1480, 1400)
 
 def place(name, area):
     (sw, sh), (cx, cy, cw, ch) = content(f'{W}/{name}.png')
@@ -140,24 +161,28 @@ f.panel(30, 150, 705, 500, 'A — from outside',
 place('pA', (42, 224, 681, 414))
 
 f.panel(745, 150, 705, 500, 'B — from inside',
-        'ears on the shoulder, bar in its slot, posts at the two ends')
+        f'the board (blue) is translucent here; the ears stop {pcb_gap} mm under it')
 place('pB', (757, 224, 681, 414))
 
 f.panel(30, 670, 705, 440, 'C — section on the left button centreline',
-        'the switch (amber) drawn from its datasheet box, not modelled')
+        'switch (amber) on the board underside, from its datasheet box')
 place('pC', (42, 744, 681, 354))
 
 f.panel(745, 670, 705, 440, 'D — the part on its own',
         f'one part per half: two plungers, a {br_t} × {br_h} mm bar, {post} mm posts')
 place('pD', (757, 744, 681, 354))
 
-f.footer('Fitted from the inside before the board goes in: the bar drops into the slot along the bottom of the pocket',
+f.footer(f'The board rests on a ledge whose top face is {12.1 - LEDGE:.1f} mm BELOW the top of the opening, so anything reaching',
+         f'inboard of the wall at the opening’s full height stands in its seat — the ears did, by 0.48 mm. They now stop',
+         f'{pcb_gap} mm under it. The nose is deliberately NOT capped: it is in the wall, which carries on above the ledge, and',
+         'a notch at the top of the nose would widen the one gap the part exists to close.',
+         'Fitted from the inside before the board goes in: the bar drops into the slot along the bottom of the pocket',
          'and locates the part, then the two noses push out through the wall. The switch’s own return spring holds',
          'the ears against the shoulder, which is what keeps the noses flush with the outer face.',
          f'Pressing one plunger bends the {post} mm-anchored beam between them, so about 0.16 N reaches the other,',
          'against the ~2.5 N its own switch needs.',
          f'Unlike the bonded LED inserts the protection here is DIMENSIONAL: it is the {gap} mm sliding gap,',
-         'and only as good as the print tolerance. Verified by parts/case/check_btn_plunger.py (12 checks).')
+         'and only as good as the print tolerance. Verified by parts/case/check_btn_plunger.py (14 checks).')
 f.save(f'{REPO}/RoHS/btn-plunger-in-case.svg')
 f.png()
 print('figure written')
