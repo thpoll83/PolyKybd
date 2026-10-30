@@ -226,26 +226,42 @@ def revision_zone(side):
                 z=(-web_t, -web_t + depth), depth=depth, web_t=web_t)
 
 
-def inserts_zone(side):
-    """Bounding box of the three ESD inserts that ride on the frame.
+def carried_zones(side):
+    """Bounding boxes of the parts that RIDE on the frame: the three ESD window
+    inserts, and the reset/boot plunger pair.
 
-    They are NOT the diffuser: they are a different part, hung on a V-scored tab
-    so it breaks off, and both the score (0.6 mm) and the insert's own flange
-    (0.88 mm) are deliberately under MIN_WALL.  Measuring them as frame walls
-    would be measuring the wrong part, so the zone is excluded -- the inserts are
-    verified against the case pockets they fit, not against this threshold.
+    They are NOT the diffuser: each is a different part, hung on a V-scored tab
+    so it breaks off, and the scores (0.3 mm at the waist) and the inserts' own
+    flanges (0.88 mm) are deliberately under MIN_WALL.  Measuring them as frame
+    walls would be measuring the wrong part, so the zones are excluded -- the
+    inserts and the plunger are verified against the case pockets they fit, not
+    against this threshold.
 
-    The box is taken by EXPORTING the module rather than recomputing its
-    arithmetic here: every number in it comes from the led_* parameters in the
-    case file, and a second copy of that would drift the first time one moves.
+    ⚠️ A LIST, one box per carried part, never their union.  The two sit at
+    opposite ends of the frame, so one box round both would excuse roughly the
+    whole frame from the wall check -- the check would still pass, and would have
+    stopped meaning anything.
+
+    Each box is taken by EXPORTING its module rather than recomputing the
+    arithmetic here: every number in it comes from the case file, and a second
+    copy of that would drift the first time one of its terms moves.
     """
+    out = []
+    for mod in ('inserts', 'plungers'):
+        z = _module_zone(side, mod)
+        if z is not None:
+            out.append(z)
+    return out or None
+
+
+def _module_zone(side, mod):
     sf = os.path.join(SRC, f'diffuser_frame_{side}.scad')
-    if not os.path.exists(sf) or '_inserts()' not in open(sf).read():
+    if not os.path.exists(sf) or f'_{mod}()' not in open(sf).read():
         return None
     fd, drv = tempfile.mkstemp(prefix='_check_tmp_', suffix='.scad', dir=SRC)
     with os.fdopen(fd, 'w') as fh:
         fh.write(f'use <diffuser_frame_{side}.scad>\n'
-                 f'diffuser_frame_{side}_inserts();\n')
+                 f'diffuser_frame_{side}_{mod}();\n')
     ofd, of = tempfile.mkstemp(prefix='z_', suffix='.stl', dir=SRC)
     os.close(ofd); os.remove(of)
     try:
@@ -282,19 +298,21 @@ def check_meshes(quick=False):
         zone = revision_zone(side)
         check(zone is not None, f'{side}: revision zone found in the scad source',
               '' if zone else 'min wall below would measure the engraving as a wall')
-        izone = None if quick else inserts_zone(side)
+        izones = None if quick else carried_zones(side)
         def in_zone(c):
             return zone and all(zone[k][0] - 0.05 <= c[i] <= zone[k][1] + 0.05
                                 for i, k in enumerate('xyz'))
         def in_inserts(c):
-            return izone and all(izone[k][0] <= c[i] <= izone[k][1]
-                                 for i, k in enumerate('xyz'))
+            return izones and any(
+                all(z[k][0] <= c[i] <= z[k][1] for i, k in enumerate('xyz'))
+                for z in izones)
 
         if quick:
-            print(f'  SKIP      {side}: min wall (--quick cannot bound the insert zone)')
+            print(f'  SKIP      {side}: min wall (--quick cannot bound the carried parts)')
             continue
-        check(izone is not None, f'{side}: insert zone measured',
-              '' if izone else 'the frame carries no _inserts() module')
+        check(izones is not None and len(izones) == 2,
+              f'{side}: carried-part zones measured',
+              f'{len(izones) if izones else 0} of 2 (inserts, plungers)')
         res = min_wall(tris, norms)
         struct = [(d, c) for d, c in res if not in_zone(c) and not in_inserts(c)]
         mn = min(d for d, _ in struct)

@@ -10,7 +10,7 @@
 //  diffuser() module, used unmodified — this file adds only the web.
 //
 //  ---------------------------------------------------------------------
-//  revision   r1.2          generated 2026-10-29
+//  revision   r1.3          generated 2026-10-30
 //  source     poly_kybd/poly_kybd_split72_plate_left.kicad_pcb
 //  diffusers  36
 //  web        54 rungs + 30 rails + 5 routed links,
@@ -225,7 +225,7 @@ module diffuser_frame_left_revision() {
     translate([-37.623, 24.026, -web_t])
         linear_extrude(0.15)
             rotate(90) mirror([1, 0, 0])
-                text("L r1.2", size = 1.0, font = "Arial:style=Bold",
+                text("L r1.3", size = 1.0, font = "Arial:style=Bold",
                      halign = "center", valign = "center", $fn = 32);
 }
 
@@ -263,24 +263,58 @@ module diffuser_frame_left_insert_stub() {
         translate([ -1.600, 0, -web_t / 2 ]) rotate([ 0, 0, 0 ]) led_v_tab_root(led_tab_l(), stem_w);
 }
 
+// The reset/boot plunger pair (EMC-700), on the same kind of V-scored web, hung
+// off a vertical rail, in the most OPEN lane the frame has.  ONE per half -- it
+// carries both of that half's plungers already.
+//
+// It lies on its BACK, travel axis into the web, so it is only 2.5 mm tall and the
+// frame's height does not grow; stood on edge it would fit a narrower gap but add
+// that to every layer of a 153 x 101 mm print.  The lane is chosen by OPENNESS --
+// clearance with the anchor rail discounted, since every candidate sits the same
+// distance from the rail it hangs on -- because this is a part you have to get
+// your fingers around and fold off by hand.  3.80 mm of open lane here.
+//
+// ⚠️ The plunger is MIRROR-SYMMETRIC about the pair's midline (measured: 0.01 mm3
+// of asymmetry against a 4.10 mm3 control with the plane 0.1 mm off), so the SAME
+// part serves both halves even though left_case() is a mirror of the right one.
+// Like the insert, it must never be emitted through mirror() -- rotate only.
+// Measured clearance to the rest of the frame: 0.90 mm (stem (-37.6,14.5)).
+module diffuser_frame_left_plungers() {
+    translate([ -39.523, 2.701, 0 ]) rotate([ 0, 0, 180 ]) {
+        translate([ 0, 0, -web_t ])
+            rotate([ 0, 0, -90 ]) rotate([ 0, -90, 0 ])
+                translate([ -182.348, -79.490, -9.300 ]) btn_plunger();
+        translate([ -1.600, 0, -web_t / 2 ]) led_v_tab(led_tab_l(), stem_w);
+    }
+}
+
+// What is left on the rail once that score is broken -- same reason as the
+// insert stub: the SPACER check measures the frame as it is FITTED.
+module diffuser_frame_left_plunger_stub() {
+    translate([ -39.523, 2.701, 0 ]) rotate([ 0, 0, 180 ])
+        translate([ -1.600, 0, -web_t / 2 ]) led_v_tab_root(led_tab_l(), stem_w);
+}
+
 module diffuser_frame_left() {
     difference() {
         union() {
             diffuser_frame_left_diffusers();
             diffuser_frame_left_web();
             diffuser_frame_left_inserts();
+            diffuser_frame_left_plungers();
         }
         diffuser_frame_left_revision();
     }
 }
 
-// The frame as it goes into the keyboard: inserts snapped off, nub left behind.
+// The frame as it goes into the keyboard: carried parts snapped off, nubs left.
 module diffuser_frame_left_fitted() {
     difference() {
         union() {
             diffuser_frame_left_diffusers();
             diffuser_frame_left_web();
             diffuser_frame_left_insert_stub();
+            diffuser_frame_left_plunger_stub();
         }
         diffuser_frame_left_revision();
     }

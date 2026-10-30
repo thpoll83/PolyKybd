@@ -23,8 +23,10 @@ Usage:
     python3 gen_diffuser_frame.py left
 """
 import sys, os, re, math, json, heapq, argparse, collections, datetime
+import subprocess, tempfile
 
-REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+HERE = os.path.dirname(os.path.abspath(__file__))
+REPO = os.path.dirname(os.path.dirname(HERE))
 
 def plate_path(side):
     return os.path.join(REPO, "poly_kybd", f"poly_kybd_split72_plate_{side}.kicad_pcb")
@@ -47,6 +49,44 @@ def case_param(name):
     return float(m.group(1))
 
 
+def module_bbox(call):
+    """Bounding box of an OpenSCAD module in the case file, by EXPORTING it.
+
+    The plunger lives in the case file's own coordinates, which follow the board
+    outline -- no scalar in that file says where it is, so these numbers cannot
+    be derived, only measured.  check_frame.py takes the insert zone the same
+    way and for the same reason: a second copy of the arithmetic drifts the
+    first time one of its terms moves.
+    """
+    fd, drv = tempfile.mkstemp(prefix='_bbox_tmp_', suffix='.scad', dir=HERE)
+    with os.fdopen(fd, 'w') as fh:
+        fh.write(f'use <{CASE_SCAD}>\n{call}\n')
+    ofd, of = tempfile.mkstemp(prefix='b_', suffix='.stl', dir=HERE)
+    os.close(ofd); os.remove(of)
+    try:
+        r = subprocess.run(['openscad', '-o', of, '--export-format', 'asciistl', drv],
+                           capture_output=True, text=True, cwd=HERE, timeout=1800)
+        out = r.stderr + r.stdout
+        # openscad exits 1 for an EMPTY result and for a syntax error alike.
+        if 'Current top level object is empty' in out or not os.path.exists(of):
+            raise SystemExit(f'module_bbox({call}): nothing came out\n{out[-600:]}')
+        pts = []
+        for ln in open(of, encoding='ascii', errors='replace'):
+            ln = ln.strip()
+            if ln.startswith('vertex'):
+                pts.append(tuple(float(v) for v in ln.split()[1:4]))
+        if not pts:
+            raise SystemExit(f'module_bbox({call}): empty mesh')
+        return {k: (min(q[i] for q in pts), max(q[i] for q in pts))
+                for i, k in enumerate('xyz')}
+    finally:
+        for f in (drv, of):
+            try:
+                os.remove(f)
+            except FileNotFoundError:
+                pass
+
+
 def seg_seg_d(p, q, r, s):
     """Exact distance between the segments pq and rs (2D)."""
     def cr(o, a, b):
@@ -58,7 +98,9 @@ def seg_seg_d(p, q, r, s):
                pt_seg_d(r, p, q), pt_seg_d(s, p, q))
 
 
-REV  = "r1.2"          # r1.0 is the file the print service refused (pre thin-wall rework)
+REV  = "r1.3"          # r1.0 is the file the print service refused (pre thin-wall rework)
+                       # r1.2 added the chained status-LED insert row;
+                       # r1.3 adds the reset/boot plunger pair (EMC-700)
 # Revision engraving: cut into the UNDERSIDE of the longest rail, which is 2.0 mm
 # wide and 19.05 mm long -- room enough, and that face points into the spacer gap
 # where nothing sees it.  0.15 mm deep, so 0.85 mm of web is left under the
@@ -851,6 +893,130 @@ def emit_scad(side, D, path):
                          f'({ins_clear:.2f} mm < {CLEAR} mm at {ins_worst}) -- '
                          f're-sweep INS_TILT/INS_UP/INS_OVER')
 
+    # ---- the reset/boot plunger pair, carried on the same frame --------------
+    # Same bargain as the inserts: a part that wants the same clear resin and the
+    # same print, snapped off before the frame is fitted.  It is far bigger than
+    # an insert and there is exactly ONE per half, so it gets its own slot rather
+    # than joining the row.
+    #
+    # It lies on its BACK -- the pair's travel axis into the web, so the part is
+    # only PLG_T tall and the frame's height (-1.00..2.70) does not grow.  Stood
+    # on edge it would fit a narrower gap but add 2.7 mm to every layer of the
+    # print, and the frame is 153 x 101 mm.
+    #
+    # ⚠️ The part's coordinates are MEASURED off the module, not restated: the
+    # plunger is built from radial bands of the board outline, so no scalar in
+    # the case file says where it is.
+    PLG_OVER = 0.70     # web root buried in the rail.  The score is at
+                        # led_tab_len/2 = 0.8, so this must stay under it or the
+                        # break would land inside the rail.
+    _pb = module_bbox('btn_plunger();')
+    PLG_L = _pb['y'][1] - _pb['y'][0]      # along the pair
+    PLG_W = _pb['z'][1] - _pb['z'][0]      # across it
+    PLG_T = _pb['x'][1] - _pb['x'][0]      # and into the web
+    _plg_free = _tab - PLG_OVER
+
+    _segs = []
+    for seg in D['segs']:
+        pts = [S(p) for p in seg['pts']]
+        _segs += [(a, b, seg['kind']) for a, b in zip(pts, pts[1:])]
+    _caps = [S((l['x'], l['y'])) for l in D['leds']]
+    _fx = ([p[0] for a, b, k in _segs for p in (a, b)]
+           + [c[0] + sg * CAP_R for c in _caps for sg in (-1, 1)])
+    _fy = ([p[1] for a, b, k in _segs for p in (a, b)]
+           + [c[1] + sg * CAP_R for c in _caps for sg in (-1, 1)])
+    FBB = (min(_fx), max(_fx), min(_fy), max(_fy))
+    XC = (FBB[0] + FBB[1]) / 2
+
+    def _plg_clear(cx, cy, ux, uy, skip=-1):
+        """Clearance of the part's footprint from everything already on the frame,
+        the LED row included -- or None if it leaves the frame's bounding box.
+
+        `skip` drops one segment, which is how the ranking below measures how OPEN
+        a slot is: every slot sits exactly _plg_free from the rail it hangs on, so
+        including the anchor makes them all tie and the choice falls to whatever
+        the sort does next."""
+        vx, vy = -uy, ux
+        cor = [(cx + ux * (PLG_L / 2) * a + vx * (PLG_W / 2) * b,
+                cy + uy * (PLG_L / 2) * a + vy * (PLG_W / 2) * b)
+               for a, b in ((1, 1), (1, -1), (-1, -1), (-1, 1))]
+        if not all(FBB[0] <= p[0] <= FBB[1] and FBB[2] <= p[1] <= FBB[3] for p in cor):
+            return None, ''
+        ed = [(cor[i], cor[(i + 1) % 4]) for i in range(4)]
+        best, who = 1e9, ''
+        for i, (a, b, k) in enumerate(_segs):
+            if i == skip:
+                continue
+            v = min(seg_seg_d(a, b, *e) for e in ed) - _r
+            if v < best:
+                best, who = v, f'stem ({a[0]:.1f},{a[1]:.1f})'
+        for c in _caps:
+            lx = (c[0] - cx) * ux + (c[1] - cy) * uy
+            ly = -(c[0] - cx) * uy + (c[1] - cy) * ux
+            v = math.hypot(max(abs(lx) - PLG_L / 2, 0.0),
+                           max(abs(ly) - PLG_W / 2, 0.0)) - CAP_R
+            if v < best:
+                best, who = v, f'diffuser cap ({c[0]:.1f},{c[1]:.1f})'
+        for i in range(4):
+            e = (_corner[i], _corner[(i + 1) % 4])
+            v = min(seg_seg_d(*e, *f) for f in ed)
+            if v < best:
+                best, who = v, 'the LED insert row'
+        return best, who
+
+    # The rule: horizontal, hung off a VERTICAL RAIL, running OUTBOARD; of the
+    # slots that clear everything, the most OPEN one, then the topmost.
+    #
+    # ⚠️ Not 'the roomiest', and not 'the outermost' either -- both were tried.
+    # Every candidate sits exactly _plg_free from the rail it hangs on, so ranking
+    # by plain clearance makes them all tie and the real choice falls through to
+    # the tiebreak.  And there is no free margin outside the last diffuser column
+    # on this frame: the grid runs to the edge, so 'outermost' just picked a lane
+    # at random.  Openness -- the clearance with the anchor rail discounted -- is
+    # what actually distinguishes them, and it is the thing that matters for a
+    # part you have to get your fingers around and fold off by hand.
+    _cands = []
+    for si, (a, b, kind) in enumerate(_segs):
+        if kind != 'rail' or abs(a[0] - b[0]) > 1e-6 or abs(a[1] - b[1]) < 10:
+            continue
+        sgn = 1 if a[0] >= XC else -1
+        for k in range(int(abs(b[1] - a[1]) * 4) + 1):
+            cy = min(a[1], b[1]) + k / 4
+            cx = a[0] + sgn * (_r + _plg_free + PLG_L / 2)
+            tight, who = _plg_clear(cx, cy, sgn, 0.0)
+            if tight is None or min(tight, _plg_free) < CLEAR:
+                continue
+            openness, _ = _plg_clear(cx, cy, sgn, 0.0, skip=si)
+            _cands.append((openness, cy, cx, sgn, tight, who))
+    if not _cands:
+        raise SystemExit('  !! nowhere on the frame clears the plunger pair -- '
+                         'relax PLG_OVER or stand it on edge')
+    _cands.sort(key=lambda z: (-z[0], -z[1]))
+    plg_open, plg_y, plg_x, plg_sgn, plg_clear, plg_worst = _cands[0]
+    plg_ang = 0 if plg_sgn > 0 else 180
+    # the near end face, where the web lands
+    plg_ex = plg_x - plg_sgn * PLG_L / 2
+    plg_ey = plg_y
+    print(f'  plunger pair {PLG_L:.2f} x {PLG_W:.2f} x {PLG_T:.2f} mm at '
+          f'({plg_ex:.2f},{plg_ey:.2f}) running {"+" if plg_sgn > 0 else "-"}x: '
+          f'{plg_clear:.2f} mm clear, {plg_open:.2f} mm of open lane ({plg_worst})')
+
+    plg_block = (
+        f"    translate([ {plg_ex:.3f}, {plg_ey:.3f}, 0 ])"
+        f" rotate([ 0, 0, {plg_ang} ]) {{\n"
+        f"        translate([ 0, 0, -web_t ])\n"
+        f"            rotate([ 0, 0, -90 ]) rotate([ 0, -90, 0 ])\n"
+        f"                translate([ {-_pb['x'][0]:.3f}, {-_pb['y'][0]:.3f},"
+        f" {-(_pb['z'][0] + _pb['z'][1]) / 2:.3f} ]) btn_plunger();\n"
+        f"        translate([ {-_tab:.3f}, 0, -web_t / 2 ])"
+        f" led_v_tab(led_tab_l(), stem_w);\n"
+        f"    }}")
+    plg_stub = (
+        f"    translate([ {plg_ex:.3f}, {plg_ey:.3f}, 0 ])"
+        f" rotate([ 0, 0, {plg_ang} ])\n"
+        f"        translate([ {-_tab:.3f}, 0, -web_t / 2 ])"
+        f" led_v_tab_root(led_tab_l(), stem_w);")
+
     ins_rot = 180 if ins_sgn < 0 else 0
     # Everything is placed in the ROW's own frame: translate to the near flange
     # end face, rotate to the row's axis, then lay the strip out along local +x.
@@ -1004,24 +1170,52 @@ module diffuser_frame_{side}_insert_stub() {{
 {stub_block}
 }}
 
+// The reset/boot plunger pair (EMC-700), on the same kind of V-scored web, hung
+// off a vertical rail, in the most OPEN lane the frame has.  ONE per half -- it
+// carries both of that half's plungers already.
+//
+// It lies on its BACK, travel axis into the web, so it is only {PLG_T:.1f} mm tall and the
+// frame's height does not grow; stood on edge it would fit a narrower gap but add
+// that to every layer of a 153 x 101 mm print.  The lane is chosen by OPENNESS --
+// clearance with the anchor rail discounted, since every candidate sits the same
+// distance from the rail it hangs on -- because this is a part you have to get
+// your fingers around and fold off by hand.  {plg_open:.2f} mm of open lane here.
+//
+// ⚠️ The plunger is MIRROR-SYMMETRIC about the pair's midline (measured: 0.01 mm3
+// of asymmetry against a 4.10 mm3 control with the plane 0.1 mm off), so the SAME
+// part serves both halves even though left_case() is a mirror of the right one.
+// Like the insert, it must never be emitted through mirror() -- rotate only.
+// Measured clearance to the rest of the frame: {plg_clear:.2f} mm ({plg_worst}).
+module diffuser_frame_{side}_plungers() {{
+{plg_block}
+}}
+
+// What is left on the rail once that score is broken -- same reason as the
+// insert stub: the SPACER check measures the frame as it is FITTED.
+module diffuser_frame_{side}_plunger_stub() {{
+{plg_stub}
+}}
+
 module diffuser_frame_{side}() {{
     difference() {{
         union() {{
             diffuser_frame_{side}_diffusers();
             diffuser_frame_{side}_web();
             diffuser_frame_{side}_inserts();
+            diffuser_frame_{side}_plungers();
         }}
         diffuser_frame_{side}_revision();
     }}
 }}
 
-// The frame as it goes into the keyboard: inserts snapped off, nub left behind.
+// The frame as it goes into the keyboard: carried parts snapped off, nubs left.
 module diffuser_frame_{side}_fitted() {{
     difference() {{
         union() {{
             diffuser_frame_{side}_diffusers();
             diffuser_frame_{side}_web();
             diffuser_frame_{side}_insert_stub();
+            diffuser_frame_{side}_plunger_stub();
         }}
         diffuser_frame_{side}_revision();
     }}

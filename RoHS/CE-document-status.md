@@ -980,6 +980,41 @@ It is also why the switch sitting on the board **underside** — its 2.5 mm body
 hanging *down* from the ledge top, so its actuator is 0.35 mm **below** the
 opening's centre rather than on it — costs nothing.
 
+✅ **The plunger pair rides on the LED diffuser frame** (2026-10-30, frame
+**r1.3**), the same bargain the status-LED inserts already take: a part that
+wants the same resin and the same print, on a V-scored web, snapped off before
+the frame is fitted. One pair per frame — it already carries both of that
+half's plungers. The generator refuses to emit a colliding one, exactly as it
+does for the insert row: measured clearance **0.90 mm** to the rail it hangs on,
+**3.80 mm** of open lane around it.
+
+⚠️ **It therefore comes out in CLEAR resin.** The frame is the light-pipe
+part; the inserts are clear by design, the buttons are clear by accident of
+sharing the print. `export/case/btn_plungers.stl` is kept as the standalone for
+exactly this — print it separately if the service buttons have to match the
+case. Flagged rather than decided: it is a visual call, not a technical one.
+
+✅ **The same part serves both halves, and that was measured rather than
+assumed.** `left_case()` is `mirror([1,0,0])` of the right, so the left half's
+pocket is the mirror of the right's — which would normally mean a mirrored
+plunger and two part numbers. It does not, because the plunger has a mirror
+plane at the pair's midline: reflecting it there leaves **0.01 mm³** of
+difference out of 63.6, against a **4.10 mm³** control with the plane moved
+0.1 mm. So it is achiral and one part fits both. Like the insert, it must never
+be emitted through `mirror()` — `rotate()` only.
+
+⚠️ **Three placement rules were tried before one survived contact with the
+frame.** 'Roomiest' is meaningless here — every candidate sits exactly the web's
+free span from the rail it hangs on, so they all tie and the choice falls
+through to whatever the sort does next. 'Outermost' was chosen next, on the
+reasoning that a part you snap off by hand wants the margin beyond the last
+diffuser column — but there is no such margin on this frame, the grid runs to
+the edge, so it picked a lane at random. What distinguishes the candidates is
+**openness**: the clearance with the anchor rail discounted. ⚠️ The first two
+were ruled out by rendering the frame and looking at where the part had landed,
+not by reading the numbers — both reported a healthy clearance while sitting
+somewhere useless.
+
 **The alternative that was not taken** is a flexible membrane or boot
 (silicone/TPU) with the same inner flange: you press *through* it and there is no
 gap at all — structural protection, like the LED inserts. It was rejected for
