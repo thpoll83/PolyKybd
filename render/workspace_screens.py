@@ -1939,6 +1939,107 @@ def clock_face():
     return im
 
 
+def poster_art(size, sky, hills, sun, title, sub, paper=(250, 236, 214)):
+    """A flat poster: a sky gradient, a sun, three sine hills and a title (the design
+    screen's artboard, and the proofs pinned beside it)."""
+    import math
+    w, h = size
+    im = Image.new("RGB", size, paper)
+    d = ImageDraw.Draw(im)
+    hgt = h * 0.62
+    for i in range(int(hgt)):
+        t = i / hgt
+        d.line((0, i, w, i), fill=tuple(int(sky[0][k] + (sky[1][k] - sky[0][k]) * t) for k in range(3)))
+    r = int(w * 0.16)
+    d.ellipse((w // 2 - r, int(hgt * 0.62) - r, w // 2 + r, int(hgt * 0.62) + r), fill=sun)
+    for j, (col, amp, base) in enumerate(zip(hills, (0.045, 0.06, 0.04), (0.60, 0.70, 0.82))):
+        pts = [(0, h)] + [(x, h * base - h * amp * math.sin(x / (w * (0.13 + 0.03 * j)) + j)) for x in range(0, w + 1, 10)] + [(w, h)]
+        d.polygon(pts, fill=col)
+    d.text((int(w * 0.07), int(h * 0.80)), title, font=font(BOLD, int(w * 0.11)), fill=paper)
+    d.text((int(w * 0.075), int(h * 0.93)), sub, font=font(SANS, int(w * 0.033)), fill=paper)
+    return im
+
+
+def poster_proof(sky, hills, sun, title, sub, note, seed):
+    """A proof print of a poster on A4: the poster with crop marks, a pen note."""
+    def draw():
+        im = Image.new("RGB", (1000, 1414), (250, 250, 247))
+        art = poster_art((780, 1100), sky, hills, sun, title, sub)
+        im.paste(art, (110, 110))
+        d = ImageDraw.Draw(im)
+        for x, y, dx, dy in ((110, 110, -1, -1), (890, 110, 1, -1), (110, 1210, -1, 1), (890, 1210, 1, 1)):
+            d.line((x + dx * 20, y, x + dx * 80, y), fill=(30, 30, 30), width=2)
+            d.line((x, y + dy * 20, x, y + dy * 80), fill=(30, 30, 30), width=2)
+        d.text((110, 1260), note, font=hand(64, 600), fill=(200, 40, 40))
+        return worn(lambda: im, seed, 0.6)()
+    return draw
+
+
+def print_type():
+    """A4 portrait: a type specimen: a big Aa, the alphabet, a size ladder."""
+    im = Image.new("RGB", (1000, 1414), (248, 246, 240))
+    d = ImageDraw.Draw(im)
+    ink = (28, 28, 32)
+    d.text((70, 40), "Aa", font=font(BOLD, 420), fill=ink)
+    d.text((620, 120), "Sans\nBold\n& Book", font=font(SANS, 54), fill=(120, 120, 126), spacing=12)
+    d.text((70, 560), "ABCDEFGHIJKLM\nNOPQRSTUVWXYZ", font=font(BOLD, 72), fill=ink, spacing=14)
+    d.text((70, 760), "abcdefghijklm\nnopqrstuvwxyz\n0123456789 &?!", font=font(SANS, 64), fill=ink, spacing=12)
+    for k, sz in enumerate((60, 44, 32, 22)):
+        y = 1010 + sum((60, 44, 32, 22)[:k]) * 1.5
+        d.text((70, y), f"{sz} pt  The quick brown fox", font=font(SANS, sz), fill=ink)
+    d.line((70, 1330, 930, 1330), fill=(220, 90, 70), width=6)
+    return im
+
+
+def print_palette():
+    """A palette card: six swatches with their hex codes, landscape."""
+    im = Image.new("RGB", (1300, 760), (250, 250, 247))
+    d = ImageDraw.Draw(im)
+    cols = [(255, 196, 140), (250, 160, 130), (230, 120, 140), (120, 80, 140), (80, 60, 120), (50, 40, 90)]
+    for i, c in enumerate(cols):
+        x = 60 + i * 200
+        d.rectangle((x, 60, x + 180, 520), fill=c)
+        d.text((x, 545), "#%02X%02X%02X" % c, font=font(MONO, 30), fill=(40, 40, 46))
+    d.text((60, 640), "Summer open air - palette B", font=hand(70, 600), fill=(30, 40, 90))
+    return im
+
+
+def paper_thumbs():
+    """A4 landscape: pencil thumbnails of poster layouts, a few crossed out, one ringed."""
+    import random as _r
+    rnd = _r.Random(3)
+    im = Image.new("RGB", (1414, 1000), (246, 244, 238))
+    d = ImageDraw.Draw(im)
+    pencil = (95, 95, 100)
+    for k in range(8):
+        cx, cy = 90 + (k % 4) * 330, 110 + (k // 4) * 430
+        bw, bh = 250, 340
+        for _ in range(2):                                     # a sketchy frame, drawn twice
+            j = lambda: rnd.randint(-4, 4)
+            d.line([(cx + j(), cy + j()), (cx + bw + j(), cy + j()), (cx + bw + j(), cy + bh + j()), (cx + j(), cy + bh + j()), (cx + j(), cy + j())], fill=pencil, width=2)
+        r = rnd.randint(35, 60)
+        sx, sy = cx + rnd.randint(70, 180), cy + rnd.randint(70, 150)
+        d.ellipse((sx - r, sy - r, sx + r, sy + r), outline=pencil, width=2)
+        for m in range(3):
+            y = cy + 190 + m * 30
+            d.line([(cx + x, y + 10 * (((x // 30) + m) % 2)) for x in range(0, bw, 30)], fill=pencil, width=2)
+        d.rectangle((cx + 20, cy + bh - 70, cx + 20 + rnd.randint(120, 200), cy + bh - 45), outline=pencil, width=2)
+        if k in (1, 4, 6):
+            d.line((cx, cy, cx + bw, cy + bh), fill=pencil, width=3); d.line((cx + bw, cy, cx, cy + bh), fill=pencil, width=3)
+        if k == 2:
+            d.ellipse((cx - 30, cy - 30, cx + bw + 30, cy + bh + 30), outline=(200, 40, 40), width=5)
+            d.text((cx + 40, cy + bh + 30), "this one!", font=hand(56, 600), fill=(200, 40, 40))
+    return im
+
+
+PROOFS = {
+    "proof_summer_a.jpg": (((255, 214, 120), (240, 140, 80)), ((200, 110, 70), (150, 70, 60), (90, 40, 50)), (255, 245, 200),
+                           "SUMMER", "open air  ·  friday", "too warm?", 47),
+    "proof_night.jpg": (((40, 60, 110), (20, 24, 60)), ((60, 90, 140), (40, 60, 110), (20, 30, 70)), (240, 230, 190),
+                        "NIGHT", "market  ·  saturday", "v2 - ok", 53),
+}
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_sheet.jpg", sheet), ("screen_reception.jpg", reception), ("screen_reception2.jpg", reception2), ("screen_mail.jpg", mail), ("screen_plan.jpg", plan),
@@ -1960,11 +2061,16 @@ if __name__ == "__main__":
                      ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("screen_plan2.jpg", plan2), ("mat_cutting.jpg", mat_cutting), ("mat_blue.jpg", mat_blue), ("steel_scratches.png", steel_scratches), ("photo_building.jpg", photo_building), *[("photo_%s.jpg" % n, arch_print(n)) for n in ARCH_PHOTOS],
                      ("paper_elevation.jpg", worn(highlighted(paper_elevation, [((60, 860, 640, 912), "yellow")]), 37)),
                      ("paper_section.jpg", worn(paper_section, 41)), ("paper_site.jpg", worn(paper_site, 43, 0.8)), ("nfc_pad.jpg", nfc_pad),
-                     ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])))
+                     ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])),
+                     ("print_type.jpg", worn(print_type, 59, 0.6)), ("print_palette.jpg", worn(print_palette, 61, 0.5)),
+                     ("paper_thumbs.jpg", worn(paper_thumbs, 67)), ("sticky_lilac.jpg", sticky((210, 190, 240), ["client", "call 3pm"])),
+                     *[(n, poster_proof(*a)) for n, a in PROOFS.items()])
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))
                      + tuple((f"cover_{i}.jpg", book_cover(i)) for i in range(len(BOOKS)))
                      + tuple((f"back_{i}.jpg", book_back(i)) for i in range(len(BOOKS)))):
+        if sys.argv[1:] and name not in sys.argv[1:]:   # only the named files
+            continue
         im_ = fn()
         im_.save(os.path.join(OUT, name), **({} if name.endswith(".png") else {"quality": 88}))
         print("wrote", os.path.join("render", "textures", "workspace", name))
