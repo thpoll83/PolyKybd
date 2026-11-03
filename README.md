@@ -60,14 +60,13 @@ Independent of your choice, here are the parts you need before putting everythin
 
 * Case (left/right) - You can either 3D print or get them CNCed (but then you should add some threads to the screw holes):
   [parts/export/case/case_polykybd_split72_left_r7.stl](parts/export/case/case_polykybd_split72_left_r7.stl)
-  ![Case](images/case_l.png)
+  ![Render of the r7 left case, open side up](images/case-left-render.jpg)
   [parts/export/case/case_polykybd_split72_right_r7.stl](parts/export/case/case_polykybd_split72_right_r7.stl)
-  ![Case](images/case_r.png)
+  ![Render of the r7 right case, open side up](images/case-right-render.jpg)
   In case the resin print has some deformations, it is best to use a hairdryer to slightly heat the case up and then put something heavy on the bottom to make it flat - it really works.
 * Spacer to keep the right distance between plate and PCB (again, can be 3D printed):
-  [parts/export/case/spacer.stl
-  ![Spacer](images/spacer.png)
-  ](parts/export/case/spacer.stl)
+  [parts/export/case/spacer.stl](parts/export/case/spacer.stl). If you fit the LED diffuser frame, print [parts/export/case/spacer_diffuser_frame.stl](parts/export/case/spacer_diffuser_frame.stl) instead. It is notched for the frame on both faces, so one part works on either half.
+  ![Render of spacer_diffuser_frame.stl](images/spacer-render.jpg)
 * Assembled 4 layers PCB 1.6mm (left/right)
   The latest gerber files with BOM and pick/place file can be found in [poly_kybd/Gerber](poly_kybd/Gerber) I made some final adjusts on the latest version, which I did not yet order (I will let you know as soon as I did).
   [poly_kybd/Gerber/PCB/left-side-v3.2/PolyKybd_Split72_L_3.2.zip](poly_kybd/Gerber/PCB/left-side-v3.2/PolyKybd_Split72_L_3.2.zip)
@@ -114,6 +113,7 @@ Independent of your choice, here are the parts you need before putting everythin
   | Aflion Tropical Waters            | Linear          | 68g   |
   | Ashkeebs Alexandrite              | Linear          | 58g   |
   | Blue Dusk Panda                   | Linear          | 62g   |
+  | BSUN x Unikeys Udon               | Linear          | 48g   |
   | CK x Haimu Pastel Lemon           | Linear          | 63.5g |
   | Ck x Haimu Pastel Thistle         | Tactile         | 63.5g |
   | Gateron KS-9 (Pro) Blue           | Clicky          | 60g   |
@@ -126,13 +126,23 @@ Independent of your choice, here are the parts you need before putting everythin
   | Geon Yellow                       | Linear          | 63.5g |
   | Glorious Panda                    | Tactile         | 67g   |
   | GOJU Works x Tecsee Safety Switch | Linear          | 65g   |
+  | HMX Cthulhu                       | Linear          | 45-50g|
+  | HMX Emo                           | Linear          | 40g   |
+  | HMX Hazelnut V2                   | Linear          | 43g   |
+  | HMX K01 Light                     | Tactile         | 45g   |
+  | HMX Lotus                         | Linear          | 62.5g |
+  | HMX Su Color Pink                 | Linear          | 45g   |
+  | HMX x Sillyworks Sonja            | Linear          | 45g   |
+  | HMX x Unikeys Purple Dawn         | Linear          | 55g   |
   | Kailh Novel Keys Cream Switch     | Linear          | 55g   |
   | Kailh Purple Potato               | Tactile         | 63.5g |
   | Kailh x Domikey Knight Saber      | Tactile         | 42g   |
+  | Keygeek M3                        | Linear          | 48g   |
   | LCET Grace                        | Linear          | 50g   |
   | LCET Joker                        | Tactile         | 58g   |
   | LCET Pink Queen                   | Tactile         | 58g   |
   | LCET Sprout                       | Linear          | 50g   |
+  | MMD Holy Panda V3                 | Tactile         | 45g   |
   | Outemu (Dustproof) Black          | Linear          | 65g   |
   | Outemu (Dustproof) Blue           | Clicky          | 65g   |
   | Outemu (Dustproof) Brown          | Tactile         | 50g   |
