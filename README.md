@@ -227,6 +227,9 @@ Independent of your choice, here are the parts you need before putting everythin
   `parts/keycap_stem/build_stems.sh` — see [parts/README.md](parts/README.md).
 * Status display holder (or cover/dummy in case no status display is used), can be 3D printed.
   [parts/export/display_holder/display_holder_r1.stl](parts/export/display_holder/display_holder_r1.stl) / [parts/export/display_holder/display_holder_dummy_r1.stl](parts/export/display_holder/display_holder_dummy_r1.stl)
+* LED diffuser frame (optional, recommended) - one part per half. Each key's LED shines through a half-round hole in the plate, and without a diffuser it shows as a bright point. The frame holds all 36 diffusers of one half at their plate positions, connected by a web under the plate. Print it in resin (SLA): it is thin, and the web is close to the 0.8mm minimum wall a print service accepts.
+  [parts/export/diffuser/diffuser_frame_left.stl](parts/export/diffuser/diffuser_frame_left.stl) / [parts/export/diffuser/diffuser_frame_right.stl](parts/export/diffuser/diffuser_frame_right.stl) (`_4x` files put four on one plate)
+  With the frame you need the other spacer, `spacer_diffuser_frame.stl` (see Spacer above), because the plain spacer has no room for the web.
 * Transparent keycap covers - 72 pieces (from relegendable keycaps [like these](https://de.aliexpress.com/item/1005002996832179.html?spm=a2g0o.order_list.order_list_main.111.49985c5f1EyPsm&gatewayAdapt=glo2deu)), 58x 1U and 14x 1.25U. Various sources sell them on Alibaba, AliExpress, Amazon & Co.
 * Optional rotary encoder ([EVQWGD001](https://de.aliexpress.com/i/32990950196.html?gatewayAdapt=gloMsite2deuPcglo2deu) or [Alps EC11 Encoder](https://www.mouser.at/c/electromechanical/encoders/?m=Alps%20Alpine&series=EC11)), [pimoroni trackball](https://mou.sr/3rmFiAO) or [23mm cirque trackpad](https://www.mouser.at/ProductDetail/Cirque/TM023023-2024-002?qs=wd5RIQLrsJhgKZTW4CXgsA%3D%3D&countryCode=DE&currencyCode=EUR) (and a 12 pin FPC cable with pins on the same side, about 50mm to 70mm). For the trackpad you will need another 3D printed holder, either a high one or a low one: ![Cirque Trackpad Inserts](images/cirque_inserts.png)
   [parts/export/cirque_insert/cirque23_slim_insert_r8.stl](parts/export/cirque_insert/cirque23_slim_insert_r8.stl)
@@ -259,6 +262,8 @@ Here is my recommended order:
       ![5mm hole drilled into the cap](images/ltr559_cap_hole.jpg)
 
    The sensor is auto-detected on whichever half you solder it to - no firmware option to enable. See the [firmware readme](https://github.com/thpoll83/qmk_firmware/blob/PolyKybd/keyboards/polykybd/readme.md) for how it drives auto-brightness and proximity wake.
+1. **(Optional) Fit the LED diffuser frame into the plate - do this first, before anything else touches the plate.** Hold the frame under the plate so that each diffuser goes up through its own switch opening. Then slide the frame about 5.5mm, so that each diffuser moves out of the switch opening and into the half-round LED hole next to it, until every diffuser sits in its half-round. The caps on the top and bottom hold the plate between them, and the switches stop the frame from sliding back later, so no glue is needed. Do this while the plate is free: the slide needs the space under the plate, which the spacer fills once the plate is on it.
+   ![Diffuser frame fitted into the left plate, top side and underside](images/diffuser-frame-in-plate.jpg)
 1. In case you want to use an [Alps EC11 Encoder](https://www.mouser.at/c/electromechanical/encoders/?m=Alps%20Alpine&series=EC11) or some remaining stock of the not any more produced [EVQWGD001](https://de.aliexpress.com/i/32990950196.html?gatewayAdapt=gloMsite2deuPcglo2deu), put it on the PCB and also put the keyboard plate once on top to make sure your encoder fits! In case of the EVQWGD001, you have to remove the last pin, before soldering it to the PCB Juts clip it away. DO NOT solder it to the PCB, or otherwise it will not work:
 ![EVQWGD001](images/evqwgd001.png)
 Depending on the type of EC11 encoder, you maybe want to put a piece of Kapton tape over the legs, in case they come close to the plate (it was not necessary for mine, but there are different kinds out there).
@@ -274,7 +279,7 @@ Depending on the type of EC11 encoder, you maybe want to put a piece of Kapton t
 There is also an experimental version for the 35mm trackpad, take a look at the parts folder.
 3. Insert the 0.96 inch status display into the display holder (bend the holder back and let it snap back to bracket the display). Connect the FPC with the socket on the PCB and lock it by lowering the brown flap on the FPC side (if you don't have a status display just close the cut out with the blind lid):
    ![Status Display](images/status_display.jpg)
-4. Put the spacer on top.
+4. Put the spacer on top. If you fitted the LED diffuser frame, this must be `spacer_diffuser_frame.stl`.
 5. While putting the plate on top of the assembly, fit the status display holder (or blind) into the plate from the plates back side:
    ![Insert Status Display](images/insert_display.jpg)
    Then, the plate rests on the spacer, which again rests on the PCB. I pushed in two screws temporarily to align plate and PCB:
