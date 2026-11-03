@@ -1374,12 +1374,119 @@ def nfc_reader():
     return g, [body, pr, card]
 
 
+def window_wall(W_, paint, y_wall, x_mid, hw):
+    """A wall depth W_["depth"] thick with a steel-framed window opening W_["x"] (from the
+    desk's centre) by W_["z"] (from the floor): the wall in four blocks round the hole,
+    their texture in world coordinates so the brick runs on across them, plaster
+    reveals, and near the outer face a black steel grid of W_["cols"] x W_["rows"] panes
+    with clear glass that throws no shadow, so the sun comes through in the grid's shape."""
+    x0, x1 = x_mid + W_["x"][0], x_mid + W_["x"][1]
+    z0, z1 = W_["z"]
+    dp = W_.get("depth", 0.30)
+    parts = []
+    for name, lo, hi in (("wall left", (x_mid - hw, y_wall, 0.0), (x0, y_wall + dp, 2.6)),
+                         ("wall right", (x1, y_wall, 0.0), (x_mid + hw, y_wall + dp, 2.6)),
+                         ("wall below", (x0, y_wall, 0.0), (x1, y_wall + dp, z0)),
+                         ("wall above", (x0, y_wall, z1), (x1, y_wall + dp, 2.6))):
+        o = cube(name, lo, hi, paint, 0.0)
+        o.select_set(True); bpy.context.view_layer.objects.active = o
+        bpy.ops.object.transform_apply(location=True)          # object = world coordinates: one brick course
+        o.select_set(False)
+        parts.append(o)
+    plaster = principled("window reveal", W_.get("reveal", (0.80, 0.79, 0.76)), 0.85)
+    t = 0.012
+    parts += [cube("reveal left", (x0, y_wall - 0.002, z0), (x0 + t, y_wall + dp, z1), plaster, 0.002),
+              cube("reveal right", (x1 - t, y_wall - 0.002, z0), (x1, y_wall + dp, z1), plaster, 0.002),
+              cube("window sill", (x0 - 0.03, y_wall - 0.035, z0 - 0.02), (x1 + 0.03, y_wall + dp, z0 + t), plaster, 0.003),
+              cube("reveal head", (x0, y_wall - 0.002, z1 - t), (x1, y_wall + dp, z1), plaster, 0.002)]
+    steel = principled("window steel", (0.018, 0.018, 0.02), 0.45)
+    yf = y_wall + dp - 0.06
+    b, m = 0.045, 0.022
+    for name, lo, hi in (("frame left", (x0 + t, yf, z0 + t), (x0 + t + b, yf + 0.05, z1 - t)),
+                         ("frame right", (x1 - t - b, yf, z0 + t), (x1 - t, yf + 0.05, z1 - t)),
+                         ("frame bottom", (x0 + t, yf, z0 + t), (x1 - t, yf + 0.05, z0 + t + b)),
+                         ("frame top", (x0 + t, yf, z1 - t - b), (x1 - t, yf + 0.05, z1 - t))):
+        parts.append(cube(name, lo, hi, steel, 0.002))
+    ix0, ix1, iz0, iz1 = x0 + t + b, x1 - t - b, z0 + t + b, z1 - t - b
+    for k in range(1, W_.get("cols", 3)):
+        xm = ix0 + (ix1 - ix0) * k / W_.get("cols", 3)
+        parts.append(cube(f"mullion {k}", (xm - m / 2, yf + 0.005, iz0), (xm + m / 2, yf + 0.04, iz1), steel, 0.0015))
+    for k in range(1, W_.get("rows", 4)):
+        zm = iz0 + (iz1 - iz0) * k / W_.get("rows", 4)
+        parts.append(cube(f"transom {k}", (ix0, yf + 0.005, zm - m / 2), (ix1, yf + 0.04, zm + m / 2), steel, 0.0015))
+    glass = bpy.data.materials.new("window glass")
+    glass.use_nodes = True
+    gb = glass.node_tree.nodes["Principled BSDF"]
+    gb.inputs["Transmission Weight"].default_value = 1.0
+    gb.inputs["Roughness"].default_value = 0.0
+    gb.inputs["IOR"].default_value = 1.0               # a thin pane: reflections, no lens
+    pane = cube("window glass", (ix0, yf + 0.024, iz0), (ix1, yf + 0.026, iz1), glass, 0.0)
+    pane.visible_shadow = False
+    parts.append(pane)
+    return parts
+
+
+def swatch_fan():
+    """A colour swatch book fanned open: 14 strips 45 x 200 x 0.6 mm on a brass screw at
+    one end, spread over 70 deg, each strip printed with five tints of one hue and a
+    white label band at the far end."""
+    import colorsys
+    parts = []
+    brass = principled("swatch screw", (0.55, 0.42, 0.18), 0.35)
+    n = 14
+    for k in range(n):
+        h = k / n
+        me = bpy.data.meshes.new("swatch strip")
+        L, Wd = 0.200, 0.045
+        me.from_pydata([(-0.01, -Wd / 2, 0), (L, -Wd / 2, 0), (L, Wd / 2, 0), (-0.01, Wd / 2, 0)], [], [(0, 1, 2, 3)])
+        lay = me.uv_layers.new(name="uv")
+        for li, uv in zip(me.polygons[0].loop_indices, [(0, 0), (1, 0), (1, 1), (0, 1)]):
+            lay.data[li].uv = uv
+        m = bpy.data.materials.new(f"swatch {k}")
+        m.use_nodes = True
+        nt_ = m.node_tree
+        ramp = nt_.nodes.new("ShaderNodeValToRGB")
+        cr = ramp.color_ramp
+        cr.interpolation = "CONSTANT"
+        tints = [colorsys.hsv_to_rgb(h, 0.95 - 0.12 * j, 0.30 + 0.12 * j) for j in range(5)]
+        cr.elements[0].color = (*tints[0], 1)
+        for j in range(1, 5):
+            e = cr.elements.new(0.18 * j)
+            e.color = (*tints[j], 1)
+        e = cr.elements.new(0.92); e.color = (0.85, 0.85, 0.83, 1)
+        cr.elements[-1].position, cr.elements[-1].color = 1.0, (0.85, 0.85, 0.83, 1)
+        uvn = nt_.nodes.new("ShaderNodeUVMap")
+        sep = nt_.nodes.new("ShaderNodeSeparateXYZ")
+        nt_.links.new(uvn.outputs[0], sep.inputs[0])
+        nt_.links.new(sep.outputs["X"], ramp.inputs[0])
+        bsdf = nt_.nodes["Principled BSDF"]
+        bsdf.inputs["Roughness"].default_value = 0.55
+        nt_.links.new(ramp.outputs[0], bsdf.inputs["Base Color"])
+        me.materials.append(m)
+        o = bpy.data.objects.new("swatch strip", me)
+        sc.collection.objects.link(o)
+        sol = o.modifiers.new("solid", "SOLIDIFY"); sol.thickness = 0.0006
+        o.rotation_euler.z = math.radians(-35 + 70 * k / (n - 1))
+        o.location.z = 0.0006 * k + 0.0003
+        parts.append(o)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=16, radius=0.004, depth=0.012, location=(0, 0, 0.006))
+    sw = bpy.context.active_object
+    sw.name = "swatch screw"
+    sw.data.materials.append(brass)
+    parts.append(sw)
+    g = bpy.data.objects.new("@swatch_fan", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
 BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(), "@nfc_reader": lambda: nfc_reader(), "@eraser_crumbs": lambda: eraser_crumbs(),
          "@name_card": lambda: name_card(), "@card_reader": lambda: card_reader(),
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
-         "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
+         "@swatch_fan": lambda: swatch_fan(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
 
 
 def wall_texture(tx):
@@ -1430,7 +1537,10 @@ def wall_texture(tx):
 
     def tex(kind, colour):
         t = nt2.nodes.new("ShaderNodeTexImage")
-        t.image = bpy.data.images.load(os.path.join(folder, f"{tx['id']}_{kind}_2k.jpg"), check_existing=True)
+        path = os.path.join(folder, f"{tx['id']}_{kind}_2k.jpg")
+        if kind == "diff" and not os.path.exists(path):          # some textures name it "diffuse"
+            path = os.path.join(folder, f"{tx['id']}_diffuse_2k.jpg")
+        t.image = bpy.data.images.load(path, check_existing=True)
         if not colour:
             t.image.colorspace_settings.name = "Non-Color"
         nt2.links.new(vec_src, t.inputs["Vector"])
@@ -1474,8 +1584,13 @@ def wall(spec, y_wall, x_mid, top):
     skirt = principled("wall skirting", (0.03, 0.03, 0.035), 0.5)
     if spec.get("texture"):                       # a Poly Haven wall texture instead of the paint
         paint = wall_texture(spec["texture"])
-    parts = [cube("wall", (x_mid - 1.8, y_wall, 0.0), (x_mid + 1.8, y_wall + 0.1, 2.6), paint, 0.0),
-             cube("wall skirting", (x_mid - 1.8, y_wall - 0.012, 0.0), (x_mid + 1.8, y_wall, 0.06), skirt, 0.002)]
+    hw = spec.get("half_width", 1.8)
+    if spec.get("window"):
+        parts = window_wall(spec["window"], paint, y_wall, x_mid, hw)
+    else:
+        parts = [cube("wall", (x_mid - hw, y_wall, 0.0), (x_mid + hw, y_wall + 0.1, 2.6), paint, 0.0)]
+    if spec.get("skirting", True):
+        parts.append(cube("wall skirting", (x_mid - hw, y_wall - 0.012, 0.0), (x_mid + hw, y_wall, 0.06), skirt, 0.002))
     if spec.get("led"):
         lit = bpy.data.materials.new("led strip")
         lit.use_nodes = True
@@ -2828,7 +2943,7 @@ cam = sc.camera
 c = S["camera"]
 aim = bpy.data.objects.new("aim", None)          # where the camera looks: above the keyboard, so the screen shows
 sc.collection.objects.link(aim)
-aim.location = tgt.matrix_world.translation + mathutils.Vector((0, c.get("aim_y", 0.0), c.get("aim_z", 0.0)))
+aim.location = tgt.matrix_world.translation + mathutils.Vector((c.get("aim_x", 0.0), c.get("aim_y", 0.0), c.get("aim_z", 0.0)))
 focus = aim.location.copy()
 e, a = math.radians(c["elev"]), math.radians(c["azim"])
 d = c["distance"]
