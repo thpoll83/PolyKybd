@@ -1468,6 +1468,27 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
     pane = cube("window glass", (ix0, yf + 0.024, iz0), (ix1, yf + 0.026, iz1), glass, 0.0)
     pane.visible_shadow = False
     parts.append(pane)
+    if W_.get("view"):                             # daylight outside: a bright backdrop beyond the glass, seen
+        V_ = W_["view"]                            # only by the camera and through the glass, lighting nothing
+        sky = bpy.data.materials.new("window view")
+        sky.use_nodes = True
+        vt = sky.node_tree
+        vb = vt.nodes["Principled BSDF"]
+        vb.inputs["Base Color"].default_value = (0, 0, 0, 1)
+        tcv = vt.nodes.new("ShaderNodeTexCoord")
+        sv = vt.nodes.new("ShaderNodeSeparateXYZ"); vt.links.new(tcv.outputs["Generated"], sv.inputs[0])
+        rmp = vt.nodes.new("ShaderNodeValToRGB")
+        rmp.color_ramp.elements[0].color = (*V_.get("low", (0.62, 0.64, 0.66)), 1)
+        rmp.color_ramp.elements[1].color = (*V_.get("high", (0.86, 0.91, 1.0)), 1)
+        vt.links.new(sv.outputs["Z"], rmp.inputs[0])
+        vt.links.new(rmp.outputs[0], vb.inputs["Emission Color"])
+        vb.inputs["Emission Strength"].default_value = V_.get("strength", 2.5)
+        dist_ = V_.get("distance", 2.0)
+        bd = cube("window view", (x0 - 5.0, y_wall + dp + dist_, z0 - 1.5), (x1 + 5.0, y_wall + dp + dist_ + 0.01, z1 + 2.5), sky, 0.0)
+        bd.visible_shadow = False
+        bd.visible_diffuse = False
+        bd.visible_glossy = False
+        parts.append(bd)
     if W_.get("frame_dirt"):                       # an old steel window: dust and grey-brown grime on the bars,
         fd = W_["frame_dirt"]                      # rust spots, the sill's plaster stained where water stood
         steel_parts = [o for o in parts if o.name.startswith(("frame", "mullion", "transom"))]
@@ -1477,7 +1498,7 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
         corner_dirt(steel_parts, fd, (0.30, 0.28, 0.25), 0.05, top=fd * 0.6)
         white = [o for o in parts if o.name.startswith(("window sill", "reveal"))]
         corner_dirt(white, fd, (0.36, 0.32, 0.27), 0.12, top=fd * 0.15)      # grey-brown into the corners,
-        corner_dirt(white, fd * 1.3, (0.03, 0.028, 0.025), 0.06, rng=(0.55, 0.99),   # near black at the very edge
+        corner_dirt(white, fd * 0.75, (0.10, 0.09, 0.08), 0.06, rng=(0.55, 0.99),   # darkest at the very edge
                     power=3.0, breakup=(0.75, 1.0))                                     # (the sill, the frame), fading slowly
     return parts
 
