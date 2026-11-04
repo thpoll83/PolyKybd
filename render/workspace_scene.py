@@ -1474,9 +1474,73 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
         wear(steel_parts, [dict(spots=fd * 0.5, scale=140, lo=0.48, tint=(0.20, 0.19, 0.17), mode="MIX", detail=10.0),
                            dict(spots=fd * 0.7, scale=320, lo=0.70, tint=(0.28, 0.14, 0.06), mode="MIX", detail=4.0),
                            dict(edges=fd)])
-        wear([o for o in parts if o.name.startswith(("window sill", "reveal"))],
-             [dict(spots=fd * 0.5, scale=30, lo=0.55, tint=(0.72, 0.68, 0.62), detail=6.0)])
+        corner_dirt(steel_parts, fd, (0.30, 0.28, 0.25), 0.05, top=fd * 0.6)
+        white = [o for o in parts if o.name.startswith(("window sill", "reveal"))]
+        wear(white, [dict(spots=fd * 0.25, scale=12, lo=0.55, tint=(0.80, 0.77, 0.72), detail=6.0),
+                     dict(spots=fd * 0.5, scale=220, lo=0.70, tint=(0.40, 0.36, 0.30), detail=4.0)])
+        corner_dirt(white, fd, (0.36, 0.32, 0.27), 0.12, top=fd * 0.35)
     return parts
+
+
+def corner_dirt(objs, amount, tint, dist=0.04, top=0.0):
+    """Dust and dirt where they collect (objs' materials, copies): in corners and along
+    inside edges, read from the shader's ambient occlusion over dist m, broken up by a
+    noise; `top` adds a film on upward faces (a sill's dust)."""
+    for o in objs:
+        if o.type != "MESH":
+            continue
+        for slot in o.material_slots:
+            if slot.material is None:
+                continue
+            m = slot.material.copy()
+            nt_ = m.node_tree
+            b = next((n for n in nt_.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
+            if b is None:
+                continue
+            ao = nt_.nodes.new("ShaderNodeAmbientOcclusion"); ao.samples = 16; ao.inputs["Distance"].default_value = dist
+            inv = nt_.nodes.new("ShaderNodeMapRange")              # 1 deep in a corner, 0 on an open face
+            inv.inputs["From Min"].default_value, inv.inputs["From Max"].default_value = 0.45, 1.0
+            inv.inputs["To Min"].default_value, inv.inputs["To Max"].default_value = 1.0, 0.0
+            nt_.links.new(ao.outputs["AO"], inv.inputs["Value"])
+            tc = nt_.nodes.new("ShaderNodeTexCoord")
+            nz = nt_.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 60.0; nz.inputs["Detail"].default_value = 8.0
+            nt_.links.new(tc.outputs["Object"], nz.inputs["Vector"])
+            br = nt_.nodes.new("ShaderNodeMapRange")
+            br.inputs["From Min"].default_value, br.inputs["From Max"].default_value = 0.35, 0.65
+            br.inputs["To Min"].default_value, br.inputs["To Max"].default_value = 0.35, 1.0
+            nt_.links.new(nz.outputs["Fac"], br.inputs["Value"])
+            f = nt_.nodes.new("ShaderNodeMath"); f.operation = "MULTIPLY"
+            nt_.links.new(inv.outputs[0], f.inputs[0]); nt_.links.new(br.outputs[0], f.inputs[1])
+            if top:
+                gn = nt_.nodes.new("ShaderNodeNewGeometry")
+                sz = nt_.nodes.new("ShaderNodeSeparateXYZ"); nt_.links.new(gn.outputs["Normal"], sz.inputs[0])
+                up = nt_.nodes.new("ShaderNodeMapRange")
+                up.inputs["From Min"].default_value, up.inputs["From Max"].default_value = 0.7, 1.0
+                up.inputs["To Min"].default_value, up.inputs["To Max"].default_value = 0.0, top
+                nt_.links.new(sz.outputs["Z"], up.inputs["Value"])
+                upn = nt_.nodes.new("ShaderNodeMath"); upn.operation = "MULTIPLY"
+                nt_.links.new(up.outputs[0], upn.inputs[0]); nt_.links.new(br.outputs[0], upn.inputs[1])
+                ad = nt_.nodes.new("ShaderNodeMath"); ad.operation = "ADD"; ad.use_clamp = True
+                nt_.links.new(f.outputs[0], ad.inputs[0]); nt_.links.new(upn.outputs[0], ad.inputs[1]); f = ad
+            k = nt_.nodes.new("ShaderNodeMath"); k.operation = "MULTIPLY"; k.inputs[1].default_value = amount; k.use_clamp = True
+            nt_.links.new(f.outputs[0], k.inputs[0])
+            src = b.inputs["Base Color"].links[0].from_socket if b.inputs["Base Color"].is_linked else None
+            mx = nt_.nodes.new("ShaderNodeMix"); mx.data_type = "RGBA"
+            if src:
+                nt_.links.new(src, mx.inputs[6])
+            else:
+                mx.inputs[6].default_value = b.inputs["Base Color"].default_value[:]
+            mx.inputs[7].default_value = (*tint, 1)
+            nt_.links.new(k.outputs[0], mx.inputs["Factor"])
+            nt_.links.new(mx.outputs[2], b.inputs["Base Color"])
+            rr = nt_.nodes.new("ShaderNodeMath"); rr.operation = "MAXIMUM"   # dust is matte
+            if b.inputs["Roughness"].is_linked:
+                nt_.links.new(b.inputs["Roughness"].links[0].from_socket, rr.inputs[0])
+            else:
+                rr.inputs[0].default_value = b.inputs["Roughness"].default_value
+            nt_.links.new(k.outputs[0], rr.inputs[1])
+            nt_.links.new(rr.outputs[0], b.inputs["Roughness"])
+            slot.material = m
 
 
 def floor_material(F):

@@ -220,7 +220,7 @@ SCENES = {
         kb_from_front=0.24,
         wall=dict(texture=dict(id="red_brick_03", tile=1.0, tint=(1.15, 1.10, 1.06), bump=1.3), half_width=4.5,
                   skirting=False,
-                  window=dict(x=(-1.75, -0.45), z=(0.95, 2.35), depth=0.34, cols=3, rows=4, dirt=0.6, dirt_from=0.78, frame_dirt=0.8),
+                  window=dict(x=(-1.75, -0.45), z=(0.95, 2.35), depth=0.34, cols=3, rows=4, dirt=0.45, dirt_from=0.88, frame_dirt=1.0),
                   items=[dict(kind="frame", img="art_arches.jpg", x=0.62, z=0.46, w=0.36, border=0.025),
                          dict(kind="sheet", img="proof_night.jpg", x=0.30, z=0.40, w=0.12, rot=-2, bow=0.004, pin=(0.85, 0.1, 0.1)),
                          dict(kind="sheet", img="print_palette.jpg", x=0.94, z=0.30, w=0.15, rot=2, bow=0.003, pin=(0.1, 0.3, 0.85))]),
