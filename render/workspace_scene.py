@@ -1476,10 +1476,8 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
                            dict(edges=fd)])
         corner_dirt(steel_parts, fd, (0.30, 0.28, 0.25), 0.05, top=fd * 0.6)
         white = [o for o in parts if o.name.startswith(("window sill", "reveal"))]
-        wear(white, [dict(spots=fd * 0.25, scale=12, lo=0.55, tint=(0.80, 0.77, 0.72), detail=6.0),
-                     dict(spots=fd * 0.5, scale=220, lo=0.70, tint=(0.40, 0.36, 0.30), detail=4.0)])
-        edge_dirt(white, fd * 1.1, (0.24, 0.21, 0.17),             # towards the steel frame, the sill, the head
-                  [("Y", yf, 0.12), ("Z", z0 + t, 0.09), ("Z", z1 - t, 0.08), ("X", x0 + t, 0.08), ("X", x1 - t, 0.08)])
+        corner_dirt(white, fd, (0.36, 0.32, 0.27), 0.12, top=fd * 0.15)      # grey-brown into the corners,
+        corner_dirt(white, fd, (0.03, 0.028, 0.025), 0.018)                   # near black right at the edge
     return parts
 
 
@@ -1541,75 +1539,6 @@ def corner_dirt(objs, amount, tint, dist=0.04, top=0.0):
                 rr.inputs[0].default_value = b.inputs["Roughness"].default_value
             nt_.links.new(k.outputs[0], rr.inputs[1])
             nt_.links.new(rr.outputs[0], b.inputs["Roughness"])
-            slot.material = m
-
-
-def edge_dirt(objs, amount, tint, planes):
-    """Dirt that thickens towards inside corners (objs' materials, copies): for each
-    plane (axis, value, width) a band fading out over width m from where a surface
-    meets that plane, counted only on faces that cross it (a face lying in the plane
-    gets none); where two bands meet, in a corner, the dirt doubles up. Broken up by a
-    noise, so it reads as dust and grime, not a painted gradient."""
-    for o in objs:
-        if o.type != "MESH":
-            continue
-        for slot in o.material_slots:
-            if slot.material is None:
-                continue
-            m = slot.material.copy()
-            nt_ = m.node_tree
-            b = next((n for n in nt_.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
-            if b is None:
-                continue
-            gn = nt_.nodes.new("ShaderNodeNewGeometry")
-            ps = nt_.nodes.new("ShaderNodeSeparateXYZ"); nt_.links.new(gn.outputs["Position"], ps.inputs[0])
-            ns = nt_.nodes.new("ShaderNodeSeparateXYZ"); nt_.links.new(gn.outputs["Normal"], ns.inputs[0])
-            bands = []
-            for axis, value, width in planes:
-                d = nt_.nodes.new("ShaderNodeMath"); d.operation = "SUBTRACT"; d.inputs[1].default_value = value
-                nt_.links.new(ps.outputs[axis], d.inputs[0])
-                ab = nt_.nodes.new("ShaderNodeMath"); ab.operation = "ABSOLUTE"; nt_.links.new(d.outputs[0], ab.inputs[0])
-                fall = nt_.nodes.new("ShaderNodeMapRange"); fall.interpolation_type = "SMOOTHSTEP"
-                fall.inputs["From Min"].default_value, fall.inputs["From Max"].default_value = 0.0, width
-                fall.inputs["To Min"].default_value, fall.inputs["To Max"].default_value = 1.0, 0.0
-                nt_.links.new(ab.outputs[0], fall.inputs["Value"])
-                na = nt_.nodes.new("ShaderNodeMath"); na.operation = "ABSOLUTE"; nt_.links.new(ns.outputs[axis], na.inputs[0])
-                cross = nt_.nodes.new("ShaderNodeMapRange")          # 1 on a face crossing the plane, 0 in it
-                cross.inputs["From Min"].default_value, cross.inputs["From Max"].default_value = 0.5, 0.9
-                cross.inputs["To Min"].default_value, cross.inputs["To Max"].default_value = 1.0, 0.0
-                nt_.links.new(na.outputs[0], cross.inputs["Value"])
-                bm = nt_.nodes.new("ShaderNodeMath"); bm.operation = "MULTIPLY"
-                nt_.links.new(fall.outputs[0], bm.inputs[0]); nt_.links.new(cross.outputs[0], bm.inputs[1])
-                bands.append(bm)
-            acc = bands[0]
-            for bnd in bands[1:]:                    # a + b + a*b: two bands meeting give more than either
-                pr = nt_.nodes.new("ShaderNodeMath"); pr.operation = "MULTIPLY"
-                nt_.links.new(acc.outputs[0], pr.inputs[0]); nt_.links.new(bnd.outputs[0], pr.inputs[1])
-                ad = nt_.nodes.new("ShaderNodeMath"); ad.operation = "ADD"
-                nt_.links.new(acc.outputs[0], ad.inputs[0]); nt_.links.new(bnd.outputs[0], ad.inputs[1])
-                ad2 = nt_.nodes.new("ShaderNodeMath"); ad2.operation = "ADD"
-                nt_.links.new(ad.outputs[0], ad2.inputs[0]); nt_.links.new(pr.outputs[0], ad2.inputs[1])
-                acc = ad2
-            tc = nt_.nodes.new("ShaderNodeTexCoord")
-            nz = nt_.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 45.0; nz.inputs["Detail"].default_value = 10.0
-            nt_.links.new(tc.outputs["Object"], nz.inputs["Vector"])
-            br = nt_.nodes.new("ShaderNodeMapRange")
-            br.inputs["From Min"].default_value, br.inputs["From Max"].default_value = 0.3, 0.7
-            br.inputs["To Min"].default_value, br.inputs["To Max"].default_value = 0.45, 1.15
-            nt_.links.new(nz.outputs["Fac"], br.inputs["Value"])
-            f = nt_.nodes.new("ShaderNodeMath"); f.operation = "MULTIPLY"
-            nt_.links.new(acc.outputs[0], f.inputs[0]); nt_.links.new(br.outputs[0], f.inputs[1])
-            k = nt_.nodes.new("ShaderNodeMath"); k.operation = "MULTIPLY"; k.inputs[1].default_value = amount; k.use_clamp = True
-            nt_.links.new(f.outputs[0], k.inputs[0])
-            src = b.inputs["Base Color"].links[0].from_socket if b.inputs["Base Color"].is_linked else None
-            mx = nt_.nodes.new("ShaderNodeMix"); mx.data_type = "RGBA"
-            if src:
-                nt_.links.new(src, mx.inputs[6])
-            else:
-                mx.inputs[6].default_value = b.inputs["Base Color"].default_value[:]
-            mx.inputs[7].default_value = (*tint, 1)
-            nt_.links.new(k.outputs[0], mx.inputs["Factor"])
-            nt_.links.new(mx.outputs[2], b.inputs["Base Color"])
             slot.material = m
 
 
