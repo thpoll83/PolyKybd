@@ -1448,13 +1448,12 @@ def swatch_fan():
         ramp = nt_.nodes.new("ShaderNodeValToRGB")
         cr = ramp.color_ramp
         cr.interpolation = "CONSTANT"
-        tints = [colorsys.hsv_to_rgb(h, 0.95 - 0.12 * j, 0.30 + 0.12 * j) for j in range(5)]
-        cr.elements[0].color = (*tints[0], 1)
+        tints = [colorsys.hsv_to_rgb(h, 0.30 + 0.17 * j, 0.95 - 0.10 * j) for j in range(5)]   # light to deep
+        cr.elements[0].color = (0.88, 0.88, 0.86, 1)               # the label band at the screw end
+        cr.elements[-1].position, cr.elements[-1].color = 0.20, (*tints[0], 1)
         for j in range(1, 5):
-            e = cr.elements.new(0.18 * j)
+            e = cr.elements.new(0.20 + 0.16 * j)
             e.color = (*tints[j], 1)
-        e = cr.elements.new(0.92); e.color = (0.85, 0.85, 0.83, 1)
-        cr.elements[-1].position, cr.elements[-1].color = 1.0, (0.85, 0.85, 0.83, 1)
         uvn = nt_.nodes.new("ShaderNodeUVMap")
         sep = nt_.nodes.new("ShaderNodeSeparateXYZ")
         nt_.links.new(uvn.outputs[0], sep.inputs[0])
@@ -2182,6 +2181,57 @@ def monitors(spec):
             o.parent = g
         objs.extend(parts + [pole, clamp, jaw, arm, plate])
         blocks.append(parts + [pole, clamp, jaw, arm, plate])
+    elif style == "dual_arm":                      # two screens on one pole: a desk clamp, a 35 mm pole, a
+        reach = spec.get("reach", 0.22)            # hub at screen height and two jointed arms to the screens' backs
+        inches = spec.get("inches", 27)
+        zc = spec.get("height", 0.36)
+        ang = spec.get("angle", 14)
+        sw0 = inches * 0.0254 * 16 / math.hypot(16, 9)
+        half = sw0 / 2 + fin["bezel"] + spec.get("gap", 0.012) / 2
+        arm_m = principled("monitor arm black", (0.03, 0.03, 0.032), 0.35, coat=0.3) if spec.get("arm_black", True) else alu
+        hw_ = []
+        pr = spec.get("pole_r", 0.0175)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=40, radius=pr, depth=zc + 0.14)
+        pole = bpy.context.active_object; pole.name = "monitor pole"
+        pole.location = (0, reach, (zc + 0.14) / 2)
+        pole.data.materials.append(arm_m); hw_.append(pole)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=40, radius=pr + 0.004, depth=0.012, location=(0, reach, zc + 0.146))
+        cap = bpy.context.active_object; cap.name = "pole cap"; cap.data.materials.append(arm_m); hw_.append(cap)
+        hw_ += [cube("monitor clamp", (-0.05, reach - 0.06, 0.0), (0.05, reach + 0.065, 0.016), arm_m, 0.004),
+                cube("monitor clamp back", (-0.04, reach + 0.045, -0.085), (0.04, reach + 0.065, 0.016), arm_m, 0.003),
+                cube("monitor clamp jaw", (-0.04, reach - 0.02, -0.095), (0.04, reach + 0.065, -0.08), arm_m, 0.003)]
+        bpy.ops.mesh.primitive_cylinder_add(vertices=40, radius=pr + 0.012, depth=0.05, location=(0, reach, zc))
+        hub = bpy.context.active_object; hub.name = "arm hub"; hub.data.materials.append(arm_m); hw_.append(hub)
+        for k, side in enumerate((-1, 1)):
+            a = math.radians(-side * ang)
+            cx, cy = side * half * math.cos(math.radians(ang)), half * math.sin(math.radians(ang))
+            head, parts, sw, sh = panel(screens[k % len(screens)], inches, (16, 9), None, glow, finish,
+                                        notes=[n[1:] for n in spec.get("notes", ()) if n[0] == k])
+            head.parent = g
+            head.location = (cx, cy, zc)
+            head.rotation_euler = (-tilt, 0, a)
+            bx, by = cx - 0.045 * math.sin(a), cy + 0.045 * math.cos(a)     # the VESA plate on the screen's back
+            plate = cube(f"vesa {k}", (-0.05, -0.006, -0.05), (0.05, 0.006, 0.05), arm_m, 0.003)
+            plate.location = (bx, by, zc); plate.rotation_euler.z = a
+            ex, ey = bx * 0.45, (by + reach) / 2 + 0.03                    # the elbow, between hub and plate
+            segs = []
+            for (x0, y0), (x1, y1) in (((0, reach), (ex, ey)), ((ex, ey), (bx, by + 0.006))):
+                ln = math.hypot(x1 - x0, y1 - y0)
+                bpy.ops.mesh.primitive_cube_add(size=1)
+                o = bpy.context.active_object; o.name = f"arm seg {k}"
+                o.scale = (ln, 0.034, 0.024)
+                o.location = ((x0 + x1) / 2, (y0 + y1) / 2, zc)
+                o.rotation_euler.z = math.atan2(y1 - y0, x1 - x0)
+                bv = o.modifiers.new("bevel", "BEVEL"); bv.width, bv.segments = 0.008, 3
+                o.data.materials.append(arm_m); segs.append(o)
+            bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.022, depth=0.036, location=(ex, ey, zc))
+            el = bpy.context.active_object; el.name = f"arm elbow {k}"; el.data.materials.append(arm_m)
+            hw_ += [plate, el] + segs
+            objs.extend(parts); blocks.append(parts)
+        for o in hw_:
+            o.parent = g
+        objs.extend(hw_)
+        blocks.append(hw_)
     return g, objs, blocks, feet
 
 
@@ -2319,8 +2369,8 @@ if S.get("monitor"):
     spec = S["monitor"]
     mon, mon_objs, blocks, feet = monitors(spec)
     wear(feet, spec.get("wear"))                   # dust and rub marks on the stand's foot
-    if spec.get("style") == "arm":                 # the pole's clamp on the desk's back edge
-        mon.location = (spec.get("x", 0.0), dhi.y - spec.get("reach", 0.24) - 0.035, top)
+    if spec.get("style") in ("arm", "dual_arm"):   # the pole's clamp on the desk's back edge
+        mon.location = (spec.get("x", 0.0), dhi.y - spec.get("reach", 0.24) - (0.065 if spec.get("style") == "dual_arm" else 0.035), top)
         mon.rotation_euler.z = math.radians(spec.get("turn", 0))
         bpy.context.view_layer.update()
     else:

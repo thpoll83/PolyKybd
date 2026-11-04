@@ -2040,6 +2040,34 @@ PROOFS = {
 }
 
 
+def moodboard_screen():
+    """A browser on a reference board: a dark page, a masonry grid of the workspace
+    prints and photos (the posters, the arches, the buildings, the palette), a search
+    bar and a few tags."""
+    im = Image.new("RGB", (W, H), (24, 24, 27))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, W, 70), fill=(40, 40, 44))
+    d.rounded_rectangle((300, 14, 1500, 56), radius=20, fill=(60, 60, 66))
+    d.text((330, 22), "moodboard / summer open air - refs", font=font(SANS, 26), fill=(200, 200, 206))
+    for i, t in enumerate(["warm", "dusk", "flat", "arches", "grain", "type"]):
+        x = 120 + i * 190
+        d.rounded_rectangle((x, 100, x + 170, 150), radius=24, outline=(120, 120, 128), width=2)
+        d.text((x + 85, 125), t, font=font(SANS, 26), fill=(210, 210, 216), anchor="mm")
+    srcs = ["proof_summer_a.jpg", "art_arches.jpg", "photo_zwinger.jpg", "print_palette.jpg", "proof_night.jpg",
+            "photo_konzerthaus.jpg", "print_type.jpg", "photo_hamburg_hbf.jpg", "paper_thumbs.jpg", "photo_hofkirche.jpg",
+            "poster_road.jpg", "photo_building.jpg"]
+    cols, gap, x0, y0 = 5, 24, 120, 180
+    cw = (W - 2 * x0 - (cols - 1) * gap) // cols
+    ys = [y0] * cols
+    for k, f in enumerate(srcs):
+        c = ys.index(min(ys))
+        src = Image.open(os.path.join(OUT, f)).convert("RGB")
+        h = int(cw * src.height / src.width)
+        im.paste(src.resize((cw, h), Image.LANCZOS), (x0 + c * (cw + gap), ys[c]))
+        ys[c] += h + gap
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_sheet.jpg", sheet), ("screen_reception.jpg", reception), ("screen_reception2.jpg", reception2), ("screen_mail.jpg", mail), ("screen_plan.jpg", plan),
@@ -2064,7 +2092,7 @@ if __name__ == "__main__":
                      ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])),
                      ("print_type.jpg", worn(print_type, 59, 0.6)), ("print_palette.jpg", worn(print_palette, 61, 0.5)),
                      ("paper_thumbs.jpg", worn(paper_thumbs, 67)), ("sticky_lilac.jpg", sticky((210, 190, 240), ["client", "call 3pm"])),
-                     *[(n, poster_proof(*a)) for n, a in PROOFS.items()])
+                     *[(n, poster_proof(*a)) for n, a in PROOFS.items()], ("screen_moodboard.jpg", moodboard_screen))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))
                      + tuple((f"cover_{i}.jpg", book_cover(i)) for i in range(len(BOOKS)))
