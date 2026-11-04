@@ -1477,15 +1477,18 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
         corner_dirt(steel_parts, fd, (0.30, 0.28, 0.25), 0.05, top=fd * 0.6)
         white = [o for o in parts if o.name.startswith(("window sill", "reveal"))]
         corner_dirt(white, fd, (0.36, 0.32, 0.27), 0.12, top=fd * 0.15)      # grey-brown into the corners,
-        corner_dirt(white, fd * 1.6, (0.03, 0.028, 0.025), 0.02, rng=(0.80, 0.97))   # near black right at the edge
+        corner_dirt(white, fd * 1.3, (0.03, 0.028, 0.025), 0.06, rng=(0.55, 0.99),   # near black at the very edge
+                    power=3.0, breakup=(0.75, 1.0))                                     # (the sill, the frame), fading slowly
     return parts
 
 
-def corner_dirt(objs, amount, tint, dist=0.04, top=0.0, rng=(0.45, 1.0)):
+def corner_dirt(objs, amount, tint, dist=0.04, top=0.0, rng=(0.45, 1.0), power=1.0, breakup=(0.35, 1.0)):
     """Dust and dirt where they collect (objs' materials, copies): in corners and along
     inside edges, read from the shader's ambient occlusion over dist m, broken up by a
     noise; `top` adds a film on upward faces (a sill's dust). rng: the occlusion values
-    that map to full dirt and to none (a narrow, high range keeps it tight to the edge)."""
+    that map to full dirt and to none; power > 1 bends that ramp so the dirt is darkest only
+    at the edge and fades out slowly. breakup: the noise's low and high factor (a narrow
+    range gives an even shade, a wide one patchy dirt)."""
     for o in objs:
         if o.type != "MESH":
             continue
@@ -1502,12 +1505,16 @@ def corner_dirt(objs, amount, tint, dist=0.04, top=0.0, rng=(0.45, 1.0)):
             inv.inputs["From Min"].default_value, inv.inputs["From Max"].default_value = rng
             inv.inputs["To Min"].default_value, inv.inputs["To Max"].default_value = 1.0, 0.0
             nt_.links.new(ao.outputs["AO"], inv.inputs["Value"])
+            if power != 1.0:
+                pw = nt_.nodes.new("ShaderNodeMath"); pw.operation = "POWER"; pw.inputs[1].default_value = power
+                nt_.links.new(inv.outputs[0], pw.inputs[0])
+                inv = pw
             tc = nt_.nodes.new("ShaderNodeTexCoord")
             nz = nt_.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 60.0; nz.inputs["Detail"].default_value = 8.0
             nt_.links.new(tc.outputs["Object"], nz.inputs["Vector"])
             br = nt_.nodes.new("ShaderNodeMapRange")
             br.inputs["From Min"].default_value, br.inputs["From Max"].default_value = 0.35, 0.65
-            br.inputs["To Min"].default_value, br.inputs["To Max"].default_value = 0.35, 1.0
+            br.inputs["To Min"].default_value, br.inputs["To Max"].default_value = breakup
             nt_.links.new(nz.outputs["Fac"], br.inputs["Value"])
             f = nt_.nodes.new("ShaderNodeMath"); f.operation = "MULTIPLY"
             nt_.links.new(inv.outputs[0], f.inputs[0]); nt_.links.new(br.outputs[0], f.inputs[1])
