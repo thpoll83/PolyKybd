@@ -1453,13 +1453,13 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
                 ad = gt_.nodes.new("ShaderNodeMath"); ad.operation = "ADD"
                 gt_.links.new(acc.outputs[0], ad.inputs[0]); gt_.links.new(m_.outputs[0], ad.inputs[1]); acc = ad
         dr = gt_.nodes.new("ShaderNodeMapRange")       # the dirt's cover, 0..dirt
-        dr.inputs["From Min"].default_value, dr.inputs["From Max"].default_value = 0.45, 1.5
+        dr.inputs["From Min"].default_value, dr.inputs["From Max"].default_value = W_.get("dirt_from", 0.45), 1.5
         dr.inputs["To Min"].default_value, dr.inputs["To Max"].default_value = 0.0, dirt_amt
         gt_.links.new(acc.outputs[0], dr.inputs["Value"])
         inv = gt_.nodes.new("ShaderNodeMath"); inv.operation = "SUBTRACT"; inv.inputs[0].default_value = 1.0
         gt_.links.new(dr.outputs[0], inv.inputs[1])
         gt_.links.new(inv.outputs[0], gb.inputs["Transmission Weight"])
-        rg = gt_.nodes.new("ShaderNodeMapRange"); rg.inputs["To Min"].default_value, rg.inputs["To Max"].default_value = 0.02, 0.7
+        rg = gt_.nodes.new("ShaderNodeMapRange"); rg.inputs["To Min"].default_value, rg.inputs["To Max"].default_value = 0.0, 0.06
         gt_.links.new(dr.outputs[0], rg.inputs["Value"]); gt_.links.new(rg.outputs[0], gb.inputs["Roughness"])
         gb.inputs["Base Color"].default_value = (*W_.get("dirt_color", (0.42, 0.38, 0.32)), 1)
     else:
@@ -1468,7 +1468,40 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
     pane = cube("window glass", (ix0, yf + 0.024, iz0), (ix1, yf + 0.026, iz1), glass, 0.0)
     pane.visible_shadow = False
     parts.append(pane)
+    if W_.get("frame_dirt"):                       # an old steel window: dust and grey-brown grime on the bars,
+        fd = W_["frame_dirt"]                      # rust spots, the sill's plaster stained where water stood
+        steel_parts = [o for o in parts if o.name.startswith(("frame", "mullion", "transom"))]
+        wear(steel_parts, [dict(spots=fd * 0.5, scale=140, lo=0.48, tint=(0.20, 0.19, 0.17), mode="MIX", detail=10.0),
+                           dict(spots=fd * 0.7, scale=320, lo=0.70, tint=(0.28, 0.14, 0.06), mode="MIX", detail=4.0),
+                           dict(edges=fd)])
+        wear([o for o in parts if o.name.startswith(("window sill", "reveal"))],
+             [dict(spots=fd * 0.5, scale=30, lo=0.55, tint=(0.72, 0.68, 0.62), detail=6.0)])
     return parts
+
+
+def floor_material(F):
+    """A floor from a Poly Haven texture (its normal and roughness, one tile per F["tile"]
+    m), recoloured: F["color"] scaled by the texture's own brightness, so a dark
+    carpet's pile reads as a light one of the same weave."""
+    m = wall_texture(dict(id=F["id"], tile=F.get("tile", 0.6), axes=("X", "Y"), bump=F.get("bump", 1.0)))
+    if F.get("color"):
+        nt_ = m.node_tree
+        diff = next(n for n in nt_.nodes if n.bl_idname == "ShaderNodeTexImage" and "_diff" in n.image.name)
+        bw = nt_.nodes.new("ShaderNodeRGBToBW")
+        nt_.links.new(diff.outputs["Color"], bw.inputs[0])
+        rg = nt_.nodes.new("ShaderNodeMapRange")
+        rg.inputs["From Min"].default_value, rg.inputs["From Max"].default_value = F.get("range", (0.02, 0.25))
+        rg.inputs["To Min"].default_value, rg.inputs["To Max"].default_value = 0.72, 1.08
+        nt_.links.new(bw.outputs[0], rg.inputs["Value"])
+        mul = nt_.nodes.new("ShaderNodeMix"); mul.data_type = "RGBA"; mul.blend_type = "MULTIPLY"
+        mul.inputs["Factor"].default_value = 1.0
+        mul.inputs[6].default_value = (*F["color"], 1)
+        cm = nt_.nodes.new("ShaderNodeCombineColor")
+        for k in range(3):
+            nt_.links.new(rg.outputs[0], cm.inputs[k])
+        nt_.links.new(cm.outputs[0], mul.inputs[7])
+        nt_.links.new(mul.outputs[2], nt_.nodes["Principled BSDF"].inputs["Base Color"])
+    return m
 
 
 def swatch_fan():
@@ -2356,6 +2389,14 @@ nt.links.new(bg.outputs["Background"], out.inputs["Surface"])
 LIGHTS = S.get("lights", [])                     # area lights, placed once the desk is known (below)
 floor = bpy.data.objects["Plane"]
 floor.is_shadow_catcher = True                   # the room's own floor, with the desk's shadow on it
+if S.get("floor"):                               # a real floor instead: a carpet, a Poly Haven texture
+    floor.is_shadow_catcher = False
+    floor.scale = (40, 40, 1)
+    floor.select_set(True); bpy.context.view_layer.objects.active = floor
+    bpy.ops.object.transform_apply(scale=True)    # object coordinates in metres: the texture's tile holds
+    floor.select_set(False)
+    floor.data.materials.clear()
+    floor.data.materials.append(floor_material(S["floor"]))
 
 # ---- the cables, while the keyboard still stands on z = 0 ----------------------------
 if S["desk"] == "@counter":
@@ -2642,6 +2683,11 @@ if S.get("desk_stains"):                           # (after the keyboard group t
     desk_stains(S["desk_stains"], top, kb_y)
 if S.get("wall"):            # the desk against a wall, 40 mm behind its back edge (built after the keyboard
     wall(S["wall"], dhi.y + 0.04, (dlo.x + dhi.x) / 2, top)   # group took the loose objects)
+    if S.get("floor"):                             # the carpet stops at the wall: through the window, the HDRI
+        inv_ = floor.matrix_world.inverted()
+        y_w = (inv_ @ mathutils.Vector((0, dhi.y + 0.04 + 0.05, 0))).y
+        for v in floor.data.vertices:
+            v.co.y = min(v.co.y, y_w)
 if S.get("room"):                                  # a plain bright room instead: a matte floor and, room["wall_y"] m
     R_ = S["room"]                                 # behind the desk, a wall with a skirting, both off-white
     floor.is_shadow_catcher = False
