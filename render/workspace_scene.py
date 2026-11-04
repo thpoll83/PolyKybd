@@ -57,7 +57,8 @@ def gltf(aid, part=None):
     new = [o for o in bpy.data.objects if o not in before]
     if part:
         parts_ = part if isinstance(part, (list, tuple)) else [part]      # several parts: one tree's bark and leaves
-        keep = [o for o in new if any(o.name.startswith(p_) and (o.name == p_ or not o.name[len(p_):][:1].isalpha())
+        keep = [o for o in new if any((o.name == p_[1:]) if p_.startswith("=") else   # "=name": that object alone
+                                      (o.name.startswith(p_) and (o.name == p_ or not o.name[len(p_):][:1].isalpha()))
                                       for p_ in parts_)]
         keep += [c for k in keep for c in k.children_recursive]
         for o in [o for o in new if o not in keep]:
@@ -1416,10 +1417,54 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
         parts.append(cube(f"transom {k}", (ix0, yf + 0.005, zm - m / 2), (ix1, yf + 0.04, zm + m / 2), steel, 0.0015))
     glass = bpy.data.materials.new("window glass")
     glass.use_nodes = True
-    gb = glass.node_tree.nodes["Principled BSDF"]
-    gb.inputs["Transmission Weight"].default_value = 1.0
-    gb.inputs["Roughness"].default_value = 0.0
+    gt_ = glass.node_tree
+    gb = gt_.nodes["Principled BSDF"]
     gb.inputs["IOR"].default_value = 1.0               # a thin pane: reflections, no lens
+    dirt_amt = W_.get("dirt", 0.0)                     # grime: a blotchy film, heavier towards each pane's
+    if dirt_amt:                                       # bottom (rain runs down), streaks, and specks
+        tc_ = gt_.nodes.new("ShaderNodeTexCoord")
+        sx_ = gt_.nodes.new("ShaderNodeSeparateXYZ"); gt_.links.new(tc_.outputs["Object"], sx_.inputs[0])
+        blot = gt_.nodes.new("ShaderNodeTexNoise"); blot.inputs["Scale"].default_value = 3.0; blot.inputs["Detail"].default_value = 6.0
+        gt_.links.new(tc_.outputs["Object"], blot.inputs["Vector"])
+        mp = gt_.nodes.new("ShaderNodeMapping"); mp.inputs["Scale"].default_value = (40.0, 1.0, 1.5)   # streaks: stretched in z
+        gt_.links.new(tc_.outputs["Object"], mp.inputs["Vector"])
+        strk = gt_.nodes.new("ShaderNodeTexNoise"); strk.inputs["Scale"].default_value = 2.0; strk.inputs["Detail"].default_value = 3.0
+        gt_.links.new(mp.outputs[0], strk.inputs["Vector"])
+        spk = gt_.nodes.new("ShaderNodeTexVoronoi"); spk.inputs["Scale"].default_value = 160.0
+        gt_.links.new(tc_.outputs["Object"], spk.inputs["Vector"])
+        spk_r = gt_.nodes.new("ShaderNodeMapRange"); spk_r.inputs["From Min"].default_value, spk_r.inputs["From Max"].default_value = 0.0, 0.08
+        spk_r.inputs["To Min"].default_value, spk_r.inputs["To Max"].default_value = 0.9, 0.0
+        gt_.links.new(spk.outputs["Distance"], spk_r.inputs["Value"])
+        pane_h = (iz1 - iz0) / W_.get("rows", 4)       # within each pane: 1 at its bottom bar, 0 at its top
+        fr = gt_.nodes.new("ShaderNodeMath"); fr.operation = "WRAP"
+        fr.inputs[1].default_value, fr.inputs[2].default_value = 0.0, pane_h
+        sub_ = gt_.nodes.new("ShaderNodeMath"); sub_.operation = "SUBTRACT"; sub_.inputs[1].default_value = -(iz1 - iz0) / 2 + 1e-4
+        gt_.links.new(sx_.outputs["Z"], sub_.inputs[0]); gt_.links.new(sub_.outputs[0], fr.inputs[0])
+        low = gt_.nodes.new("ShaderNodeMapRange"); low.inputs["From Min"].default_value, low.inputs["From Max"].default_value = 0.0, pane_h
+        low.inputs["To Min"].default_value, low.inputs["To Max"].default_value = 0.9, 0.15
+        gt_.links.new(fr.outputs[0], low.inputs["Value"])
+        acc = None
+        for out_, w_ in ((blot.outputs["Fac"], 0.55), (strk.outputs["Fac"], 0.35), (low.outputs[0], 0.6), (spk_r.outputs[0], 0.5)):
+            m_ = gt_.nodes.new("ShaderNodeMath"); m_.operation = "MULTIPLY"; m_.inputs[1].default_value = w_
+            gt_.links.new(out_, m_.inputs[0])
+            if acc is None:
+                acc = m_
+            else:
+                ad = gt_.nodes.new("ShaderNodeMath"); ad.operation = "ADD"
+                gt_.links.new(acc.outputs[0], ad.inputs[0]); gt_.links.new(m_.outputs[0], ad.inputs[1]); acc = ad
+        dr = gt_.nodes.new("ShaderNodeMapRange")       # the dirt's cover, 0..dirt
+        dr.inputs["From Min"].default_value, dr.inputs["From Max"].default_value = 0.45, 1.5
+        dr.inputs["To Min"].default_value, dr.inputs["To Max"].default_value = 0.0, dirt_amt
+        gt_.links.new(acc.outputs[0], dr.inputs["Value"])
+        inv = gt_.nodes.new("ShaderNodeMath"); inv.operation = "SUBTRACT"; inv.inputs[0].default_value = 1.0
+        gt_.links.new(dr.outputs[0], inv.inputs[1])
+        gt_.links.new(inv.outputs[0], gb.inputs["Transmission Weight"])
+        rg = gt_.nodes.new("ShaderNodeMapRange"); rg.inputs["To Min"].default_value, rg.inputs["To Max"].default_value = 0.02, 0.7
+        gt_.links.new(dr.outputs[0], rg.inputs["Value"]); gt_.links.new(rg.outputs[0], gb.inputs["Roughness"])
+        gb.inputs["Base Color"].default_value = (*W_.get("dirt_color", (0.42, 0.38, 0.32)), 1)
+    else:
+        gb.inputs["Transmission Weight"].default_value = 1.0
+        gb.inputs["Roughness"].default_value = 0.0
     pane = cube("window glass", (ix0, yf + 0.024, iz0), (ix1, yf + 0.026, iz1), glass, 0.0)
     pane.visible_shadow = False
     parts.append(pane)
@@ -1480,12 +1525,67 @@ def swatch_fan():
     return g, parts
 
 
+def pc_tower():
+    """A desktop PC tower, 210 x 450 x 470 mm: a black satin steel case on four rubber
+    feet, a perforated front (a fine hole grid as dark dots and bump), a power button
+    with a white LED ring, two USB ports and an audio jack in the top front, dust on
+    the top. The front faces -y."""
+    W_, D_, H_ = 0.21, 0.45, 0.47
+    steel = principled("pc case", (0.025, 0.025, 0.027), 0.45)
+    steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.6
+    front = principled("pc front mesh", (0.03, 0.03, 0.032), 0.6)
+    fn_ = front.node_tree
+    tc = fn_.nodes.new("ShaderNodeTexCoord")
+    vo = fn_.nodes.new("ShaderNodeTexVoronoi"); vo.inputs["Scale"].default_value = 260.0
+    vo.feature = "F1"; vo.voronoi_dimensions = "2D"; vo.inputs["Randomness"].default_value = 0.0
+    mp = fn_.nodes.new("ShaderNodeMapping"); mp.inputs["Rotation"].default_value = (math.radians(90), 0, 0)
+    fn_.links.new(tc.outputs["Object"], mp.inputs["Vector"]); fn_.links.new(mp.outputs[0], vo.inputs["Vector"])
+    hole = fn_.nodes.new("ShaderNodeMapRange")
+    hole.inputs["From Min"].default_value, hole.inputs["From Max"].default_value = 0.22, 0.28
+    fn_.links.new(vo.outputs["Distance"], hole.inputs["Value"])
+    col = fn_.nodes.new("ShaderNodeMix"); col.data_type = "RGBA"
+    col.inputs[6].default_value, col.inputs[7].default_value = (0.002, 0.002, 0.002, 1), (0.04, 0.04, 0.043, 1)
+    fn_.links.new(hole.outputs[0], col.inputs["Factor"])
+    b_ = fn_.nodes["Principled BSDF"]
+    fn_.links.new(col.outputs[2], b_.inputs["Base Color"])
+    bm_ = fn_.nodes.new("ShaderNodeBump"); bm_.inputs["Strength"].default_value = 0.3
+    fn_.links.new(hole.outputs[0], bm_.inputs["Height"]); fn_.links.new(bm_.outputs["Normal"], b_.inputs["Normal"])
+    rubber = principled("pc feet", (0.01, 0.01, 0.01), 0.9)
+    led = bpy.data.materials.new("pc led")
+    led.use_nodes = True
+    lb = led.node_tree.nodes["Principled BSDF"]
+    lb.inputs["Emission Color"].default_value = (0.85, 0.92, 1.0, 1); lb.inputs["Emission Strength"].default_value = 6.0
+    port = principled("pc port", (0.005, 0.005, 0.005), 0.5)
+    parts = [cube("pc case", (-W_ / 2, -D_ / 2, 0.012), (W_ / 2, D_ / 2, H_), steel, 0.006),
+             cube("pc front", (-W_ / 2 + 0.006, -D_ / 2 - 0.004, 0.02), (W_ / 2 - 0.006, -D_ / 2 + 0.002, H_ - 0.06), front, 0.002)]
+    for fx in (-1, 1):
+        for fy in (-1, 1):
+            parts.append(cube("pc foot", (fx * (W_ / 2 - 0.03) - 0.015, fy * (D_ / 2 - 0.04) - 0.015, 0.0),
+                              (fx * (W_ / 2 - 0.03) + 0.015, fy * (D_ / 2 - 0.04) + 0.015, 0.013), rubber, 0.004))
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.011, depth=0.006, location=(0.06, -D_ / 2 - 0.002, H_ - 0.03),
+                                        rotation=(math.pi / 2, 0, 0))
+    ring = bpy.context.active_object; ring.name = "pc power led"; ring.data.materials.append(led); parts.append(ring)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.0085, depth=0.008, location=(0.06, -D_ / 2 - 0.003, H_ - 0.03),
+                                        rotation=(math.pi / 2, 0, 0))
+    btn = bpy.context.active_object; btn.name = "pc power button"; btn.data.materials.append(steel); parts.append(btn)
+    for k, x in enumerate((-0.07, -0.045)):
+        parts.append(cube("pc usb", (x - 0.007, -D_ / 2 - 0.001, H_ - 0.036), (x + 0.007, -D_ / 2 + 0.003, H_ - 0.031), port, 0.0005))
+    bpy.ops.mesh.primitive_cylinder_add(vertices=16, radius=0.003, depth=0.004, location=(-0.015, -D_ / 2, H_ - 0.033),
+                                        rotation=(math.pi / 2, 0, 0))
+    jack = bpy.context.active_object; jack.name = "pc jack"; jack.data.materials.append(port); parts.append(jack)
+    g = bpy.data.objects.new("@pc_tower", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
 BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(), "@nfc_reader": lambda: nfc_reader(), "@eraser_crumbs": lambda: eraser_crumbs(),
          "@name_card": lambda: name_card(), "@card_reader": lambda: card_reader(),
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
-         "@swatch_fan": lambda: swatch_fan(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
+         "@swatch_fan": lambda: swatch_fan(), "@pc_tower": lambda: pc_tower(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
 
 
 def wall_texture(tx):
