@@ -244,7 +244,7 @@ SCENES = {
                   for k in range(3)],
         camera=dict(distance=2.35, elev=30, azim=-8, lens=45, fstop=11.0, aim_y=0.14, aim_z=0.08)),
     "designer": dict(                                  # a designer in a loft: brick, a steel window, low sun
-        hdri="canary_wharf", hdri_turn=200, hdri_strength=0.9, hdri_view=2.5, exposure=0.6,
+        hdri="canary_wharf", hdri_turn=290, hdri_strength=0.9, hdri_view=2.5, exposure=0.6,
         look="AgX - Punchy", sun=dict(**{"from": (-0.45, 1.0, 0.70)}, strength=11.0, angle=0.5, color=(1.0, 0.92, 0.80)),
         post=dict(vignette=0.30, glare=0.06, glare_threshold=1.5, sat=1.0, sharpen=0.05), filter_width=1.0,
         lights=[dict(at=(0.3, -1.6, 1.6), size=(1.4, 0.6), energy=90, color=(0.95, 0.97, 1.0)),
