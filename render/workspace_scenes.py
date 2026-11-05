@@ -244,7 +244,7 @@ SCENES = {
                   for k in range(3)],
         camera=dict(distance=2.35, elev=30, azim=-8, lens=45, fstop=11.0, aim_y=0.14, aim_z=0.08)),
     "designer": dict(                                  # a designer in a loft: brick, a steel window, low sun
-        hdri="canary_wharf", hdri_turn=200, hdri_strength=0.9, exposure=0.6,
+        hdri="canary_wharf", hdri_turn=200, hdri_strength=0.9, hdri_view=2.5, exposure=0.6,
         look="AgX - Punchy", sun=dict(**{"from": (-0.45, 1.0, 0.70)}, strength=11.0, angle=0.5, color=(1.0, 0.92, 0.80)),
         post=dict(vignette=0.30, glare=0.06, glare_threshold=1.5, sat=1.0, sharpen=0.05), filter_width=1.0,
         lights=[dict(at=(0.3, -1.6, 1.6), size=(1.4, 0.6), energy=90, color=(0.95, 0.97, 1.0)),
@@ -258,7 +258,7 @@ SCENES = {
         kb_from_front=0.24,
         wall=dict(texture=dict(id="red_brick_03", tile=1.0, tint=(1.15, 1.10, 1.06), bump=1.0, cavity=0.8, depth=0.012), half_width=4.5,
                   skirting=False,
-                  window=dict(x=(-1.75, -0.45), z=(0.95, 2.35), depth=0.34, cols=3, rows=4, dirt=0.45, dirt_from=0.88, frame_dirt=1.0, view=dict(img="window_view.jpg", strength=2.6, size=(6.0, 3.8), distance=4.0, drop=2.6)),
+                  window=dict(x=(-1.75, -0.45), z=(0.95, 2.35), depth=0.34, cols=3, rows=4, dirt=0.45, dirt_from=0.88, frame_dirt=1.0),
                   items=[dict(kind="bookcase", x0=-3.70, x1=-1.95, h=2.45, d=0.32, bays=2, rows=7, dust=0.8, things=[
                              ("potted_plant_04", None, 3, 0, 0.72), ("wooden_crate_01", None, 1, 1, 0.62, 0.20),
                              ("standing_picture_frame_01", None, 5, 1, 0.70)],

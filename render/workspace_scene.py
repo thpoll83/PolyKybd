@@ -2787,6 +2787,16 @@ nt.links.new(coord.outputs["Generated"], mapping.inputs["Vector"])
 nt.links.new(mapping.outputs["Vector"], env.inputs["Vector"])
 nt.links.new(env.outputs["Color"], bg.inputs["Color"])
 nt.links.new(bg.outputs["Background"], out.inputs["Surface"])
+if S.get("hdri_view"):                           # the panorama brighter where it is SEEN (straight from the camera, or
+    lp = nt.nodes.new("ShaderNodeLightPath")     # through a window's glass), not where it lights the room: a bright
+    td = nt.nodes.new("ShaderNodeMath"); td.operation = "GREATER_THAN"; td.inputs[1].default_value = 0.0   # view out
+    nt.links.new(lp.outputs["Transmission Depth"], td.inputs[0])
+    seen = nt.nodes.new("ShaderNodeMath"); seen.operation = "MAXIMUM"
+    nt.links.new(lp.outputs["Is Camera Ray"], seen.inputs[0]); nt.links.new(td.outputs[0], seen.inputs[1])
+    gain = nt.nodes.new("ShaderNodeMapRange")
+    gain.inputs["To Min"].default_value, gain.inputs["To Max"].default_value = S["hdri_strength"], S["hdri_strength"] * S["hdri_view"]
+    nt.links.new(seen.outputs[0], gain.inputs["Value"])
+    nt.links.new(gain.outputs[0], bg.inputs["Strength"])
 LIGHTS = S.get("lights", [])                     # area lights, placed once the desk is known (below)
 floor = bpy.data.objects["Plane"]
 floor.is_shadow_catcher = True                   # the room's own floor, with the desk's shadow on it
