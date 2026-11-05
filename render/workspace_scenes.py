@@ -250,7 +250,7 @@ SCENES = {
         lights=[dict(at=(0.3, -1.6, 1.6), size=(1.4, 0.6), energy=90, color=(0.95, 0.97, 1.0)),
                 dict(at=(1.2, -0.6, 1.9), size=(1.0, 1.0), energy=60, color=(1.0, 0.95, 0.88))],
         floor=dict(id="dirty_carpet", tile=0.4, color=(0.62, 0.60, 0.56), bump=1.6, range=(0.04, 0.22), dirt=0.8),     # a light loop-pile carpet
-        chair_fabric=dict(id="denim_fabric", tile=0.12, color=(0.20, 0.20, 0.22), bump=1.2, range=(0.05, 0.35)),
+        chair_fabric=dict(id="denim_fabric", tile=0.08, color=(0.075, 0.075, 0.085), bump=2.0, range=(0.05, 0.35)),
         desk="@industrial_desk", desk_wood=dict(id="oak_veneer_01", tile=1.83, tint=(1.25, 1.18, 1.05), bump=0.4),
         desk_dents=0.08, desk_spots=0.8, desk_spots_tint=(0.70, 0.64, 0.56),
         desk_stains=[dict(x=-0.21, y=0.32, r=0.042, strength=0.9), dict(x=-0.40, y=0.18, r=0.04, strength=0.6),

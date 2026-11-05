@@ -1758,8 +1758,8 @@ def office_chair():
         parts.append(cube("chair arm post", (sx * 0.255 - 0.015, -0.02, 0.46), (sx * 0.255 + 0.015, 0.06, 0.66), plastic, 0.006))
         parts.append(cube("chair arm pad", (sx * 0.255 - 0.035, -0.16, 0.66), (sx * 0.255 + 0.035, 0.10, 0.69), plastic, 0.01))
     if S.get("chair_fabric"):                      # used: the seat's front worn shiny and lighter, dust and
-        wear([seat], [dict(spots=0.5, scale=6, lo=0.55, tint=(0.40, 0.40, 0.42), mode="MIX", detail=4.0)])   # crumbs,
-        wear([seat, back], [dict(spots=0.4, scale=60, lo=0.62, tint=(0.55, 0.54, 0.52), mode="MIX", detail=6.0)])
+        wear([seat], [dict(spots=0.35, scale=6, lo=0.55, tint=(0.16, 0.16, 0.17), mode="MIX", detail=4.0)])   # crumbs,
+        wear([seat, back], [dict(spots=0.2, scale=90, lo=0.66, tint=(0.24, 0.23, 0.22), mode="MIX", detail=6.0)])
         grime([o for o in parts if o.name.startswith("chair arm pad")], 1.0)                 # rubbed armrests,
         spots([o for o in parts if o.name.startswith(("chair leg", "chair hub"))], 0.6, scale=30, lo=0.58,  # dusty base
               tint=(0.32, 0.31, 0.29), mode="MIX", detail=5.0)
