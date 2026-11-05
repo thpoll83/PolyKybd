@@ -257,7 +257,7 @@ SCENES = {
         kb_from_front=0.24,
         wall=dict(texture=dict(id="red_brick_03", tile=1.0, tint=(1.15, 1.10, 1.06), bump=1.0, cavity=0.8, depth=0.012), half_width=4.5,
                   skirting=False,
-                  window=dict(x=(-1.75, -0.45), z=(0.95, 2.35), depth=0.34, cols=3, rows=4, dirt=0.45, dirt_from=0.88, frame_dirt=1.0, view=dict(strength=2.5)),
+                  window=dict(x=(-1.75, -0.45), z=(0.95, 2.35), depth=0.34, cols=3, rows=4, dirt=0.45, dirt_from=0.88, frame_dirt=1.0, view=dict(img="window_view.jpg", strength=1.8, size=(7.0, 4.4), distance=6.0)),
                   items=[dict(kind="bookcase", x0=-3.70, x1=-1.95, h=2.45, d=0.32, bays=2, rows=7, dust=0.8, things=[
                              ("potted_plant_04", None, 3, 0, 0.72), ("wooden_crate_01", None, 1, 1, 0.62, 0.20),
                              ("standing_picture_frame_01", None, 5, 1, 0.70)],
@@ -273,7 +273,8 @@ SCENES = {
                          dict(kind="sheet", img="print_palette.jpg", x=0.94, z=0.30, w=0.15, rot=2, bow=0.003, pin=(0.1, 0.3, 0.85))]),
         props=[("@pc_tower", None, -0.42, 0.10, 12, None, False, dict(floor=True)),
                ("wicker_basket_01", None, -1.30, 0.16, 15, None, False, dict(floor=True)),
-               ("@office_chair", None, -1.72, -0.30, 35, None, False, dict(floor=True)),   # a second place, at the bookcase
+               ("@paper_balls", None, -1.30, 0.16, 0, None, False, dict(floor=True, z=0.03)),      # in the basket
+               ("@office_chair", None, -1.98, -0.42, -45, None, False, dict(floor=True)),   # a second place, at the bookcase
                ("@tablet", None, 0.50, 0.02, -12, None, False),
                ("@swatch_fan", None, -0.48, -0.06, 20, None, False),
                ("potted_plant_04", None, -0.74, 0.32, 0, None, False, dict(leaf=0.25, leaf_sv=(1.2, 0.85), darken=[("_dirt", 0.5)])),
@@ -288,6 +289,8 @@ SCENES = {
         monitor=dict(style="dual_arm", y=0.40, inches=27, screens=["screen_design.jpg", "screen_moodboard.jpg"], glow=1.0,
                      screen_rough=0.06, height=0.36, reach=0.20, angle=14, finish="black"),
         mouse=None,
+        glints=[dict(at=(-1.6 + 0.85 * k, -2.6, 0.55), size=(0.70, 1.10), strength=2.2, color=(0.94, 0.97, 1.0), flat=True)
+                for k in range(5)] + [dict(at=(0.4, -2.2, 1.05), size=(1.4, 0.08), strength=4.0, color=(1.0, 0.9, 0.75))],
         camera=dict(distance=2.45, elev=20, azim=32, lens=35, fstop=5.6, aim_x=-0.22, aim_y=0.10, aim_z=0.10)),
     "gamer": dict(
         hdri="neon_photostudio", hdri_turn=210, hdri_strength=0.7,

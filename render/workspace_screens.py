@@ -872,6 +872,18 @@ def photo_building():
     return im
 
 
+def window_view():
+    """What the designer's window looks out on: a wide crop of the canary_wharf HDRI's
+    tonemapped JPG (CC0) along its horizon, office towers and sky, no border; seen out
+    of focus through the dirty glass, so the panorama's slight bend does not show."""
+    import workspace_assets
+    Image.MAX_IMAGE_PIXELS = None
+    src = Image.open(workspace_assets.fetch_photo("canary_wharf"))
+    w, h = src.size
+    ph = src.crop((int(w * 0.50), int(h * 0.14), int(w * 0.80), int(h * 0.52)))
+    return ph.resize((2400, int(2400 * ph.height / ph.width)), Image.LANCZOS).convert("RGB")
+
+
 def mat_cutting():
     """A self-healing cutting mat's print, 3600 x 1440 px (4 px a mm on 900 x 360 mm):
     dark green, a 10 mm grid with every fifth line heavier, mm ticks and numbers along
@@ -2086,7 +2098,7 @@ if __name__ == "__main__":
                      ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
                      ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))),
                      ("art_arches.jpg", art_arches), ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
-                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("screen_plan2.jpg", plan2), ("mat_cutting.jpg", mat_cutting), ("mat_blue.jpg", mat_blue), ("steel_scratches.png", steel_scratches), ("photo_building.jpg", photo_building), *[("photo_%s.jpg" % n, arch_print(n)) for n in ARCH_PHOTOS],
+                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("screen_plan2.jpg", plan2), ("mat_cutting.jpg", mat_cutting), ("mat_blue.jpg", mat_blue), ("steel_scratches.png", steel_scratches), ("photo_building.jpg", photo_building), ("window_view.jpg", window_view), *[("photo_%s.jpg" % n, arch_print(n)) for n in ARCH_PHOTOS],
                      ("paper_elevation.jpg", worn(highlighted(paper_elevation, [((60, 860, 640, 912), "yellow")]), 37)),
                      ("paper_section.jpg", worn(paper_section, 41)), ("paper_site.jpg", worn(paper_site, 43, 0.8)), ("nfc_pad.jpg", nfc_pad),
                      ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])),

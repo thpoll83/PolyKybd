@@ -1482,14 +1482,25 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
         vb.inputs["Base Color"].default_value = (0, 0, 0, 1)
         tcv = vt.nodes.new("ShaderNodeTexCoord")
         sv = vt.nodes.new("ShaderNodeSeparateXYZ"); vt.links.new(tcv.outputs["Generated"], sv.inputs[0])
-        rmp = vt.nodes.new("ShaderNodeValToRGB")
-        rmp.color_ramp.elements[0].color = (*V_.get("low", (0.62, 0.64, 0.66)), 1)
-        rmp.color_ramp.elements[1].color = (*V_.get("high", (0.86, 0.91, 1.0)), 1)
-        vt.links.new(sv.outputs["Z"], rmp.inputs[0])
-        vt.links.new(rmp.outputs[0], vb.inputs["Emission Color"])
+        if V_.get("img"):                          # a photo (render/textures/workspace/<img>) across the backdrop
+            cmb = vt.nodes.new("ShaderNodeCombineXYZ")
+            vt.links.new(sv.outputs["X"], cmb.inputs["X"]); vt.links.new(sv.outputs["Z"], cmb.inputs["Y"])
+            vimg = vt.nodes.new("ShaderNodeTexImage")
+            vimg.image = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", V_["img"]), check_existing=True)
+            vimg.extension = "EXTEND"
+            vt.links.new(cmb.outputs[0], vimg.inputs["Vector"])
+            vt.links.new(vimg.outputs["Color"], vb.inputs["Emission Color"])
+        else:
+            rmp = vt.nodes.new("ShaderNodeValToRGB")
+            rmp.color_ramp.elements[0].color = (*V_.get("low", (0.62, 0.64, 0.66)), 1)
+            rmp.color_ramp.elements[1].color = (*V_.get("high", (0.86, 0.91, 1.0)), 1)
+            vt.links.new(sv.outputs["Z"], rmp.inputs[0])
+            vt.links.new(rmp.outputs[0], vb.inputs["Emission Color"])
         vb.inputs["Emission Strength"].default_value = V_.get("strength", 2.5)
         dist_ = V_.get("distance", 2.0)
-        bd = cube("window view", (x0 - 5.0, y_wall + dp + dist_, z0 - 1.5), (x1 + 5.0, y_wall + dp + dist_ + 0.01, z1 + 2.5), sky, 0.0)
+        vw, vh = V_.get("size", (11.3, 5.4))      # (for a photo: its own aspect, so it is not stretched)
+        xc_ = (x0 + x1) / 2
+        bd = cube("window view", (xc_ - vw / 2, y_wall + dp + dist_, z0 - 1.5), (xc_ + vw / 2, y_wall + dp + dist_ + 0.01, z0 - 1.5 + vh), sky, 0.0)
         bd.visible_shadow = False
         bd.visible_diffuse = False
         bd.visible_glossy = False
@@ -1749,6 +1760,33 @@ def office_chair():
     return g, parts
 
 
+def paper_balls():
+    """Crumpled paper: seven balls of printer paper, 50-80 mm, each an icosphere pushed
+    in and out by a noise, piled in a loose heap about 160 mm across."""
+    import random
+    rnd = random.Random(5)
+    paper = principled("crumpled paper", (0.86, 0.85, 0.82), 0.8)
+    parts = []
+    spots_ = [(0.0, 0.0, 0.0), (0.06, 0.02, 0.0), (-0.05, 0.03, 0.0), (0.01, -0.06, 0.0), (0.03, 0.04, 0.05),
+              (-0.03, -0.02, 0.05), (0.07, -0.04, 0.0)]
+    for k, (px, py, pz) in enumerate(spots_):
+        r = rnd.uniform(0.025, 0.04)
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, radius=r, location=(px, py, pz + r))
+        o = bpy.context.active_object
+        o.name = "paper ball"
+        tx_ = bpy.data.textures.new(f"crumple {k}", "VORONOI")
+        tx_.noise_scale = 0.012
+        dm = o.modifiers.new("crumple", "DISPLACE"); dm.texture = tx_; dm.strength = r * 0.45; dm.mid_level = 0.6
+        o.rotation_euler = (rnd.uniform(0, 3), rnd.uniform(0, 3), rnd.uniform(0, 3))
+        o.data.materials.append(paper)
+        parts.append(o)
+    g = bpy.data.objects.new("@paper_balls", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
 def floor_material(F):
     """A floor from a Poly Haven texture (its normal and roughness, one tile per F["tile"]
     m), recoloured: F["color"] scaled by the texture's own brightness, so a dark
@@ -1888,7 +1926,7 @@ BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holde
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
-         "@swatch_fan": lambda: swatch_fan(), "@pc_tower": lambda: pc_tower(), "@office_chair": lambda: office_chair(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
+         "@swatch_fan": lambda: swatch_fan(), "@pc_tower": lambda: pc_tower(), "@office_chair": lambda: office_chair(), "@paper_balls": lambda: paper_balls(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
 
 
 def wall_texture(tx):
