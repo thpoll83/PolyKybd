@@ -1390,6 +1390,9 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
                          ("wall below", (x0, y_wall, 0.0), (x1, y_wall + dp, z0)),
                          ("wall above", (x0, y_wall, z1), (x1, y_wall + dp, 2.6))):
         o = cube(name, lo, hi, paint, 0.0)
+        o.modifiers.clear()                                    # a sharp box: smooth shading across its
+        for p_ in o.data.polygons:                             # corners darkened the face by every edge,
+            p_.use_smooth = False                              # a dark seam where two blocks meet
         o.select_set(True); bpy.context.view_layer.objects.active = o
         bpy.ops.object.transform_apply(location=True)          # object = world coordinates: one brick course
         o.select_set(False)
@@ -1576,11 +1579,12 @@ def corner_dirt(objs, amount, tint, dist=0.04, top=0.0, rng=(0.45, 1.0), power=1
 def bookcase(it, y_wall):
     """A bookcase standing on the floor against the wall, from x it["x0"] to it["x1"] (from
     the keyboard's centre), it["h"] m high, it["d"] deep: black steel uprights and a top
-    rail, it["bays"] bays, it["rows"] oak boards, filled with plain books (cloth and paper
-    covers in muted colours, a lighter label band on some spines, heights and
-    thicknesses varied, now and then a stack lying flat or one leaning) and, on a few
+    rail, it["bays"] bays, it["rows"] oak boards, filled with books built as the office
+    shelf's (book_parts(): boards, page block, printed spine) from workspace_scenes.LIBRARY,
+    some set back, now and then a stack lying flat or a gap) and, on a few
     boards, a box or a plant from it["things"] (aid, part, board index, bay, x in bay)."""
     import random
+    from workspace_scenes import LIBRARY
     rnd = random.Random(it.get("seed", 11))
     x0, x1, H, D = it["x0"], it["x1"], it.get("h", 2.4), it.get("d", 0.32)
     bays, rows = it.get("bays", 2), it.get("rows", 6)
@@ -1600,7 +1604,6 @@ def bookcase(it, y_wall):
                (0.08, 0.08, 0.09), (0.55, 0.30, 0.12), (0.36, 0.38, 0.40), (0.70, 0.20, 0.14), (0.88, 0.84, 0.74),
                (0.22, 0.30, 0.40), (0.48, 0.42, 0.30)]
     mats = [principled(f"bookcase cover {i}", c, rnd.uniform(0.45, 0.8)) for i, c in enumerate(palette)]
-    label = principled("bookcase label", (0.86, 0.83, 0.75), 0.6)
     things = it.get("things", [])
     for r, zb in enumerate(z_board):
         gap = (H - 0.12) / rows - 0.03            # clear height above this board
@@ -1630,24 +1633,24 @@ def bookcase(it, y_wall):
                 if rnd.random() < 0.06:                                # a gap
                     xb += rnd.uniform(0.03, 0.08)
                     continue
-                th = rnd.uniform(0.014, 0.045)
-                hb = min(gap - 0.02, rnd.uniform(0.17, 0.30))
-                dp_ = rnd.uniform(0.14, 0.22)
-                m_ = rnd.choice(mats)
-                bk = cube("bookcase book", (xb, yb - 0.012 - dp_, z0_), (xb + th, yb - 0.012, z0_ + hb), m_, 0.0012)
-                out.append(bk)
-                out.append(cube("bookcase book pages", (xb + 0.0015, yb - 0.012 - dp_ + 0.003, z0_ + 0.002),
-                                (xb + th - 0.0015, yb - 0.014, z0_ + hb + 0.0005), pages, 0.0005))
-                if rnd.random() < 0.4:                                 # a label band on the spine
-                    lz = z0_ + hb * rnd.uniform(0.62, 0.78)
-                    out.append(cube("bookcase spine label", (xb + 0.002, yb - 0.0125 - dp_ - 0.0006, lz),
-                                    (xb + th - 0.002, yb - 0.0125 - dp_ + 0.001, lz + rnd.uniform(0.02, 0.04)), label, 0.0003))
-                xb += th + rnd.uniform(0.0, 0.003)
+                bi = rnd.randrange(len(LIBRARY))
+                _t, _a, cover, _ink, hb, th, _st = LIBRARY[bi]
+                if hb > gap - 0.02:
+                    hb = gap - 0.02
+                dp_ = min(D - 0.03, hb * rnd.uniform(0.70, 0.78))
+                parts_b = book_parts(f"bookcase book {r}.{b}.{len(out)}", cover, hb, th, dp_, f"lib_spine_{bi}.jpg",
+                                     rnd.random() < 0.35)
+                bg_ = bpy.data.objects.new("bookcase book", None)
+                sc.collection.objects.link(bg_)
+                for o in parts_b:
+                    o.parent = bg_
+                bg_.location = (xb, yb - 0.012 - (D - 0.03 - dp_) * rnd.uniform(0.0, 0.3), z0_)
+                out += parts_b
+                xb += th + 0.001 + rnd.uniform(0.0, 0.002)
             for aid, part, _r, _b, fx, *h_ in mine:
                 g_, objs_ = BUILT[aid]() if aid in BUILT else gltf(aid, part)
                 place(g_, objs_, (bx0 + bw * fx, yb - D / 2), rnd.uniform(-20, 20), h_[0] if h_ else None, base_z=z0_)
                 out += [o for o in objs_ if o.type == "MESH"]
-    grime([o for o in out if o.name.startswith("bookcase book")], 0.5)
     return out
 
 
@@ -2038,6 +2041,32 @@ def disc(name, x, y, z, r, mat, n=96):
     return o
 
 
+def book_parts(name, cover, hgt, th, dep, spine_img, curved, x0=0.0, sides=None):
+    """One book standing upright, its spine facing the viewer: the two boards, the spine
+    strip and the page block between them (aged paper, 3 mm short of the boards' fore
+    edge), the printed spine label (spine_img), bulging like a cloth hardback's when
+    curved, and, with sides=(back image, front image), its covers on the side faces.
+    Local frame: x from x0 to x0 + th, y from -dep to 0 (the spine at -dep), z 0 to hgt.
+    Rubbed board corners, dusty page tops."""
+    cm = bpy.data.materials.get(f"book cover {cover}") or principled(f"book cover {cover}", cover, 0.55)
+    pg = bpy.data.materials.get("book pages") or principled("book pages", (0.78, 0.73, 0.62), 0.85)
+    bd = 0.0022
+    parts_b = [cube(f"{name}", (x0, -dep, 0), (x0 + bd, 0, hgt), cm, 0.0008),
+               cube(f"{name} pages", (x0 + bd, -dep + 0.002, 0.003), (x0 + th - bd, -0.003, hgt - 0.003), pg, 0.0006),
+               cube(f"{name} board", (x0 + th - bd, -dep, 0), (x0 + th, 0, hgt), cm, 0.0008),
+               cube(f"{name} back", (x0, -dep, 0), (x0 + th, -dep + 0.002, hgt), cm, 0.0008)]
+    sp = bpy.data.materials.get(f"spine {spine_img}") or image_material(f"spine {spine_img}", spine_img, rough=0.5)
+    parts_b.append(spine(f"{name} spine", x0, th, hgt, -dep - 0.0004, th * 0.22 if curved else 0.0, sp))
+    if sides:
+        for side, img_ in ((x0 - 0.0004, sides[0]), (x0 + th + 0.0004, sides[1])):
+            parts_b.append(side_board(f"{name} side", side, -dep, 0.0, hgt, side > x0, image_material(
+                f"{img_}", img_, rough=0.55)))         # front cover on the right, back on the left
+    grime([parts_b[0], parts_b[2], parts_b[3]], 0.9)   # rubbed cover corners
+    grime(parts_b[1:2], 1.0)                # page tops: dusty, darker where they are pulled out
+    grime(parts_b[4:], 0.8, axes=("X", "Z"))
+    return parts_b
+
+
 def spine(name, x0, th, h, y, bulge, mat, n=12):
     """A book's spine label from x0 to x0 + th, 0 to h high, at y facing the viewer;
     bulge > 0 rounds it out towards the viewer like a cloth hardback's. uv: the image."""
@@ -2132,26 +2161,11 @@ def wall_item(it, y_wall, top):
             prev_h = None
             for i, (title, author, cover, ink, hgt, th, style) in enumerate(BOOKS):
                 dep = 0.16 + 0.01 * (i % 3)
-                cm = principled(f"book cover {i}", cover, 0.55)
-                pg = principled("book pages", (0.78, 0.73, 0.62), 0.85)   # aged paper, darker than new
                 last = i == len(BOOKS) - 1
                 lean = math.radians(it.get("lean", 9)) if last else 0.0
                 x0 = -th if last else 0.0             # the leaning book pivots on its bottom-right corner
-                curved = i % 3 == 0                   # a cloth hardback: its spine bulges
-                bd = 0.0022                           # the boards, the spine strip, and the page block
-                parts_b = [cube(f"book {i}", (x0, -dep, 0), (x0 + bd, 0, hgt), cm, 0.0008),   # between them,
-                           cube(f"book pages {i}", (x0 + bd, -dep + 0.002, 0.003),          # 3 mm short of the
-                                (x0 + th - bd, -0.003, hgt - 0.003), pg, 0.0006),            # boards' fore edge
-                           cube(f"book board {i}", (x0 + th - bd, -dep, 0), (x0 + th, 0, hgt), cm, 0.0008),
-                           cube(f"book back {i}", (x0, -dep, 0), (x0 + th, -dep + 0.002, hgt), cm, 0.0008)]
-                sp = image_material(f"spine {i}", f"spine_{i}.jpg", rough=0.5)
-                parts_b.append(spine(f"spine {i}", x0, th, hgt, -dep - 0.0004, th * 0.22 if curved else 0.0, sp))
-                for side, img_ in ((x0 - 0.0004, f"back_{i}.jpg"), (x0 + th + 0.0004, f"cover_{i}.jpg")):
-                    parts_b.append(side_board(f"book side {i}", side, -dep, 0.0, hgt, side > x0, image_material(
-                        f"{img_}", img_, rough=0.55)))         # front cover on the right, back on the left
-                grime([parts_b[0], parts_b[2], parts_b[3]], 0.9)   # rubbed cover corners
-                grime(parts_b[1:2], 1.0)                # page tops: dusty, darker where they are pulled out
-                grime(parts_b[4:], 0.8, axes=("X", "Z"))
+                parts_b = book_parts(f"book {i}", cover, hgt, th, dep, f"spine_{i}.jpg", i % 3 == 0, x0,
+                                     sides=(f"back_{i}.jpg", f"cover_{i}.jpg"))
                 bg_ = bpy.data.objects.new(f"book {i}", None)
                 sc.collection.objects.link(bg_)
                 for o in parts_b:

@@ -1613,7 +1613,7 @@ def wall_scuff():
     return im
 
 
-from workspace_scenes import BOOKS  # noqa: E402  (the shelf's books: data shared with the scene)
+from workspace_scenes import BOOKS, LIBRARY  # noqa: E402  (the shelf's and bookcase's books: data shared with the scene)
 
 
 SERIF = "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
@@ -1632,11 +1632,11 @@ def _rgb(c):
     return tuple(int(v * 255) for v in c)
 
 
-def book_spine(i):
-    """Book i's spine (BOOKS) in one of four layouts after real spines: drawn lying
-    (height along x), then turned to read top to bottom."""
+def book_spine(i, books=BOOKS):
+    """Book i's spine (BOOKS, or LIBRARY) in one of four layouts after real spines: drawn
+    lying (height along x), then turned to read top to bottom."""
     def draw():
-        title, author, cover, ink, hgt, th, style = BOOKS[i]
+        title, author, cover, ink, hgt, th, style = books[i]
         w, h = max(140, int(th * PX * 2.4)), int(hgt * PX)
         bg = _rgb(cover)
         im = Image.new("RGB", (h, w), bg)
@@ -1669,7 +1669,7 @@ def book_spine(i):
             d.line((x1, w / 2, h * 0.80, w / 2), fill=ink, width=3)
             fn = font(BOLD, int(w * 0.36))
             d.rectangle((h * 0.84, w * 0.18, h * 0.96, w * 0.82), fill=ink)
-            d.text((h * 0.865, w * 0.22), str(i + 3), font=fn, fill=bg)
+            d.text((h * 0.865, w * 0.22), str(i + 3 if i + 3 < 10 else i % 9 + 1), font=fn, fill=bg)   # one digit fits
         else:                                          # title down the spine, author and a mark below
             f = _fit(BOLD if i % 2 else SANS, title, int(w * 0.44), h * 0.56)
             d.text((h * 0.07, (w - f.size * 1.2) / 2), title, font=f, fill=ink)
@@ -2095,6 +2095,7 @@ if __name__ == "__main__":
                      *[(n, poster_proof(*a)) for n, a in PROOFS.items()], ("screen_moodboard.jpg", moodboard_screen))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))
+                     + tuple((f"lib_spine_{i}.jpg", book_spine(i, LIBRARY)) for i in range(len(LIBRARY)))
                      + tuple((f"cover_{i}.jpg", book_cover(i)) for i in range(len(BOOKS)))
                      + tuple((f"back_{i}.jpg", book_back(i)) for i in range(len(BOOKS)))):
         if sys.argv[1:] and name not in sys.argv[1:]:   # only the named files

@@ -43,6 +43,41 @@ BOOKS = [  # (title, author, cover rgb, ink rgb, height m, thickness m, spine st
     ("Ergonomics", "K. Kroemer", (0.30, 0.30, 0.33), (230, 230, 230), 0.190, 0.028, 1),
     ("Rust", "S. Klabnik", (0.62, 0.28, 0.12), (245, 240, 230), 0.198, 0.032, 3)]
 
+LIBRARY = [  # the designer's bookcase, same fields as BOOKS; workspace_screens.py draws lib_spine_<i>.jpg.
+    # Design, type, architecture and art books: taller and thicker than the office's manuals
+    ("Grid Systems", "J. Mueller-Brockmann", (0.92, 0.90, 0.84), (25, 25, 28), 0.297, 0.024, 3),
+    ("Interaction of Color", "J. Albers", (0.80, 0.24, 0.12), (250, 244, 230), 0.255, 0.020, 1),
+    ("Thinking with Type", "E. Lupton", (0.95, 0.80, 0.18), (25, 25, 28), 0.230, 0.022, 0),
+    ("Ways of Seeing", "J. Berger", (0.82, 0.16, 0.14), (250, 250, 245), 0.198, 0.012, 0),
+    ("BAUHAUS", "Taschen", (0.08, 0.08, 0.09), (230, 60, 40), 0.300, 0.045, 2),
+    ("Typographic Style", "R. Bringhurst", (0.18, 0.28, 0.42), (240, 230, 205), 0.235, 0.030, 1),
+    ("Logo Modernism", "J. Mueller", (0.94, 0.93, 0.90), (20, 20, 22), 0.310, 0.055, 3),
+    ("Design as Art", "B. Munari", (0.20, 0.42, 0.62), (250, 248, 240), 0.198, 0.014, 0),
+    ("Point and Line to Plane", "W. Kandinsky", (0.86, 0.80, 0.66), (60, 40, 30), 0.215, 0.018, 1),
+    ("Swiss Graphic Design", "R. Hollis", (0.70, 0.08, 0.10), (250, 250, 250), 0.280, 0.034, 3),
+    ("Typographie", "E. Ruder", (0.90, 0.88, 0.80), (30, 30, 34), 0.300, 0.032, 1),
+    ("PAUL RAND", "S. Heller", (0.10, 0.30, 0.55), (250, 220, 60), 0.290, 0.048, 2),
+    ("Signs and Symbols", "A. Frutiger", (0.26, 0.26, 0.28), (235, 235, 230), 0.240, 0.026, 0),
+    ("Letterpress Now", "J. Rabanus", (0.55, 0.36, 0.20), (245, 235, 210), 0.250, 0.022, 3),
+    ("Brutalism", "Phaidon", (0.56, 0.56, 0.54), (20, 20, 22), 0.290, 0.040, 3),
+    ("Towards a New Architecture", "Le Corbusier", (0.88, 0.84, 0.72), (110, 40, 30), 0.225, 0.020, 1),
+    ("EAMES", "Vitra", (0.85, 0.42, 0.14), (250, 245, 235), 0.270, 0.036, 2),
+    ("Less but Better", "D. Rams", (0.30, 0.31, 0.30), (240, 120, 40), 0.210, 0.016, 0),
+    ("Helvetica Forever", "V. Malsy", (0.95, 0.95, 0.94), (200, 30, 30), 0.255, 0.030, 3),
+    ("Futura", "C. Burke", (0.12, 0.12, 0.13), (240, 200, 60), 0.240, 0.024, 0),
+    ("Lettering", "A. Shaw", (0.36, 0.52, 0.40), (245, 240, 225), 0.235, 0.020, 1),
+    ("Wayfinding", "D. Gibson", (0.94, 0.70, 0.10), (20, 20, 25), 0.250, 0.018, 0),
+    ("Visual Grammar", "C. Leborg", (0.62, 0.70, 0.74), (25, 30, 40), 0.200, 0.014, 0),
+    ("PHOTOGRAPHY", "Phaidon", (0.15, 0.15, 0.16), (235, 235, 235), 0.300, 0.050, 2),
+    ("Colour", "D. Hornung", (0.48, 0.20, 0.42), (250, 240, 235), 0.270, 0.022, 3),
+    ("Japanese Type", "Gestalten", (0.92, 0.22, 0.20), (250, 250, 250), 0.245, 0.028, 1),
+    ("Sketchbook", "", (0.18, 0.16, 0.14), (200, 190, 170), 0.215, 0.020, 0),
+    ("Poster Design", "M. Schwartz", (0.22, 0.46, 0.50), (250, 245, 230), 0.285, 0.026, 3),
+    ("Packaging", "Laurence King", (0.80, 0.72, 0.52), (40, 35, 30), 0.250, 0.024, 1),
+    ("The Form of the Book", "J. Tschichold", (0.40, 0.12, 0.10), (235, 210, 150), 0.205, 0.018, 1),
+    ("MODERNISM", "Gestalten", (0.92, 0.88, 0.78), (25, 25, 28), 0.300, 0.046, 2),
+    ("Notes on Design", "", (0.20, 0.24, 0.30), (230, 230, 225), 0.190, 0.012, 0)]
+
 SCENES = {
     "office": dict(
         hdri="poly_haven_studio", hdri_turn=0, hdri_strength=0.55, exposure=0.25,
