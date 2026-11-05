@@ -251,9 +251,9 @@ SCENES = {
                 dict(at=(1.2, -0.6, 1.9), size=(1.0, 1.0), energy=60, color=(1.0, 0.95, 0.88))],
         floor=dict(id="dirty_carpet", tile=0.4, color=(0.62, 0.60, 0.56), bump=1.6, range=(0.04, 0.22), dirt=0.8),     # a light loop-pile carpet
         desk="@industrial_desk", desk_wood=dict(id="oak_veneer_01", tile=1.83, tint=(1.25, 1.18, 1.05), bump=0.4),
-        desk_dents=0.08, desk_spots=0.9,
-        desk_stains=[dict(x=-0.21, y=0.32, r=0.042, strength=0.32), dict(x=-0.40, y=0.18, r=0.04, strength=0.22),
-                     dict(x=0.66, y=0.30, r=0.04, strength=0.18)],     # old mug rings
+        desk_dents=0.08, desk_spots=0.8, desk_spots_tint=(0.70, 0.64, 0.56),
+        desk_stains=[dict(x=-0.21, y=0.32, r=0.042, strength=0.9), dict(x=-0.40, y=0.18, r=0.04, strength=0.6),
+                     dict(x=0.66, y=0.30, r=0.04, strength=0.5)],     # old mug rings (light oak: high strength)
         kb_from_front=0.24,
         wall=dict(texture=dict(id="red_brick_03", tile=1.0, tint=(1.15, 1.10, 1.06), bump=1.3), half_width=4.5,
                   skirting=False,

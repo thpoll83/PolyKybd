@@ -2632,7 +2632,7 @@ if (S.get("desk_matte") or S.get("desk_dents")) and not S["desk"].startswith("@"
             if S.get("desk_dents"):
                 dent_material(slot.material, S["desk_dents"], S.get("desk_dent_scale", 14.0))
 if S.get("desk_spots"):                            # faint marks of use: a few soft, slightly darker spots
-    spots(desk_objs, S["desk_spots"])
+    spots(desk_objs, S["desk_spots"], tint=S.get("desk_spots_tint", (0.86, 0.83, 0.78)))   # (a light top needs a darker tint)
 
 
 def desk_stains(stains, top, kb_y):
