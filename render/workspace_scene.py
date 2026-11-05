@@ -1500,7 +1500,8 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
         dist_ = V_.get("distance", 2.0)
         vw, vh = V_.get("size", (11.3, 5.4))      # (for a photo: its own aspect, so it is not stretched)
         xc_ = (x0 + x1) / 2
-        bd = cube("window view", (xc_ - vw / 2, y_wall + dp + dist_, z0 - 1.5), (xc_ + vw / 2, y_wall + dp + dist_ + 0.01, z0 - 1.5 + vh), sky, 0.0)
+        zb_ = z0 - V_.get("drop", 1.5)            # its bottom edge below the sill (the camera looks down through it)
+        bd = cube("window view", (xc_ - vw / 2, y_wall + dp + dist_, zb_), (xc_ + vw / 2, y_wall + dp + dist_ + 0.01, zb_ + vh), sky, 0.0)
         bd.visible_shadow = False
         bd.visible_diffuse = False
         bd.visible_glossy = False
