@@ -320,22 +320,33 @@ def window(base, content, x, y, w, title, accent=(60, 64, 76)):
     return base
 
 
-def chat():
-    """A team chat: channels on the left, a thread of short messages, a reply box."""
+CHAT_OFFICE = (["# general", "# office-move", "# budget-2026", "# random", "", "Anna Weber", "Marco Rossi", "Jonas K."], 2,
+               [("Marco Rossi", "10:02", "Review moved to 14:00 on Thursday", (90, 140, 210)),
+                ("Anna Weber", "10:05", "ok! can someone check the travel line?", (200, 120, 90)),
+                ("Jonas K.", "10:07", "Q3 is the trade fair, I'll add a note", (110, 170, 110)),
+                ("Anna Weber", "10:08", "thanks :)", (200, 120, 90)),
+                ("Lena Hofmann", "10:15", "who has the projector adapter?", (180, 110, 180))])
+CHAT_STUDIO = (["# studio", "# summer-poster", "# night-market", "# type-nerds", "", "Mira (client)", "Tom", "Sven"], 1,
+               [("Mira (client)", "09:41", "Love v2! Can the sun be a bit warmer?", (210, 120, 80)),
+                ("Tom", "09:44", "warmer = the palette B oranges?", (90, 140, 210)),
+                ("Mira (client)", "09:46", "yes, and the date bigger please", (210, 120, 80)),
+                ("Sven", "09:52", "printer needs the PDF by Friday noon", (110, 170, 110)),
+                ("Tom", "09:53", "on it - export at 3 mm bleed", (90, 140, 210))])
+
+
+def chat(spec=CHAT_OFFICE):
+    """A team chat: channels on the left (spec: channels, the selected one, messages), a
+    thread of short messages, a reply box."""
+    channels, sel, msgs = spec
     im = Image.new("RGB", (1400, 1100), (255, 255, 255))
     d = ImageDraw.Draw(im)
     d.rectangle((0, 0, 330, 1100), fill=(50, 48, 76))
-    for k, t in enumerate(["# general", "# office-move", "# budget-2026", "# random", "", "Anna Weber", "Marco Rossi", "Jonas K."]):
-        if k == 2:
+    for k, t in enumerate(channels):
+        if k == sel:
             d.rectangle((0, 90 + k * 64 - 12, 330, 90 + k * 64 + 44), fill=(90, 86, 130))
-        d.text((30, 90 + k * 64), t, font=font(BOLD if k == 2 else SANS, 28), fill=(235, 232, 245))
-    d.text((370, 30), "# budget-2026", font=font(BOLD, 34), fill=(30, 30, 40))
+        d.text((30, 90 + k * 64), t, font=font(BOLD if k == sel else SANS, 28), fill=(235, 232, 245))
+    d.text((370, 30), channels[sel], font=font(BOLD, 34), fill=(30, 30, 40))
     d.line((330, 90, 1400, 90), fill=(225, 225, 232), width=2)
-    msgs = [("Marco Rossi", "10:02", "Review moved to 14:00 on Thursday", (90, 140, 210)),
-            ("Anna Weber", "10:05", "ok! can someone check the travel line?", (200, 120, 90)),
-            ("Jonas K.", "10:07", "Q3 is the trade fair, I'll add a note", (110, 170, 110)),
-            ("Anna Weber", "10:08", "thanks :)", (200, 120, 90)),
-            ("Lena Hofmann", "10:15", "who has the projector adapter?", (180, 110, 180))]
     for k, (who, t, msg, col) in enumerate(msgs):
         y = 130 + k * 170
         d.ellipse((370, y, 440, y + 70), fill=col)
@@ -344,7 +355,7 @@ def chat():
         d.text((470 + d.textlength(who, font=font(BOLD, 28)) + 20, y + 4), t, font=font(SANS, 24), fill=(130, 130, 140))
         d.text((470, y + 44), msg, font=font(SANS, 28), fill=(40, 40, 50))
     d.rounded_rectangle((370, 980, 1360, 1060), 12, outline=(200, 200, 210), width=2)
-    d.text((400, 1004), "Message #budget-2026", font=font(SANS, 26), fill=(150, 150, 160))
+    d.text((400, 1004), "Message " + channels[sel], font=font(SANS, 26), fill=(150, 150, 160))
     return im
 
 
@@ -2080,6 +2091,73 @@ def moodboard_screen():
     return im
 
 
+def music_player():
+    """A small music player: the album art (the night poster), title and artist, a
+    progress bar, the transport buttons."""
+    im = Image.new("RGB", (900, 360), (24, 24, 28))
+    d = ImageDraw.Draw(im)
+    art = Image.open(os.path.join(OUT, "proof_night.jpg")).convert("RGB")
+    art = art.crop((110, 110, 890, 890)).resize((280, 280), Image.LANCZOS)
+    im.paste(art, (40, 40))
+    d.text((360, 60), "Night Drive", font=font(BOLD, 44), fill=(240, 240, 245))
+    d.text((360, 120), "Lo-Fi Studio Mix", font=font(SANS, 30), fill=(160, 162, 172))
+    d.rounded_rectangle((360, 210, 860, 222), 6, fill=(70, 72, 80))
+    d.rounded_rectangle((360, 210, 560, 222), 6, fill=(120, 200, 140))
+    d.text((360, 236), "1:24", font=font(SANS, 22), fill=(150, 150, 160))
+    d.text((815, 236), "3:51", font=font(SANS, 22), fill=(150, 150, 160))
+    for k, x in enumerate((470, 580, 690)):
+        if k == 1:
+            d.ellipse((x - 34, 266, x + 34, 334), fill=(240, 240, 245))
+            d.rectangle((x - 12, 284, x - 4, 316), fill=(24, 24, 28)); d.rectangle((x + 4, 284, x + 12, 316), fill=(24, 24, 28))
+        else:
+            sgn = -1 if k == 0 else 1
+            d.polygon([(x - 18 * sgn, 284), (x - 18 * sgn, 316), (x + 14 * sgn, 300)], fill=(200, 200, 208))
+    return im
+
+
+def file_browser():
+    """A file manager on the poster project folder: a sidebar and a grid of thumbnails
+    with their file names."""
+    im = Image.new("RGB", (1300, 820), (248, 248, 250))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 260, 820), fill=(236, 237, 241))
+    for k, t in enumerate(["Recent", "Desktop", "Projects", "  Summer Poster", "  Night Market", "Downloads", "Fonts"]):
+        if k == 3:
+            d.rectangle((0, 40 + k * 56 - 8, 260, 40 + k * 56 + 40), fill=(205, 220, 245))
+        d.text((24, 40 + k * 56), t, font=font(SANS, 26), fill=(40, 42, 50))
+    files = [("proof_summer_a.jpg", "poster_v1.pdf"), ("proof_night.jpg", "night_v2.pdf"), ("print_palette.jpg", "palette_B.png"),
+             ("paper_thumbs.jpg", "thumbs_scan.jpg"), ("print_type.jpg", "type_specimen.pdf"), ("art_arches.jpg", "arches_ref.png"),
+             ("photo_zwinger.jpg", "ref_zwinger.jpg"), ("photo_konzerthaus.jpg", "ref_berlin.jpg")]
+    for k, (src, name) in enumerate(files):
+        cx, cy = 300 + (k % 4) * 245, 40 + (k // 4) * 380
+        th = Image.open(os.path.join(OUT, src)).convert("RGB")
+        th.thumbnail((200, 260), Image.LANCZOS)
+        im.paste(th, (cx + (210 - th.width) // 2, cy + (270 - th.height) // 2))
+        d.text((cx + 105 - d.textlength(name, font=font(SANS, 22)) / 2, cy + 290), name, font=font(SANS, 22), fill=(50, 52, 60))
+    return im
+
+
+def design_desktop():
+    """The designer's left screen: the poster app, the studio chat over its lower right,
+    an on-screen note, a notification, the desktop panel."""
+    im = design()
+    window(im, chat(CHAT_STUDIO), 1640, 760, 860, "Chat - #summer-poster", accent=(50, 48, 76))
+    screen_note(im, 120, 1000, (255, 236, 140), ["sun warmer!", "date bigger", "PDF Fri 12:00"], 3)
+    toast(im, 1880, 90, "Mira (client)", "Love v2! Can the sun be a bit warmer?")
+    taskbar(im, [(200, 90, 60), (50, 48, 76), (0, 95, 184), (120, 200, 140), (230, 180, 60)], 0)
+    return im
+
+
+def moodboard_desktop():
+    """The designer's right screen: the reference board, a file manager on the project
+    folder, a music player, the desktop panel."""
+    im = moodboard_screen()
+    window(im, file_browser(), 140, 640, 1300, "Files - Summer Poster", accent=(70, 74, 86))
+    window(im, music_player(), 1600, 980, 820, "Music", accent=(36, 36, 42))
+    taskbar(im, [(200, 90, 60), (50, 48, 76), (0, 95, 184), (120, 200, 140), (230, 180, 60)], 2)
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_sheet.jpg", sheet), ("screen_reception.jpg", reception), ("screen_reception2.jpg", reception2), ("screen_mail.jpg", mail), ("screen_plan.jpg", plan),
@@ -2104,7 +2182,7 @@ if __name__ == "__main__":
                      ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])),
                      ("print_type.jpg", worn(print_type, 59, 0.6)), ("print_palette.jpg", worn(print_palette, 61, 0.5)),
                      ("paper_thumbs.jpg", worn(paper_thumbs, 67)), ("sticky_lilac.jpg", sticky((210, 190, 240), ["client", "call 3pm"])),
-                     *[(n, poster_proof(*a)) for n, a in PROOFS.items()], ("screen_moodboard.jpg", moodboard_screen))
+                     *[(n, poster_proof(*a)) for n, a in PROOFS.items()], ("screen_moodboard.jpg", moodboard_screen), ("screen_design2.jpg", design_desktop), ("screen_moodboard2.jpg", moodboard_desktop))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))
                      + tuple((f"lib_spine_{i}.jpg", book_spine(i, LIBRARY)) for i in range(len(LIBRARY)))

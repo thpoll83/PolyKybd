@@ -110,7 +110,7 @@ def main():
         p = fetch_hdri(sc["hdri"])
         used[sc["hdri"]] = p
         print(f"{name}: room {os.path.relpath(p, HERE)}")
-        for tex in (sc.get("wall", {}).get("texture"), sc.get("counter_wood"), sc.get("desk_wood"), sc.get("floor")):
+        for tex in (sc.get("wall", {}).get("texture"), sc.get("counter_wood"), sc.get("desk_wood"), sc.get("floor"), sc.get("chair_fabric")):
             if tex:
                 used[tex["id"]] = fetch_texture(tex["id"])["diff"]
         things = sc.get("room", {}).get("things", []) + [t for it in sc.get("wall", {}).get("items", []) for t in it.get("things", [])]

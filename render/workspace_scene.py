@@ -1716,13 +1716,16 @@ def office_chair():
     mesh back on a curved stem, two armrests; dark grey fabric, black plastic, a
     polished column. Seat height 0.47 m; the front faces -y."""
     plastic = principled("chair plastic", (0.02, 0.02, 0.022), 0.45)
-    fabric = principled("chair fabric", (0.09, 0.09, 0.10), 0.9)
-    fn_ = fabric.node_tree
-    tcf = fn_.nodes.new("ShaderNodeTexCoord")
-    wv = fn_.nodes.new("ShaderNodeTexWave"); wv.inputs["Scale"].default_value = 260.0
-    fn_.links.new(tcf.outputs["Object"], wv.inputs["Vector"])
-    bf = fn_.nodes.new("ShaderNodeBump"); bf.inputs["Strength"].default_value = 0.15
-    fn_.links.new(wv.outputs["Fac"], bf.inputs["Height"]); fn_.links.new(bf.outputs["Normal"], fn_.nodes["Principled BSDF"].inputs["Normal"])
+    if S.get("chair_fabric"):                      # a woven fabric from a Poly Haven texture, recoloured
+        fabric = floor_material(dict(S["chair_fabric"], axes="box"))
+    else:
+        fabric = principled("chair fabric", (0.09, 0.09, 0.10), 0.9)
+        fn_ = fabric.node_tree
+        tcf = fn_.nodes.new("ShaderNodeTexCoord")
+        wv = fn_.nodes.new("ShaderNodeTexWave"); wv.inputs["Scale"].default_value = 260.0
+        fn_.links.new(tcf.outputs["Object"], wv.inputs["Vector"])
+        bf = fn_.nodes.new("ShaderNodeBump"); bf.inputs["Strength"].default_value = 0.15
+        fn_.links.new(wv.outputs["Fac"], bf.inputs["Height"]); fn_.links.new(bf.outputs["Normal"], fn_.nodes["Principled BSDF"].inputs["Normal"])
     chrome = principled("chair column", (0.6, 0.6, 0.62), 0.2)
     chrome.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
     parts = []
@@ -1754,6 +1757,12 @@ def office_chair():
     for sx in (-1, 1):                             # armrests: a post and a pad
         parts.append(cube("chair arm post", (sx * 0.255 - 0.015, -0.02, 0.46), (sx * 0.255 + 0.015, 0.06, 0.66), plastic, 0.006))
         parts.append(cube("chair arm pad", (sx * 0.255 - 0.035, -0.16, 0.66), (sx * 0.255 + 0.035, 0.10, 0.69), plastic, 0.01))
+    if S.get("chair_fabric"):                      # used: the seat's front worn shiny and lighter, dust and
+        wear([seat], [dict(spots=0.5, scale=6, lo=0.55, tint=(0.40, 0.40, 0.42), mode="MIX", detail=4.0)])   # crumbs,
+        wear([seat, back], [dict(spots=0.4, scale=60, lo=0.62, tint=(0.55, 0.54, 0.52), mode="MIX", detail=6.0)])
+        grime([o for o in parts if o.name.startswith("chair arm pad")], 1.0)                 # rubbed armrests,
+        spots([o for o in parts if o.name.startswith(("chair leg", "chair hub"))], 0.6, scale=30, lo=0.58,  # dusty base
+              tint=(0.32, 0.31, 0.29), mode="MIX", detail=5.0)
     g = bpy.data.objects.new("@office_chair", None)
     sc.collection.objects.link(g)
     for o in parts:
@@ -1791,8 +1800,9 @@ def paper_balls():
 def floor_material(F):
     """A floor from a Poly Haven texture (its normal and roughness, one tile per F["tile"]
     m), recoloured: F["color"] scaled by the texture's own brightness, so a dark
-    carpet's pile reads as a light one of the same weave."""
-    m = wall_texture(dict(id=F["id"], tile=F.get("tile", 0.6), axes=("X", "Y"), bump=F.get("bump", 1.0)))
+    carpet's pile reads as a light one of the same weave. F["axes"] "box" maps it onto
+    every face of an object (a chair's fabric)."""
+    m = wall_texture(dict(id=F["id"], tile=F.get("tile", 0.6), axes=F.get("axes", ("X", "Y")), bump=F.get("bump", 1.0)))
     if F.get("color"):
         nt_ = m.node_tree
         diff = next(n for n in nt_.nodes if n.bl_idname == "ShaderNodeTexImage" and "_diff" in n.image.name)

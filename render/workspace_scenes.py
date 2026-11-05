@@ -250,6 +250,7 @@ SCENES = {
         lights=[dict(at=(0.3, -1.6, 1.6), size=(1.4, 0.6), energy=90, color=(0.95, 0.97, 1.0)),
                 dict(at=(1.2, -0.6, 1.9), size=(1.0, 1.0), energy=60, color=(1.0, 0.95, 0.88))],
         floor=dict(id="dirty_carpet", tile=0.4, color=(0.62, 0.60, 0.56), bump=1.6, range=(0.04, 0.22), dirt=0.8),     # a light loop-pile carpet
+        chair_fabric=dict(id="denim_fabric", tile=0.12, color=(0.20, 0.20, 0.22), bump=1.2, range=(0.05, 0.35)),
         desk="@industrial_desk", desk_wood=dict(id="oak_veneer_01", tile=1.83, tint=(1.25, 1.18, 1.05), bump=0.4),
         desk_dents=0.08, desk_spots=0.8, desk_spots_tint=(0.70, 0.64, 0.56),
         desk_stains=[dict(x=-0.21, y=0.32, r=0.042, strength=0.9), dict(x=-0.40, y=0.18, r=0.04, strength=0.6),
@@ -266,8 +267,8 @@ SCENES = {
                                    dict(img="proof_night.jpg", w=0.12, y=0.03, z=1.22, rot=-2),
                                    dict(img="sticky_yellow.jpg", w=0.076, y=-0.08, z=1.10, rot=5),
                                    dict(img="photo_zwinger.jpg", w=0.16, y=0.0, z=0.98, rot=-1)]),
-                         dict(kind="clock", x=0.02, z=0.69, r=0.115),
-                         dict(kind="frame", img="photo_building.jpg", x=0.36, z=0.68, w=0.20, border=0.02),
+                         dict(kind="clock", x=-0.10, z=0.69, r=0.115),
+                         dict(kind="frame", img="photo_building.jpg", x=0.22, z=0.72, w=0.18, border=0.02),
                          dict(kind="frame", img="art_arches.jpg", x=0.62, z=0.46, w=0.36, border=0.025),
                          dict(kind="sheet", img="proof_night.jpg", x=0.30, z=0.40, w=0.12, rot=-2, bow=0.004, pin=(0.85, 0.1, 0.1)),
                          dict(kind="sheet", img="print_palette.jpg", x=0.94, z=0.30, w=0.15, rot=2, bow=0.003, pin=(0.1, 0.3, 0.85))]),
@@ -286,7 +287,7 @@ SCENES = {
                ("stationery_supplies", "stationery_supplies_eraser", 0.74, -0.16, 24, None, False, dict(grime=0.8)),
                ("stationery_supplies", "stationery_supplies_pencilcup", 0.52, 0.36, 0, None, False, dict(grime=0.4))],
         desk_mat=dict(w=0.80, d=0.36, x=0.02, y=0.0, color=(0.20, 0.20, 0.21), rough=0.95, wear=[dict(spots=0.4, scale=4, lo=0.5), dict(edges=0.4)]),
-        monitor=dict(style="dual_arm", y=0.40, inches=27, screens=["screen_design.jpg", "screen_moodboard.jpg"], glow=1.0,
+        monitor=dict(style="dual_arm", y=0.40, inches=27, screens=["screen_design2.jpg", "screen_moodboard2.jpg"], glow=1.0,
                      screen_rough=0.06, height=0.36, reach=0.20, angle=14, finish="black"),
         mouse=None,
         glints=[dict(at=(-1.6 + 0.85 * k, -2.6, 0.55), size=(0.70, 1.10), strength=2.2, color=(0.94, 0.97, 1.0), flat=True)
