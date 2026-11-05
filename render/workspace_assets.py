@@ -72,11 +72,14 @@ def fetch_photo(aid):
 
 
 def fetch_texture(aid, res="2k"):
-    """A Poly Haven texture's colour, normal (GL) and roughness maps as 2k JPGs;
-    returns {"diff": path, "nor": path, "rough": path}."""
+    """A Poly Haven texture's colour, normal (GL) and roughness maps as 2k JPGs, and its
+    height and occlusion maps where it has them; returns {"diff": path, "nor": path,
+    "rough": path, "disp": path, "ao": path}."""
     files = json.loads(get(f"{API}/files/{aid}"))
     out = {}
-    for key, kind in (("diff", "Diffuse"), ("nor", "nor_gl"), ("rough", "Rough")):
+    for key, kind in (("diff", "Diffuse"), ("nor", "nor_gl"), ("rough", "Rough"), ("disp", "Displacement"), ("ao", "AO")):
+        if key in ("disp", "ao") and kind not in files:          # height and occlusion: only where the texture has them
+            continue
         u = files[kind][res]["jpg"]["url"]
         path = os.path.join(OUT, aid, os.path.basename(u))
         if not os.path.exists(path):

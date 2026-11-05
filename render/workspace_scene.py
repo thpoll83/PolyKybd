@@ -1651,6 +1651,8 @@ def bookcase(it, y_wall):
                 g_, objs_ = BUILT[aid]() if aid in BUILT else gltf(aid, part)
                 place(g_, objs_, (bx0 + bw * fx, yb - D / 2), rnd.uniform(-20, 20), h_[0] if h_ else None, base_z=z0_)
                 out += [o for o in objs_ if o.type == "MESH"]
+    for k, sh in enumerate(it.get("side", [])):    # papers taped to the end upright's outer face (x1, facing +x):
+        out += side_sheet(f"bookcase side {k}", sh, x1 + 0.0006, yb - 0.005 - D / 2)   # y across the face
     if it.get("dust"):                             # dust on the boards (a film, thicker in front of and between
         du = it["dust"]                            # the books and in the corners), grey on the steel's tops
         boards = [o for o in out if o.name.startswith("bookcase board")]
@@ -1660,6 +1662,91 @@ def bookcase(it, y_wall):
         corner_dirt([o for o in out if o.name.startswith(("bookcase upright", "bookcase top rail"))], du,
                     (0.42, 0.41, 0.39), 0.06, top=du, breakup=(0.3, 1.1))
     return out
+
+
+def side_sheet(name, sh, x_face, y_mid):
+    """A print or a note taped flat to a face at x_face that looks along +x: sh["img"],
+    sh["w"] wide (the height from the image), its centre sh["y"] from y_mid across the
+    face and sh["z"] above the floor, turned sh["rot"] deg; one strip of masking tape
+    across its top edge."""
+    img = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", sh["img"]), check_existing=True)
+    w = sh["w"]
+    h = w * img.size[1] / img.size[0]
+    out = []
+    g = bpy.data.objects.new(name, None)
+    sc.collection.objects.link(g)
+    me = bpy.data.meshes.new(name)
+    me.from_pydata([(-w / 2, 0, -h / 2), (w / 2, 0, -h / 2), (w / 2, 0, h / 2), (-w / 2, 0, h / 2)], [], [(0, 1, 2, 3)])
+    lay = me.uv_layers.new(name="uv")
+    for li, uv in zip(me.polygons[0].loop_indices, [(0, 0), (1, 0), (1, 1), (0, 1)]):
+        lay.data[li].uv = uv
+    me.materials.append(image_material(name, sh["img"], rough=0.7))
+    o = bpy.data.objects.new(name, me)
+    sc.collection.objects.link(o)
+    o.parent = g
+    out.append(o)
+    tape = principled("masking tape", (0.86, 0.80, 0.62), 0.7)
+    tw = min(0.06, w * 0.5)
+    t_ = cube(f"{name} tape", (-tw / 2, -0.0004, h / 2 - 0.012), (tw / 2, -0.0002, h / 2 + 0.012), tape, 0.0)
+    t_.parent = g
+    out.append(t_)
+    g.rotation_euler = (0, math.radians(sh.get("rot", 0)), 0)
+    wrap = bpy.data.objects.new(f"{name} face", None)   # the sheet's front (-y) turned to +x
+    sc.collection.objects.link(wrap)
+    wrap.rotation_euler.z = math.radians(90)
+    wrap.location = (x_face, y_mid + sh.get("y", 0.0), sh["z"])
+    g.parent = wrap
+    return out
+
+
+def office_chair():
+    """An office chair: a five-star base on casters, a gas column, a padded seat and a
+    mesh back on a curved stem, two armrests; dark grey fabric, black plastic, a
+    polished column. Seat height 0.47 m; the front faces -y."""
+    plastic = principled("chair plastic", (0.02, 0.02, 0.022), 0.45)
+    fabric = principled("chair fabric", (0.09, 0.09, 0.10), 0.9)
+    fn_ = fabric.node_tree
+    tcf = fn_.nodes.new("ShaderNodeTexCoord")
+    wv = fn_.nodes.new("ShaderNodeTexWave"); wv.inputs["Scale"].default_value = 260.0
+    fn_.links.new(tcf.outputs["Object"], wv.inputs["Vector"])
+    bf = fn_.nodes.new("ShaderNodeBump"); bf.inputs["Strength"].default_value = 0.15
+    fn_.links.new(wv.outputs["Fac"], bf.inputs["Height"]); fn_.links.new(bf.outputs["Normal"], fn_.nodes["Principled BSDF"].inputs["Normal"])
+    chrome = principled("chair column", (0.6, 0.6, 0.62), 0.2)
+    chrome.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    parts = []
+    for k in range(5):                             # the star: five legs, a caster under each tip
+        a = math.radians(90 + 72 * k)
+        leg = cube("chair leg", (0.0, -0.022, 0.06), (0.30, 0.022, 0.095), plastic, 0.008)
+        leg.rotation_euler.z = a
+        parts.append(leg)
+        cx, cy = 0.28 * math.cos(a), 0.28 * math.sin(a)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.025, depth=0.022, location=(cx, cy, 0.025),
+                                            rotation=(math.pi / 2, 0, a))
+        cs = bpy.context.active_object; cs.name = "chair caster"; cs.data.materials.append(plastic)
+        parts.append(cs)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.045, depth=0.06, location=(0, 0, 0.09))
+    hub = bpy.context.active_object; hub.name = "chair hub"; hub.data.materials.append(plastic); parts.append(hub)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.022, depth=0.30, location=(0, 0, 0.27))
+    col = bpy.context.active_object; col.name = "chair column"; col.data.materials.append(chrome); parts.append(col)
+    parts.append(cube("chair mechanism", (-0.10, -0.12, 0.40), (0.10, 0.12, 0.43), plastic, 0.01))
+    seat = cube("chair seat", (-0.25, -0.24, 0.43), (0.25, 0.23, 0.50), fabric, 0.03)
+    seat.modifiers["bevel"].segments = 6
+    parts.append(seat)
+    parts.append(cube("chair stem", (-0.04, 0.20, 0.44), (0.04, 0.24, 0.62), plastic, 0.01))
+    back = cube("chair back", (-0.23, 0.22, 0.58), (0.23, 0.27, 1.08), fabric, 0.03)
+    back.modifiers["bevel"].segments = 6
+    bend = back.modifiers.new("bend", "SIMPLE_DEFORM"); bend.deform_method = "BEND"; bend.deform_axis = "Z"
+    bend.angle = math.radians(-25)
+    back.rotation_euler.x = math.radians(-8)
+    parts.append(back)
+    for sx in (-1, 1):                             # armrests: a post and a pad
+        parts.append(cube("chair arm post", (sx * 0.255 - 0.015, -0.02, 0.46), (sx * 0.255 + 0.015, 0.06, 0.66), plastic, 0.006))
+        parts.append(cube("chair arm pad", (sx * 0.255 - 0.035, -0.16, 0.66), (sx * 0.255 + 0.035, 0.10, 0.69), plastic, 0.01))
+    g = bpy.data.objects.new("@office_chair", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
 
 
 def floor_material(F):
@@ -1801,7 +1888,7 @@ BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holde
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
-         "@swatch_fan": lambda: swatch_fan(), "@pc_tower": lambda: pc_tower(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
+         "@swatch_fan": lambda: swatch_fan(), "@pc_tower": lambda: pc_tower(), "@office_chair": lambda: office_chair(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
 
 
 def wall_texture(tx):
@@ -1870,6 +1957,30 @@ def wall_texture(tx):
     nt2.links.new(tex("nor_gl", False).outputs["Color"], nm.inputs["Color"])
     nt2.links.new(nm.outputs["Normal"], b.inputs["Normal"])
     nt2.links.new(tex("rough", False).outputs["Color"], b.inputs["Roughness"])
+    if tx.get("cavity"):                           # relief from the height and occlusion maps: the mortar and the
+        cv = tx["cavity"]                          # brick edges sink and darken, each brick stands out
+        hgt = tex("disp", False)
+        ao_ = tex("ao", False)
+        bmpc = nt2.nodes.new("ShaderNodeBump")
+        bmpc.inputs["Strength"].default_value = cv
+        bmpc.inputs["Distance"].default_value = tx.get("depth", 0.01)
+        nt2.links.new(hgt.outputs["Color"], bmpc.inputs["Height"])
+        nt2.links.new(nm.outputs["Normal"], bmpc.inputs["Normal"])
+        nt2.links.new(bmpc.outputs["Normal"], b.inputs["Normal"])
+        low = nt2.nodes.new("ShaderNodeMapRange")  # the lowest 40 % of the height darkens towards 0.35
+        low.inputs["From Min"].default_value, low.inputs["From Max"].default_value = 0.0, 0.4
+        low.inputs["To Min"].default_value, low.inputs["To Max"].default_value = 1.0 - 0.65 * cv, 1.0
+        nt2.links.new(hgt.outputs["Color"], low.inputs["Value"])
+        dk = nt2.nodes.new("ShaderNodeMath"); dk.operation = "MULTIPLY"
+        nt2.links.new(low.outputs[0], dk.inputs[0]); nt2.links.new(ao_.outputs["Color"], dk.inputs[1])
+        mc = nt2.nodes.new("ShaderNodeMix"); mc.data_type = "RGBA"; mc.blend_type = "MULTIPLY"
+        mc.inputs["Factor"].default_value = 1.0
+        nt2.links.new(mix.outputs[2], mc.inputs[6])
+        cc = nt2.nodes.new("ShaderNodeCombineColor")
+        for k in range(3):
+            nt2.links.new(dk.outputs[0], cc.inputs[k])
+        nt2.links.new(cc.outputs[0], mc.inputs[7])
+        nt2.links.new(mc.outputs[2], b.inputs["Base Color"])
     return m
 
 
