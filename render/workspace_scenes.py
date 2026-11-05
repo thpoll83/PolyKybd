@@ -249,14 +249,16 @@ SCENES = {
         post=dict(vignette=0.30, glare=0.06, glare_threshold=1.5, sat=1.0, sharpen=0.05), filter_width=1.0,
         lights=[dict(at=(0.3, -1.6, 1.6), size=(1.4, 0.6), energy=90, color=(0.95, 0.97, 1.0)),
                 dict(at=(1.2, -0.6, 1.9), size=(1.0, 1.0), energy=60, color=(1.0, 0.95, 0.88))],
-        floor=dict(id="dirty_carpet", tile=0.4, color=(0.62, 0.60, 0.56), bump=1.6, range=(0.04, 0.22)),     # a light loop-pile carpet
+        floor=dict(id="dirty_carpet", tile=0.4, color=(0.62, 0.60, 0.56), bump=1.6, range=(0.04, 0.22), dirt=0.8),     # a light loop-pile carpet
         desk="@industrial_desk", desk_wood=dict(id="oak_veneer_01", tile=1.83, tint=(1.25, 1.18, 1.05), bump=0.4),
-        desk_dents=0.05, desk_spots=0.3,
+        desk_dents=0.08, desk_spots=0.55,
+        desk_stains=[dict(x=-0.22, y=0.31, r=0.042, strength=0.12), dict(x=-0.36, y=0.20, r=0.04, strength=0.08),
+                     dict(x=0.66, y=0.30, r=0.04, strength=0.07)],     # old mug rings
         kb_from_front=0.24,
         wall=dict(texture=dict(id="red_brick_03", tile=1.0, tint=(1.15, 1.10, 1.06), bump=1.3), half_width=4.5,
                   skirting=False,
                   window=dict(x=(-1.75, -0.45), z=(0.95, 2.35), depth=0.34, cols=3, rows=4, dirt=0.45, dirt_from=0.88, frame_dirt=1.0, view=dict(strength=2.5)),
-                  items=[dict(kind="bookcase", x0=-3.70, x1=-1.95, h=2.45, d=0.32, bays=2, rows=7, things=[
+                  items=[dict(kind="bookcase", x0=-3.70, x1=-1.95, h=2.45, d=0.32, bays=2, rows=7, dust=0.8, things=[
                              ("potted_plant_04", None, 3, 0, 0.72), ("wooden_crate_01", None, 1, 1, 0.62, 0.20),
                              ("standing_picture_frame_01", None, 5, 1, 0.70)]),
                          dict(kind="frame", img="art_arches.jpg", x=0.62, z=0.46, w=0.36, border=0.025),

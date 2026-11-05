@@ -1651,6 +1651,14 @@ def bookcase(it, y_wall):
                 g_, objs_ = BUILT[aid]() if aid in BUILT else gltf(aid, part)
                 place(g_, objs_, (bx0 + bw * fx, yb - D / 2), rnd.uniform(-20, 20), h_[0] if h_ else None, base_z=z0_)
                 out += [o for o in objs_ if o.type == "MESH"]
+    if it.get("dust"):                             # dust on the boards (a film, thicker in front of and between
+        du = it["dust"]                            # the books and in the corners), grey on the steel's tops
+        boards = [o for o in out if o.name.startswith("bookcase board")]
+        corner_dirt(boards, du, (0.30, 0.27, 0.23), 0.06, rng=(0.5, 1.0))            # grime in the corners
+        corner_dirt(boards, du * 0.7, (0.62, 0.60, 0.56), 0.02, rng=(0.98, 1.0), top=du, breakup=(0.3, 1.1))   # grey dust film
+        spots(boards, du * 0.6, scale=40, lo=0.58, tint=(0.66, 0.64, 0.60), mode="MIX", detail=6.0)            # and fluff
+        corner_dirt([o for o in out if o.name.startswith(("bookcase upright", "bookcase top rail"))], du,
+                    (0.42, 0.41, 0.39), 0.06, top=du, breakup=(0.3, 1.1))
     return out
 
 
@@ -2585,6 +2593,11 @@ if S.get("floor"):                               # a real floor instead: a carpe
     floor.select_set(False)
     floor.data.materials.clear()
     floor.data.materials.append(floor_material(S["floor"]))
+    if S["floor"].get("dirt"):                     # a used carpet: grey along the walls and round the furniture's
+        fdr = S["floor"]["dirt"]                   # feet (where the vacuum misses), a few faint stains
+        corner_dirt([floor], fdr, (0.22, 0.20, 0.18), 0.45, rng=(0.55, 1.0), power=1.2, breakup=(0.4, 1.2))
+        spots([floor], fdr, scale=2.0, lo=0.58, tint=(0.55, 0.51, 0.46), detail=5.0)          # worn paths, stains
+        spots([floor], fdr * 0.7, scale=9.0, lo=0.66, tint=(0.45, 0.41, 0.36), detail=3.0)    # and smaller marks
 
 # ---- the cables, while the keyboard still stands on z = 0 ----------------------------
 if S["desk"] == "@counter":
