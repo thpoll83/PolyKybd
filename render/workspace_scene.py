@@ -1405,8 +1405,8 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
     b, m = 0.045, 0.022
     for name, lo, hi in (("frame left", (x0 + t, yf, z0 + t), (x0 + t + b, yf + 0.05, z1 - t)),
                          ("frame right", (x1 - t - b, yf, z0 + t), (x1 - t, yf + 0.05, z1 - t)),
-                         ("frame bottom", (x0 + t, yf, z0 + t), (x1 - t, yf + 0.05, z0 + t + b)),
-                         ("frame top", (x0 + t, yf, z1 - t - b), (x1 - t, yf + 0.05, z1 - t))):
+                         ("frame bottom", (x0 + t + b, yf + 0.003, z0 + t), (x1 - t - b, yf + 0.047, z0 + t + b)),   # between the
+                         ("frame top", (x0 + t + b, yf + 0.003, z1 - t - b), (x1 - t - b, yf + 0.047, z1 - t))):    # stiles, set back
         parts.append(cube(name, lo, hi, steel, 0.002))
     ix0, ix1, iz0, iz1 = x0 + t + b, x1 - t - b, z0 + t + b, z1 - t - b
     for k in range(1, W_.get("cols", 3)):
@@ -1414,7 +1414,9 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
         parts.append(cube(f"mullion {k}", (xm - m / 2, yf + 0.005, iz0), (xm + m / 2, yf + 0.04, iz1), steel, 0.0015))
     for k in range(1, W_.get("rows", 4)):
         zm = iz0 + (iz1 - iz0) * k / W_.get("rows", 4)
-        parts.append(cube(f"transom {k}", (ix0, yf + 0.005, zm - m / 2), (ix1, yf + 0.04, zm + m / 2), steel, 0.0015))
+        parts.append(cube(f"transom {k}", (ix0, yf + 0.008, zm - m / 2), (ix1, yf + 0.037, zm + m / 2), steel, 0.0015))
+        # (set back 3 mm from the mullions: coplanar faces where they cross read as a deep corner to the dust's
+        # occlusion and render black)
     glass = bpy.data.materials.new("window glass")
     glass.use_nodes = True
     gt_ = glass.node_tree
@@ -1569,6 +1571,84 @@ def corner_dirt(objs, amount, tint, dist=0.04, top=0.0, rng=(0.45, 1.0), power=1
             nt_.links.new(k.outputs[0], rr.inputs[1])
             nt_.links.new(rr.outputs[0], b.inputs["Roughness"])
             slot.material = m
+
+
+def bookcase(it, y_wall):
+    """A bookcase standing on the floor against the wall, from x it["x0"] to it["x1"] (from
+    the keyboard's centre), it["h"] m high, it["d"] deep: black steel uprights and a top
+    rail, it["bays"] bays, it["rows"] oak boards, filled with plain books (cloth and paper
+    covers in muted colours, a lighter label band on some spines, heights and
+    thicknesses varied, now and then a stack lying flat or one leaning) and, on a few
+    boards, a box or a plant from it["things"] (aid, part, board index, bay, x in bay)."""
+    import random
+    rnd = random.Random(it.get("seed", 11))
+    x0, x1, H, D = it["x0"], it["x1"], it.get("h", 2.4), it.get("d", 0.32)
+    bays, rows = it.get("bays", 2), it.get("rows", 6)
+    steel = principled("bookcase steel", (0.025, 0.025, 0.027), 0.45)
+    steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.7
+    oak = wood("bookcase oak", (0.46, 0.32, 0.19), 0.55, grain=30.0)
+    pages = principled("bookcase pages", (0.80, 0.75, 0.64), 0.85)
+    out, u = [], 0.035
+    yb, yf = y_wall, y_wall - D
+    bw = (x1 - x0 - (bays + 1) * u) / bays
+    for k in range(bays + 1):                      # uprights
+        xu = x0 + k * (bw + u)
+        out.append(cube("bookcase upright", (xu, yf, 0.0), (xu + u, yb - 0.005, H), steel, 0.002))
+    out.append(cube("bookcase top rail", (x0, yf, H - u), (x1, yb - 0.005, H), steel, 0.002))
+    z_board = [0.06 + (H - 0.12) * r / rows for r in range(rows)]
+    palette = [(0.30, 0.10, 0.08), (0.12, 0.18, 0.30), (0.62, 0.55, 0.42), (0.16, 0.26, 0.18), (0.80, 0.76, 0.66),
+               (0.08, 0.08, 0.09), (0.55, 0.30, 0.12), (0.36, 0.38, 0.40), (0.70, 0.20, 0.14), (0.88, 0.84, 0.74),
+               (0.22, 0.30, 0.40), (0.48, 0.42, 0.30)]
+    mats = [principled(f"bookcase cover {i}", c, rnd.uniform(0.45, 0.8)) for i, c in enumerate(palette)]
+    label = principled("bookcase label", (0.86, 0.83, 0.75), 0.6)
+    things = it.get("things", [])
+    for r, zb in enumerate(z_board):
+        gap = (H - 0.12) / rows - 0.03            # clear height above this board
+        for b in range(bays):
+            bx0 = x0 + u + b * (bw + u)
+            out.append(cube("bookcase board", (bx0, yf + 0.005, zb), (bx0 + bw, yb - 0.008, zb + 0.03), oak, 0.002))
+            if r == 0 and it.get("bottom_empty"):
+                continue
+            mine = [t for t in things if t[2] == r and t[3] == b]
+            stop = bx0 + bw - 0.01
+            if mine:                               # things take the bay's right part
+                stop = bx0 + bw * min(t[4] for t in mine) - 0.03
+            xb = bx0 + 0.008 + rnd.uniform(0.0, 0.05)
+            z0_ = zb + 0.03
+            while xb < stop - 0.02:
+                if rnd.random() < 0.07 and stop - xb > 0.24:          # a stack lying flat
+                    n_ = rnd.randint(2, 5)
+                    zz = z0_
+                    sw = rnd.uniform(0.17, 0.23)
+                    for _ in range(n_):
+                        t_ = rnd.uniform(0.018, 0.035)
+                        out.append(cube("bookcase flat book", (xb, yb - 0.01 - rnd.uniform(0.15, 0.2), zz),
+                                        (xb + sw, yb - 0.012, zz + t_), rnd.choice(mats), 0.0012))
+                        zz += t_
+                    xb += sw + 0.012
+                    continue
+                if rnd.random() < 0.06:                                # a gap
+                    xb += rnd.uniform(0.03, 0.08)
+                    continue
+                th = rnd.uniform(0.014, 0.045)
+                hb = min(gap - 0.02, rnd.uniform(0.17, 0.30))
+                dp_ = rnd.uniform(0.14, 0.22)
+                m_ = rnd.choice(mats)
+                bk = cube("bookcase book", (xb, yb - 0.012 - dp_, z0_), (xb + th, yb - 0.012, z0_ + hb), m_, 0.0012)
+                out.append(bk)
+                out.append(cube("bookcase book pages", (xb + 0.0015, yb - 0.012 - dp_ + 0.003, z0_ + 0.002),
+                                (xb + th - 0.0015, yb - 0.014, z0_ + hb + 0.0005), pages, 0.0005))
+                if rnd.random() < 0.4:                                 # a label band on the spine
+                    lz = z0_ + hb * rnd.uniform(0.62, 0.78)
+                    out.append(cube("bookcase spine label", (xb + 0.002, yb - 0.0125 - dp_ - 0.0006, lz),
+                                    (xb + th - 0.002, yb - 0.0125 - dp_ + 0.001, lz + rnd.uniform(0.02, 0.04)), label, 0.0003))
+                xb += th + rnd.uniform(0.0, 0.003)
+            for aid, part, _r, _b, fx, *h_ in mine:
+                g_, objs_ = BUILT[aid]() if aid in BUILT else gltf(aid, part)
+                place(g_, objs_, (bx0 + bw * fx, yb - D / 2), rnd.uniform(-20, 20), h_[0] if h_ else None, base_z=z0_)
+                out += [o for o in objs_ if o.type == "MESH"]
+    grime([o for o in out if o.name.startswith("bookcase book")], 0.5)
+    return out
 
 
 def floor_material(F):
@@ -2020,7 +2100,7 @@ def wall_item(it, y_wall, top):
     (x, z of the pin relative to the board's centre); "sheet": a paper on the wall
     itself; "clock": a wall clock of radius r."""
     out = []
-    x, z = it["x"], top + it["z"]
+    x, z = it.get("x", 0.0), top + it.get("z", 0.0)
     if it["kind"] == "board":
         w, h = it["w"], it["h"]
         wood_m = wood("board frame", (0.30, 0.19, 0.10), 0.5)
@@ -2040,6 +2120,8 @@ def wall_item(it, y_wall, top):
             out += hung(f"board sheet {i}", sh, x + sh["x"], y_wall - 0.0262 - 0.0004 * i, z + sh["z"])
     elif it["kind"] == "sheet":
         out += hung("wall sheet", it, x, y_wall - 0.0004, z)
+    elif it["kind"] == "bookcase":                # floor to ceiling: a black steel frame, oak boards, books
+        out += bookcase(it, y_wall)
     elif it["kind"] == "shelf":                   # a floating oak shelf w wide, things standing on it
         w, dp_ = it.get("w", 0.6), it.get("d", 0.2)
         oak = wood("shelf oak", (0.42, 0.28, 0.16), 0.5, grain=30.0)
