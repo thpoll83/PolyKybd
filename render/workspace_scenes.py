@@ -276,7 +276,8 @@ SCENES = {
                ("wicker_basket_01", None, -1.30, 0.16, 15, None, False, dict(floor=True)),
                ("@paper_balls", None, -1.30, 0.16, 0, None, False, dict(floor=True, z=0.03)),      # in the basket
                ("@office_chair", None, -1.86, -0.38, -45, None, False, dict(floor=True)),   # a second place, at the bookcase
-               ("@tablet", None, 0.50, 0.02, -12, None, False),
+               ("@tablet", None, 0.60, 0.04, -12, None, False),
+               ("@usb_stick", None, 0.18, -0.24, 28, None, False),
                ("@swatch_fan", None, -0.48, -0.06, 20, None, False),
                ("potted_plant_04", None, -0.74, 0.32, 0, None, False, dict(leaf=0.25, leaf_sv=(1.2, 0.85), darken=[("_dirt", 0.5)])),
                ("@mug", None, -0.30, 0.26, 30, None, False, dict(wear=[dict(band=("Z", 0.90, 1.0), amount=0.2),
@@ -289,7 +290,8 @@ SCENES = {
         desk_mat=dict(w=0.80, d=0.36, x=0.02, y=0.0, color=(0.20, 0.20, 0.21), rough=0.95, wear=[dict(spots=0.4, scale=4, lo=0.5), dict(edges=0.4)]),
         monitor=dict(style="dual_arm", y=0.40, inches=27, screens=["screen_design2.jpg", "screen_moodboard2.jpg"], glow=1.0,
                      screen_rough=0.06, height=0.36, reach=0.20, angle=14, finish="black"),
-        mouse=None,
+        mouse=dict(x=0.34, y=-0.02, turn=-8, wired=True, color=(0.016, 0.016, 0.017), side=(0.008, 0.008, 0.009), rough=0.85,
+                   coat=0.0, specular=0.2, wear=[dict(band=("Y", 0.0, 0.5), amount=0.2)]),
         glints=[dict(at=(-1.6 + 0.85 * k, -2.6, 0.55), size=(0.70, 1.10), strength=2.2, color=(0.94, 0.97, 1.0), flat=True)
                 for k in range(5)] + [dict(at=(0.4, -2.2, 1.05), size=(1.4, 0.08), strength=4.0, color=(1.0, 0.9, 0.75))],
         camera=dict(distance=2.45, elev=20, azim=32, lens=35, fstop=5.6, aim_x=-0.22, aim_y=0.10, aim_z=0.10)),

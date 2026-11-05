@@ -1925,7 +1925,52 @@ def pc_tower():
     bpy.ops.mesh.primitive_cylinder_add(vertices=16, radius=0.003, depth=0.004, location=(-0.015, -D_ / 2, H_ - 0.033),
                                         rotation=(math.pi / 2, 0, 0))
     jack = bpy.context.active_object; jack.name = "pc jack"; jack.data.materials.append(port); parts.append(jack)
+    cab = principled("pc cable", (0.012, 0.012, 0.013), 0.5)
+    # cables out of the back panel (+y): power low down, then display and USB higher; each runs back a little,
+    # sags to the floor and on towards the wall, two of them rise to the desk's underside instead
+    for k, (x_, z_, r_, route) in enumerate(((0.05, 0.06, 0.0045, "floor"), (-0.04, 0.30, 0.003, "up"),
+                                              (-0.06, 0.34, 0.0025, "up"), (0.02, 0.38, 0.0022, "floor"),
+                                              (-0.02, 0.36, 0.0022, "floor"))):
+        y0 = D_ / 2
+        if route == "floor":
+            pts = [(x_, y0, z_), (x_, y0 + 0.06, z_ - 0.01), (x_ + 0.03 * k, y0 + 0.14, max(r_, z_ * 0.3)),
+                   (x_ + 0.06 * k - 0.05, y0 + 0.22, r_), (x_ + 0.1 * k - 0.12, y0 + 0.40, r_)]
+        else:
+            pts = [(x_, y0, z_), (x_, y0 + 0.06, z_ + 0.03), (x_ - 0.02, y0 + 0.12, z_ + 0.18),
+                   (x_ - 0.05, y0 + 0.16, 0.66), (x_ - 0.08, y0 + 0.18, 0.72)]
+        cu = bpy.data.curves.new(f"pc cable {k}", "CURVE")
+        cu.dimensions = "3D"
+        cu.bevel_depth, cu.bevel_resolution = r_, 3
+        sp_ = cu.splines.new("BEZIER")
+        sp_.bezier_points.add(len(pts) - 1)
+        for bp, p_ in zip(sp_.bezier_points, pts):
+            bp.co = p_
+            bp.handle_left_type = bp.handle_right_type = "AUTO"
+        co = bpy.data.objects.new(f"pc cable {k}", cu)
+        sc.collection.objects.link(co)
+        co.data.materials.append(cab)
+        parts.append(co)
+        parts.append(cube(f"pc plug {k}", (x_ - 0.008, y0, z_ - 0.006), (x_ + 0.008, y0 + 0.02, z_ + 0.006), cab, 0.002))
     g = bpy.data.objects.new("@pc_tower", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def usb_stick():
+    """A USB stick, 58 x 19 x 9 mm: a matte dark grey body with a rubbed metal swivel
+    cover over the connector end, a small loop at the other end."""
+    body = principled("usb body", (0.06, 0.06, 0.065), 0.55)
+    metal = principled("usb metal", (0.70, 0.70, 0.72), 0.3)
+    metal.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    parts = [cube("usb body", (-0.029, -0.0095, 0.0), (0.024, 0.0095, 0.009), body, 0.003),
+             cube("usb connector", (0.024, -0.006, 0.0025), (0.036, 0.006, 0.0068), metal, 0.0005),
+             cube("usb swivel", (-0.010, -0.0105, -0.0003), (0.034, 0.0105, 0.0093), metal, 0.002)]
+    bpy.ops.mesh.primitive_torus_add(major_radius=0.004, minor_radius=0.0012, location=(-0.031, 0, 0.0045))
+    loop = bpy.context.active_object; loop.name = "usb loop"; loop.data.materials.append(body); parts.append(loop)
+    grime(parts[2:3], 0.8)
+    g = bpy.data.objects.new("@usb_stick", None)
     sc.collection.objects.link(g)
     for o in parts:
         o.parent = g
@@ -1937,7 +1982,7 @@ BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holde
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
-         "@swatch_fan": lambda: swatch_fan(), "@pc_tower": lambda: pc_tower(), "@office_chair": lambda: office_chair(), "@paper_balls": lambda: paper_balls(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
+         "@swatch_fan": lambda: swatch_fan(), "@pc_tower": lambda: pc_tower(), "@office_chair": lambda: office_chair(), "@paper_balls": lambda: paper_balls(), "@usb_stick": lambda: usb_stick(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
 
 
 def wall_texture(tx):
