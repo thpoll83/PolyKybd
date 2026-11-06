@@ -2624,6 +2624,13 @@ def screen_material(screen, glow, rough=0.4):
     nt2.links.new(tex.outputs["Color"], b.inputs["Emission Color"])
     b.inputs["Base Color"].default_value = (0.0, 0.0, 0.0, 1)
     b.inputs["Emission Strength"].default_value = glow
+    cast = S.get("monitor", {}).get("cast", 1.0)   # the light the picture throws on the room, as a factor of
+    if cast != 1.0:                                # glow (camera rays still see glow, so the picture keeps its look)
+        lp = nt2.nodes.new("ShaderNodeLightPath")
+        mr = nt2.nodes.new("ShaderNodeMapRange")
+        mr.inputs["To Min"].default_value, mr.inputs["To Max"].default_value = glow * cast, glow
+        nt2.links.new(lp.outputs["Is Camera Ray"], mr.inputs["Value"])
+        nt2.links.new(mr.outputs[0], b.inputs["Emission Strength"])
     b.inputs["Roughness"].default_value = rough     # 0.4 an anti-glare coat: the room shows only as a soft sheen
     b.inputs["Specular IOR Level"].default_value = 0.15 if rough >= 0.3 else 0.4
     return m
@@ -2900,6 +2907,14 @@ if S.get("hdri_view"):                           # the panorama brighter where i
     gain.inputs["To Min"].default_value, gain.inputs["To Max"].default_value = S["hdri_strength"], S["hdri_strength"] * S["hdri_view"]
     nt.links.new(seen.outputs[0], gain.inputs["Value"])
     nt.links.new(gain.outputs[0], bg.inputs["Strength"])
+    if S.get("hdri_view_clamp"):                 # and its brightest parts (a studio's strip lights) capped where seen,
+        cap = nt.nodes.new("ShaderNodeVectorMath"); cap.operation = "MINIMUM"   # so they stop burning out to white
+        cap.inputs[1].default_value = (S["hdri_view_clamp"],) * 3
+        nt.links.new(env.outputs["Color"], cap.inputs[0])
+        mx = nt.nodes.new("ShaderNodeMix"); mx.data_type = "RGBA"
+        nt.links.new(seen.outputs[0], mx.inputs["Factor"])
+        nt.links.new(env.outputs["Color"], mx.inputs[6]); nt.links.new(cap.outputs[0], mx.inputs[7])
+        nt.links.new(mx.outputs[2], bg.inputs["Color"])
 LIGHTS = S.get("lights", [])                     # area lights, placed once the desk is known (below)
 floor = bpy.data.objects["Plane"]
 floor.is_shadow_catcher = True                   # the room's own floor, with the desk's shadow on it
