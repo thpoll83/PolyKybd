@@ -320,22 +320,33 @@ def window(base, content, x, y, w, title, accent=(60, 64, 76)):
     return base
 
 
-def chat():
-    """A team chat: channels on the left, a thread of short messages, a reply box."""
+CHAT_OFFICE = (["# general", "# office-move", "# budget-2026", "# random", "", "Anna Weber", "Marco Rossi", "Jonas K."], 2,
+               [("Marco Rossi", "10:02", "Review moved to 14:00 on Thursday", (90, 140, 210)),
+                ("Anna Weber", "10:05", "ok! can someone check the travel line?", (200, 120, 90)),
+                ("Jonas K.", "10:07", "Q3 is the trade fair, I'll add a note", (110, 170, 110)),
+                ("Anna Weber", "10:08", "thanks :)", (200, 120, 90)),
+                ("Lena Hofmann", "10:15", "who has the projector adapter?", (180, 110, 180))])
+CHAT_STUDIO = (["# studio", "# summer-poster", "# night-market", "# type-nerds", "", "Mira (client)", "Tom", "Sven"], 1,
+               [("Mira (client)", "09:41", "Love v2! Can the sun be a bit warmer?", (210, 120, 80)),
+                ("Tom", "09:44", "warmer = the palette B oranges?", (90, 140, 210)),
+                ("Mira (client)", "09:46", "yes, and the date bigger please", (210, 120, 80)),
+                ("Sven", "09:52", "printer needs the PDF by Friday noon", (110, 170, 110)),
+                ("Tom", "09:53", "on it - export at 3 mm bleed", (90, 140, 210))])
+
+
+def chat(spec=CHAT_OFFICE):
+    """A team chat: channels on the left (spec: channels, the selected one, messages), a
+    thread of short messages, a reply box."""
+    channels, sel, msgs = spec
     im = Image.new("RGB", (1400, 1100), (255, 255, 255))
     d = ImageDraw.Draw(im)
     d.rectangle((0, 0, 330, 1100), fill=(50, 48, 76))
-    for k, t in enumerate(["# general", "# office-move", "# budget-2026", "# random", "", "Anna Weber", "Marco Rossi", "Jonas K."]):
-        if k == 2:
+    for k, t in enumerate(channels):
+        if k == sel:
             d.rectangle((0, 90 + k * 64 - 12, 330, 90 + k * 64 + 44), fill=(90, 86, 130))
-        d.text((30, 90 + k * 64), t, font=font(BOLD if k == 2 else SANS, 28), fill=(235, 232, 245))
-    d.text((370, 30), "# budget-2026", font=font(BOLD, 34), fill=(30, 30, 40))
+        d.text((30, 90 + k * 64), t, font=font(BOLD if k == sel else SANS, 28), fill=(235, 232, 245))
+    d.text((370, 30), channels[sel], font=font(BOLD, 34), fill=(30, 30, 40))
     d.line((330, 90, 1400, 90), fill=(225, 225, 232), width=2)
-    msgs = [("Marco Rossi", "10:02", "Review moved to 14:00 on Thursday", (90, 140, 210)),
-            ("Anna Weber", "10:05", "ok! can someone check the travel line?", (200, 120, 90)),
-            ("Jonas K.", "10:07", "Q3 is the trade fair, I'll add a note", (110, 170, 110)),
-            ("Anna Weber", "10:08", "thanks :)", (200, 120, 90)),
-            ("Lena Hofmann", "10:15", "who has the projector adapter?", (180, 110, 180))]
     for k, (who, t, msg, col) in enumerate(msgs):
         y = 130 + k * 170
         d.ellipse((370, y, 440, y + 70), fill=col)
@@ -344,7 +355,7 @@ def chat():
         d.text((470 + d.textlength(who, font=font(BOLD, 28)) + 20, y + 4), t, font=font(SANS, 24), fill=(130, 130, 140))
         d.text((470, y + 44), msg, font=font(SANS, 28), fill=(40, 40, 50))
     d.rounded_rectangle((370, 980, 1360, 1060), 12, outline=(200, 200, 210), width=2)
-    d.text((400, 1004), "Message #budget-2026", font=font(SANS, 26), fill=(150, 150, 160))
+    d.text((400, 1004), "Message " + channels[sel], font=font(SANS, 26), fill=(150, 150, 160))
     return im
 
 
@@ -870,6 +881,18 @@ def photo_building():
     im = Image.new("RGB", (ph.width + 240, ph.height + 240), (246, 245, 240))
     im.paste(ph, (120, 120))
     return im
+
+
+def window_view():
+    """What the designer's window looks out on: a wide crop of the canary_wharf HDRI's
+    tonemapped JPG (CC0) along its horizon, office towers and sky, no border; seen out
+    of focus through the dirty glass, so the panorama's slight bend does not show."""
+    import workspace_assets
+    Image.MAX_IMAGE_PIXELS = None
+    src = Image.open(workspace_assets.fetch_photo("canary_wharf"))
+    w, h = src.size
+    ph = src.crop((int(w * 0.50), int(h * 0.14), int(w * 0.80), int(h * 0.52)))
+    return ph.resize((2400, int(2400 * ph.height / ph.width)), Image.LANCZOS).convert("RGB")
 
 
 def mat_cutting():
@@ -1613,7 +1636,7 @@ def wall_scuff():
     return im
 
 
-from workspace_scenes import BOOKS  # noqa: E402  (the shelf's books: data shared with the scene)
+from workspace_scenes import BOOKS, LIBRARY  # noqa: E402  (the shelf's and bookcase's books: data shared with the scene)
 
 
 SERIF = "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
@@ -1632,11 +1655,11 @@ def _rgb(c):
     return tuple(int(v * 255) for v in c)
 
 
-def book_spine(i):
-    """Book i's spine (BOOKS) in one of four layouts after real spines: drawn lying
-    (height along x), then turned to read top to bottom."""
+def book_spine(i, books=BOOKS):
+    """Book i's spine (BOOKS, or LIBRARY) in one of four layouts after real spines: drawn
+    lying (height along x), then turned to read top to bottom."""
     def draw():
-        title, author, cover, ink, hgt, th, style = BOOKS[i]
+        title, author, cover, ink, hgt, th, style = books[i]
         w, h = max(140, int(th * PX * 2.4)), int(hgt * PX)
         bg = _rgb(cover)
         im = Image.new("RGB", (h, w), bg)
@@ -1669,7 +1692,7 @@ def book_spine(i):
             d.line((x1, w / 2, h * 0.80, w / 2), fill=ink, width=3)
             fn = font(BOLD, int(w * 0.36))
             d.rectangle((h * 0.84, w * 0.18, h * 0.96, w * 0.82), fill=ink)
-            d.text((h * 0.865, w * 0.22), str(i + 3), font=fn, fill=bg)
+            d.text((h * 0.865, w * 0.22), str(i + 3 if i + 3 < 10 else i % 9 + 1), font=fn, fill=bg)   # one digit fits
         else:                                          # title down the spine, author and a mark below
             f = _fit(BOLD if i % 2 else SANS, title, int(w * 0.44), h * 0.56)
             d.text((h * 0.07, (w - f.size * 1.2) / 2), title, font=f, fill=ink)
@@ -1939,6 +1962,201 @@ def clock_face():
     return im
 
 
+def poster_art(size, sky, hills, sun, title, sub, paper=(250, 236, 214)):
+    """A flat poster: a sky gradient, a sun, three sine hills and a title (the design
+    screen's artboard, and the proofs pinned beside it)."""
+    import math
+    w, h = size
+    im = Image.new("RGB", size, paper)
+    d = ImageDraw.Draw(im)
+    hgt = h * 0.62
+    for i in range(int(hgt)):
+        t = i / hgt
+        d.line((0, i, w, i), fill=tuple(int(sky[0][k] + (sky[1][k] - sky[0][k]) * t) for k in range(3)))
+    r = int(w * 0.16)
+    d.ellipse((w // 2 - r, int(hgt * 0.62) - r, w // 2 + r, int(hgt * 0.62) + r), fill=sun)
+    for j, (col, amp, base) in enumerate(zip(hills, (0.045, 0.06, 0.04), (0.60, 0.70, 0.82))):
+        pts = [(0, h)] + [(x, h * base - h * amp * math.sin(x / (w * (0.13 + 0.03 * j)) + j)) for x in range(0, w + 1, 10)] + [(w, h)]
+        d.polygon(pts, fill=col)
+    d.text((int(w * 0.07), int(h * 0.80)), title, font=font(BOLD, int(w * 0.11)), fill=paper)
+    d.text((int(w * 0.075), int(h * 0.93)), sub, font=font(SANS, int(w * 0.033)), fill=paper)
+    return im
+
+
+def poster_proof(sky, hills, sun, title, sub, note, seed):
+    """A proof print of a poster on A4: the poster with crop marks, a pen note."""
+    def draw():
+        im = Image.new("RGB", (1000, 1414), (250, 250, 247))
+        art = poster_art((780, 1100), sky, hills, sun, title, sub)
+        im.paste(art, (110, 110))
+        d = ImageDraw.Draw(im)
+        for x, y, dx, dy in ((110, 110, -1, -1), (890, 110, 1, -1), (110, 1210, -1, 1), (890, 1210, 1, 1)):
+            d.line((x + dx * 20, y, x + dx * 80, y), fill=(30, 30, 30), width=2)
+            d.line((x, y + dy * 20, x, y + dy * 80), fill=(30, 30, 30), width=2)
+        d.text((110, 1260), note, font=hand(64, 600), fill=(200, 40, 40))
+        return worn(lambda: im, seed, 0.6)()
+    return draw
+
+
+def print_type():
+    """A4 portrait: a type specimen: a big Aa, the alphabet, a size ladder."""
+    im = Image.new("RGB", (1000, 1414), (248, 246, 240))
+    d = ImageDraw.Draw(im)
+    ink = (28, 28, 32)
+    d.text((70, 40), "Aa", font=font(BOLD, 420), fill=ink)
+    d.text((620, 120), "Sans\nBold\n& Book", font=font(SANS, 54), fill=(120, 120, 126), spacing=12)
+    d.text((70, 560), "ABCDEFGHIJKLM\nNOPQRSTUVWXYZ", font=font(BOLD, 72), fill=ink, spacing=14)
+    d.text((70, 760), "abcdefghijklm\nnopqrstuvwxyz\n0123456789 &?!", font=font(SANS, 64), fill=ink, spacing=12)
+    for k, sz in enumerate((60, 44, 32, 22)):
+        y = 1010 + sum((60, 44, 32, 22)[:k]) * 1.5
+        d.text((70, y), f"{sz} pt  The quick brown fox", font=font(SANS, sz), fill=ink)
+    d.line((70, 1330, 930, 1330), fill=(220, 90, 70), width=6)
+    return im
+
+
+def print_palette():
+    """A palette card: six swatches with their hex codes, landscape."""
+    im = Image.new("RGB", (1300, 760), (250, 250, 247))
+    d = ImageDraw.Draw(im)
+    cols = [(255, 196, 140), (250, 160, 130), (230, 120, 140), (120, 80, 140), (80, 60, 120), (50, 40, 90)]
+    for i, c in enumerate(cols):
+        x = 60 + i * 200
+        d.rectangle((x, 60, x + 180, 520), fill=c)
+        d.text((x, 545), "#%02X%02X%02X" % c, font=font(MONO, 30), fill=(40, 40, 46))
+    d.text((60, 640), "Summer open air - palette B", font=hand(70, 600), fill=(30, 40, 90))
+    return im
+
+
+def paper_thumbs():
+    """A4 landscape: pencil thumbnails of poster layouts, a few crossed out, one ringed."""
+    import random as _r
+    rnd = _r.Random(3)
+    im = Image.new("RGB", (1414, 1000), (246, 244, 238))
+    d = ImageDraw.Draw(im)
+    pencil = (95, 95, 100)
+    for k in range(8):
+        cx, cy = 90 + (k % 4) * 330, 110 + (k // 4) * 430
+        bw, bh = 250, 340
+        for _ in range(2):                                     # a sketchy frame, drawn twice
+            j = lambda: rnd.randint(-4, 4)
+            d.line([(cx + j(), cy + j()), (cx + bw + j(), cy + j()), (cx + bw + j(), cy + bh + j()), (cx + j(), cy + bh + j()), (cx + j(), cy + j())], fill=pencil, width=2)
+        r = rnd.randint(35, 60)
+        sx, sy = cx + rnd.randint(70, 180), cy + rnd.randint(70, 150)
+        d.ellipse((sx - r, sy - r, sx + r, sy + r), outline=pencil, width=2)
+        for m in range(3):
+            y = cy + 190 + m * 30
+            d.line([(cx + x, y + 10 * (((x // 30) + m) % 2)) for x in range(0, bw, 30)], fill=pencil, width=2)
+        d.rectangle((cx + 20, cy + bh - 70, cx + 20 + rnd.randint(120, 200), cy + bh - 45), outline=pencil, width=2)
+        if k in (1, 4, 6):
+            d.line((cx, cy, cx + bw, cy + bh), fill=pencil, width=3); d.line((cx + bw, cy, cx, cy + bh), fill=pencil, width=3)
+        if k == 2:
+            d.ellipse((cx - 30, cy - 30, cx + bw + 30, cy + bh + 30), outline=(200, 40, 40), width=5)
+            d.text((cx + 40, cy + bh + 30), "this one!", font=hand(56, 600), fill=(200, 40, 40))
+    return im
+
+
+PROOFS = {
+    "proof_summer_a.jpg": (((255, 214, 120), (240, 140, 80)), ((200, 110, 70), (150, 70, 60), (90, 40, 50)), (255, 245, 200),
+                           "SUMMER", "open air  ·  friday", "too warm?", 47),
+    "proof_night.jpg": (((40, 60, 110), (20, 24, 60)), ((60, 90, 140), (40, 60, 110), (20, 30, 70)), (240, 230, 190),
+                        "NIGHT", "market  ·  saturday", "v2 - ok", 53),
+}
+
+
+def moodboard_screen():
+    """A browser on a reference board: a dark page, a masonry grid of the workspace
+    prints and photos (the posters, the arches, the buildings, the palette), a search
+    bar and a few tags."""
+    im = Image.new("RGB", (W, H), (24, 24, 27))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, W, 70), fill=(40, 40, 44))
+    d.rounded_rectangle((300, 14, 1500, 56), radius=20, fill=(60, 60, 66))
+    d.text((330, 22), "moodboard / summer open air - refs", font=font(SANS, 26), fill=(200, 200, 206))
+    for i, t in enumerate(["warm", "dusk", "flat", "arches", "grain", "type"]):
+        x = 120 + i * 190
+        d.rounded_rectangle((x, 100, x + 170, 150), radius=24, outline=(120, 120, 128), width=2)
+        d.text((x + 85, 125), t, font=font(SANS, 26), fill=(210, 210, 216), anchor="mm")
+    srcs = ["proof_summer_a.jpg", "art_arches.jpg", "photo_zwinger.jpg", "print_palette.jpg", "proof_night.jpg",
+            "photo_konzerthaus.jpg", "print_type.jpg", "photo_hamburg_hbf.jpg", "paper_thumbs.jpg", "photo_hofkirche.jpg",
+            "poster_road.jpg", "photo_building.jpg"]
+    cols, gap, x0, y0 = 5, 24, 120, 180
+    cw = (W - 2 * x0 - (cols - 1) * gap) // cols
+    ys = [y0] * cols
+    for k, f in enumerate(srcs):
+        c = ys.index(min(ys))
+        src = Image.open(os.path.join(OUT, f)).convert("RGB")
+        h = int(cw * src.height / src.width)
+        im.paste(src.resize((cw, h), Image.LANCZOS), (x0 + c * (cw + gap), ys[c]))
+        ys[c] += h + gap
+    return im
+
+
+def music_player():
+    """A small music player: the album art (the night poster), title and artist, a
+    progress bar, the transport buttons."""
+    im = Image.new("RGB", (900, 360), (24, 24, 28))
+    d = ImageDraw.Draw(im)
+    art = Image.open(os.path.join(OUT, "proof_night.jpg")).convert("RGB")
+    art = art.crop((110, 110, 890, 890)).resize((280, 280), Image.LANCZOS)
+    im.paste(art, (40, 40))
+    d.text((360, 60), "Night Drive", font=font(BOLD, 44), fill=(240, 240, 245))
+    d.text((360, 120), "Lo-Fi Studio Mix", font=font(SANS, 30), fill=(160, 162, 172))
+    d.rounded_rectangle((360, 210, 860, 222), 6, fill=(70, 72, 80))
+    d.rounded_rectangle((360, 210, 560, 222), 6, fill=(120, 200, 140))
+    d.text((360, 236), "1:24", font=font(SANS, 22), fill=(150, 150, 160))
+    d.text((815, 236), "3:51", font=font(SANS, 22), fill=(150, 150, 160))
+    for k, x in enumerate((470, 580, 690)):
+        if k == 1:
+            d.ellipse((x - 34, 266, x + 34, 334), fill=(240, 240, 245))
+            d.rectangle((x - 12, 284, x - 4, 316), fill=(24, 24, 28)); d.rectangle((x + 4, 284, x + 12, 316), fill=(24, 24, 28))
+        else:
+            sgn = -1 if k == 0 else 1
+            d.polygon([(x - 18 * sgn, 284), (x - 18 * sgn, 316), (x + 14 * sgn, 300)], fill=(200, 200, 208))
+    return im
+
+
+def file_browser():
+    """A file manager on the poster project folder: a sidebar and a grid of thumbnails
+    with their file names."""
+    im = Image.new("RGB", (1300, 820), (248, 248, 250))
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 260, 820), fill=(236, 237, 241))
+    for k, t in enumerate(["Recent", "Desktop", "Projects", "  Summer Poster", "  Night Market", "Downloads", "Fonts"]):
+        if k == 3:
+            d.rectangle((0, 40 + k * 56 - 8, 260, 40 + k * 56 + 40), fill=(205, 220, 245))
+        d.text((24, 40 + k * 56), t, font=font(SANS, 26), fill=(40, 42, 50))
+    files = [("proof_summer_a.jpg", "poster_v1.pdf"), ("proof_night.jpg", "night_v2.pdf"), ("print_palette.jpg", "palette_B.png"),
+             ("paper_thumbs.jpg", "thumbs_scan.jpg"), ("print_type.jpg", "type_specimen.pdf"), ("art_arches.jpg", "arches_ref.png"),
+             ("photo_zwinger.jpg", "ref_zwinger.jpg"), ("photo_konzerthaus.jpg", "ref_berlin.jpg")]
+    for k, (src, name) in enumerate(files):
+        cx, cy = 300 + (k % 4) * 245, 40 + (k // 4) * 380
+        th = Image.open(os.path.join(OUT, src)).convert("RGB")
+        th.thumbnail((200, 260), Image.LANCZOS)
+        im.paste(th, (cx + (210 - th.width) // 2, cy + (270 - th.height) // 2))
+        d.text((cx + 105 - d.textlength(name, font=font(SANS, 22)) / 2, cy + 290), name, font=font(SANS, 22), fill=(50, 52, 60))
+    return im
+
+
+def design_desktop():
+    """The designer's left screen: the poster app, the studio chat over its lower right,
+    a notification, the desktop panel (the note is a paper one on the bezel: sticky_sun.jpg)."""
+    im = design()
+    window(im, chat(CHAT_STUDIO), 1640, 760, 860, "Chat - #summer-poster", accent=(50, 48, 76))
+    toast(im, 1880, 90, "Mira (client)", "Love v2! Can the sun be a bit warmer?")
+    taskbar(im, [(200, 90, 60), (50, 48, 76), (0, 95, 184), (120, 200, 140), (230, 180, 60)], 0)
+    return im
+
+
+def moodboard_desktop():
+    """The designer's right screen: the reference board, a file manager on the project
+    folder, a music player, the desktop panel."""
+    im = moodboard_screen()
+    window(im, file_browser(), 140, 640, 1300, "Files - Summer Poster", accent=(70, 74, 86))
+    window(im, music_player(), 1600, 980, 820, "Music", accent=(36, 36, 42))
+    taskbar(im, [(200, 90, 60), (50, 48, 76), (0, 95, 184), (120, 200, 140), (230, 180, 60)], 2)
+    return im
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_sheet.jpg", sheet), ("screen_reception.jpg", reception), ("screen_reception2.jpg", reception2), ("screen_mail.jpg", mail), ("screen_plan.jpg", plan),
@@ -1957,14 +2175,21 @@ if __name__ == "__main__":
                      ("paper_back.jpg", worn(lambda: Image.new("RGB", (500, 650), (240, 238, 232)), 17, 0.6)),
                      ("sticky_wide.jpg", sticky((250, 235, 120), ["release v1.8 - Thu"], (1140, 760))),
                      ("art_arches.jpg", art_arches), ("paper_rota.jpg", worn(paper_rota, 19)), ("paper_phone.jpg", worn(paper_phone, 23)),
-                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("screen_plan2.jpg", plan2), ("mat_cutting.jpg", mat_cutting), ("mat_blue.jpg", mat_blue), ("steel_scratches.png", steel_scratches), ("photo_building.jpg", photo_building), *[("photo_%s.jpg" % n, arch_print(n)) for n in ARCH_PHOTOS],
+                     ("paper_desk_month.jpg", worn(paper_desk_month, 29, 0.6)), ("paper_wifi.jpg", worn(paper_wifi, 31)), ("name_card.jpg", name_card), ("screen_plan2.jpg", plan2), ("mat_cutting.jpg", mat_cutting), ("mat_blue.jpg", mat_blue), ("steel_scratches.png", steel_scratches), ("photo_building.jpg", photo_building), ("window_view.jpg", window_view), *[("photo_%s.jpg" % n, arch_print(n)) for n in ARCH_PHOTOS],
                      ("paper_elevation.jpg", worn(highlighted(paper_elevation, [((60, 860, 640, 912), "yellow")]), 37)),
                      ("paper_section.jpg", worn(paper_section, 41)), ("paper_site.jpg", worn(paper_site, 43, 0.8)), ("nfc_pad.jpg", nfc_pad),
-                     ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])))
+                     ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])),
+                     ("print_type.jpg", worn(print_type, 59, 0.6)), ("print_palette.jpg", worn(print_palette, 61, 0.5)),
+                     ("paper_thumbs.jpg", worn(paper_thumbs, 67)), ("sticky_lilac.jpg", sticky((210, 190, 240), ["client", "call 3pm"])),
+                     ("sticky_sun.jpg", sticky((250, 232, 120), ["sun warmer!", "date bigger", "PDF Fri 12"])),
+                     *[(n, poster_proof(*a)) for n, a in PROOFS.items()], ("screen_moodboard.jpg", moodboard_screen), ("screen_design2.jpg", design_desktop), ("screen_moodboard2.jpg", moodboard_desktop))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))
+                     + tuple((f"lib_spine_{i}.jpg", book_spine(i, LIBRARY)) for i in range(len(LIBRARY)))
                      + tuple((f"cover_{i}.jpg", book_cover(i)) for i in range(len(BOOKS)))
                      + tuple((f"back_{i}.jpg", book_back(i)) for i in range(len(BOOKS)))):
+        if sys.argv[1:] and name not in sys.argv[1:]:   # only the named files
+            continue
         im_ = fn()
         im_.save(os.path.join(OUT, name), **({} if name.endswith(".png") else {"quality": 88}))
         print("wrote", os.path.join("render", "textures", "workspace", name))

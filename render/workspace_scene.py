@@ -57,7 +57,8 @@ def gltf(aid, part=None):
     new = [o for o in bpy.data.objects if o not in before]
     if part:
         parts_ = part if isinstance(part, (list, tuple)) else [part]      # several parts: one tree's bark and leaves
-        keep = [o for o in new if any(o.name.startswith(p_) and (o.name == p_ or not o.name[len(p_):][:1].isalpha())
+        keep = [o for o in new if any((o.name == p_[1:]) if p_.startswith("=") else   # "=name": that object alone
+                                      (o.name.startswith(p_) and (o.name == p_ or not o.name[len(p_):][:1].isalpha()))
                                       for p_ in parts_)]
         keep += [c for k in keep for c in k.children_recursive]
         for o in [o for o in new if o not in keep]:
@@ -1050,7 +1051,7 @@ def matte_material(m, rough, specular=0.35):
         b_.inputs["Coat Weight"].default_value = min(b_.inputs["Coat Weight"].default_value, 0.1)
 
 
-def spots(objs, amount, scale=9.0, tint=(0.86, 0.83, 0.78), lo=0.60, mode="MULTIPLY", detail=2.0):
+def spots(objs, amount, scale=9.0, tint=(0.86, 0.83, 0.78), lo=0.60, mode="MULTIPLY", detail=2.0, seed=None):
     """Faint spots on a surface (objs' materials, copies): where a noise of `scale` rises
     past `lo` the colour turns towards tint (MULTIPLY: darkens; MIX: dust on a dark
     shell), soft-edged, here and there. A large scale with a high lo gives specks."""
@@ -1068,6 +1069,8 @@ def spots(objs, amount, scale=9.0, tint=(0.86, 0.83, 0.78), lo=0.60, mode="MULTI
             tc = nt2.nodes.new("ShaderNodeTexCoord")
             nz = nt2.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = scale
             nz.inputs["Detail"].default_value = detail
+            if seed is not None:                   # (a 4D noise at W = seed: another pattern on the same shape)
+                nz.noise_dimensions = "4D"; nz.inputs["W"].default_value = seed
             nt2.links.new(tc.outputs["Object"], nz.inputs["Vector"])
             mr = nt2.nodes.new("ShaderNodeMapRange"); mr.interpolation_type = "SMOOTHSTEP"
             mr.inputs["From Min"].default_value, mr.inputs["From Max"].default_value = lo, lo + 0.10
@@ -1374,12 +1377,689 @@ def nfc_reader():
     return g, [body, pr, card]
 
 
+def window_wall(W_, paint, y_wall, x_mid, hw):
+    """A wall depth W_["depth"] thick with a steel-framed window opening W_["x"] (from the
+    desk's centre) by W_["z"] (from the floor): the wall in four blocks round the hole,
+    their texture in world coordinates so the brick runs on across them, plaster
+    reveals, and near the outer face a black steel grid of W_["cols"] x W_["rows"] panes
+    with clear glass that throws no shadow, so the sun comes through in the grid's shape."""
+    x0, x1 = x_mid + W_["x"][0], x_mid + W_["x"][1]
+    z0, z1 = W_["z"]
+    dp = W_.get("depth", 0.30)
+    parts = []
+    for name, lo, hi in (("wall left", (x_mid - hw, y_wall, 0.0), (x0, y_wall + dp, 2.6)),
+                         ("wall right", (x1, y_wall, 0.0), (x_mid + hw, y_wall + dp, 2.6)),
+                         ("wall below", (x0, y_wall, 0.0), (x1, y_wall + dp, z0)),
+                         ("wall above", (x0, y_wall, z1), (x1, y_wall + dp, 2.6))):
+        o = cube(name, lo, hi, paint, 0.0)
+        o.modifiers.clear()                                    # a sharp box: smooth shading across its
+        for p_ in o.data.polygons:                             # corners darkened the face by every edge,
+            p_.use_smooth = False                              # a dark seam where two blocks meet
+        o.select_set(True); bpy.context.view_layer.objects.active = o
+        bpy.ops.object.transform_apply(location=True)          # object = world coordinates: one brick course
+        o.select_set(False)
+        parts.append(o)
+    plaster = principled("window reveal", W_.get("reveal", (0.80, 0.79, 0.76)), 0.85)
+    t = 0.012
+    parts += [cube("reveal left", (x0, y_wall - 0.002, z0), (x0 + t, y_wall + dp, z1), plaster, 0.002),
+              cube("reveal right", (x1 - t, y_wall - 0.002, z0), (x1, y_wall + dp, z1), plaster, 0.002),
+              cube("window sill", (x0 - 0.03, y_wall - 0.035, z0 - 0.02), (x1 + 0.03, y_wall + dp, z0 + t), plaster, 0.003),
+              cube("reveal head", (x0, y_wall - 0.002, z1 - t), (x1, y_wall + dp, z1), plaster, 0.002)]
+    steel = principled("window steel", (0.018, 0.018, 0.02), 0.45)
+    yf = y_wall + dp - 0.06
+    b, m = 0.045, 0.022
+    for name, lo, hi in (("frame left", (x0 + t, yf, z0 + t), (x0 + t + b, yf + 0.05, z1 - t)),
+                         ("frame right", (x1 - t - b, yf, z0 + t), (x1 - t, yf + 0.05, z1 - t)),
+                         ("frame bottom", (x0 + t + b, yf + 0.003, z0 + t), (x1 - t - b, yf + 0.047, z0 + t + b)),   # between the
+                         ("frame top", (x0 + t + b, yf + 0.003, z1 - t - b), (x1 - t - b, yf + 0.047, z1 - t))):    # stiles, set back
+        parts.append(cube(name, lo, hi, steel, 0.002))
+    ix0, ix1, iz0, iz1 = x0 + t + b, x1 - t - b, z0 + t + b, z1 - t - b
+    for k in range(1, W_.get("cols", 3)):
+        xm = ix0 + (ix1 - ix0) * k / W_.get("cols", 3)
+        parts.append(cube(f"mullion {k}", (xm - m / 2, yf + 0.005, iz0), (xm + m / 2, yf + 0.04, iz1), steel, 0.0015))
+    for k in range(1, W_.get("rows", 4)):
+        zm = iz0 + (iz1 - iz0) * k / W_.get("rows", 4)
+        parts.append(cube(f"transom {k}", (ix0, yf + 0.008, zm - m / 2), (ix1, yf + 0.037, zm + m / 2), steel, 0.0015))
+        # (set back 3 mm from the mullions: coplanar faces where they cross read as a deep corner to the dust's
+        # occlusion and render black)
+    glass = bpy.data.materials.new("window glass")
+    glass.use_nodes = True
+    gt_ = glass.node_tree
+    gb = gt_.nodes["Principled BSDF"]
+    gb.inputs["IOR"].default_value = 1.0               # a thin pane: reflections, no lens
+    dirt_amt = W_.get("dirt", 0.0)                     # grime: a blotchy film, heavier towards each pane's
+    if dirt_amt:                                       # bottom (rain runs down), streaks, and specks
+        tc_ = gt_.nodes.new("ShaderNodeTexCoord")
+        sx_ = gt_.nodes.new("ShaderNodeSeparateXYZ"); gt_.links.new(tc_.outputs["Object"], sx_.inputs[0])
+        blot = gt_.nodes.new("ShaderNodeTexNoise"); blot.inputs["Scale"].default_value = 3.0; blot.inputs["Detail"].default_value = 6.0
+        gt_.links.new(tc_.outputs["Object"], blot.inputs["Vector"])
+        mp = gt_.nodes.new("ShaderNodeMapping"); mp.inputs["Scale"].default_value = (40.0, 1.0, 1.5)   # streaks: stretched in z
+        gt_.links.new(tc_.outputs["Object"], mp.inputs["Vector"])
+        strk = gt_.nodes.new("ShaderNodeTexNoise"); strk.inputs["Scale"].default_value = 2.0; strk.inputs["Detail"].default_value = 3.0
+        gt_.links.new(mp.outputs[0], strk.inputs["Vector"])
+        spk = gt_.nodes.new("ShaderNodeTexVoronoi"); spk.inputs["Scale"].default_value = 160.0
+        gt_.links.new(tc_.outputs["Object"], spk.inputs["Vector"])
+        spk_r = gt_.nodes.new("ShaderNodeMapRange"); spk_r.inputs["From Min"].default_value, spk_r.inputs["From Max"].default_value = 0.0, 0.08
+        spk_r.inputs["To Min"].default_value, spk_r.inputs["To Max"].default_value = 0.9, 0.0
+        gt_.links.new(spk.outputs["Distance"], spk_r.inputs["Value"])
+        pane_h = (iz1 - iz0) / W_.get("rows", 4)       # within each pane: 1 at its bottom bar, 0 at its top
+        fr = gt_.nodes.new("ShaderNodeMath"); fr.operation = "WRAP"
+        fr.inputs[1].default_value, fr.inputs[2].default_value = 0.0, pane_h
+        sub_ = gt_.nodes.new("ShaderNodeMath"); sub_.operation = "SUBTRACT"; sub_.inputs[1].default_value = -(iz1 - iz0) / 2 + 1e-4
+        gt_.links.new(sx_.outputs["Z"], sub_.inputs[0]); gt_.links.new(sub_.outputs[0], fr.inputs[0])
+        low = gt_.nodes.new("ShaderNodeMapRange"); low.inputs["From Min"].default_value, low.inputs["From Max"].default_value = 0.0, pane_h
+        low.inputs["To Min"].default_value, low.inputs["To Max"].default_value = 0.9, 0.15
+        gt_.links.new(fr.outputs[0], low.inputs["Value"])
+        acc = None
+        for out_, w_ in ((blot.outputs["Fac"], 0.55), (strk.outputs["Fac"], 0.35), (low.outputs[0], 0.6), (spk_r.outputs[0], 0.5)):
+            m_ = gt_.nodes.new("ShaderNodeMath"); m_.operation = "MULTIPLY"; m_.inputs[1].default_value = w_
+            gt_.links.new(out_, m_.inputs[0])
+            if acc is None:
+                acc = m_
+            else:
+                ad = gt_.nodes.new("ShaderNodeMath"); ad.operation = "ADD"
+                gt_.links.new(acc.outputs[0], ad.inputs[0]); gt_.links.new(m_.outputs[0], ad.inputs[1]); acc = ad
+        dr = gt_.nodes.new("ShaderNodeMapRange")       # the dirt's cover, 0..dirt
+        dr.inputs["From Min"].default_value, dr.inputs["From Max"].default_value = W_.get("dirt_from", 0.45), 1.5
+        dr.inputs["To Min"].default_value, dr.inputs["To Max"].default_value = 0.0, dirt_amt
+        gt_.links.new(acc.outputs[0], dr.inputs["Value"])
+        inv = gt_.nodes.new("ShaderNodeMath"); inv.operation = "SUBTRACT"; inv.inputs[0].default_value = 1.0
+        gt_.links.new(dr.outputs[0], inv.inputs[1])
+        gt_.links.new(inv.outputs[0], gb.inputs["Transmission Weight"])
+        rg = gt_.nodes.new("ShaderNodeMapRange"); rg.inputs["To Min"].default_value, rg.inputs["To Max"].default_value = 0.0, 0.06
+        gt_.links.new(dr.outputs[0], rg.inputs["Value"]); gt_.links.new(rg.outputs[0], gb.inputs["Roughness"])
+        gb.inputs["Base Color"].default_value = (*W_.get("dirt_color", (0.42, 0.38, 0.32)), 1)
+    else:
+        gb.inputs["Transmission Weight"].default_value = 1.0
+        gb.inputs["Roughness"].default_value = 0.0
+    pane = cube("window glass", (ix0, yf + 0.024, iz0), (ix1, yf + 0.026, iz1), glass, 0.0)
+    pane.visible_shadow = False
+    parts.append(pane)
+    if W_.get("view"):                             # daylight outside: a bright backdrop beyond the glass, seen
+        V_ = W_["view"]                            # only by the camera and through the glass, lighting nothing
+        sky = bpy.data.materials.new("window view")
+        sky.use_nodes = True
+        vt = sky.node_tree
+        vb = vt.nodes["Principled BSDF"]
+        vb.inputs["Base Color"].default_value = (0, 0, 0, 1)
+        tcv = vt.nodes.new("ShaderNodeTexCoord")
+        sv = vt.nodes.new("ShaderNodeSeparateXYZ"); vt.links.new(tcv.outputs["Generated"], sv.inputs[0])
+        if V_.get("img"):                          # a photo (render/textures/workspace/<img>) across the backdrop
+            cmb = vt.nodes.new("ShaderNodeCombineXYZ")
+            vt.links.new(sv.outputs["X"], cmb.inputs["X"]); vt.links.new(sv.outputs["Z"], cmb.inputs["Y"])
+            vimg = vt.nodes.new("ShaderNodeTexImage")
+            vimg.image = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", V_["img"]), check_existing=True)
+            vimg.extension = "EXTEND"
+            vt.links.new(cmb.outputs[0], vimg.inputs["Vector"])
+            vt.links.new(vimg.outputs["Color"], vb.inputs["Emission Color"])
+        else:
+            rmp = vt.nodes.new("ShaderNodeValToRGB")
+            rmp.color_ramp.elements[0].color = (*V_.get("low", (0.62, 0.64, 0.66)), 1)
+            rmp.color_ramp.elements[1].color = (*V_.get("high", (0.86, 0.91, 1.0)), 1)
+            vt.links.new(sv.outputs["Z"], rmp.inputs[0])
+            vt.links.new(rmp.outputs[0], vb.inputs["Emission Color"])
+        vb.inputs["Emission Strength"].default_value = V_.get("strength", 2.5)
+        dist_ = V_.get("distance", 2.0)
+        vw, vh = V_.get("size", (11.3, 5.4))      # (for a photo: its own aspect, so it is not stretched)
+        xc_ = (x0 + x1) / 2
+        zb_ = z0 - V_.get("drop", 1.5)            # its bottom edge below the sill (the camera looks down through it)
+        bd = cube("window view", (xc_ - vw / 2, y_wall + dp + dist_, zb_), (xc_ + vw / 2, y_wall + dp + dist_ + 0.01, zb_ + vh), sky, 0.0)
+        bd.visible_shadow = False
+        bd.visible_diffuse = False
+        bd.visible_glossy = False
+        parts.append(bd)
+    if W_.get("frame_dirt"):                       # an old steel window: dust and grey-brown grime on the bars,
+        fd = W_["frame_dirt"]                      # rust spots, the sill's plaster stained where water stood
+        sd = W_.get("steel_dirt", fd)              # (the bars' share alone; the sill keeps frame_dirt)
+        steel_parts = [o for o in parts if o.name.startswith(("frame", "mullion", "transom"))]
+        wear(steel_parts, [dict(spots=sd * 0.5, scale=140, lo=0.48, tint=(0.20, 0.19, 0.17), mode="MIX", detail=10.0),
+                           dict(spots=sd * 0.7, scale=320, lo=0.70, tint=(0.28, 0.14, 0.06), mode="MIX", detail=4.0),
+                           dict(edges=sd)])
+        corner_dirt(steel_parts, sd, (0.30, 0.28, 0.25), 0.05, top=sd * 0.6)
+        white = [o for o in parts if o.name.startswith(("window sill", "reveal"))]
+        corner_dirt(white, fd, (0.36, 0.32, 0.27), 0.12, top=fd * 0.15)      # grey-brown into the corners,
+        corner_dirt(white, fd * 0.75, (0.10, 0.09, 0.08), 0.06, rng=(0.55, 0.99),   # darkest at the very edge
+                    power=3.0, breakup=(0.75, 1.0))                                     # (the sill, the frame), fading slowly
+    return parts
+
+
+def corner_dirt(objs, amount, tint, dist=0.04, top=0.0, rng=(0.45, 1.0), power=1.0, breakup=(0.35, 1.0), seed=None):
+    """Dust and dirt where they collect (objs' materials, copies): in corners and along
+    inside edges, read from the shader's ambient occlusion over dist m, broken up by a
+    noise; `top` adds a film on upward faces (a sill's dust). rng: the occlusion values
+    that map to full dirt and to none; power > 1 bends that ramp so the dirt is darkest only
+    at the edge and fades out slowly. breakup: the noise's low and high factor (a narrow
+    range gives an even shade, a wide one patchy dirt). seed: a 4D noise at W = seed, so
+    parts of one shape do not repeat one pattern."""
+    for o in objs:
+        if o.type != "MESH":
+            continue
+        for slot in o.material_slots:
+            if slot.material is None:
+                continue
+            m = slot.material.copy()
+            nt_ = m.node_tree
+            b = next((n for n in nt_.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled"), None)
+            if b is None:
+                continue
+            ao = nt_.nodes.new("ShaderNodeAmbientOcclusion"); ao.samples = 16; ao.inputs["Distance"].default_value = dist
+            inv = nt_.nodes.new("ShaderNodeMapRange")              # 1 deep in a corner, 0 on an open face
+            inv.inputs["From Min"].default_value, inv.inputs["From Max"].default_value = rng
+            inv.inputs["To Min"].default_value, inv.inputs["To Max"].default_value = 1.0, 0.0
+            nt_.links.new(ao.outputs["AO"], inv.inputs["Value"])
+            if power != 1.0:
+                pw = nt_.nodes.new("ShaderNodeMath"); pw.operation = "POWER"; pw.inputs[1].default_value = power
+                nt_.links.new(inv.outputs[0], pw.inputs[0])
+                inv = pw
+            tc = nt_.nodes.new("ShaderNodeTexCoord")
+            nz = nt_.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 60.0; nz.inputs["Detail"].default_value = 8.0
+            if seed is not None:
+                nz.noise_dimensions = "4D"; nz.inputs["W"].default_value = seed
+            nt_.links.new(tc.outputs["Object"], nz.inputs["Vector"])
+            br = nt_.nodes.new("ShaderNodeMapRange")
+            br.inputs["From Min"].default_value, br.inputs["From Max"].default_value = 0.35, 0.65
+            br.inputs["To Min"].default_value, br.inputs["To Max"].default_value = breakup
+            nt_.links.new(nz.outputs["Fac"], br.inputs["Value"])
+            f = nt_.nodes.new("ShaderNodeMath"); f.operation = "MULTIPLY"
+            nt_.links.new(inv.outputs[0], f.inputs[0]); nt_.links.new(br.outputs[0], f.inputs[1])
+            if top:
+                gn = nt_.nodes.new("ShaderNodeNewGeometry")
+                sz = nt_.nodes.new("ShaderNodeSeparateXYZ"); nt_.links.new(gn.outputs["Normal"], sz.inputs[0])
+                up = nt_.nodes.new("ShaderNodeMapRange")
+                up.inputs["From Min"].default_value, up.inputs["From Max"].default_value = 0.7, 1.0
+                up.inputs["To Min"].default_value, up.inputs["To Max"].default_value = 0.0, top
+                nt_.links.new(sz.outputs["Z"], up.inputs["Value"])
+                upn = nt_.nodes.new("ShaderNodeMath"); upn.operation = "MULTIPLY"
+                nt_.links.new(up.outputs[0], upn.inputs[0]); nt_.links.new(br.outputs[0], upn.inputs[1])
+                ad = nt_.nodes.new("ShaderNodeMath"); ad.operation = "ADD"; ad.use_clamp = True
+                nt_.links.new(f.outputs[0], ad.inputs[0]); nt_.links.new(upn.outputs[0], ad.inputs[1]); f = ad
+            k = nt_.nodes.new("ShaderNodeMath"); k.operation = "MULTIPLY"; k.inputs[1].default_value = amount; k.use_clamp = True
+            nt_.links.new(f.outputs[0], k.inputs[0])
+            src = b.inputs["Base Color"].links[0].from_socket if b.inputs["Base Color"].is_linked else None
+            mx = nt_.nodes.new("ShaderNodeMix"); mx.data_type = "RGBA"
+            if src:
+                nt_.links.new(src, mx.inputs[6])
+            else:
+                mx.inputs[6].default_value = b.inputs["Base Color"].default_value[:]
+            mx.inputs[7].default_value = (*tint, 1)
+            nt_.links.new(k.outputs[0], mx.inputs["Factor"])
+            nt_.links.new(mx.outputs[2], b.inputs["Base Color"])
+            rr = nt_.nodes.new("ShaderNodeMath"); rr.operation = "MAXIMUM"   # dust is matte
+            if b.inputs["Roughness"].is_linked:
+                nt_.links.new(b.inputs["Roughness"].links[0].from_socket, rr.inputs[0])
+            else:
+                rr.inputs[0].default_value = b.inputs["Roughness"].default_value
+            nt_.links.new(k.outputs[0], rr.inputs[1])
+            nt_.links.new(rr.outputs[0], b.inputs["Roughness"])
+            slot.material = m
+
+
+def bookcase(it, y_wall):
+    """A bookcase standing on the floor against the wall, from x it["x0"] to it["x1"] (from
+    the keyboard's centre), it["h"] m high, it["d"] deep: black steel uprights and a top
+    rail, it["bays"] bays, it["rows"] oak boards, filled with books built as the office
+    shelf's (book_parts(): boards, page block, printed spine) from workspace_scenes.LIBRARY,
+    some set back, now and then a stack lying flat or a gap) and, on a few
+    boards, a box or a plant from it["things"] (aid, part, board index, bay, x in bay)."""
+    import random
+    from workspace_scenes import LIBRARY
+    rnd = random.Random(it.get("seed", 11))
+    x0, x1, H, D = it["x0"], it["x1"], it.get("h", 2.4), it.get("d", 0.32)
+    bays, rows = it.get("bays", 2), it.get("rows", 6)
+    steel = principled("bookcase steel", (0.025, 0.025, 0.027), 0.45)
+    steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.7
+    oak = wood("bookcase oak", (0.46, 0.32, 0.19), 0.55, grain=30.0)
+    pages = principled("bookcase pages", (0.80, 0.75, 0.64), 0.85)
+    out, u = [], 0.035
+    yb, yf = y_wall, y_wall - D
+    bw = (x1 - x0 - (bays + 1) * u) / bays
+    for k in range(bays + 1):                      # uprights
+        xu = x0 + k * (bw + u)
+        out.append(cube("bookcase upright", (xu, yf, 0.0), (xu + u, yb - 0.005, H), steel, 0.002))
+    out.append(cube("bookcase top rail", (x0, yf, H - u), (x1, yb - 0.005, H), steel, 0.002))
+    z_board = [0.06 + (H - 0.12) * r / rows for r in range(rows)]
+    palette = [(0.30, 0.10, 0.08), (0.12, 0.18, 0.30), (0.62, 0.55, 0.42), (0.16, 0.26, 0.18), (0.80, 0.76, 0.66),
+               (0.08, 0.08, 0.09), (0.55, 0.30, 0.12), (0.36, 0.38, 0.40), (0.70, 0.20, 0.14), (0.88, 0.84, 0.74),
+               (0.22, 0.30, 0.40), (0.48, 0.42, 0.30)]
+    mats = [principled(f"bookcase cover {i}", c, rnd.uniform(0.45, 0.8)) for i, c in enumerate(palette)]
+    things = it.get("things", [])
+    for r, zb in enumerate(z_board):
+        gap = (H - 0.12) / rows - 0.03            # clear height above this board
+        for b in range(bays):
+            bx0 = x0 + u + b * (bw + u)
+            out.append(cube("bookcase board", (bx0, yf + 0.005, zb), (bx0 + bw, yb - 0.008, zb + 0.03), oak, 0.002))
+            if r == 0 and it.get("bottom_empty"):
+                continue
+            mine = [t for t in things if t[2] == r and t[3] == b]
+            stop = bx0 + bw - 0.01
+            if mine:                               # things take the bay's right part
+                stop = bx0 + bw * min(t[4] for t in mine) - 0.03
+            xb = bx0 + 0.008 + rnd.uniform(0.0, 0.05)
+            z0_ = zb + 0.03
+            while xb < stop - 0.02:
+                if rnd.random() < 0.07 and stop - xb > 0.24:          # a stack lying flat
+                    n_ = rnd.randint(2, 5)
+                    zz = z0_
+                    sw = rnd.uniform(0.17, 0.23)
+                    for _ in range(n_):                # boards top and bottom, the spine at the wall and the
+                        t_ = rnd.uniform(0.018, 0.035)     # page block showing at the front, set back 3 mm
+                        cm_ = principled(f"bookcase flat cover {len(out)}", LIBRARY[rnd.randrange(len(LIBRARY))][2],
+                                         rnd.uniform(0.45, 0.7))
+                        yf_ = yb - 0.01 - rnd.uniform(0.15, 0.2)
+                        xs_ = xb + rnd.uniform(-0.01, 0.01)
+                        fb = [cube("bookcase flat book", (xs_, yf_, zz), (xs_ + sw, yb - 0.012, zz + 0.0022), cm_, 0.0008),
+                              cube("bookcase flat book", (xs_, yf_, zz + t_ - 0.0022), (xs_ + sw, yb - 0.012, zz + t_), cm_, 0.0008),
+                              cube("bookcase flat book", (xs_, yb - 0.014, zz), (xs_ + sw, yb - 0.012, zz + t_), cm_, 0.0008),
+                              cube("bookcase flat pages", (xs_ + 0.003, yf_ + 0.003, zz + 0.0022), (xs_ + sw - 0.003, yb - 0.014,
+                                   zz + t_ - 0.0022), pages, 0.0006)]
+                        grime(fb[:3], 0.3)
+                        out += fb
+                        zz += t_
+                    xb += sw + 0.012
+                    continue
+                if rnd.random() < 0.06:                                # a gap
+                    xb += rnd.uniform(0.03, 0.08)
+                    continue
+                bi = rnd.randrange(len(LIBRARY))
+                _t, _a, cover, _ink, hb, th, _st = LIBRARY[bi]
+                if hb > gap - 0.02:
+                    hb = gap - 0.02
+                dp_ = min(D - 0.03, hb * rnd.uniform(0.70, 0.78))
+                parts_b = book_parts(f"bookcase book {r}.{b}.{len(out)}", cover, hb, th, dp_, f"lib_spine_{bi}.jpg",
+                                     rnd.random() < 0.35, rub=rnd.uniform(0.1, 0.35))
+                bg_ = bpy.data.objects.new("bookcase book", None)
+                sc.collection.objects.link(bg_)
+                for o in parts_b:
+                    o.parent = bg_
+                bg_.location = (xb, yb - 0.012 - (D - 0.03 - dp_) * rnd.uniform(0.0, 0.3), z0_)
+                out += parts_b
+                xb += th + 0.001 + rnd.uniform(0.0, 0.002)
+            for aid, part, _r, _b, fx, *h_ in mine:
+                g_, objs_ = BUILT[aid]() if aid in BUILT else gltf(aid, part)
+                place(g_, objs_, (bx0 + bw * fx, yb - D / 2), rnd.uniform(-20, 20), h_[0] if h_ else None, base_z=z0_)
+                out += [o for o in objs_ if o.type == "MESH"]
+    for k, sh in enumerate(it.get("side", [])):    # papers taped to the end upright's outer face (x1, facing +x):
+        out += side_sheet(f"bookcase side {k}", sh, x1 + 0.0006, yb - 0.005 - D / 2)   # y across the face
+    if it.get("dust"):                             # dust on the boards (a film, thicker in front of and between
+        du = it["dust"]                            # the books and in the corners), grey on the steel's tops
+        # each part its own pattern (a seed) and its own amount: a board in reach is wiped now and then, one
+        # high up or behind a plant is not
+        for o in [o for o in out if o.name.startswith("bookcase board")]:
+            k_, sd_ = rnd.uniform(0.35, 1.25), rnd.uniform(0.0, 100.0)
+            corner_dirt([o], du * 0.5 * k_, (0.34, 0.31, 0.27), 0.06, rng=(0.6, 1.0), breakup=(0.1, 1.3), seed=sd_)
+            corner_dirt([o], du * 0.7 * k_, (0.62, 0.60, 0.56), 0.02, rng=(0.98, 1.0), top=du * k_,
+                        breakup=(rnd.uniform(0.0, 0.4), rnd.uniform(0.9, 1.4)), seed=sd_ + 7.3)
+            spots([o], du * 0.6 * k_, scale=rnd.uniform(25, 55), lo=rnd.uniform(0.55, 0.64), tint=(0.66, 0.64, 0.60),
+                  mode="MIX", detail=6.0, seed=sd_ + 13.1)
+        for o in [o for o in out if o.name.startswith(("bookcase upright", "bookcase top rail"))]:
+            k_ = rnd.uniform(0.6, 1.1)             # the black steel: mid-grey dust, mostly on its tops
+            corner_dirt([o], du * 0.6 * k_, (0.27, 0.26, 0.25), 0.06, top=du * 0.65 * k_, breakup=(0.0, 1.2),
+                        seed=rnd.uniform(0.0, 100.0))
+    return out
+
+
+def side_sheet(name, sh, x_face, y_mid):
+    """A print or a note taped flat to a face at x_face that looks along +x: sh["img"],
+    sh["w"] wide (the height from the image), its centre sh["y"] from y_mid across the
+    face and sh["z"] above the floor, turned sh["rot"] deg; one strip of masking tape
+    across its top edge."""
+    img = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", sh["img"]), check_existing=True)
+    w = sh["w"]
+    h = w * img.size[1] / img.size[0]
+    out = []
+    g = bpy.data.objects.new(name, None)
+    sc.collection.objects.link(g)
+    me = bpy.data.meshes.new(name)
+    me.from_pydata([(-w / 2, 0, -h / 2), (w / 2, 0, -h / 2), (w / 2, 0, h / 2), (-w / 2, 0, h / 2)], [], [(0, 1, 2, 3)])
+    lay = me.uv_layers.new(name="uv")
+    for li, uv in zip(me.polygons[0].loop_indices, [(0, 0), (1, 0), (1, 1), (0, 1)]):
+        lay.data[li].uv = uv
+    me.materials.append(image_material(name, sh["img"], rough=0.7))
+    o = bpy.data.objects.new(name, me)
+    sc.collection.objects.link(o)
+    o.parent = g
+    out.append(o)
+    tape = principled("masking tape", (0.86, 0.80, 0.62), 0.7)
+    tw = min(0.06, w * 0.5)
+    t_ = cube(f"{name} tape", (-tw / 2, -0.0004, h / 2 - 0.012), (tw / 2, -0.0002, h / 2 + 0.012), tape, 0.0)
+    t_.parent = g
+    out.append(t_)
+    g.rotation_euler = (0, math.radians(sh.get("rot", 0)), 0)
+    wrap = bpy.data.objects.new(f"{name} face", None)   # the sheet's front (-y) turned to +x
+    sc.collection.objects.link(wrap)
+    wrap.rotation_euler.z = math.radians(90)
+    wrap.location = (x_face, y_mid + sh.get("y", 0.0), sh["z"])
+    g.parent = wrap
+    return out
+
+
+def office_chair():
+    """An office chair: a five-star base on casters, a gas column, a padded seat and a
+    mesh back on a curved stem, two armrests; dark grey fabric, black plastic, a
+    polished column. Seat height 0.47 m; the front faces -y."""
+    plastic = principled("chair plastic", (0.02, 0.02, 0.022), 0.45)
+    if S.get("chair_fabric"):                      # a woven fabric from a Poly Haven texture, recoloured
+        fabric = floor_material(dict(S["chair_fabric"], axes="box"))
+    else:
+        fabric = principled("chair fabric", (0.09, 0.09, 0.10), 0.9)
+        fn_ = fabric.node_tree
+        tcf = fn_.nodes.new("ShaderNodeTexCoord")
+        wv = fn_.nodes.new("ShaderNodeTexWave"); wv.inputs["Scale"].default_value = 260.0
+        fn_.links.new(tcf.outputs["Object"], wv.inputs["Vector"])
+        bf = fn_.nodes.new("ShaderNodeBump"); bf.inputs["Strength"].default_value = 0.15
+        fn_.links.new(wv.outputs["Fac"], bf.inputs["Height"]); fn_.links.new(bf.outputs["Normal"], fn_.nodes["Principled BSDF"].inputs["Normal"])
+    chrome = principled("chair column", (0.6, 0.6, 0.62), 0.2)
+    chrome.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    parts = []
+    for k in range(5):                             # the star: five legs, a caster under each tip
+        a = math.radians(90 + 72 * k)
+        leg = cube("chair leg", (0.0, -0.022, 0.06), (0.30, 0.022, 0.095), plastic, 0.008)
+        leg.rotation_euler.z = a
+        parts.append(leg)
+        cx, cy = 0.28 * math.cos(a), 0.28 * math.sin(a)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.025, depth=0.022, location=(cx, cy, 0.025),
+                                            rotation=(math.pi / 2, 0, a))
+        cs = bpy.context.active_object; cs.name = "chair caster"; cs.data.materials.append(plastic)
+        parts.append(cs)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.045, depth=0.06, location=(0, 0, 0.09))
+    hub = bpy.context.active_object; hub.name = "chair hub"; hub.data.materials.append(plastic); parts.append(hub)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.022, depth=0.30, location=(0, 0, 0.27))
+    col = bpy.context.active_object; col.name = "chair column"; col.data.materials.append(chrome); parts.append(col)
+    parts.append(cube("chair mechanism", (-0.10, -0.12, 0.40), (0.10, 0.12, 0.43), plastic, 0.01))
+    seat = cube("chair seat", (-0.25, -0.24, 0.43), (0.25, 0.23, 0.50), fabric, 0.03)
+    seat.modifiers["bevel"].segments = 6
+    parts.append(seat)
+    parts.append(cube("chair stem", (-0.04, 0.20, 0.44), (0.04, 0.24, 0.62), plastic, 0.01))
+    back = cube("chair back", (-0.23, 0.22, 0.58), (0.23, 0.27, 1.08), fabric, 0.03)
+    back.modifiers["bevel"].segments = 6
+    bend = back.modifiers.new("bend", "SIMPLE_DEFORM"); bend.deform_method = "BEND"; bend.deform_axis = "Z"
+    bend.angle = math.radians(-25)
+    back.rotation_euler.x = math.radians(-8)
+    parts.append(back)
+    for sx in (-1, 1):                             # armrests: a post and a pad
+        parts.append(cube("chair arm post", (sx * 0.255 - 0.015, -0.02, 0.46), (sx * 0.255 + 0.015, 0.06, 0.66), plastic, 0.006))
+        parts.append(cube("chair arm pad", (sx * 0.255 - 0.035, -0.16, 0.66), (sx * 0.255 + 0.035, 0.10, 0.69), plastic, 0.01))
+    if S.get("chair_fabric"):                      # used: the seat's front worn shiny and lighter, dust and
+        wear([seat], [dict(spots=0.35, scale=6, lo=0.55, tint=(0.16, 0.16, 0.17), mode="MIX", detail=4.0)])   # crumbs,
+        wear([seat, back], [dict(spots=0.2, scale=90, lo=0.66, tint=(0.24, 0.23, 0.22), mode="MIX", detail=6.0)])
+        grime([o for o in parts if o.name.startswith("chair arm pad")], 1.0)                 # rubbed armrests,
+        spots([o for o in parts if o.name.startswith(("chair leg", "chair hub"))], 0.6, scale=30, lo=0.58,  # dusty base
+              tint=(0.32, 0.31, 0.29), mode="MIX", detail=5.0)
+    g = bpy.data.objects.new("@office_chair", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def paper_balls():
+    """Crumpled paper: seven balls of printer paper, 50-80 mm, each an icosphere pushed
+    in and out by a noise, piled in a loose heap about 160 mm across."""
+    import random
+    rnd = random.Random(5)
+    paper = principled("crumpled paper", (0.86, 0.85, 0.82), 0.8)
+    parts = []
+    spots_ = [(0.0, 0.0, 0.0), (0.06, 0.02, 0.0), (-0.05, 0.03, 0.0), (0.01, -0.06, 0.0), (0.03, 0.04, 0.05),
+              (-0.03, -0.02, 0.05), (0.07, -0.04, 0.0)]
+    for k, (px, py, pz) in enumerate(spots_):
+        r = rnd.uniform(0.025, 0.04)
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, radius=r, location=(px, py, pz + r))
+        o = bpy.context.active_object
+        o.name = "paper ball"
+        tx_ = bpy.data.textures.new(f"crumple {k}", "VORONOI")
+        tx_.noise_scale = 0.012
+        dm = o.modifiers.new("crumple", "DISPLACE"); dm.texture = tx_; dm.strength = r * 0.45; dm.mid_level = 0.6
+        o.rotation_euler = (rnd.uniform(0, 3), rnd.uniform(0, 3), rnd.uniform(0, 3))
+        o.data.materials.append(paper)
+        parts.append(o)
+    g = bpy.data.objects.new("@paper_balls", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def paper_sheets():
+    """Thrown-away printouts: three sheets (A4 printouts at 55 %, as if folded small),
+    each bent over along its length and curled, lying crosswise on top of each other
+    (for the bottom of a bin)."""
+    import random
+    rnd = random.Random(9)
+    parts = []
+    for k in range(3):
+        bpy.ops.mesh.primitive_plane_add(size=1)
+        o = bpy.context.active_object
+        o.name = "paper sheet"
+        o.scale = (0.21 * 0.55, 0.297 * 0.55, 1)       # folded small enough to lie inside the bin
+        bpy.ops.object.transform_apply(scale=True)
+        sub = o.modifiers.new("sub", "SUBSURF"); sub.subdivision_type = "SIMPLE"; sub.levels = sub.render_levels = 4
+        bend = o.modifiers.new("fold", "SIMPLE_DEFORM"); bend.deform_method = "BEND"; bend.deform_axis = "Y"
+        bend.angle = math.radians(rnd.uniform(90, 160))
+        curl = o.modifiers.new("curl", "SIMPLE_DEFORM"); curl.deform_method = "BEND"; curl.deform_axis = "X"
+        curl.angle = math.radians(rnd.uniform(-35, 35))
+        o.modifiers.new("solid", "SOLIDIFY").thickness = 0.0002
+        o.data.materials.append(image_material(f"paper sheet {k}", ("paper_sprint.jpg", "paper_chart.jpg", "paper_layout.jpg")[k], rough=0.8))
+        o.location = (rnd.uniform(-0.02, 0.02), rnd.uniform(-0.02, 0.02), 0.012 + 0.01 * k)
+        o.rotation_euler.z = math.radians(rnd.uniform(0, 180))
+        parts.append(o)
+    g = bpy.data.objects.new("@paper_sheets", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def floor_material(F):
+    """A floor from a Poly Haven texture (its normal and roughness, one tile per F["tile"]
+    m), recoloured: F["color"] scaled by the texture's own brightness, so a dark
+    carpet's pile reads as a light one of the same weave. F["axes"] "box" maps it onto
+    every face of an object (a chair's fabric)."""
+    m = wall_texture(dict(id=F["id"], tile=F.get("tile", 0.6), axes=F.get("axes", ("X", "Y")), bump=F.get("bump", 1.0)))
+    if F.get("color"):
+        nt_ = m.node_tree
+        diff = next(n for n in nt_.nodes if n.bl_idname == "ShaderNodeTexImage" and "_diff" in n.image.name)
+        bw = nt_.nodes.new("ShaderNodeRGBToBW")
+        nt_.links.new(diff.outputs["Color"], bw.inputs[0])
+        rg = nt_.nodes.new("ShaderNodeMapRange")
+        rg.inputs["From Min"].default_value, rg.inputs["From Max"].default_value = F.get("range", (0.02, 0.25))
+        rg.inputs["To Min"].default_value, rg.inputs["To Max"].default_value = 0.72, 1.08
+        nt_.links.new(bw.outputs[0], rg.inputs["Value"])
+        mul = nt_.nodes.new("ShaderNodeMix"); mul.data_type = "RGBA"; mul.blend_type = "MULTIPLY"
+        mul.inputs["Factor"].default_value = 1.0
+        mul.inputs[6].default_value = (*F["color"], 1)
+        cm = nt_.nodes.new("ShaderNodeCombineColor")
+        for k in range(3):
+            nt_.links.new(rg.outputs[0], cm.inputs[k])
+        nt_.links.new(cm.outputs[0], mul.inputs[7])
+        nt_.links.new(mul.outputs[2], nt_.nodes["Principled BSDF"].inputs["Base Color"])
+    return m
+
+
+def swatch_fan():
+    """A colour swatch book fanned open: 14 strips 45 x 200 x 0.6 mm on a brass screw at
+    one end, spread over 70 deg, each strip printed with five tints of one hue and a
+    white label band at the far end."""
+    import colorsys
+    parts = []
+    brass = principled("swatch screw", (0.55, 0.42, 0.18), 0.35)
+    n = 14
+    for k in range(n):
+        h = k / n
+        me = bpy.data.meshes.new("swatch strip")
+        L, Wd = 0.200, 0.045
+        me.from_pydata([(-0.01, -Wd / 2, 0), (L, -Wd / 2, 0), (L, Wd / 2, 0), (-0.01, Wd / 2, 0)], [], [(0, 1, 2, 3)])
+        lay = me.uv_layers.new(name="uv")
+        for li, uv in zip(me.polygons[0].loop_indices, [(0, 0), (1, 0), (1, 1), (0, 1)]):
+            lay.data[li].uv = uv
+        m = bpy.data.materials.new(f"swatch {k}")
+        m.use_nodes = True
+        nt_ = m.node_tree
+        ramp = nt_.nodes.new("ShaderNodeValToRGB")
+        cr = ramp.color_ramp
+        cr.interpolation = "CONSTANT"
+        tints = [colorsys.hsv_to_rgb(h, 0.30 + 0.17 * j, 0.95 - 0.10 * j) for j in range(5)]   # light to deep
+        cr.elements[0].color = (0.88, 0.88, 0.86, 1)               # the label band at the screw end
+        cr.elements[-1].position, cr.elements[-1].color = 0.20, (*tints[0], 1)
+        for j in range(1, 5):
+            e = cr.elements.new(0.20 + 0.16 * j)
+            e.color = (*tints[j], 1)
+        uvn = nt_.nodes.new("ShaderNodeUVMap")
+        sep = nt_.nodes.new("ShaderNodeSeparateXYZ")
+        nt_.links.new(uvn.outputs[0], sep.inputs[0])
+        nt_.links.new(sep.outputs["X"], ramp.inputs[0])
+        bsdf = nt_.nodes["Principled BSDF"]
+        bsdf.inputs["Roughness"].default_value = 0.55
+        nt_.links.new(ramp.outputs[0], bsdf.inputs["Base Color"])
+        me.materials.append(m)
+        o = bpy.data.objects.new("swatch strip", me)
+        sc.collection.objects.link(o)
+        sol = o.modifiers.new("solid", "SOLIDIFY"); sol.thickness = 0.0006
+        o.rotation_euler.z = math.radians(-35 + 70 * k / (n - 1))
+        o.location.z = 0.0006 * k + 0.0003
+        parts.append(o)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=16, radius=0.004, depth=0.012, location=(0, 0, 0.006))
+    sw = bpy.context.active_object
+    sw.name = "swatch screw"
+    sw.data.materials.append(brass)
+    parts.append(sw)
+    g = bpy.data.objects.new("@swatch_fan", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+PC_WALL_GAP = 0.30                                # from the tower's back panel to the wall behind it
+
+
+def pc_tower():
+    """A desktop PC tower, 210 x 450 x 470 mm: a black satin steel case on four rubber
+    feet, a perforated front (a fine hole grid as dark dots and bump), a power button
+    with a white LED ring, two USB ports and an audio jack in the top front, dust on
+    the top. The front faces -y."""
+    W_, D_, H_ = 0.21, 0.45, 0.47
+    steel = principled("pc case", (0.025, 0.025, 0.027), 0.45)
+    steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.6
+    st_ = steel.node_tree                          # light scratches: steel_scratches.png box-projected, two tiles a
+    sb_ = st_.nodes["Principled BSDF"]             # metre; a scratch is paler and shinier than the satin paint
+    stc = st_.nodes.new("ShaderNodeTexCoord")
+    smp = st_.nodes.new("ShaderNodeMapping"); smp.inputs["Scale"].default_value = (2.0, 2.0, 2.0)
+    st_.links.new(stc.outputs["Object"], smp.inputs["Vector"])
+    sti = st_.nodes.new("ShaderNodeTexImage"); sti.projection = "BOX"; sti.projection_blend = 0.2
+    sti.image = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", "steel_scratches.png"), check_existing=True)
+    sti.image.colorspace_settings.name = "Non-Color"
+    st_.links.new(smp.outputs[0], sti.inputs["Vector"])
+    sk = st_.nodes.new("ShaderNodeMapRange")       # the texture peaks at 200/255
+    sk.inputs["From Max"].default_value = 0.78
+    st_.links.new(sti.outputs["Color"], sk.inputs["Value"])
+    scm = st_.nodes.new("ShaderNodeMix"); scm.data_type = "RGBA"
+    scm.inputs[6].default_value, scm.inputs[7].default_value = (0.025, 0.025, 0.027, 1), (0.16, 0.16, 0.17, 1)
+    sf = st_.nodes.new("ShaderNodeMath"); sf.operation = "MULTIPLY"; sf.inputs[1].default_value = 0.55
+    st_.links.new(sk.outputs[0], sf.inputs[0]); st_.links.new(sf.outputs[0], scm.inputs["Factor"])
+    st_.links.new(scm.outputs[2], sb_.inputs["Base Color"])
+    srr = st_.nodes.new("ShaderNodeMapRange")
+    srr.inputs["To Min"].default_value, srr.inputs["To Max"].default_value = 0.45, 0.25
+    st_.links.new(sk.outputs[0], srr.inputs["Value"]); st_.links.new(srr.outputs[0], sb_.inputs["Roughness"])
+    front = principled("pc front mesh", (0.03, 0.03, 0.032), 0.6)
+    fn_ = front.node_tree
+    tc = fn_.nodes.new("ShaderNodeTexCoord")
+    vo = fn_.nodes.new("ShaderNodeTexVoronoi"); vo.inputs["Scale"].default_value = 260.0
+    vo.feature = "F1"; vo.voronoi_dimensions = "2D"; vo.inputs["Randomness"].default_value = 0.0
+    mp = fn_.nodes.new("ShaderNodeMapping"); mp.inputs["Rotation"].default_value = (math.radians(90), 0, 0)
+    fn_.links.new(tc.outputs["Object"], mp.inputs["Vector"]); fn_.links.new(mp.outputs[0], vo.inputs["Vector"])
+    hole = fn_.nodes.new("ShaderNodeMapRange")
+    hole.inputs["From Min"].default_value, hole.inputs["From Max"].default_value = 0.22, 0.28
+    fn_.links.new(vo.outputs["Distance"], hole.inputs["Value"])
+    col = fn_.nodes.new("ShaderNodeMix"); col.data_type = "RGBA"
+    col.inputs[6].default_value, col.inputs[7].default_value = (0.002, 0.002, 0.002, 1), (0.04, 0.04, 0.043, 1)
+    fn_.links.new(hole.outputs[0], col.inputs["Factor"])
+    b_ = fn_.nodes["Principled BSDF"]
+    fn_.links.new(col.outputs[2], b_.inputs["Base Color"])
+    bm_ = fn_.nodes.new("ShaderNodeBump"); bm_.inputs["Strength"].default_value = 0.3
+    fn_.links.new(hole.outputs[0], bm_.inputs["Height"]); fn_.links.new(bm_.outputs["Normal"], b_.inputs["Normal"])
+    rubber = principled("pc feet", (0.01, 0.01, 0.01), 0.9)
+    led = bpy.data.materials.new("pc led")
+    led.use_nodes = True
+    lb = led.node_tree.nodes["Principled BSDF"]
+    lb.inputs["Emission Color"].default_value = (0.85, 0.92, 1.0, 1); lb.inputs["Emission Strength"].default_value = 6.0
+    port = principled("pc port", (0.005, 0.005, 0.005), 0.5)
+    parts = [cube("pc case", (-W_ / 2, -D_ / 2, 0.012), (W_ / 2, D_ / 2, H_), steel, 0.006),
+             cube("pc front", (-W_ / 2 + 0.006, -D_ / 2 - 0.004, 0.02), (W_ / 2 - 0.006, -D_ / 2 + 0.002, H_ - 0.06), front, 0.002)]
+    for fx in (-1, 1):
+        for fy in (-1, 1):
+            parts.append(cube("pc foot", (fx * (W_ / 2 - 0.03) - 0.015, fy * (D_ / 2 - 0.04) - 0.015, 0.0),
+                              (fx * (W_ / 2 - 0.03) + 0.015, fy * (D_ / 2 - 0.04) + 0.015, 0.013), rubber, 0.004))
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.011, depth=0.006, location=(0.06, -D_ / 2 - 0.002, H_ - 0.03),
+                                        rotation=(math.pi / 2, 0, 0))
+    ring = bpy.context.active_object; ring.name = "pc power led"; ring.data.materials.append(led); parts.append(ring)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.0085, depth=0.008, location=(0.06, -D_ / 2 - 0.003, H_ - 0.03),
+                                        rotation=(math.pi / 2, 0, 0))
+    btn = bpy.context.active_object; btn.name = "pc power button"; btn.data.materials.append(steel); parts.append(btn)
+    for k, x in enumerate((-0.07, -0.045)):
+        parts.append(cube("pc usb", (x - 0.007, -D_ / 2 - 0.001, H_ - 0.036), (x + 0.007, -D_ / 2 + 0.003, H_ - 0.031), port, 0.0005))
+    bpy.ops.mesh.primitive_cylinder_add(vertices=16, radius=0.003, depth=0.004, location=(-0.015, -D_ / 2, H_ - 0.033),
+                                        rotation=(math.pi / 2, 0, 0))
+    jack = bpy.context.active_object; jack.name = "pc jack"; jack.data.materials.append(port); parts.append(jack)
+    cab = principled("pc cable", (0.012, 0.012, 0.013), 0.5)
+    # cables out of the back panel (+y): the power cable drops to the floor and runs along the foot of the wall
+    # to the right (+x), the display and USB cables rise to the desk's underside, where they are clipped
+    for k, (x_, z_, r_, route) in enumerate(((0.05, 0.06, 0.0045, "wall"), (-0.04, 0.30, 0.003, "up"),
+                                              (-0.06, 0.34, 0.0025, "up"), (0.02, 0.38, 0.0022, "up"),
+                                              (-0.02, 0.36, 0.0022, "up"))):
+        y0 = D_ / 2
+        if route == "wall":
+            yw = y0 + PC_WALL_GAP - 0.03
+            pts = [(x_, y0, z_), (x_, y0 + 0.05, z_ - 0.02), (x_ + 0.02, y0 + 0.10, r_), (x_ + 0.10, yw - 0.02, r_),
+                   (x_ + 0.40, yw, r_), (x_ + 0.90, yw, r_), (x_ + 1.40, yw, r_)]
+        else:
+            dy = 0.10 + 0.04 * k
+            pts = [(x_, y0, z_), (x_, y0 + 0.05, z_ + 0.02), (x_ - 0.01 * k, y0 + dy * 0.7, z_ + 0.15),
+                   (x_ - 0.02 * k, y0 + dy, 0.62), (x_ - 0.03 * k, y0 + dy + 0.02, 0.715), (x_ - 0.03 * k + 0.2, y0 + dy + 0.02, 0.715)]
+        cu = bpy.data.curves.new(f"pc cable {k}", "CURVE")
+        cu.dimensions = "3D"
+        cu.bevel_depth, cu.bevel_resolution = r_, 3
+        sp_ = cu.splines.new("BEZIER")
+        sp_.bezier_points.add(len(pts) - 1)
+        for bp, p_ in zip(sp_.bezier_points, pts):
+            bp.co = p_
+            bp.handle_left_type = bp.handle_right_type = "AUTO"
+        co = bpy.data.objects.new(f"pc cable {k}", cu)
+        sc.collection.objects.link(co)
+        co.data.materials.append(cab)
+        parts.append(co)
+        parts.append(cube(f"pc plug {k}", (x_ - 0.008, y0, z_ - 0.006), (x_ + 0.008, y0 + 0.02, z_ + 0.006), cab, 0.002))
+    g = bpy.data.objects.new("@pc_tower", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def usb_stick():
+    """A USB stick, 58 x 19 x 9 mm: a matte dark grey body with a rubbed metal swivel
+    cover over the connector end, a small loop at the other end."""
+    body = principled("usb body", (0.06, 0.06, 0.065), 0.55)
+    metal = principled("usb metal", (0.70, 0.70, 0.72), 0.3)
+    metal.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    parts = [cube("usb body", (-0.029, -0.0095, 0.0), (0.024, 0.0095, 0.009), body, 0.003),
+             cube("usb connector", (0.024, -0.006, 0.0025), (0.036, 0.006, 0.0068), metal, 0.0005),
+             cube("usb swivel", (-0.010, -0.0105, -0.0003), (0.034, 0.0105, 0.0093), metal, 0.002)]
+    bpy.ops.mesh.primitive_torus_add(major_radius=0.004, minor_radius=0.0012, location=(-0.031, 0, 0.0045))
+    loop = bpy.context.active_object; loop.name = "usb loop"; loop.data.materials.append(body); parts.append(loop)
+    grime(parts[2:3], 0.8)
+    g = bpy.data.objects.new("@usb_stick", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
 BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(), "@nfc_reader": lambda: nfc_reader(), "@eraser_crumbs": lambda: eraser_crumbs(),
          "@name_card": lambda: name_card(), "@card_reader": lambda: card_reader(),
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
-         "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
+         "@swatch_fan": lambda: swatch_fan(), "@pc_tower": lambda: pc_tower(), "@office_chair": lambda: office_chair(), "@paper_balls": lambda: paper_balls(), "@paper_sheets": lambda: paper_sheets(), "@usb_stick": lambda: usb_stick(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
 
 
 def wall_texture(tx):
@@ -1430,7 +2110,10 @@ def wall_texture(tx):
 
     def tex(kind, colour):
         t = nt2.nodes.new("ShaderNodeTexImage")
-        t.image = bpy.data.images.load(os.path.join(folder, f"{tx['id']}_{kind}_2k.jpg"), check_existing=True)
+        path = os.path.join(folder, f"{tx['id']}_{kind}_2k.jpg")
+        if kind == "diff" and not os.path.exists(path):          # some textures name it "diffuse"
+            path = os.path.join(folder, f"{tx['id']}_diffuse_2k.jpg")
+        t.image = bpy.data.images.load(path, check_existing=True)
         if not colour:
             t.image.colorspace_settings.name = "Non-Color"
         nt2.links.new(vec_src, t.inputs["Vector"])
@@ -1445,6 +2128,30 @@ def wall_texture(tx):
     nt2.links.new(tex("nor_gl", False).outputs["Color"], nm.inputs["Color"])
     nt2.links.new(nm.outputs["Normal"], b.inputs["Normal"])
     nt2.links.new(tex("rough", False).outputs["Color"], b.inputs["Roughness"])
+    if tx.get("cavity"):                           # relief from the height and occlusion maps: the mortar and the
+        cv = tx["cavity"]                          # brick edges sink and darken, each brick stands out
+        hgt = tex("disp", False)
+        ao_ = tex("ao", False)
+        bmpc = nt2.nodes.new("ShaderNodeBump")
+        bmpc.inputs["Strength"].default_value = cv
+        bmpc.inputs["Distance"].default_value = tx.get("depth", 0.01)
+        nt2.links.new(hgt.outputs["Color"], bmpc.inputs["Height"])
+        nt2.links.new(nm.outputs["Normal"], bmpc.inputs["Normal"])
+        nt2.links.new(bmpc.outputs["Normal"], b.inputs["Normal"])
+        low = nt2.nodes.new("ShaderNodeMapRange")  # the lowest 40 % of the height darkens towards 0.35
+        low.inputs["From Min"].default_value, low.inputs["From Max"].default_value = 0.0, 0.4
+        low.inputs["To Min"].default_value, low.inputs["To Max"].default_value = 1.0 - 0.65 * cv, 1.0
+        nt2.links.new(hgt.outputs["Color"], low.inputs["Value"])
+        dk = nt2.nodes.new("ShaderNodeMath"); dk.operation = "MULTIPLY"
+        nt2.links.new(low.outputs[0], dk.inputs[0]); nt2.links.new(ao_.outputs["Color"], dk.inputs[1])
+        mc = nt2.nodes.new("ShaderNodeMix"); mc.data_type = "RGBA"; mc.blend_type = "MULTIPLY"
+        mc.inputs["Factor"].default_value = 1.0
+        nt2.links.new(mix.outputs[2], mc.inputs[6])
+        cc = nt2.nodes.new("ShaderNodeCombineColor")
+        for k in range(3):
+            nt2.links.new(dk.outputs[0], cc.inputs[k])
+        nt2.links.new(cc.outputs[0], mc.inputs[7])
+        nt2.links.new(mc.outputs[2], b.inputs["Base Color"])
     return m
 
 
@@ -1474,8 +2181,13 @@ def wall(spec, y_wall, x_mid, top):
     skirt = principled("wall skirting", (0.03, 0.03, 0.035), 0.5)
     if spec.get("texture"):                       # a Poly Haven wall texture instead of the paint
         paint = wall_texture(spec["texture"])
-    parts = [cube("wall", (x_mid - 1.8, y_wall, 0.0), (x_mid + 1.8, y_wall + 0.1, 2.6), paint, 0.0),
-             cube("wall skirting", (x_mid - 1.8, y_wall - 0.012, 0.0), (x_mid + 1.8, y_wall, 0.06), skirt, 0.002)]
+    hw = spec.get("half_width", 1.8)
+    if spec.get("window"):
+        parts = window_wall(spec["window"], paint, y_wall, x_mid, hw)
+    else:
+        parts = [cube("wall", (x_mid - hw, y_wall, 0.0), (x_mid + hw, y_wall + 0.1, 2.6), paint, 0.0)]
+    if spec.get("skirting", True):
+        parts.append(cube("wall skirting", (x_mid - hw, y_wall - 0.012, 0.0), (x_mid + hw, y_wall, 0.06), skirt, 0.002))
     if spec.get("led"):
         lit = bpy.data.materials.new("led strip")
         lit.use_nodes = True
@@ -1619,6 +2331,32 @@ def disc(name, x, y, z, r, mat, n=96):
     return o
 
 
+def book_parts(name, cover, hgt, th, dep, spine_img, curved, x0=0.0, sides=None, rub=0.9):
+    """One book standing upright, its spine facing the viewer: the two boards, the spine
+    strip and the page block between them (aged paper, 3 mm short of the boards' fore
+    edge), the printed spine label (spine_img), bulging like a cloth hardback's when
+    curved, and, with sides=(back image, front image), its covers on the side faces.
+    Local frame: x from x0 to x0 + th, y from -dep to 0 (the spine at -dep), z 0 to hgt.
+    Rubbed board corners, dusty page tops."""
+    cm = bpy.data.materials.get(f"book cover {cover}") or principled(f"book cover {cover}", cover, 0.55)
+    pg = bpy.data.materials.get("book pages") or principled("book pages", (0.78, 0.73, 0.62), 0.85)
+    bd = 0.0022
+    parts_b = [cube(f"{name}", (x0, -dep, 0), (x0 + bd, 0, hgt), cm, 0.0008),
+               cube(f"{name} pages", (x0 + bd, -dep + 0.002, 0.003), (x0 + th - bd, -0.003, hgt - 0.003), pg, 0.0006),
+               cube(f"{name} board", (x0 + th - bd, -dep, 0), (x0 + th, 0, hgt), cm, 0.0008),
+               cube(f"{name} back", (x0, -dep, 0), (x0 + th, -dep + 0.002, hgt), cm, 0.0008)]
+    sp = bpy.data.materials.get(f"spine {spine_img}") or image_material(f"spine {spine_img}", spine_img, rough=0.5)
+    parts_b.append(spine(f"{name} spine", x0, th, hgt, -dep - 0.0004, th * 0.22 if curved else 0.0, sp))
+    if sides:
+        for side, img_ in ((x0 - 0.0004, sides[0]), (x0 + th + 0.0004, sides[1])):
+            parts_b.append(side_board(f"{name} side", side, -dep, 0.0, hgt, side > x0, image_material(
+                f"{img_}", img_, rough=0.55)))         # front cover on the right, back on the left
+    grime([parts_b[0], parts_b[2], parts_b[3]], rub)   # rubbed cover corners
+    grime(parts_b[1:2], 1.0)                # page tops: dusty, darker where they are pulled out
+    grime(parts_b[4:], 0.8, axes=("X", "Z"))
+    return parts_b
+
+
 def spine(name, x0, th, h, y, bulge, mat, n=12):
     """A book's spine label from x0 to x0 + th, 0 to h high, at y facing the viewer;
     bulge > 0 rounds it out towards the viewer like a cloth hardback's. uv: the image."""
@@ -1681,7 +2419,7 @@ def wall_item(it, y_wall, top):
     (x, z of the pin relative to the board's centre); "sheet": a paper on the wall
     itself; "clock": a wall clock of radius r."""
     out = []
-    x, z = it["x"], top + it["z"]
+    x, z = it.get("x", 0.0), top + it.get("z", 0.0)
     if it["kind"] == "board":
         w, h = it["w"], it["h"]
         wood_m = wood("board frame", (0.30, 0.19, 0.10), 0.5)
@@ -1701,6 +2439,8 @@ def wall_item(it, y_wall, top):
             out += hung(f"board sheet {i}", sh, x + sh["x"], y_wall - 0.0262 - 0.0004 * i, z + sh["z"])
     elif it["kind"] == "sheet":
         out += hung("wall sheet", it, x, y_wall - 0.0004, z)
+    elif it["kind"] == "bookcase":                # floor to ceiling: a black steel frame, oak boards, books
+        out += bookcase(it, y_wall)
     elif it["kind"] == "shelf":                   # a floating oak shelf w wide, things standing on it
         w, dp_ = it.get("w", 0.6), it.get("d", 0.2)
         oak = wood("shelf oak", (0.42, 0.28, 0.16), 0.5, grain=30.0)
@@ -1711,26 +2451,11 @@ def wall_item(it, y_wall, top):
             prev_h = None
             for i, (title, author, cover, ink, hgt, th, style) in enumerate(BOOKS):
                 dep = 0.16 + 0.01 * (i % 3)
-                cm = principled(f"book cover {i}", cover, 0.55)
-                pg = principled("book pages", (0.78, 0.73, 0.62), 0.85)   # aged paper, darker than new
                 last = i == len(BOOKS) - 1
                 lean = math.radians(it.get("lean", 9)) if last else 0.0
                 x0 = -th if last else 0.0             # the leaning book pivots on its bottom-right corner
-                curved = i % 3 == 0                   # a cloth hardback: its spine bulges
-                bd = 0.0022                           # the boards, the spine strip, and the page block
-                parts_b = [cube(f"book {i}", (x0, -dep, 0), (x0 + bd, 0, hgt), cm, 0.0008),   # between them,
-                           cube(f"book pages {i}", (x0 + bd, -dep + 0.002, 0.003),          # 3 mm short of the
-                                (x0 + th - bd, -0.003, hgt - 0.003), pg, 0.0006),            # boards' fore edge
-                           cube(f"book board {i}", (x0 + th - bd, -dep, 0), (x0 + th, 0, hgt), cm, 0.0008),
-                           cube(f"book back {i}", (x0, -dep, 0), (x0 + th, -dep + 0.002, hgt), cm, 0.0008)]
-                sp = image_material(f"spine {i}", f"spine_{i}.jpg", rough=0.5)
-                parts_b.append(spine(f"spine {i}", x0, th, hgt, -dep - 0.0004, th * 0.22 if curved else 0.0, sp))
-                for side, img_ in ((x0 - 0.0004, f"back_{i}.jpg"), (x0 + th + 0.0004, f"cover_{i}.jpg")):
-                    parts_b.append(side_board(f"book side {i}", side, -dep, 0.0, hgt, side > x0, image_material(
-                        f"{img_}", img_, rough=0.55)))         # front cover on the right, back on the left
-                grime([parts_b[0], parts_b[2], parts_b[3]], 0.9)   # rubbed cover corners
-                grime(parts_b[1:2], 1.0)                # page tops: dusty, darker where they are pulled out
-                grime(parts_b[4:], 0.8, axes=("X", "Z"))
+                parts_b = book_parts(f"book {i}", cover, hgt, th, dep, f"spine_{i}.jpg", i % 3 == 0, x0,
+                                     sides=(f"back_{i}.jpg", f"cover_{i}.jpg"))
                 bg_ = bpy.data.objects.new(f"book {i}", None)
                 sc.collection.objects.link(bg_)
                 for o in parts_b:
@@ -2067,6 +2792,57 @@ def monitors(spec):
             o.parent = g
         objs.extend(parts + [pole, clamp, jaw, arm, plate])
         blocks.append(parts + [pole, clamp, jaw, arm, plate])
+    elif style == "dual_arm":                      # two screens on one pole: a desk clamp, a 35 mm pole, a
+        reach = spec.get("reach", 0.22)            # hub at screen height and two jointed arms to the screens' backs
+        inches = spec.get("inches", 27)
+        zc = spec.get("height", 0.36)
+        ang = spec.get("angle", 14)
+        sw0 = inches * 0.0254 * 16 / math.hypot(16, 9)
+        half = sw0 / 2 + fin["bezel"] + spec.get("gap", 0.012) / 2
+        arm_m = principled("monitor arm black", (0.03, 0.03, 0.032), 0.35, coat=0.3) if spec.get("arm_black", True) else alu
+        hw_ = []
+        pr = spec.get("pole_r", 0.0175)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=40, radius=pr, depth=zc + 0.14)
+        pole = bpy.context.active_object; pole.name = "monitor pole"
+        pole.location = (0, reach, (zc + 0.14) / 2)
+        pole.data.materials.append(arm_m); hw_.append(pole)
+        bpy.ops.mesh.primitive_cylinder_add(vertices=40, radius=pr + 0.004, depth=0.012, location=(0, reach, zc + 0.146))
+        cap = bpy.context.active_object; cap.name = "pole cap"; cap.data.materials.append(arm_m); hw_.append(cap)
+        hw_ += [cube("monitor clamp", (-0.05, reach - 0.06, 0.0), (0.05, reach + 0.065, 0.016), arm_m, 0.004),
+                cube("monitor clamp back", (-0.04, reach + 0.045, -0.085), (0.04, reach + 0.065, 0.016), arm_m, 0.003),
+                cube("monitor clamp jaw", (-0.04, reach - 0.02, -0.095), (0.04, reach + 0.065, -0.08), arm_m, 0.003)]
+        bpy.ops.mesh.primitive_cylinder_add(vertices=40, radius=pr + 0.012, depth=0.05, location=(0, reach, zc))
+        hub = bpy.context.active_object; hub.name = "arm hub"; hub.data.materials.append(arm_m); hw_.append(hub)
+        for k, side in enumerate((-1, 1)):
+            a = math.radians(-side * ang)
+            cx, cy = side * half * math.cos(math.radians(ang)), half * math.sin(math.radians(ang))
+            head, parts, sw, sh = panel(screens[k % len(screens)], inches, (16, 9), None, glow, finish,
+                                        notes=[n[1:] for n in spec.get("notes", ()) if n[0] == k])
+            head.parent = g
+            head.location = (cx, cy, zc)
+            head.rotation_euler = (-tilt, 0, a)
+            bx, by = cx - 0.045 * math.sin(a), cy + 0.045 * math.cos(a)     # the VESA plate on the screen's back
+            plate = cube(f"vesa {k}", (-0.05, -0.006, -0.05), (0.05, 0.006, 0.05), arm_m, 0.003)
+            plate.location = (bx, by, zc); plate.rotation_euler.z = a
+            ex, ey = bx * 0.45, (by + reach) / 2 + 0.03                    # the elbow, between hub and plate
+            segs = []
+            for (x0, y0), (x1, y1) in (((0, reach), (ex, ey)), ((ex, ey), (bx, by + 0.006))):
+                ln = math.hypot(x1 - x0, y1 - y0)
+                bpy.ops.mesh.primitive_cube_add(size=1)
+                o = bpy.context.active_object; o.name = f"arm seg {k}"
+                o.scale = (ln, 0.034, 0.024)
+                o.location = ((x0 + x1) / 2, (y0 + y1) / 2, zc)
+                o.rotation_euler.z = math.atan2(y1 - y0, x1 - x0)
+                bv = o.modifiers.new("bevel", "BEVEL"); bv.width, bv.segments = 0.008, 3
+                o.data.materials.append(arm_m); segs.append(o)
+            bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.022, depth=0.036, location=(ex, ey, zc))
+            el = bpy.context.active_object; el.name = f"arm elbow {k}"; el.data.materials.append(arm_m)
+            hw_ += [plate, el] + segs
+            objs.extend(parts); blocks.append(parts)
+        for o in hw_:
+            o.parent = g
+        objs.extend(hw_)
+        blocks.append(hw_)
     return g, objs, blocks, feet
 
 
@@ -2088,9 +2864,32 @@ nt.links.new(coord.outputs["Generated"], mapping.inputs["Vector"])
 nt.links.new(mapping.outputs["Vector"], env.inputs["Vector"])
 nt.links.new(env.outputs["Color"], bg.inputs["Color"])
 nt.links.new(bg.outputs["Background"], out.inputs["Surface"])
+if S.get("hdri_view"):                           # the panorama brighter where it is SEEN (straight from the camera, or
+    lp = nt.nodes.new("ShaderNodeLightPath")     # through a window's glass), not where it lights the room: a bright
+    td = nt.nodes.new("ShaderNodeMath"); td.operation = "GREATER_THAN"; td.inputs[1].default_value = 0.0   # view out
+    nt.links.new(lp.outputs["Transmission Depth"], td.inputs[0])
+    seen = nt.nodes.new("ShaderNodeMath"); seen.operation = "MAXIMUM"
+    nt.links.new(lp.outputs["Is Camera Ray"], seen.inputs[0]); nt.links.new(td.outputs[0], seen.inputs[1])
+    gain = nt.nodes.new("ShaderNodeMapRange")
+    gain.inputs["To Min"].default_value, gain.inputs["To Max"].default_value = S["hdri_strength"], S["hdri_strength"] * S["hdri_view"]
+    nt.links.new(seen.outputs[0], gain.inputs["Value"])
+    nt.links.new(gain.outputs[0], bg.inputs["Strength"])
 LIGHTS = S.get("lights", [])                     # area lights, placed once the desk is known (below)
 floor = bpy.data.objects["Plane"]
 floor.is_shadow_catcher = True                   # the room's own floor, with the desk's shadow on it
+if S.get("floor"):                               # a real floor instead: a carpet, a Poly Haven texture
+    floor.is_shadow_catcher = False
+    floor.scale = (40, 40, 1)
+    floor.select_set(True); bpy.context.view_layer.objects.active = floor
+    bpy.ops.object.transform_apply(scale=True)    # object coordinates in metres: the texture's tile holds
+    floor.select_set(False)
+    floor.data.materials.clear()
+    floor.data.materials.append(floor_material(S["floor"]))
+    if S["floor"].get("dirt"):                     # a used carpet: grey along the walls and round the furniture's
+        fdr = S["floor"]["dirt"]                   # feet (where the vacuum misses), a few faint stains
+        corner_dirt([floor], fdr, (0.22, 0.20, 0.18), 0.45, rng=(0.55, 1.0), power=1.2, breakup=(0.4, 1.2))
+        spots([floor], fdr, scale=2.0, lo=0.58, tint=(0.55, 0.51, 0.46), detail=5.0)          # worn paths, stains
+        spots([floor], fdr * 0.7, scale=9.0, lo=0.66, tint=(0.45, 0.41, 0.36), detail=3.0)    # and smaller marks
 
 # ---- the cables, while the keyboard still stands on z = 0 ----------------------------
 if S["desk"] == "@counter":
@@ -2125,7 +2924,7 @@ if (S.get("desk_matte") or S.get("desk_dents")) and not S["desk"].startswith("@"
             if S.get("desk_dents"):
                 dent_material(slot.material, S["desk_dents"], S.get("desk_dent_scale", 14.0))
 if S.get("desk_spots"):                            # faint marks of use: a few soft, slightly darker spots
-    spots(desk_objs, S["desk_spots"])
+    spots(desk_objs, S["desk_spots"], tint=S.get("desk_spots_tint", (0.86, 0.83, 0.78)))   # (a light top needs a darker tint)
 
 
 def desk_stains(stains, top, kb_y):
@@ -2204,8 +3003,8 @@ if S.get("monitor"):
     spec = S["monitor"]
     mon, mon_objs, blocks, feet = monitors(spec)
     wear(feet, spec.get("wear"))                   # dust and rub marks on the stand's foot
-    if spec.get("style") == "arm":                 # the pole's clamp on the desk's back edge
-        mon.location = (spec.get("x", 0.0), dhi.y - spec.get("reach", 0.24) - 0.035, top)
+    if spec.get("style") in ("arm", "dual_arm"):   # the pole's clamp on the desk's back edge
+        mon.location = (spec.get("x", 0.0), dhi.y - spec.get("reach", 0.24) - (0.065 if spec.get("style") == "dual_arm" else 0.035), top)
         mon.rotation_euler.z = math.radians(spec.get("turn", 0))
         bpy.context.view_layer.update()
     else:
@@ -2377,6 +3176,11 @@ if S.get("desk_stains"):                           # (after the keyboard group t
     desk_stains(S["desk_stains"], top, kb_y)
 if S.get("wall"):            # the desk against a wall, 40 mm behind its back edge (built after the keyboard
     wall(S["wall"], dhi.y + 0.04, (dlo.x + dhi.x) / 2, top)   # group took the loose objects)
+    if S.get("floor"):                             # the carpet stops at the wall: through the window, the HDRI
+        inv_ = floor.matrix_world.inverted()
+        y_w = (inv_ @ mathutils.Vector((0, dhi.y + 0.04 + 0.05, 0))).y
+        for v in floor.data.vertices:
+            v.co.y = min(v.co.y, y_w)
 if S.get("room"):                                  # a plain bright room instead: a matte floor and, room["wall_y"] m
     R_ = S["room"]                                 # behind the desk, a wall with a skirting, both off-white
     floor.is_shadow_catcher = False
@@ -2828,7 +3632,7 @@ cam = sc.camera
 c = S["camera"]
 aim = bpy.data.objects.new("aim", None)          # where the camera looks: above the keyboard, so the screen shows
 sc.collection.objects.link(aim)
-aim.location = tgt.matrix_world.translation + mathutils.Vector((0, c.get("aim_y", 0.0), c.get("aim_z", 0.0)))
+aim.location = tgt.matrix_world.translation + mathutils.Vector((c.get("aim_x", 0.0), c.get("aim_y", 0.0), c.get("aim_z", 0.0)))
 focus = aim.location.copy()
 e, a = math.radians(c["elev"]), math.radians(c["azim"])
 d = c["distance"]
