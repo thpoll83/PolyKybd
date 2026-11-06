@@ -384,6 +384,28 @@ def video(layers, story, out, width=640, fps=25):
     print("wrote", out, "with sound,", total, "frames", round(total / fps, 1), "s")
 
 
+def wait_all(procs):
+    """Wait for every worker; True when all exit 0. On the first failure the others are
+    stopped and waited for, so none of them outlives this process and goes on writing a
+    part file that a retry also writes (and Ctrl-C stops them all the same way)."""
+    import time
+    try:
+        while True:
+            codes = [p.poll() for p in procs]
+            if all(c == 0 for c in codes):
+                return True
+            if any(c not in (None, 0) for c in codes):
+                break
+            time.sleep(0.5)
+    finally:
+        for p in procs:
+            if p.poll() is None:
+                p.terminate()
+        for p in procs:
+            p.wait()
+    return False
+
+
 def video_parallel(layers, story, out, width, fps, jobs):
     sys.path.insert(0, os.path.join(HERE, "..", "..", "PolyKybdHost", "tools"))
     from fw_anim_sim import FwSim
@@ -398,7 +420,7 @@ def video_parallel(layers, story, out, width, fps, jobs):
     procs = [subprocess.Popen([sys.executable, os.path.abspath(__file__), "video", layers, story, part, str(width), str(fps)],
                               env=dict(os.environ, PK_FRAMES=f"{lo}:{hi}"))
              for part, lo, hi in zip(parts, cuts, cuts[1:])]
-    if any(p.wait() != 0 for p in procs):
+    if not wait_all(procs):
         raise SystemExit("a part failed: " + ", ".join(str(p.returncode) for p in procs))
     lst = out + ".parts.txt"
     with open(lst, "w") as f:
