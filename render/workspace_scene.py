@@ -1668,7 +1668,7 @@ def bookcase(it, y_wall):
     if it.get("dust"):                             # dust on the boards (a film, thicker in front of and between
         du = it["dust"]                            # the books and in the corners), grey on the steel's tops
         boards = [o for o in out if o.name.startswith("bookcase board")]
-        corner_dirt(boards, du, (0.30, 0.27, 0.23), 0.06, rng=(0.5, 1.0))            # grime in the corners
+        corner_dirt(boards, du * 0.5, (0.34, 0.31, 0.27), 0.06, rng=(0.6, 1.0), breakup=(0.1, 1.3))   # some grime in the corners
         corner_dirt(boards, du * 0.7, (0.62, 0.60, 0.56), 0.02, rng=(0.98, 1.0), top=du, breakup=(0.3, 1.1))   # grey dust film
         spots(boards, du * 0.6, scale=40, lo=0.58, tint=(0.66, 0.64, 0.60), mode="MIX", detail=6.0)            # and fluff
         corner_dirt([o for o in out if o.name.startswith(("bookcase upright", "bookcase top rail"))], du,
@@ -1797,6 +1797,35 @@ def paper_balls():
     return g, parts
 
 
+def paper_sheets():
+    """Thrown-away printouts: three A4 sheets, each folded once along its length and
+    curled, lying crosswise on top of each other (for the bottom of a bin)."""
+    import random
+    rnd = random.Random(9)
+    parts = []
+    for k in range(3):
+        bpy.ops.mesh.primitive_plane_add(size=1)
+        o = bpy.context.active_object
+        o.name = "paper sheet"
+        o.scale = (0.21, 0.297, 1)
+        bpy.ops.object.transform_apply(scale=True)
+        sub = o.modifiers.new("sub", "SUBSURF"); sub.subdivision_type = "SIMPLE"; sub.levels = sub.render_levels = 4
+        bend = o.modifiers.new("fold", "SIMPLE_DEFORM"); bend.deform_method = "BEND"; bend.deform_axis = "Y"
+        bend.angle = math.radians(rnd.uniform(40, 120))
+        curl = o.modifiers.new("curl", "SIMPLE_DEFORM"); curl.deform_method = "BEND"; curl.deform_axis = "X"
+        curl.angle = math.radians(rnd.uniform(-35, 35))
+        o.modifiers.new("solid", "SOLIDIFY").thickness = 0.0002
+        o.data.materials.append(image_material(f"paper sheet {k}", ("paper_sprint.jpg", "paper_chart.jpg", "paper_layout.jpg")[k], rough=0.8))
+        o.location = (rnd.uniform(-0.02, 0.02), rnd.uniform(-0.02, 0.02), 0.012 + 0.01 * k)
+        o.rotation_euler.z = math.radians(rnd.uniform(0, 180))
+        parts.append(o)
+    g = bpy.data.objects.new("@paper_sheets", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
 def floor_material(F):
     """A floor from a Poly Haven texture (its normal and roughness, one tile per F["tile"]
     m), recoloured: F["color"] scaled by the texture's own brightness, so a dark
@@ -1877,6 +1906,9 @@ def swatch_fan():
     return g, parts
 
 
+PC_WALL_GAP = 0.30                                # from the tower's back panel to the wall behind it
+
+
 def pc_tower():
     """A desktop PC tower, 210 x 450 x 470 mm: a black satin steel case on four rubber
     feet, a perforated front (a fine hole grid as dark dots and bump), a power button
@@ -1926,18 +1958,20 @@ def pc_tower():
                                         rotation=(math.pi / 2, 0, 0))
     jack = bpy.context.active_object; jack.name = "pc jack"; jack.data.materials.append(port); parts.append(jack)
     cab = principled("pc cable", (0.012, 0.012, 0.013), 0.5)
-    # cables out of the back panel (+y): power low down, then display and USB higher; each runs back a little,
-    # sags to the floor and on towards the wall, two of them rise to the desk's underside instead
-    for k, (x_, z_, r_, route) in enumerate(((0.05, 0.06, 0.0045, "floor"), (-0.04, 0.30, 0.003, "up"),
-                                              (-0.06, 0.34, 0.0025, "up"), (0.02, 0.38, 0.0022, "floor"),
-                                              (-0.02, 0.36, 0.0022, "floor"))):
+    # cables out of the back panel (+y): the power cable drops to the floor and runs along the foot of the wall
+    # to the right (+x), the display and USB cables rise to the desk's underside, where they are clipped
+    for k, (x_, z_, r_, route) in enumerate(((0.05, 0.06, 0.0045, "wall"), (-0.04, 0.30, 0.003, "up"),
+                                              (-0.06, 0.34, 0.0025, "up"), (0.02, 0.38, 0.0022, "up"),
+                                              (-0.02, 0.36, 0.0022, "up"))):
         y0 = D_ / 2
-        if route == "floor":
-            pts = [(x_, y0, z_), (x_, y0 + 0.06, z_ - 0.01), (x_ + 0.03 * k, y0 + 0.14, max(r_, z_ * 0.3)),
-                   (x_ + 0.06 * k - 0.05, y0 + 0.22, r_), (x_ + 0.1 * k - 0.12, y0 + 0.40, r_)]
+        if route == "wall":
+            yw = y0 + PC_WALL_GAP - 0.03
+            pts = [(x_, y0, z_), (x_, y0 + 0.05, z_ - 0.02), (x_ + 0.02, y0 + 0.10, r_), (x_ + 0.10, yw - 0.02, r_),
+                   (x_ + 0.40, yw, r_), (x_ + 0.90, yw, r_), (x_ + 1.40, yw, r_)]
         else:
-            pts = [(x_, y0, z_), (x_, y0 + 0.06, z_ + 0.03), (x_ - 0.02, y0 + 0.12, z_ + 0.18),
-                   (x_ - 0.05, y0 + 0.16, 0.66), (x_ - 0.08, y0 + 0.18, 0.72)]
+            dy = 0.10 + 0.04 * k
+            pts = [(x_, y0, z_), (x_, y0 + 0.05, z_ + 0.02), (x_ - 0.01 * k, y0 + dy * 0.7, z_ + 0.15),
+                   (x_ - 0.02 * k, y0 + dy, 0.62), (x_ - 0.03 * k, y0 + dy + 0.02, 0.715), (x_ - 0.03 * k + 0.2, y0 + dy + 0.02, 0.715)]
         cu = bpy.data.curves.new(f"pc cable {k}", "CURVE")
         cu.dimensions = "3D"
         cu.bevel_depth, cu.bevel_resolution = r_, 3
@@ -1982,7 +2016,7 @@ BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holde
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
 "@tablet": lambda: tablet(), "@ruler": lambda: ruler(), "@set_square": lambda: set_square(),
-         "@swatch_fan": lambda: swatch_fan(), "@pc_tower": lambda: pc_tower(), "@office_chair": lambda: office_chair(), "@paper_balls": lambda: paper_balls(), "@usb_stick": lambda: usb_stick(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
+         "@swatch_fan": lambda: swatch_fan(), "@pc_tower": lambda: pc_tower(), "@office_chair": lambda: office_chair(), "@paper_balls": lambda: paper_balls(), "@paper_sheets": lambda: paper_sheets(), "@usb_stick": lambda: usb_stick(), "@mug": lambda: mug(), "@mug_dark": lambda: mug((0.05, 0.05, 0.055))}
 
 
 def wall_texture(tx):
