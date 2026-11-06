@@ -274,8 +274,7 @@ SCENES = {
                          dict(kind="sheet", img="print_palette.jpg", x=0.94, z=0.30, w=0.15, rot=2, bow=0.003, pin=(0.1, 0.3, 0.85))]),
         props=[("@pc_tower", None, -0.42, 0.10, 12, None, False, dict(floor=True)),
                ("wicker_basket_01", None, -1.30, 0.16, 15, None, False, dict(floor=True)),
-               ("@paper_sheets", None, -1.30, 0.16, 20, None, False, dict(floor=True, z=0.02)),   # in the basket: a few
-               ("@paper_balls", None, -1.31, 0.15, 0, None, False, dict(floor=True, z=0.07)),     # printouts, balls on top
+               ("@paper_sheets", None, -1.30, 0.16, 20, None, False, dict(floor=True, z=0.02)),   # in the basket: printouts
                ("@office_chair", None, -1.86, -0.38, -45, None, False, dict(floor=True)),   # a second place, at the bookcase
                ("@tablet", None, 0.60, 0.04, -12, None, False),
                ("@usb_stick", None, 0.18, -0.24, 28, None, False),
