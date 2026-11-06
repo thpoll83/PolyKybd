@@ -32,6 +32,16 @@ def board_leds(board):
         r'(?:\t\t[^\n]*\n)*?\t\t\(at ([-\d.]+) ([-\d.]+)', t)]
 
 
+# PK_RGB_EASE=<g>: the gradient follows t**g across x instead of t, so g < 1
+# spends most of the hue change near the left edge (the docs' idle close-up:
+# red at the edge, purple, then blue for the rest of the half)
+EASE = float(os.environ.get("PK_RGB_EASE", 1.0))
+
+
+def _hue_at(hues, t):
+    return hues[0] + (hues[1] - hues[0]) * t ** EASE
+
+
 def leds(root, board, hues, energy=0.02, radius=0.0012):
     """One point light per LED; hues = (left, right) in degrees across x."""
     (tx, ty), dz = textured_parts.fit(root, textured_parts.board_keys(board))
@@ -39,7 +49,7 @@ def leds(root, board, hues, energy=0.02, radius=0.0012):
     xs = np.array([p[0] for p in pts])
     x0, x1 = xs.min(), xs.max()
     for i, (x, y) in enumerate(pts):
-        h = hues[0] + (hues[1] - hues[0]) * (x - x0) / (x1 - x0)
+        h = _hue_at(hues, (x - x0) / (x1 - x0))
         d = bpy.data.lights.new(f"led {i}", "POINT")
         d.color = colorsys.hsv_to_rgb((h % 360) / 360, 1.0, 1.0)
         d.energy = energy
@@ -57,7 +67,10 @@ def night(sc):
     if floor:
         floor.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (0.004, 0.004, 0.004, 1)
     w = sc.world
-    w.node_tree.nodes["Background"].inputs[0].default_value = (0, 0, 0, 1)
+    # PK_WORLD=<v>: a dim grey room instead of black, so the caps read as grey
+    # glass the way a phone's long exposure shows them (the docs' idle close-up)
+    v = float(os.environ.get("PK_WORLD", 0.0))
+    w.node_tree.nodes["Background"].inputs[0].default_value = (v, v, v * 1.05, 1)
     sc.view_settings.view_transform = "AgX"
     sc.view_settings.look = os.environ.get("PK_LOOK", "AgX - Base Contrast")
 
@@ -135,11 +148,21 @@ def _hue_colour(nt, x0, x1, hues):
     nt.links.new(geo.outputs["Position"], sep.inputs[0])
     mr = n.new("ShaderNodeMapRange")
     mr.inputs["From Min"].default_value, mr.inputs["From Max"].default_value = x0, x1
-    mr.inputs["To Min"].default_value, mr.inputs["To Max"].default_value = hues[0] / 360, hues[1] / 360
+    mr.inputs["To Min"].default_value, mr.inputs["To Max"].default_value = 0.0, 1.0
     nt.links.new(sep.outputs["X"], mr.inputs["Value"])
+    ease = n.new("ShaderNodeMath")
+    ease.operation = "POWER"
+    ease.use_clamp = False
+    ease.inputs[1].default_value = EASE
+    nt.links.new(mr.outputs["Result"], ease.inputs[0])
+    hue = n.new("ShaderNodeMath")
+    hue.operation = "MULTIPLY_ADD"
+    hue.inputs[1].default_value = (hues[1] - hues[0]) / 360
+    hue.inputs[2].default_value = hues[0] / 360
+    nt.links.new(ease.outputs[0], hue.inputs[0])
     wrap = n.new("ShaderNodeMath")
     wrap.operation = "FRACT"
-    nt.links.new(mr.outputs["Result"], wrap.inputs[0])
+    nt.links.new(hue.outputs[0], wrap.inputs[0])
     col = n.new("ShaderNodeCombineColor")
     col.mode = "HSV"
     col.inputs[1].default_value = col.inputs[2].default_value = 1.0
@@ -177,7 +200,7 @@ def led_points(root, board, hues, z):
     xs = np.array([p[0] for p in pts])
     x0, x1 = xs.min(), xs.max()
     pos = np.array([tuple(root.matrix_world @ mathutils.Vector((x + tx, y + ty, z + dz))) for x, y in pts])
-    cols = np.array([colorsys.hsv_to_rgb(((hues[0] + (hues[1] - hues[0]) * (x - x0) / (x1 - x0)) % 360) / 360, 1, 1)
+    cols = np.array([colorsys.hsv_to_rgb((_hue_at(hues, (x - x0) / (x1 - x0)) % 360) / 360, 1, 1)
                      for x, y in pts])
     return pos, cols
 

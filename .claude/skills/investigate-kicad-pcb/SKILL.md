@@ -8,7 +8,7 @@ description: >-
   SERIAL_COM/net X", "did the plane short the line", or during hardware bring-up when
   deciding whether a symptom is firmware vs board. Operates on this repo's KiCad
   files (poly_kybd/*.kicad_pcb). Knows which Python libs work and which mislead, and
-  that KiCad 9 / pcbnew is unavailable here. NOT for firmware config (that lives in
+  that KiCad 9 is not preinstalled (render/README.md has the install). NOT for firmware config (that lives in
   the qmk_firmware repo) or gerber/fab output.
 ---
 
@@ -173,10 +173,11 @@ concrete lead.
   what located the 2026-08 zone problem after every inference-based theory had failed —
   its `actual 0,0000 mm` lines disagreed with the saved fill, which is what proved DRC
   was refilling in memory rather than checking the file.
-- **KiCad 9 / pcbnew is UNAVAILABLE.** `add-apt-repository` breaks (`ModuleNotFoundError:
-  apt_pkg`), the KiCad PPA is proxy-blocked, and the distro **KiCad 7 cannot open v9
-  `.kicad_pcb`** (or run its DRC). Don't burn time installing it — the Python-only
-  path above is the whole toolkit.
+- **KiCad 9 is not preinstalled, and the distro KiCad 7 cannot open v9 `.kicad_pcb`**
+  (or run its DRC). `add-apt-repository` breaks (`ModuleNotFoundError: apt_pkg`), but the
+  KiCad 9 PPA added by hand worked on 2026-10-15 (`render/README.md` → *Setting up a fresh
+  cloud container*; earlier sessions found it proxy-blocked). For reading a board, the
+  Python-only path above is still faster than a 5-minute install.
 - **A layout diff is a lead, not a verdict.** Identical files exonerate the design;
   a delta (trace layer, GND-pour clearance) is worth flagging but is rarely, on its
   own, proof of a fault. Keep hardware-mechanism claims (joints, coupling) as

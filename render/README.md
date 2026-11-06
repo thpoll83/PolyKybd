@@ -97,7 +97,7 @@ blender -b render/out/hero.blend --python render/rerender.py -- render/out/hero2
 
 Arguments: output, samples, width, light scale, exposure (stops). It re-applies
 `materials.py` and renders: about 2 minutes for the full keyboard instead of
-the ~25 the import and merge take. Every material remembers its role
+the ~25 the import and merge take (about 50 in a 4-CPU cloud container). Every material remembers its role
 (`pk_role`), so this works on a scene whose colours were already changed.
 
 ### White studio and the bridge cable
@@ -148,6 +148,36 @@ builds carry OpenImageDenoise. The Ubuntu/Debian package lacks the denoiser,
 so its images stay grainy at any sample count you would wait for. The scripts
 switch denoising on whenever the build has it.
 
+### Setting up a fresh cloud container
+
+Neither KiCad nor Blender is installed there. These steps assume Ubuntu 24.04
+(noble), which the container ran on 2026-10-15; on another release, change the
+PPA suite. Both downloads together take about 5 minutes:
+
+```bash
+curl -sSLO https://download.blender.org/release/Blender4.1/blender-4.1.1-linux-x64.tar.xz
+tar -xf blender-4.1.1-linux-x64.tar.xz -C /tmp       # /tmp/blender-4.1.1-linux-x64/blender
+export PATH="/tmp/blender-4.1.1-linux-x64:$PATH"            # the commands below call plain `blender`
+# KiCad 9: add-apt-repository fails here (python3 has no apt_pkg), so add the PPA by hand
+fp=$(curl -fsS https://api.launchpad.net/1.0/~kicad/+archive/ubuntu/kicad-9.0-releases \
+     | python3 -c 'import json,sys;print(json.load(sys.stdin)["signing_key_fingerprint"])')
+mkdir -p /etc/apt/keyrings          # a keyring of its own, trusted for this source only
+curl -fsS "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x$fp" | gpg --dearmor > /etc/apt/keyrings/kicad9.gpg
+test -s /etc/apt/keyrings/kicad9.gpg && echo "deb [signed-by=/etc/apt/keyrings/kicad9.gpg] https://ppa.launchpadcontent.net/kicad/kicad-9.0-releases/ubuntu noble main" \
+    > /etc/apt/sources.list.d/kicad9.list
+apt-get update && apt-get install -y --no-install-recommends kicad kicad-packages3d kicad-footprints \
+    kicad-symbols xvfb xauth libegl1 libgl1 libxi6 libxkbcommon0 libsm6 libxrender1 libxxf86vm1 libxfixes3
+```
+
+⚠️ **Building `hero.blend` from scratch took about 52 minutes on 4 CPUs**
+(2026-10-15, Blender 4.1.1, KiCad 9.0.9): 3 minutes of export, then per half
+about 16.5 minutes of import and 4 to 12 of merging (the script's "merged in
+N s" counts from the start of that half's import). Run it in the background
+and only once per container. Every view script loads the saved scene, so wait
+until `render/out/hero.blend` is written before starting one.
+Typical timings after that: a 48-sample, 900 px preview takes 1 to 2.5
+minutes, a 256-sample, 1400 px final 30 to 35.
+
 ### Editing an imported mesh (bmesh)
 
 `profile.dent()` and `rgb.clear_case()` rebuild geometry that came in from
@@ -182,7 +212,8 @@ every `.wrl` model. The keycaps, stems, displays, cables and switches are all
 `.wrl`, so a GLB comes out as a bare populated PCB. The VRML exporter uses the
 3D viewer's own loader and keeps everything.
 
-The Blender 4.0 import of one half takes about 7 minutes and creates about
+The Blender 4.0 import of one half took about 7 minutes on the machine
+the scripts were written on (17 in a 4-CPU cloud container, above) and creates about
 87k objects. Blender 4.2 and later ship the X3D/VRML importer as an extension
 ("Web3D X3D/VRML2 format"), so install that first there.
 
@@ -192,6 +223,22 @@ The Blender 4.0 import of one half takes about 7 minutes and creates about
   library ships none, and inside the case only the plug shows
 - the key displays are unlit in the hero and top views; only the product
   photo's viewpoint (below) turns them on (`screens.py`)
+- the roller encoder (Panasonic EVQWGD001, footprint `poly_kb:PolyJog`) has no
+  model. Panasonic and the part libraries offer none, and the part is out of
+  production. The closest is `models/EVQWGD001.step` in
+  [crides/kleeb](https://github.com/crides/kleeb) (MIT), a copy of
+  [this GrabCAD model](https://grabcad.com/library/panasonic-evqwgd001-encoder-1).
+  It is simplified: the frame, roller and five pins are there, the holes and
+  pads on the back are not, and kleeb notes it does not match the footprint.
+  It is not committed here. To look at it, put it on a one-footprint board
+  (`(footprint "x:enc" (at 100 100) (model "<path>/EVQWGD001.step"))` plus an
+  `Edge.Cuts` rectangle) and run `kicad-cli pcb export vrml --units mm`;
+  the GLB export of the same board comes out empty. In Blender, import with
+  `axis_forward='Y', axis_up='Z'` and drop the two board meshes. The face with
+  the pins (the side `parts-list` shows) is the model's bottom: rotate by
+  (-90°, 90°, 0) and view from about 25° left and 20° up to match that photo.
+- the switches (`SW_Cherry_MX_PCB.wrl`) have no LED slit, so the docs' photos
+  of the plastic bar across the slit cannot be rendered
 
 ## The product photo's viewpoint
 
@@ -307,6 +354,59 @@ skill (`.claude/skills/render-variant-grid/`).
 ⚠️ `textured_parts.fit()` is cached per half. A fit taken after `profile.py`
 has re-posed the displays drifts by 3.5 mm of height, which once put the LED
 emitters inside the plate.
+
+### The idle close-up
+
+The docs' Idle page (`oled-keycaps-render.jpg`) matches an old phone photo:
+the left half's q to b block in a dark room, the backlight red at the left
+edge, purple, then blue, and deep blue legends. About 35 minutes on 4 CPUs:
+
+```bash
+PK_SPLAY=0 PK_BLOOM=0.5,-0.2 PK_RGB_EASE=0.15 PK_WORLD=0.1 PK_RGB=360,228 PK_EMIT=10 PK_GLOW=6 \
+PK_FLEX=1,0.15 PK_LED=0 PK_POWER_LED=0.15 "PK_LOOK=AgX - High Contrast" PK_STRENGTH=1.6 \
+PK_STATUS=_l1 PK_TINT=0.0,0.2,1.0 \
+blender -b render/out/hero.blend --python render/closeup_view.py -- \
+    out.png 256 1400 screens_idle_photo 0.45 0.58 0.10 81 0 29
+```
+
+- `screens_idle_photo` is layer 1 with the key left of z showing `# ~`, as
+  on the photographed board.
+- 10 cm away with a 29 mm lens, like a phone close-up, tilted 9 degrees from
+  straight down; `PK_SPLAY=0` squares the columns to the frame.
+- `PK_RGB_EASE` bends the hue gradient so the change from red to blue
+  happens near the left edge. ⚠️ AgX pushes saturated blue (240 deg) towards
+  purple: the photo's blue is about 225 deg here.
+- ⚠️ The legends' blue needs a low `PK_STRENGTH` (1.6). At 4, AgX bleaches
+  the tint to a pale blue-white.
+- The diffuser frame stays in (no `PK_HIDE_ROLES`), so the plate keeps its
+  silkscreen and the LED light reaches the gaps.
+
+### The language close-ups
+
+The docs' Languages page shows the left half on Greek and the right half on
+French AZERTY, matched 1:1 to two old phone photos: the clear case on a purple
+mat, the columns square to the frame. About 35 minutes each:
+
+```bash
+H=../PolyKybdHost/.venv/bin/python
+QT_QPA_PLATFORM=offscreen $H render/board_layer.py _L1 /tmp/board_L1.json
+for L in el-GR fr-FR; do
+  PK_LANG=$L QT_QPA_PLATFORM=offscreen $H render/export_screens.py ../PolyKybdHost /tmp/board_L1.json 1
+done
+LOOK="PK_SPLAY=0 PK_SPLAY_RIGHT=0 PK_CLEAR_CASE=1 PK_COVE_RGB=0.19,0.045,0.22 PK_STRENGTH=1.6 PK_TINT=0.2,0.55,1.0 PK_STATUS=_l1"
+env $LOOK blender -b render/out/hero.blend --python render/closeup_view.py -- \
+    greek.png 256 1400 screens_layer1_el-GR 0.6 0.76 0.15 66 0 50
+env $LOOK PK_SIDE=right blender -b render/out/hero.blend --python render/closeup_view.py -- \
+    altgr.png 256 1400 screens_layer1_fr-FR 0.74 0.8 0.165 66 0 50
+```
+
+- `PK_LANG` draws a language in the layout editor's preview code; the atlas
+  is named `screens_layer<N>_<lang>`. The host venv needs PyQt5.
+- `KC_HYPR` is drawn from the firmware's own legend (U+1F4AB in its 18 pt
+  Hyper font): the editor preview leaves it blank.
+- ⚠️ The right half is turned 9 degrees for the hero shot. Without
+  `PK_SPLAY_RIGHT=0` its rows slope across the frame.
+- The status panel shows today's firmware screen, not the photo's older one.
 
 ### The Eden intro video
 
@@ -466,6 +566,28 @@ preview takes about a minute. Traps:
   default close camera (45 with the earlier 70 mm, 0.45 m view), longer than
   a background command's default limit: run it detached and watch its log
   (see `polykybd-claude/docs/web-session.md`).
+
+## A printed part on its own
+
+The docs' Case & Spacer page shows each case half and the spacer alone, in
+the same white studio and case material as the keyboard renders. No KiCad
+export or saved scene is needed; the script imports the STL directly:
+
+```bash
+blender -b --python render/case_parts.py -- parts/export/case/case_polykybd_split72_left_r7.stl \
+    render/out/case_l.png 256 1400 35 -20 50 0.8
+```
+
+The arguments after the width are the camera elevation and bearing (deg,
+negative = from the left), the lens (mm) and the share of the frame the part
+fills. The docs used bearing -20 for the left case and the spacer (elevation
+45), +20 for the right case. About 1.5 minutes each at 256 samples on 4 CPUs.
+The docs' images are false-coloured (`PK_PART_RGB`: left 0.55,0.06,0.70,
+right 0.03,0.15,0.75, spacer 0.70,0.13,0.03) and use `PK_FILL=0.1
+PK_EXPOSURE=-0.2 "PK_LOOK=AgX - High Contrast"`. ⚠️ At the defaults the side
+fills light floor, walls and ribs evenly and the colours read pastel.
+The camera fits the part's bounding box, so the frame keeps empty floor where
+the box is empty (the cut corner); the docs images are cropped to the part.
 
 ## Top view for PolyKybdHost's layout editor
 
