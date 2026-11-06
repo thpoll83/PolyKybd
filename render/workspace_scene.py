@@ -1641,10 +1641,19 @@ def bookcase(it, y_wall):
                     n_ = rnd.randint(2, 5)
                     zz = z0_
                     sw = rnd.uniform(0.17, 0.23)
-                    for _ in range(n_):
-                        t_ = rnd.uniform(0.018, 0.035)
-                        out.append(cube("bookcase flat book", (xb, yb - 0.01 - rnd.uniform(0.15, 0.2), zz),
-                                        (xb + sw, yb - 0.012, zz + t_), rnd.choice(mats), 0.0012))
+                    for _ in range(n_):                # boards top and bottom, the spine at the wall and the
+                        t_ = rnd.uniform(0.018, 0.035)     # page block showing at the front, set back 3 mm
+                        cm_ = principled(f"bookcase flat cover {len(out)}", LIBRARY[rnd.randrange(len(LIBRARY))][2],
+                                         rnd.uniform(0.45, 0.7))
+                        yf_ = yb - 0.01 - rnd.uniform(0.15, 0.2)
+                        xs_ = xb + rnd.uniform(-0.01, 0.01)
+                        fb = [cube("bookcase flat book", (xs_, yf_, zz), (xs_ + sw, yb - 0.012, zz + 0.0022), cm_, 0.0008),
+                              cube("bookcase flat book", (xs_, yf_, zz + t_ - 0.0022), (xs_ + sw, yb - 0.012, zz + t_), cm_, 0.0008),
+                              cube("bookcase flat book", (xs_, yb - 0.014, zz), (xs_ + sw, yb - 0.012, zz + t_), cm_, 0.0008),
+                              cube("bookcase flat pages", (xs_ + 0.003, yf_ + 0.003, zz + 0.0022), (xs_ + sw - 0.003, yb - 0.014,
+                                   zz + t_ - 0.0022), pages, 0.0006)]
+                        grime(fb[:3], 0.3)
+                        out += fb
                         zz += t_
                     xb += sw + 0.012
                     continue
@@ -1657,7 +1666,7 @@ def bookcase(it, y_wall):
                     hb = gap - 0.02
                 dp_ = min(D - 0.03, hb * rnd.uniform(0.70, 0.78))
                 parts_b = book_parts(f"bookcase book {r}.{b}.{len(out)}", cover, hb, th, dp_, f"lib_spine_{bi}.jpg",
-                                     rnd.random() < 0.35)
+                                     rnd.random() < 0.35, rub=rnd.uniform(0.1, 0.35))
                 bg_ = bpy.data.objects.new("bookcase book", None)
                 sc.collection.objects.link(bg_)
                 for o in parts_b:
@@ -1683,8 +1692,8 @@ def bookcase(it, y_wall):
             spots([o], du * 0.6 * k_, scale=rnd.uniform(25, 55), lo=rnd.uniform(0.55, 0.64), tint=(0.66, 0.64, 0.60),
                   mode="MIX", detail=6.0, seed=sd_ + 13.1)
         for o in [o for o in out if o.name.startswith(("bookcase upright", "bookcase top rail"))]:
-            k_ = rnd.uniform(0.6, 1.1)             # the black steel: a little darker grey dust, mostly on its tops
-            corner_dirt([o], du * 0.3 * k_, (0.16, 0.155, 0.15), 0.06, top=du * 0.35 * k_, breakup=(0.0, 1.2),
+            k_ = rnd.uniform(0.6, 1.1)             # the black steel: mid-grey dust, mostly on its tops
+            corner_dirt([o], du * 0.6 * k_, (0.27, 0.26, 0.25), 0.06, top=du * 0.65 * k_, breakup=(0.0, 1.2),
                         seed=rnd.uniform(0.0, 100.0))
     return out
 
@@ -2322,7 +2331,7 @@ def disc(name, x, y, z, r, mat, n=96):
     return o
 
 
-def book_parts(name, cover, hgt, th, dep, spine_img, curved, x0=0.0, sides=None):
+def book_parts(name, cover, hgt, th, dep, spine_img, curved, x0=0.0, sides=None, rub=0.9):
     """One book standing upright, its spine facing the viewer: the two boards, the spine
     strip and the page block between them (aged paper, 3 mm short of the boards' fore
     edge), the printed spine label (spine_img), bulging like a cloth hardback's when
@@ -2342,7 +2351,7 @@ def book_parts(name, cover, hgt, th, dep, spine_img, curved, x0=0.0, sides=None)
         for side, img_ in ((x0 - 0.0004, sides[0]), (x0 + th + 0.0004, sides[1])):
             parts_b.append(side_board(f"{name} side", side, -dep, 0.0, hgt, side > x0, image_material(
                 f"{img_}", img_, rough=0.55)))         # front cover on the right, back on the left
-    grime([parts_b[0], parts_b[2], parts_b[3]], 0.9)   # rubbed cover corners
+    grime([parts_b[0], parts_b[2], parts_b[3]], rub)   # rubbed cover corners
     grime(parts_b[1:2], 1.0)                # page tops: dusty, darker where they are pulled out
     grime(parts_b[4:], 0.8, axes=("X", "Z"))
     return parts_b
