@@ -2139,10 +2139,9 @@ def file_browser():
 
 def design_desktop():
     """The designer's left screen: the poster app, the studio chat over its lower right,
-    an on-screen note, a notification, the desktop panel."""
+    a notification, the desktop panel (the note is a paper one on the bezel: sticky_sun.jpg)."""
     im = design()
     window(im, chat(CHAT_STUDIO), 1640, 760, 860, "Chat - #summer-poster", accent=(50, 48, 76))
-    screen_note(im, 120, 1000, (255, 236, 140), ["sun warmer!", "date bigger", "PDF Fri 12:00"], 3)
     toast(im, 1880, 90, "Mira (client)", "Love v2! Can the sun be a bit warmer?")
     taskbar(im, [(200, 90, 60), (50, 48, 76), (0, 95, 184), (120, 200, 140), (230, 180, 60)], 0)
     return im
@@ -2182,6 +2181,7 @@ if __name__ == "__main__":
                      ("sticky_courier.jpg", sticky((250, 230, 110), ["courier", "14:00", "-> Lea"])),
                      ("print_type.jpg", worn(print_type, 59, 0.6)), ("print_palette.jpg", worn(print_palette, 61, 0.5)),
                      ("paper_thumbs.jpg", worn(paper_thumbs, 67)), ("sticky_lilac.jpg", sticky((210, 190, 240), ["client", "call 3pm"])),
+                     ("sticky_sun.jpg", sticky((250, 232, 120), ["sun warmer!", "date bigger", "PDF Fri 12"])),
                      *[(n, poster_proof(*a)) for n, a in PROOFS.items()], ("screen_moodboard.jpg", moodboard_screen), ("screen_design2.jpg", design_desktop), ("screen_moodboard2.jpg", moodboard_desktop))
                      + tuple((f"print_{n}.jpg", doc_print(n)) for n in DOC_PRINTS)
                      + tuple((f"spine_{i}.jpg", book_spine(i)) for i in range(len(BOOKS)))

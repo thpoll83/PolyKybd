@@ -289,6 +289,7 @@ SCENES = {
                ("stationery_supplies", "stationery_supplies_pencilcup", 0.52, 0.36, 0, None, False, dict(grime=0.4))],
         desk_mat=dict(w=0.80, d=0.36, x=0.02, y=0.0, color=(0.20, 0.20, 0.21), rough=0.95, wear=[dict(spots=0.4, scale=4, lo=0.5), dict(edges=0.4)]),
         monitor=dict(style="dual_arm", y=0.40, inches=27, screens=["screen_design2.jpg", "screen_moodboard2.jpg"], glow=1.0,
+                     notes=[(0, -0.40, "sticky_sun.jpg", -3, 0.052)],
                      screen_rough=0.035, height=0.36, reach=0.20, angle=14, finish="black"),
         mouse=dict(x=0.34, y=-0.02, turn=-8, wired=True, color=(0.016, 0.016, 0.017), side=(0.008, 0.008, 0.009), rough=0.85,
                    coat=0.0, specular=0.2, wear=[dict(band=("Y", 0.0, 0.5), amount=0.2)]),
