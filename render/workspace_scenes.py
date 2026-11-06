@@ -302,11 +302,11 @@ SCENES = {
         kb_from_front=0.25,
         desk_mat=dict(w=0.92, d=0.38, x=0.12, y=0.0, glow=(1.0, 0.15, 0.85), strength=8.0),
         desk_spots=0.5, desk_spots_tint=(0.30, 0.30, 0.32),      # dust and wiped marks on the black top
-        props=[("gamepad", None, -0.46, -0.06, 18, None, False),
+        props=[("gamepad", None, -0.48, 0.0, 18, None, False),
                ("digital_wrist_watch", None, 0.50, -0.10, 60, None, False),
                ("@drink_can", None, 0.52, 0.22, 20, None, False),
-               ("gaming_console", None, -0.56, 0.24, -12, None, False)],
-        monitor=dict(style="ultrawide", y=0.42, inches=34, screen="screen_0ad.jpg", glow=1.8),   # 0 A.D., CC BY-SA (textures/workspace/CREDITS.md)
+               ("gaming_console", None, -0.60, 0.26, -12, 0.065, False)],
+        monitor=dict(style="ultrawide", y=0.42, inches=34, screen="screen_stk.jpg", glow=1.8),   # SuperTuxKart (textures/workspace/CREDITS.md)
         mouse=dict(x=0.36, y=0.0, turn=-6, wired=True),
         legend_glow=14.0,
         camera=dict(distance=1.55, elev=15, azim=12, lens=40, fstop=4.0, aim_y=0.14, aim_z=0.17)),
