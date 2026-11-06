@@ -258,7 +258,7 @@ SCENES = {
         kb_from_front=0.24,
         wall=dict(texture=dict(id="red_brick_03", tile=1.0, tint=(1.15, 1.10, 1.06), bump=1.0, cavity=0.8, depth=0.012), half_width=4.5,
                   skirting=False,
-                  window=dict(x=(-1.75, -0.45), z=(0.95, 2.35), depth=0.34, cols=3, rows=4, dirt=0.45, dirt_from=0.88, frame_dirt=1.0),
+                  window=dict(x=(-1.75, -0.45), z=(0.95, 2.35), depth=0.34, cols=3, rows=4, dirt=0.45, dirt_from=0.88, frame_dirt=1.0, steel_dirt=0.4),
                   items=[dict(kind="bookcase", x0=-3.70, x1=-1.95, h=2.45, d=0.32, bays=2, rows=7, dust=0.8, things=[
                              ("potted_plant_04", None, 3, 0, 0.72), ("wooden_crate_01", None, 1, 1, 0.62, 0.20),
                              ("standing_picture_frame_01", None, 5, 1, 0.70)],
@@ -277,14 +277,14 @@ SCENES = {
                ("@paper_sheets", None, -1.30, 0.16, 20, None, False, dict(floor=True, z=0.02)),   # in the basket: printouts
                ("@office_chair", None, -1.86, -0.38, -45, None, False, dict(floor=True)),   # a second place, at the bookcase
                ("@tablet", None, 0.60, 0.04, -12, None, False),
-               ("@usb_stick", None, 0.18, -0.24, 28, None, False),
+               ("@usb_stick", None, 0.04, -0.14, 28, None, False),
                ("@swatch_fan", None, -0.48, -0.06, 20, None, False),
                ("potted_plant_04", None, -0.74, 0.32, 0, None, False, dict(leaf=0.25, leaf_sv=(1.2, 0.85), darken=[("_dirt", 0.5)])),
                ("@mug", None, -0.30, 0.26, 30, None, False, dict(wear=[dict(band=("Z", 0.90, 1.0), amount=0.2),
                    dict(spots=0.6, scale=45, lo=0.60, tint=(0.68, 0.52, 0.38), detail=4.0)])),
                ("office_notepads", "office_notepads_sticky_stack", -0.26, -0.18, -15, None, False, dict(grime=0.4)),
                ("binder_notebook", "binder_notebook_closed", 0.80, 0.28, -10, None, False, dict(grime=0.6, wear=[dict(spots=0.4, scale=15, lo=0.58)])),
-               ("stationery_supplies", "stationery_supplies_pencil_used", 0.30, -0.22, 50, None, True, dict(grip=("auto", 0.12, 0.40, 0.35))),
+               ("stationery_supplies", "stationery_supplies_pencil_used", 0.22, -0.15, 15, None, True, dict(grip=("auto", 0.12, 0.40, 0.35))),
                ("stationery_supplies", "stationery_supplies_eraser", 0.74, -0.16, 24, None, False, dict(grime=0.8)),
                ("stationery_supplies", "stationery_supplies_pencilcup", 0.52, 0.36, 0, None, False, dict(grime=0.4))],
         desk_mat=dict(w=0.80, d=0.36, x=0.02, y=0.0, color=(0.20, 0.20, 0.21), rough=0.95, wear=[dict(spots=0.4, scale=4, lo=0.5), dict(edges=0.4)]),

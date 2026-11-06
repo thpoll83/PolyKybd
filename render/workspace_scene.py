@@ -1508,11 +1508,12 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
         parts.append(bd)
     if W_.get("frame_dirt"):                       # an old steel window: dust and grey-brown grime on the bars,
         fd = W_["frame_dirt"]                      # rust spots, the sill's plaster stained where water stood
+        sd = W_.get("steel_dirt", fd)              # (the bars' share alone; the sill keeps frame_dirt)
         steel_parts = [o for o in parts if o.name.startswith(("frame", "mullion", "transom"))]
-        wear(steel_parts, [dict(spots=fd * 0.5, scale=140, lo=0.48, tint=(0.20, 0.19, 0.17), mode="MIX", detail=10.0),
-                           dict(spots=fd * 0.7, scale=320, lo=0.70, tint=(0.28, 0.14, 0.06), mode="MIX", detail=4.0),
-                           dict(edges=fd)])
-        corner_dirt(steel_parts, fd, (0.30, 0.28, 0.25), 0.05, top=fd * 0.6)
+        wear(steel_parts, [dict(spots=sd * 0.5, scale=140, lo=0.48, tint=(0.20, 0.19, 0.17), mode="MIX", detail=10.0),
+                           dict(spots=sd * 0.7, scale=320, lo=0.70, tint=(0.28, 0.14, 0.06), mode="MIX", detail=4.0),
+                           dict(edges=sd)])
+        corner_dirt(steel_parts, sd, (0.30, 0.28, 0.25), 0.05, top=sd * 0.6)
         white = [o for o in parts if o.name.startswith(("window sill", "reveal"))]
         corner_dirt(white, fd, (0.36, 0.32, 0.27), 0.12, top=fd * 0.15)      # grey-brown into the corners,
         corner_dirt(white, fd * 0.75, (0.10, 0.09, 0.08), 0.06, rng=(0.55, 0.99),   # darkest at the very edge
@@ -1918,6 +1919,26 @@ def pc_tower():
     W_, D_, H_ = 0.21, 0.45, 0.47
     steel = principled("pc case", (0.025, 0.025, 0.027), 0.45)
     steel.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.6
+    st_ = steel.node_tree                          # light scratches: steel_scratches.png box-projected, two tiles a
+    sb_ = st_.nodes["Principled BSDF"]             # metre; a scratch is paler and shinier than the satin paint
+    stc = st_.nodes.new("ShaderNodeTexCoord")
+    smp = st_.nodes.new("ShaderNodeMapping"); smp.inputs["Scale"].default_value = (2.0, 2.0, 2.0)
+    st_.links.new(stc.outputs["Object"], smp.inputs["Vector"])
+    sti = st_.nodes.new("ShaderNodeTexImage"); sti.projection = "BOX"; sti.projection_blend = 0.2
+    sti.image = bpy.data.images.load(os.path.join(HERE, "textures", "workspace", "steel_scratches.png"), check_existing=True)
+    sti.image.colorspace_settings.name = "Non-Color"
+    st_.links.new(smp.outputs[0], sti.inputs["Vector"])
+    sk = st_.nodes.new("ShaderNodeMapRange")       # the texture peaks at 200/255
+    sk.inputs["From Max"].default_value = 0.78
+    st_.links.new(sti.outputs["Color"], sk.inputs["Value"])
+    scm = st_.nodes.new("ShaderNodeMix"); scm.data_type = "RGBA"
+    scm.inputs[6].default_value, scm.inputs[7].default_value = (0.025, 0.025, 0.027, 1), (0.16, 0.16, 0.17, 1)
+    sf = st_.nodes.new("ShaderNodeMath"); sf.operation = "MULTIPLY"; sf.inputs[1].default_value = 0.55
+    st_.links.new(sk.outputs[0], sf.inputs[0]); st_.links.new(sf.outputs[0], scm.inputs["Factor"])
+    st_.links.new(scm.outputs[2], sb_.inputs["Base Color"])
+    srr = st_.nodes.new("ShaderNodeMapRange")
+    srr.inputs["To Min"].default_value, srr.inputs["To Max"].default_value = 0.45, 0.25
+    st_.links.new(sk.outputs[0], srr.inputs["Value"]); st_.links.new(srr.outputs[0], sb_.inputs["Roughness"])
     front = principled("pc front mesh", (0.03, 0.03, 0.032), 0.6)
     fn_ = front.node_tree
     tc = fn_.nodes.new("ShaderNodeTexCoord")
