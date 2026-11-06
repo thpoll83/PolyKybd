@@ -18,6 +18,20 @@ A_U0, A_U1 = 1.5 / 12.2, 10.7 / 12.2
 A_V0, A_V1 = 1 - 6.1 / 11.0, 1 - 1.0 / 11.0
 
 
+def code_atlas(ref, kle_path):
+    """The cells of the screen-map passes' code atlas: every cell of an exported atlas
+    (`ref`, screens_layer0.json), plus a free cell for each KLE key the export left
+    out (a key that was blank then, such as KC_HYPR at 6,1), so that every key display
+    gets a quad. {label: (x, y)}; sorted(labels) gives the cell numbers."""
+    (aw, ah), (cw, ch) = ref["size"], ref["cell"]
+    cells = dict(ref["keys"])
+    used = {tuple(v) for v in cells.values()}
+    free = [(x, y) for y in range(0, ah - ch + 1, ch) for x in range(0, aw - cw + 1, cw) if (x, y) not in used]
+    for label in sorted({k[0] for k in kle_keys(kle_path)} - set(cells)):
+        cells[label] = free.pop(0)
+    return cells
+
+
 def kle_keys(path):
     """[(label, cx, cy)] key centres in U, KLE frame (y down), rotations applied."""
     rows = json.load(open(path, encoding="utf-8"))
