@@ -2054,7 +2054,33 @@ def usb_stick():
     return g, parts
 
 
-BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(), "@nfc_reader": lambda: nfc_reader(), "@eraser_crumbs": lambda: eraser_crumbs(),
+def drink_can(rgb=(0.02, 0.55, 0.50)):
+    """A 330 ml slim drink can, 58 mm across and 146 mm high: a printed aluminium body
+    (rgb, glossy, metallic) with a darker band near the top, a bare aluminium neck and
+    lid with a ring pull, a bevelled base."""
+    alu = principled("can aluminium", (0.80, 0.80, 0.82), 0.22)
+    alu.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    paint = principled(f"can paint {rgb}", rgb, 0.25, coat=0.4)
+    paint.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.6
+    band = principled(f"can band {rgb}", tuple(c * 0.25 for c in rgb), 0.3, coat=0.4)
+    r, h = 0.029, 0.146
+    parts = []
+    for name, z0, z1, rr, m in (("can base", 0.0, 0.008, r * 0.86, alu), ("can body", 0.006, h - 0.016, r, paint),
+                                ("can band", h - 0.040, h - 0.028, r + 0.0002, band),
+                                ("can neck", h - 0.016, h - 0.004, r * 0.90, alu), ("can lid", h - 0.004, h, r * 0.84, alu)):
+        bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=rr, depth=z1 - z0, location=(0, 0, (z0 + z1) / 2))
+        o = bpy.context.active_object; o.name = name; o.data.materials.append(m)
+        bpy.ops.object.shade_smooth()
+        parts.append(o)
+    parts.append(cube("can pull", (-0.006, -0.012, h), (0.006, 0.006, h + 0.0012), alu, 0.0005))
+    g = bpy.data.objects.new("@drink_can", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+BUILT = {"@drink_can": lambda: drink_can(), "@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(), "@nfc_reader": lambda: nfc_reader(), "@eraser_crumbs": lambda: eraser_crumbs(),
          "@name_card": lambda: name_card(), "@card_reader": lambda: card_reader(),
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
