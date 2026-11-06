@@ -1051,7 +1051,7 @@ def matte_material(m, rough, specular=0.35):
         b_.inputs["Coat Weight"].default_value = min(b_.inputs["Coat Weight"].default_value, 0.1)
 
 
-def spots(objs, amount, scale=9.0, tint=(0.86, 0.83, 0.78), lo=0.60, mode="MULTIPLY", detail=2.0):
+def spots(objs, amount, scale=9.0, tint=(0.86, 0.83, 0.78), lo=0.60, mode="MULTIPLY", detail=2.0, seed=None):
     """Faint spots on a surface (objs' materials, copies): where a noise of `scale` rises
     past `lo` the colour turns towards tint (MULTIPLY: darkens; MIX: dust on a dark
     shell), soft-edged, here and there. A large scale with a high lo gives specks."""
@@ -1069,6 +1069,8 @@ def spots(objs, amount, scale=9.0, tint=(0.86, 0.83, 0.78), lo=0.60, mode="MULTI
             tc = nt2.nodes.new("ShaderNodeTexCoord")
             nz = nt2.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = scale
             nz.inputs["Detail"].default_value = detail
+            if seed is not None:                   # (a 4D noise at W = seed: another pattern on the same shape)
+                nz.noise_dimensions = "4D"; nz.inputs["W"].default_value = seed
             nt2.links.new(tc.outputs["Object"], nz.inputs["Vector"])
             mr = nt2.nodes.new("ShaderNodeMapRange"); mr.interpolation_type = "SMOOTHSTEP"
             mr.inputs["From Min"].default_value, mr.inputs["From Max"].default_value = lo, lo + 0.10
@@ -1521,13 +1523,14 @@ def window_wall(W_, paint, y_wall, x_mid, hw):
     return parts
 
 
-def corner_dirt(objs, amount, tint, dist=0.04, top=0.0, rng=(0.45, 1.0), power=1.0, breakup=(0.35, 1.0)):
+def corner_dirt(objs, amount, tint, dist=0.04, top=0.0, rng=(0.45, 1.0), power=1.0, breakup=(0.35, 1.0), seed=None):
     """Dust and dirt where they collect (objs' materials, copies): in corners and along
     inside edges, read from the shader's ambient occlusion over dist m, broken up by a
     noise; `top` adds a film on upward faces (a sill's dust). rng: the occlusion values
     that map to full dirt and to none; power > 1 bends that ramp so the dirt is darkest only
     at the edge and fades out slowly. breakup: the noise's low and high factor (a narrow
-    range gives an even shade, a wide one patchy dirt)."""
+    range gives an even shade, a wide one patchy dirt). seed: a 4D noise at W = seed, so
+    parts of one shape do not repeat one pattern."""
     for o in objs:
         if o.type != "MESH":
             continue
@@ -1550,6 +1553,8 @@ def corner_dirt(objs, amount, tint, dist=0.04, top=0.0, rng=(0.45, 1.0), power=1
                 inv = pw
             tc = nt_.nodes.new("ShaderNodeTexCoord")
             nz = nt_.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 60.0; nz.inputs["Detail"].default_value = 8.0
+            if seed is not None:
+                nz.noise_dimensions = "4D"; nz.inputs["W"].default_value = seed
             nt_.links.new(tc.outputs["Object"], nz.inputs["Vector"])
             br = nt_.nodes.new("ShaderNodeMapRange")
             br.inputs["From Min"].default_value, br.inputs["From Max"].default_value = 0.35, 0.65
@@ -1668,12 +1673,19 @@ def bookcase(it, y_wall):
         out += side_sheet(f"bookcase side {k}", sh, x1 + 0.0006, yb - 0.005 - D / 2)   # y across the face
     if it.get("dust"):                             # dust on the boards (a film, thicker in front of and between
         du = it["dust"]                            # the books and in the corners), grey on the steel's tops
-        boards = [o for o in out if o.name.startswith("bookcase board")]
-        corner_dirt(boards, du * 0.5, (0.34, 0.31, 0.27), 0.06, rng=(0.6, 1.0), breakup=(0.1, 1.3))   # some grime in the corners
-        corner_dirt(boards, du * 0.7, (0.62, 0.60, 0.56), 0.02, rng=(0.98, 1.0), top=du, breakup=(0.3, 1.1))   # grey dust film
-        spots(boards, du * 0.6, scale=40, lo=0.58, tint=(0.66, 0.64, 0.60), mode="MIX", detail=6.0)            # and fluff
-        corner_dirt([o for o in out if o.name.startswith(("bookcase upright", "bookcase top rail"))], du,
-                    (0.42, 0.41, 0.39), 0.06, top=du, breakup=(0.3, 1.1))
+        # each part its own pattern (a seed) and its own amount: a board in reach is wiped now and then, one
+        # high up or behind a plant is not
+        for o in [o for o in out if o.name.startswith("bookcase board")]:
+            k_, sd_ = rnd.uniform(0.35, 1.25), rnd.uniform(0.0, 100.0)
+            corner_dirt([o], du * 0.5 * k_, (0.34, 0.31, 0.27), 0.06, rng=(0.6, 1.0), breakup=(0.1, 1.3), seed=sd_)
+            corner_dirt([o], du * 0.7 * k_, (0.62, 0.60, 0.56), 0.02, rng=(0.98, 1.0), top=du * k_,
+                        breakup=(rnd.uniform(0.0, 0.4), rnd.uniform(0.9, 1.4)), seed=sd_ + 7.3)
+            spots([o], du * 0.6 * k_, scale=rnd.uniform(25, 55), lo=rnd.uniform(0.55, 0.64), tint=(0.66, 0.64, 0.60),
+                  mode="MIX", detail=6.0, seed=sd_ + 13.1)
+        for o in [o for o in out if o.name.startswith(("bookcase upright", "bookcase top rail"))]:
+            k_ = rnd.uniform(0.6, 1.1)             # the black steel: a little darker grey dust, mostly on its tops
+            corner_dirt([o], du * 0.3 * k_, (0.16, 0.155, 0.15), 0.06, top=du * 0.35 * k_, breakup=(0.0, 1.2),
+                        seed=rnd.uniform(0.0, 100.0))
     return out
 
 
