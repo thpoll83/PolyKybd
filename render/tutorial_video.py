@@ -384,6 +384,29 @@ def video(layers, story, out, width=640, fps=25):
     print("wrote", out, "with sound,", total, "frames", round(total / fps, 1), "s")
 
 
+def wait_all(procs):
+    """Wait for every worker; True when all exit 0. On the first failure the others are
+    stopped and waited for, so none of them outlives this process and goes on writing a
+    part file that a retry also writes (and Ctrl-C stops them all the same way). A
+    stopped worker kills and waits for its own ffmpeg before it exits (stop_encoders())."""
+    import time
+    try:
+        while True:
+            codes = [p.poll() for p in procs]
+            if all(c == 0 for c in codes):
+                return True
+            if any(c not in (None, 0) for c in codes):
+                break
+            time.sleep(0.5)
+    finally:
+        for p in procs:
+            if p.poll() is None:
+                p.terminate()
+        for p in procs:
+            p.wait()
+    return False
+
+
 def video_parallel(layers, story, out, width, fps, jobs):
     sys.path.insert(0, os.path.join(HERE, "..", "..", "PolyKybdHost", "tools"))
     from fw_anim_sim import FwSim
@@ -398,7 +421,7 @@ def video_parallel(layers, story, out, width, fps, jobs):
     procs = [subprocess.Popen([sys.executable, os.path.abspath(__file__), "video", layers, story, part, str(width), str(fps)],
                               env=dict(os.environ, PK_FRAMES=f"{lo}:{hi}"))
              for part, lo, hi in zip(parts, cuts, cuts[1:])]
-    if any(p.wait() != 0 for p in procs):
+    if not wait_all(procs):
         raise SystemExit("a part failed: " + ", ".join(str(p.returncode) for p in procs))
     lst = out + ".parts.txt"
     with open(lst, "w") as f:
@@ -409,12 +432,27 @@ def video_parallel(layers, story, out, width, fps, jobs):
         os.remove(p)
 
 
+ENCODERS = []                                    # this process's ffmpeg children, for stop_encoders()
+
+
 def encoder(out, img, fps, threads):
     import subprocess
-    return subprocess.Popen(["ffmpeg", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
-                             "-s", f"{img.width}x{img.height}", "-r", str(fps), "-i", "-",
-                             "-c:v", "libx264", "-crf", "18", "-preset", "slow", "-pix_fmt", "yuv420p",
-                             "-threads", str(threads), "-movflags", "+faststart", out], stdin=subprocess.PIPE)
+    enc = subprocess.Popen(["ffmpeg", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
+                            "-s", f"{img.width}x{img.height}", "-r", str(fps), "-i", "-",
+                            "-c:v", "libx264", "-crf", "18", "-preset", "slow", "-pix_fmt", "yuv420p",
+                            "-threads", str(threads), "-movflags", "+faststart", out], stdin=subprocess.PIPE)
+    ENCODERS.append(enc)
+    return enc
+
+
+def stop_encoders():
+    """At exit, kill and wait for any ffmpeg this process started that is still running:
+    a worker stopped by wait_all() must not leave its encoder draining frames into a part
+    file that a retry writes again. (A finished encode has already exited: no-op.)"""
+    for enc in ENCODERS:
+        if enc.poll() is None:
+            enc.kill()
+            enc.wait()
 
 
 def video_part(layers, story, out, width, fps, lo=0, hi=-1, threads=0, events=None):
@@ -852,6 +890,10 @@ if __name__ == "__main__":
                         sys.argv[5]], check=True)
         print("wrote", sys.argv[5], "with a new soundtrack")
     elif mode == "video":                        # video <layers> <story.npz> <out.mp4> [width] [fps]
+        import atexit
+        import signal
+        atexit.register(stop_encoders)           # SIGTERM from wait_all() exits through atexit, not abruptly
+        signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))
         video(sys.argv[2], sys.argv[3], sys.argv[4], *(int(v) for v in sys.argv[5:7]))
     else:
         raise SystemExit(f"unknown mode {mode}")
