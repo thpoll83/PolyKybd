@@ -2054,7 +2054,62 @@ def usb_stick():
     return g, parts
 
 
-BUILT = {"@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(), "@nfc_reader": lambda: nfc_reader(), "@eraser_crumbs": lambda: eraser_crumbs(),
+def drink_can(rgb=(0.02, 0.55, 0.50)):
+    """A 330 ml slim drink can, 58 mm across and 146 mm high: a printed aluminium body
+    (rgb, glossy, metallic) with a darker band near the top, a bare aluminium neck and
+    lid with a ring pull, a bevelled base."""
+    alu = principled("can aluminium", (0.80, 0.80, 0.82), 0.22)
+    alu.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 1.0
+    paint = principled(f"can paint {rgb}", rgb, 0.25, coat=0.4)
+    paint.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.6
+    band = principled(f"can band {rgb}", tuple(c * 0.25 for c in rgb), 0.3, coat=0.4)
+    r, h = 0.029, 0.146
+    parts = []
+    for name, z0, z1, rr, m in (("can base", 0.0, 0.008, r * 0.86, alu), ("can body", 0.006, h - 0.016, r, paint),
+                                ("can band", h - 0.040, h - 0.028, r + 0.0002, band),
+                                ("can neck", h - 0.016, h - 0.004, r * 0.90, alu), ("can lid", h - 0.004, h, r * 0.84, alu)):
+        bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=rr, depth=z1 - z0, location=(0, 0, (z0 + z1) / 2))
+        o = bpy.context.active_object; o.name = name; o.data.materials.append(m)
+        bpy.ops.object.shade_smooth()
+        parts.append(o)
+    parts.append(cube("can pull", (-0.006, -0.012, h), (0.006, 0.006, h + 0.0012), alu, 0.0005))
+    g = bpy.data.objects.new("@drink_can", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+def game_console():
+    """A slim game console lying flat, 270 x 220 x 52 mm: a matte black shell, a glossy
+    black inset on the top, a thin white light line along the front, a disc slot, a
+    power button and two USB ports; a little dust on the top, no scuffs."""
+    shell = principled("console shell", (0.022, 0.022, 0.024), 0.55)
+    gloss = principled("console gloss", (0.01, 0.01, 0.011), 0.08, coat=0.6)
+    slot_m = principled("console slot", (0.002, 0.002, 0.002), 0.6)
+    led = bpy.data.materials.new("console light")
+    led.use_nodes = True
+    lb = led.node_tree.nodes["Principled BSDF"]
+    lb.inputs["Emission Color"].default_value = (0.85, 0.92, 1.0, 1); lb.inputs["Emission Strength"].default_value = 5.0
+    W_, D_, H_ = 0.27, 0.22, 0.052
+    parts = [cube("console shell", (-W_ / 2, -D_ / 2, 0.004), (W_ / 2, D_ / 2, H_), shell, 0.008),
+             cube("console foot", (-W_ / 2 + 0.02, -D_ / 2 + 0.02, 0.0), (W_ / 2 - 0.02, D_ / 2 - 0.02, 0.005), slot_m, 0.002),
+             cube("console top", (-W_ / 2 + 0.012, -D_ / 2 + 0.03, H_ - 0.0004), (W_ / 2 - 0.012, D_ / 2 - 0.012, H_ + 0.0012), gloss, 0.003),
+             cube("console light", (-W_ / 2 + 0.02, -D_ / 2 - 0.0006, 0.010), (W_ / 2 - 0.02, -D_ / 2 + 0.001, 0.012), led, 0.0003),
+             cube("console slot", (-0.07, -D_ / 2 - 0.0006, 0.028), (0.07, -D_ / 2 + 0.002, 0.031), slot_m, 0.0005),
+             cube("console button", (W_ / 2 - 0.035, -D_ / 2 - 0.0012, 0.024), (W_ / 2 - 0.022, -D_ / 2 + 0.001, 0.036), gloss, 0.002)]
+    for k in range(2):
+        x_ = -W_ / 2 + 0.025 + k * 0.018
+        parts.append(cube("console usb", (x_, -D_ / 2 - 0.0006, 0.026), (x_ + 0.012, -D_ / 2 + 0.002, 0.031), slot_m, 0.0005))
+    spots(parts[2:3], 0.25, scale=60, lo=0.62, tint=(0.30, 0.30, 0.31), mode="MIX", detail=6.0)   # light dust on the gloss
+    g = bpy.data.objects.new("@console", None)
+    sc.collection.objects.link(g)
+    for o in parts:
+        o.parent = g
+    return g, parts
+
+
+BUILT = {"@console": lambda: game_console(), "@drink_can": lambda: drink_can(), "@badges": lambda: visitor_badges(), "@card_holder": lambda: card_holder(), "@nfc_reader": lambda: nfc_reader(), "@eraser_crumbs": lambda: eraser_crumbs(),
          "@name_card": lambda: name_card(), "@card_reader": lambda: card_reader(),
          "@puzzle_cube": lambda: puzzle_cube(), "@pot_soil": lambda: pot_soil(), "@white_pot": lambda: white_pot(), "@usb_hub": lambda: usb_hub(),
          "@newtons_cradle": lambda: newtons_cradle(), "@clips": lambda: paper_clips(),
@@ -2598,6 +2653,13 @@ def screen_material(screen, glow, rough=0.4):
     nt2.links.new(tex.outputs["Color"], b.inputs["Emission Color"])
     b.inputs["Base Color"].default_value = (0.0, 0.0, 0.0, 1)
     b.inputs["Emission Strength"].default_value = glow
+    cast = S.get("monitor", {}).get("cast", 1.0)   # the light the picture throws on the room, as a factor of
+    if cast != 1.0:                                # glow (camera rays still see glow, so the picture keeps its look)
+        lp = nt2.nodes.new("ShaderNodeLightPath")
+        mr = nt2.nodes.new("ShaderNodeMapRange")
+        mr.inputs["To Min"].default_value, mr.inputs["To Max"].default_value = glow * cast, glow
+        nt2.links.new(lp.outputs["Is Camera Ray"], mr.inputs["Value"])
+        nt2.links.new(mr.outputs[0], b.inputs["Emission Strength"])
     b.inputs["Roughness"].default_value = rough     # 0.4 an anti-glare coat: the room shows only as a soft sheen
     b.inputs["Specular IOR Level"].default_value = 0.15 if rough >= 0.3 else 0.4
     return m
@@ -2748,6 +2810,29 @@ def monitors(spec):
                     min(0.006, bt / 2))
         for o in (neck, base):
             o.parent = st
+        cab_m = bpy.data.materials.get("monitor cable") or principled("monitor cable", (0.012, 0.012, 0.013), 0.5)
+        for k in range(spec.get("cables", 0)):     # power and display cables: out of the back low down, hanging in a
+            cx_ = 0.075 + 0.03 * k                 # slack curve right of the neck to the desk, then back over its rear edge
+            r_ = (0.0032, 0.0025)[k % 2]
+            yb_ = 0.07 + 0.006 * k
+            edge = spec.get("cable_edge", 0.14)
+            zb_ = zc - sh / 2                      # the panel's lower edge
+            pts = [(cx_ - 0.01, 0.05, zb_ + sh * 0.18), (cx_, yb_, zb_ - 0.01), (cx_ + 0.012 + 0.006 * k, yb_ + 0.012, zb_ * 0.5),
+                   (cx_ + 0.02 + 0.01 * k, yb_ + 0.03, 0.012), (cx_ + 0.03 + 0.012 * k, yb_ + 0.05, r_),
+                   (cx_ + 0.05 + 0.015 * k, edge - 0.012, r_), (cx_ + 0.05 + 0.015 * k, edge + 0.01, -0.03),
+                   (cx_ + 0.05 + 0.015 * k, edge + 0.02, -0.4)]
+            cu = bpy.data.curves.new(f"monitor cable {k}", "CURVE")
+            cu.dimensions = "3D"
+            cu.bevel_depth, cu.bevel_resolution = r_, 3
+            sp_ = cu.splines.new("BEZIER")
+            sp_.bezier_points.add(len(pts) - 1)
+            for bp, p_ in zip(sp_.bezier_points, pts):
+                bp.co = p_
+                bp.handle_left_type = bp.handle_right_type = "AUTO"
+            co = bpy.data.objects.new(f"monitor cable {k}", cu)
+            sc.collection.objects.link(co)
+            co.data.materials.append(cab_m)
+            co.parent = st
         objs.extend(parts + [neck, base])
         blocks.append(parts + [neck, base])
         feet.append(base)
@@ -2874,6 +2959,14 @@ if S.get("hdri_view"):                           # the panorama brighter where i
     gain.inputs["To Min"].default_value, gain.inputs["To Max"].default_value = S["hdri_strength"], S["hdri_strength"] * S["hdri_view"]
     nt.links.new(seen.outputs[0], gain.inputs["Value"])
     nt.links.new(gain.outputs[0], bg.inputs["Strength"])
+    if S.get("hdri_view_clamp"):                 # and its brightest parts (a studio's strip lights) capped where seen,
+        cap = nt.nodes.new("ShaderNodeVectorMath"); cap.operation = "MINIMUM"   # so they stop burning out to white
+        cap.inputs[1].default_value = (S["hdri_view_clamp"],) * 3
+        nt.links.new(env.outputs["Color"], cap.inputs[0])
+        mx = nt.nodes.new("ShaderNodeMix"); mx.data_type = "RGBA"
+        nt.links.new(seen.outputs[0], mx.inputs["Factor"])
+        nt.links.new(env.outputs["Color"], mx.inputs[6]); nt.links.new(cap.outputs[0], mx.inputs[7])
+        nt.links.new(mx.outputs[2], bg.inputs["Color"])
 LIGHTS = S.get("lights", [])                     # area lights, placed once the desk is known (below)
 floor = bpy.data.objects["Plane"]
 floor.is_shadow_catcher = True                   # the room's own floor, with the desk's shadow on it

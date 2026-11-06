@@ -1269,6 +1269,60 @@ def game():
     return im
 
 
+def stk_hud():
+    """screen_stk.jpg: the SuperTuxKart screenshot stk_base.jpg (3440 x 1474, see
+    CREDITS.md) with a race HUD drawn over it: the racers' order down the left, lap and
+    race time at the top right, the held item in a box at the top, a minimap of the
+    track at the bottom left and a speed gauge at the bottom right."""
+    import math
+    im = Image.open(os.path.join(OUT, "stk_base.jpg")).convert("RGBA")
+    w, h = im.size
+    ov = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(ov)
+    racers = [("Gnu", (90, 160, 255)), ("Nolok", (255, 80, 80)), ("Tux", (255, 210, 60)), ("Suzanne", (180, 120, 60)),
+              ("Pidgin", (150, 110, 220)), ("Kiki", (90, 220, 140))]
+    for i, (name, col) in enumerate(racers):          # the order: a round badge per racer, ours (2nd) larger
+        me = i == 1
+        r = 52 if me else 40
+        cx, cy = 90, 120 + i * 120
+        d.ellipse((cx - r - 6, cy - r - 6, cx + r + 6, cy + r + 6), fill=(0, 0, 0, 150))
+        d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=col + (255,), outline=(255, 255, 255, 255), width=5 if me else 3)
+        d.text((cx, cy), str(i + 1), font=font(BOLD, 46 if me else 36), fill=(255, 255, 255, 255), anchor="mm",
+               stroke_width=3, stroke_fill=(0, 0, 0, 255))
+        d.text((cx + r + 22, cy), name, font=font(BOLD, 34), fill=(255, 255, 255, 230), anchor="lm",
+               stroke_width=3, stroke_fill=(0, 0, 0, 200))
+    d.rounded_rectangle((w - 560, 40, w - 50, 230), 26, fill=(0, 0, 0, 140))       # lap and time
+    d.text((w - 90, 70), "LAP 2/3", font=font(BOLD, 74), fill=(255, 255, 255, 255), anchor="ra")
+    d.text((w - 90, 160), "1:12.48", font=font(BOLD, 56), fill=(255, 220, 90, 255), anchor="ra")
+    bx = w // 2 - 95                                   # the held item: a gift box
+    d.rounded_rectangle((bx, 40, bx + 190, 230), 28, fill=(0, 0, 0, 150), outline=(255, 255, 255, 230), width=6)
+    d.rectangle((bx + 45, 95, bx + 145, 195), fill=(240, 70, 90, 255))
+    d.rectangle((bx + 85, 95, bx + 105, 195), fill=(255, 220, 90, 255))
+    d.rectangle((bx + 45, 125, bx + 145, 141), fill=(255, 220, 90, 255))
+    d.ellipse((bx + 62, 70, bx + 96, 100), outline=(255, 220, 90, 255), width=8)
+    d.ellipse((bx + 94, 70, bx + 128, 100), outline=(255, 220, 90, 255), width=8)
+    mx, my, mr = 260, h - 270, 200                     # the minimap: a winding loop, the racers as dots
+    d.ellipse((mx - mr - 20, my - mr - 20, mx + mr + 20, my + mr + 20), fill=(0, 0, 0, 120))
+    pts = [(mx + mr * 0.85 * math.cos(t) * (1 + 0.18 * math.sin(3 * t)), my + mr * 0.62 * math.sin(t) * (1 + 0.25 * math.cos(2 * t)))
+           for t in [k * 2 * math.pi / 120 for k in range(121)]]
+    d.line(pts, fill=(255, 255, 255, 120), width=26, joint="curve")
+    d.line(pts, fill=(60, 60, 70, 230), width=16, joint="curve")
+    for k, (_n, col) in zip((70, 66, 60, 52, 40, 30), racers):
+        x, y = pts[k]
+        d.ellipse((x - 14, y - 14, x + 14, y + 14), fill=col + (255,), outline=(255, 255, 255, 255), width=3)
+    gx, gy, gr = w - 260, h - 230, 190                 # the speed gauge
+    d.pieslice((gx - gr - 20, gy - gr - 20, gx + gr + 20, gy + gr + 20), 150, 390, fill=(0, 0, 0, 130))
+    d.arc((gx - gr, gy - gr, gx + gr, gy + gr), 150, 390, fill=(255, 255, 255, 90), width=26)
+    d.arc((gx - gr, gy - gr, gx + gr, gy + gr), 150, 320, fill=(255, 200, 60, 255), width=26)
+    d.text((gx, gy - 10), "87", font=font(BOLD, 110), fill=(255, 255, 255, 255), anchor="mm",
+           stroke_width=4, stroke_fill=(0, 0, 0, 200))
+    d.text((gx, gy + 80), "km/h", font=font(SANS, 40), fill=(230, 230, 240, 255), anchor="mm")
+    for k in range(3):                                 # nitro bar under the gauge
+        d.rounded_rectangle((gx - 150 + k * 104, h - 60, gx - 60 + k * 104, h - 36), 8,
+                            fill=(80, 200, 255, 255) if k < 2 else (255, 255, 255, 70))
+    return Image.alpha_composite(im, ov).convert("RGB")
+
+
 def ruler():
     """A 300 mm steel rule's face, 3000 x 280 px (10 px a mm): brushed steel, a tick a
     millimetre (longer each 5 and 10), the centimetres numbered."""
@@ -2160,7 +2214,7 @@ def moodboard_desktop():
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in ((("screen_code.jpg", code), ("screen_calendar.jpg", calendar), ("screen_sheet.jpg", sheet), ("screen_reception.jpg", reception), ("screen_reception2.jpg", reception2), ("screen_mail.jpg", mail), ("screen_plan.jpg", plan),
-                     ("screen_design.jpg", design), ("screen_game.jpg", game), ("ruler.jpg", ruler),
+                     ("screen_design.jpg", design), ("screen_game.jpg", game), ("screen_stk.jpg", stk_hud), ("ruler.jpg", ruler),
                      ("poster_road.jpg", poster), ("cork.jpg", cork), ("paper_layout.jpg", worn(highlighted(paper_layout, [((70, 585, 430, 642), "green")]), 7)),
                      ("paper_sprint.jpg", worn(highlighted(paper_sprint, [((150, 454, 520, 512), "yellow"), ((150, 814, 470, 872), "pink")]), 3)), ("paper_chart.jpg", worn(paper_chart, 13)),
                      ("paper_month.jpg", worn(highlighted(paper_month, [((584, 958, 700, 1054), "yellow"), ((328, 1174, 444, 1270), "orange")]), 5, 0.7)), ("photo_keyboard.jpg", photo_keyboard),

@@ -297,13 +297,16 @@ SCENES = {
                 for k in range(5)] + [dict(at=(0.4, -2.2, 1.05), size=(1.4, 0.08), strength=4.0, color=(1.0, 0.9, 0.75))],
         camera=dict(distance=2.45, elev=20, azim=32, lens=35, fstop=5.6, aim_x=-0.22, aim_y=0.10, aim_z=0.10)),
     "gamer": dict(
-        hdri="neon_photostudio", hdri_turn=210, hdri_strength=0.7,
+        hdri="neon_photostudio", hdri_turn=210, hdri_strength=0.55, hdri_view=0.6, hdri_view_clamp=2.0,   # the light bars dimmer to the eye
         desk="@black_desk", desk_height=None,
         kb_from_front=0.25,
         desk_mat=dict(w=0.92, d=0.38, x=0.12, y=0.0, glow=(1.0, 0.15, 0.85), strength=8.0),
-        props=[("gamepad", None, -0.58, -0.10, 25, None, False),
-               ("digital_wrist_watch", None, 0.70, -0.10, 70, None, False)],
-        monitor=dict(style="ultrawide", y=0.42, inches=34, screen="screen_game.jpg", glow=1.8),
+        desk_spots=0.5, desk_spots_tint=(0.30, 0.30, 0.32),      # dust and wiped marks on the black top
+        props=[("gamepad", None, -0.48, 0.0, 18, None, False),
+               ("digital_wrist_watch", None, 0.595, -0.12, 60, None, False),   # partly out of the frame
+               ("@drink_can", None, 0.655, 0.22, 20, None, False),
+               ("@console", None, -0.58, 0.24, -14, None, False)],
+        monitor=dict(style="ultrawide", y=0.42, inches=34, screen="screen_stk.jpg", glow=2.0, cast=8.0, cables=2),   # SuperTuxKart (textures/workspace/CREDITS.md)
         mouse=dict(x=0.36, y=0.0, turn=-6, wired=True),
         legend_glow=14.0,
         camera=dict(distance=1.55, elev=15, azim=12, lens=40, fstop=4.0, aim_y=0.14, aim_z=0.17)),
