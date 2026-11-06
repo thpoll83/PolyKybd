@@ -1798,8 +1798,9 @@ def paper_balls():
 
 
 def paper_sheets():
-    """Thrown-away printouts: three A4 sheets, each folded once along its length and
-    curled, lying crosswise on top of each other (for the bottom of a bin)."""
+    """Thrown-away printouts: three sheets (A4 printouts at 55 %, as if folded small),
+    each bent over along its length and curled, lying crosswise on top of each other
+    (for the bottom of a bin)."""
     import random
     rnd = random.Random(9)
     parts = []
@@ -1807,11 +1808,11 @@ def paper_sheets():
         bpy.ops.mesh.primitive_plane_add(size=1)
         o = bpy.context.active_object
         o.name = "paper sheet"
-        o.scale = (0.21, 0.297, 1)
+        o.scale = (0.21 * 0.55, 0.297 * 0.55, 1)       # folded small enough to lie inside the bin
         bpy.ops.object.transform_apply(scale=True)
         sub = o.modifiers.new("sub", "SUBSURF"); sub.subdivision_type = "SIMPLE"; sub.levels = sub.render_levels = 4
         bend = o.modifiers.new("fold", "SIMPLE_DEFORM"); bend.deform_method = "BEND"; bend.deform_axis = "Y"
-        bend.angle = math.radians(rnd.uniform(40, 120))
+        bend.angle = math.radians(rnd.uniform(90, 160))
         curl = o.modifiers.new("curl", "SIMPLE_DEFORM"); curl.deform_method = "BEND"; curl.deform_axis = "X"
         curl.angle = math.radians(rnd.uniform(-35, 35))
         o.modifiers.new("solid", "SOLIDIFY").thickness = 0.0002
