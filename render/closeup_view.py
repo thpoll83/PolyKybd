@@ -253,6 +253,14 @@ if passes:                                         # a tuning page (studio light
     if sc.world:
         sc.world.lightgroup = "studio"
     vl.cycles.denoising_store_passes = True
+    if "mat" not in vl.aovs:                       # a mask of the cutting mat (PK_MAT_GRID), filtered like
+        vl.aovs.add().name = "mat"                 # the image, so a page can recolour the mat alone
+        vl.aovs["mat"].type = "VALUE"
+    _mm = bpy.data.materials.get("cutting mat")
+    if _mm:
+        _aov = _mm.node_tree.nodes.new("ShaderNodeOutputAOV")
+        _aov.name = "mat"                         # (in 4.1 the AOV name is the node's `name`)
+        _aov.inputs["Value"].default_value = 1.0
     sc.use_nodes = True
     nt = sc.node_tree
     rl = nt.nodes.get("Render Layers") or nt.nodes.new("CompositorNodeRLayers")
@@ -260,10 +268,10 @@ if passes:                                         # a tuning page (studio light
     fo.base_path = passes
     fo.format.file_format, fo.format.color_depth = "OPEN_EXR", "16"
     fo.file_slots.clear()
-    for name in ("Image",) + tuple("Combined_" + g_ for g_ in groups):
+    for name in ("Image", "mat") + tuple("Combined_" + g_ for g_ in groups):
         fo.file_slots.new(name)
         src = rl.outputs[name]
-        if name != "Image":                        # the light group passes are not denoised by Cycles
+        if name.startswith("Combined_"):           # the light group passes are not denoised by Cycles
             dn = nt.nodes.new("CompositorNodeDenoise")
             nt.links.new(src, dn.inputs["Image"])
             nt.links.new(rl.outputs["Denoising Normal"], dn.inputs["Normal"])
