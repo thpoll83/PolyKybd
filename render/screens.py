@@ -142,6 +142,42 @@ def keys(root, board, side, strength=6.0, kle_path=KLE, atlas_name="screens_laye
     return len(verts) // 4
 
 
+def driver_chips(root, board, side, kle_path=KLE):
+    """The OLED driver chip on each display's glass ledge, below the image area: a glossy
+    6.0 x 0.8 x 0.3 mm box centred across the panel, 7.0 to 7.8 mm from the panel's top
+    edge (the panel is 12.2 x 11.0 mm, keymatch.A_*). On the real keyboard its flat top
+    catches the room light as a short white streak under the image, inside the clear cap.
+    Returns how many."""
+    kb = textured_parts.board_keys(board)
+    (tx, ty), dz = textured_parts.fit(root, kb)
+    X, Y0, Y1 = textured_parts.DISP_X, textured_parts.DISP_Y0, textured_parts.DISP_Y1
+    z0 = textured_parts.DISP_TOP + dz + LIFT       # on the glass, above the decal (units are mm here)
+    z1 = z0 + 0.3
+    fu0, fu1 = 3.1 / 12.2, 9.1 / 12.2
+    fv0, fv1 = 1 - 7.8 / 11.0, 1 - 7.0 / 11.0
+    verts, tris, uv = [], [], []
+    for x, y, r in kb:
+        def at(fu, fv, zz):
+            p = np.array([-X + 2 * X * fu, Y0 + (Y1 - Y0) * fv])
+            xy = textured_parts._rot(p, r) + np.array([x, y]) + np.array([tx, ty])
+            return (xy[0], xy[1], zz)
+        b = len(verts)
+        verts += [at(fu0, fv0, z0), at(fu1, fv0, z0), at(fu1, fv1, z0), at(fu0, fv1, z0),
+                  at(fu0, fv0, z1), at(fu1, fv0, z1), at(fu1, fv1, z1), at(fu0, fv1, z1)]
+        for q in ((4, 5, 6, 7), (0, 3, 2, 1), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)):
+            tris += [(b + q[0], b + q[1], b + q[2]), (b + q[0], b + q[2], b + q[3])]
+        uv += [(0.0, 0.0)] * 8
+    m = bpy.data.materials.get("driver chip") or bpy.data.materials.new("driver chip")
+    m.use_nodes = True
+    m["pk_role"] = "driver chip"
+    bs = m.node_tree.nodes["Principled BSDF"]
+    bs.inputs["Base Color"].default_value = (0.35, 0.36, 0.38, 1)
+    bs.inputs["Metallic"].default_value = 0.85
+    bs.inputs["Roughness"].default_value = 0.12
+    textured_parts._mesh(root.name + " driver chips", verts, tris, uv, m, root)
+    return len(kb)
+
+
 def status(root, side, strength=4.0, suffix=""):
     """The status panel's picture over the top face of the half's "status lcd" box,
     from textures/status_<side><suffix>.png (suffix "_l1" for layer 1)."""

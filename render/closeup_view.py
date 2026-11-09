@@ -15,7 +15,7 @@ of that colour with a 10 mm grid (lines lr,lg,lb) under the board, PK_STEM_RGB="
 recolours the keycap stems and PK_CAP_ROUGH frosts the caps, PK_SPLAY the left
 half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
 the right half's (default -9), PK_BLOOM="threshold,mix[,size]"
-a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_SHEEN="W[,size]" a panel the cap tops mirror, PK_PASSES=<dir> light-group EXRs for a tuning page, PK_PANEL_FLOOR="r,g,b"
+a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_SHEEN="W[,size]" a panel the cap tops mirror, PK_PASSES=<dir> light-group EXRs for a tuning page, PK_CHIP=1 the OLED driver chips, PK_PANEL_FLOOR="r,g,b"
 (screens.py) gives every key panel a faint glow of that colour, PK_LIGHT scales
 the studio lights (0.15 is a dim room, for the docs' idle close-up).
 PK_RGB="h0,h1" is the night shot: the studio off, the case clear, and every
@@ -60,6 +60,8 @@ for _m in bpy.data.materials:                      # PK_STEM_RGB="r,g,b": light 
         _b.inputs["Roughness"].default_value = float(os.environ["PK_CAP_ROUGH"])
 PROFILE = os.environ.get("PK_PROFILE")
 print("lit", screens.keys(root, board, SIDE, strength=float(os.environ.get("PK_STRENGTH", 6.0)), atlas_name=atlas), screens.status(root, SIDE, suffix=os.environ.get("PK_STATUS", "")))
+if os.environ.get("PK_CHIP"):                      # the OLED driver chips on the displays' glass ledges
+    print("chips", screens.driver_chips(root, board, SIDE))
 if os.environ.get("PK_DENT"):                     # "depth_mm[,rim_mm]": a real dented top
     _d = [float(v) for v in os.environ["PK_DENT"].split(",")]
     profile.dent(root, board, *_d)
@@ -121,8 +123,8 @@ if sheen:                                          # tops mirror it to the camer
     _lo.visible_camera = False
     _caps = bpy.data.collections.new("sheen caps")  # and only the caps see it (light linking): the plate's
     for _o in root.children_recursive:              # aluminium mirrored it as a bright smear
-        if _o.type == "MESH" and any(sl.material and sl.material.get("pk_role") == "keycap glass"
-                                     for sl in _o.material_slots):
+        if _o.type == "MESH" and any(sl.material and sl.material.get("pk_role") in ("keycap glass", "driver chip")
+                                     for sl in _o.material_slots):   # (and the driver chips' flat tops)
             _caps.objects.link(_o)
     _lo.light_linking.receiver_collection = _caps
     print("sheen caps", len(_caps.objects))
