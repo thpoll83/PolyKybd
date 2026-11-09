@@ -15,7 +15,7 @@ of that colour with a 10 mm grid (lines lr,lg,lb) under the board, PK_STEM_RGB="
 recolours the keycap stems and PK_CAP_ROUGH frosts the caps, PK_SPLAY the left
 half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
 the right half's (default -9), PK_BLOOM="threshold,mix[,size]"
-a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_SHEEN="W[,size]" a panel the cap tops mirror, PK_PANEL_FLOOR="r,g,b"
+a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_SHEEN="W[,size]" a panel the cap tops mirror, PK_PASSES=<dir> light-group EXRs for a tuning page, PK_PANEL_FLOOR="r,g,b"
 (screens.py) gives every key panel a faint glow of that colour, PK_LIGHT scales
 the studio lights (0.15 is a dim room, for the docs' idle close-up).
 PK_RGB="h0,h1" is the night shot: the studio off, the case clear, and every
@@ -238,4 +238,36 @@ if bloom:
     g.glare_type, g.quality, g.threshold, g.mix, g.size = "FOG_GLOW", "HIGH", th, mix, gsize
     nt.links.new(rl.outputs["Image"], g.inputs["Image"])
     nt.links.new(g.outputs["Image"], comp.inputs["Image"])
+passes = os.environ.get("PK_PASSES")              # a directory: the light split into light groups for
+if passes:                                         # a tuning page (studio lights and world, the floor's cove
+    vl = sc.view_layers[0]                         # light, the cap sheen, the lit legends), each denoised,
+    groups = ("studio", "floor", "sheen", "legends")   # as half-float EXRs, beside the combined image
+    for g_ in groups:
+        if g_ not in vl.lightgroups:
+            vl.lightgroups.add(name=g_)
+    for o in sc.objects:
+        if o.type == "LIGHT":
+            o.lightgroup = "sheen" if o.name == "cap sheen" else ("floor" if o.name == "cove light" else "studio")
+        elif o.type == "MESH" and ("lit legends" in o.name or "status" in o.name.lower()):
+            o.lightgroup = "legends"
+    if sc.world:
+        sc.world.lightgroup = "studio"
+    vl.cycles.denoising_store_passes = True
+    sc.use_nodes = True
+    nt = sc.node_tree
+    rl = nt.nodes.get("Render Layers") or nt.nodes.new("CompositorNodeRLayers")
+    fo = nt.nodes.new("CompositorNodeOutputFile")
+    fo.base_path = passes
+    fo.format.file_format, fo.format.color_depth = "OPEN_EXR", "16"
+    fo.file_slots.clear()
+    for name in ("Image",) + tuple("Combined_" + g_ for g_ in groups):
+        fo.file_slots.new(name)
+        src = rl.outputs[name]
+        if name != "Image":                        # the light group passes are not denoised by Cycles
+            dn = nt.nodes.new("CompositorNodeDenoise")
+            nt.links.new(src, dn.inputs["Image"])
+            nt.links.new(rl.outputs["Denoising Normal"], dn.inputs["Normal"])
+            nt.links.new(rl.outputs["Denoising Albedo"], dn.inputs["Albedo"])
+            src = dn.outputs["Image"]
+        nt.links.new(src, fo.inputs[name])
 bpy.ops.render.render(write_still=True)
