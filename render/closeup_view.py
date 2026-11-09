@@ -10,8 +10,9 @@ yaw in degrees, lens in mm, fstop > 0 turns on depth of field. PK_STRENGTH sets
 the legends' emission (6 saturates to white at close range; 3 keeps the
 LIT_TINT visible), PK_STATUS the status-panel suffix (_l1), PK_BORDER a crop, PK_SIDE=right
 frames the right half, PK_CLEAR_CASE=1 makes the case clear in the studio,
-PK_COVE_RGB="r,g,b" colours the studio floor, PK_MAT_GRID="r,g,b" lays a cutting mat
-of that colour with a 10 mm grid under the board, PK_SPLAY the left
+PK_COVE_RGB="r,g,b" colours the studio floor, PK_MAT_GRID="r,g,b[,lr,lg,lb]" lays a cutting mat
+of that colour with a 10 mm grid (lines lr,lg,lb) under the board, PK_STEM_RGB="r,g,b"
+recolours the keycap stems and PK_CAP_ROUGH frosts the caps, PK_SPLAY the left
 half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
 the right half's (default -9), PK_BLOOM="threshold,mix[,size]"
 a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_PANEL_FLOOR="r,g,b"
@@ -49,6 +50,14 @@ root = bpy.data.objects[f"split72_{SIDE}.wrl"]
 board = os.path.join(textured_parts.REPO, "poly_kybd", f"poly_kybd_split72_{SIDE}.kicad_pcb")
 textured_parts.add(root, textured_parts.board_keys(board))
 materials.apply(bpy)
+for _m in bpy.data.materials:                      # PK_STEM_RGB="r,g,b": light stems, so the clear caps read
+    _b = _m.node_tree.nodes.get("Principled BSDF") if _m.use_nodes else None   # grey, not black;
+    if _b is None:                                 # PK_CAP_ROUGH: a frosted cap surface (0 = clear glass)
+        continue
+    if _m.get("pk_role") == "stem" and os.environ.get("PK_STEM_RGB"):
+        _b.inputs["Base Color"].default_value = (*(float(v) for v in os.environ["PK_STEM_RGB"].split(",")), 1)
+    if _m.get("pk_role") == "keycap glass" and os.environ.get("PK_CAP_ROUGH"):
+        _b.inputs["Roughness"].default_value = float(os.environ["PK_CAP_ROUGH"])
 PROFILE = os.environ.get("PK_PROFILE")
 print("lit", screens.keys(root, board, SIDE, strength=float(os.environ.get("PK_STRENGTH", 6.0)), atlas_name=atlas), screens.status(root, SIDE, suffix=os.environ.get("PK_STATUS", "")))
 if os.environ.get("PK_DENT"):                     # "depth_mm[,rim_mm]": a real dented top
@@ -144,7 +153,9 @@ else:
     studio.cove(sc, colour=tuple(float(v) for v in cove.split(",")) if cove else (0.9, 0.9, 0.9))
     mat_grid = os.environ.get("PK_MAT_GRID")       # "r,g,b": a cutting mat of that colour under the board,
     if mat_grid:                                   # pale lines every 10 mm, wider ones every 50 mm
-        base = tuple(float(v) for v in mat_grid.split(","))
+        _mg = [float(v) for v in mat_grid.split(",")]
+        base = tuple(_mg[:3])                      # three more values: the lines' colour
+        line_rgb = tuple(_mg[3:6]) if len(_mg) >= 6 else (0.62, 0.68, 0.45)
         bpy.ops.mesh.primitive_plane_add(size=0.8, location=(tgt.location.x, tgt.location.y, 0.0004))
         mat_o = bpy.context.active_object
         mat_o.name = "cutting mat"
@@ -170,7 +181,7 @@ else:
                     nt.links.new(line.outputs[0], mx.inputs[0]); nt.links.new(lt.outputs[0], mx.inputs[1])
                     line = mx
         mix = nt.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"
-        mix.inputs[6].default_value = (*base, 1); mix.inputs[7].default_value = (0.62, 0.68, 0.45, 1)
+        mix.inputs[6].default_value = (*base, 1); mix.inputs[7].default_value = (*line_rgb, 1)
         nt.links.new(line.outputs[0], mix.inputs["Factor"])
         nt.links.new(mix.outputs[2], b.inputs["Base Color"])
         mat_o.data.materials.append(m)
