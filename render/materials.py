@@ -8,6 +8,7 @@ diffuse colour and transparency. Each ROLES entry matches on that source colour
 (within TOL per channel) and sets Principled inputs. The first match wins;
 unmatched materials keep their colour with roughness DEFAULT_ROUGHNESS.
 """
+import os
 TOL = 0.001          # the source colours are exact; 0.098 (switch) vs 0.1 (display) differ by 0.002
 
 # (role, source rgb, transparent in the source?, Principled BSDF inputs)
@@ -156,7 +157,8 @@ def scene_settings(sc):
     # glass caps, and without them every display renders black
     c.caustics_reflective, c.caustics_refractive = False, True
     c.blur_glossy = 1.0                 # "Filter Glossy": tames the caustic noise
-    c.use_denoising = denoiser_available()
+    # PK_DENOISE=0 turns the denoiser off: it smooths a display's fine pixel grid away
+    c.use_denoising = denoiser_available() and os.environ.get("PK_DENOISE", "1") != "0"
 
 
 def _rim_glass(bpy, m, bsdf):

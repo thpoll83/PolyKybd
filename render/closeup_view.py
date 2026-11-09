@@ -15,7 +15,7 @@ of that colour with a 10 mm grid (lines lr,lg,lb) under the board, PK_STEM_RGB="
 recolours the keycap stems and PK_CAP_ROUGH frosts the caps, PK_SPLAY the left
 half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
 the right half's (default -9), PK_BLOOM="threshold,mix[,size]"
-a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_PANEL_FLOOR="r,g,b"
+a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_PANEL_FLOOR="r,g,b"
 (screens.py) gives every key panel a faint glow of that colour, PK_LIGHT scales
 the studio lights (0.15 is a dim room, for the docs' idle close-up).
 PK_RGB="h0,h1" is the night shot: the studio off, the case clear, and every
@@ -99,6 +99,12 @@ cam.data.lens = lens
 cam.data.clip_start = 0.005          # the default 0.1 m cuts the front keys at this distance
 e, y = math.radians(elev), math.radians(yaw)
 cam.location = tgt.location + mathutils.Vector((dist * math.cos(e) * math.sin(y), -dist * math.cos(e) * math.cos(y), dist * math.sin(e)))
+if os.environ.get("PK_ROLL"):                       # degrees: turn the camera about its view axis, counter-
+    bpy.context.view_layer.update()                # clockwise for positive values (the picture turns the
+    _mw = cam.matrix_world.copy()                  # other way); the aim constraint is baked first
+    for _c in list(cam.constraints):
+        cam.constraints.remove(_c)
+    cam.matrix_world = _mw @ mathutils.Matrix.Rotation(math.radians(float(os.environ["PK_ROLL"])), 4, "Z")
 cam.data.dof.use_dof = aperture > 0
 if aperture > 0:
     cam.data.dof.focus_object = tgt

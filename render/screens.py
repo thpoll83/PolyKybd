@@ -67,6 +67,42 @@ def _material(name, image, strength):
         b2.default_value = (*[float(c) for c in floor.split(",")], 1.0)
         nt.links.new(lit, a2)
         lit = next(o for o in add.outputs if o.type == "RGBA")
+    # PK_RASTER=<fill>: the OLED's pixel grid, each pixel lit over `fill` of its pitch
+    # (0.86 as tutorial_video.py's pixel_grid), dark gaps between; the atlas has one
+    # texel per display pixel, so the grid is the texture's own texel grid
+    raster = os.environ.get("PK_RASTER")
+    if raster:
+        fill = float(raster)
+        tc = nt.nodes.new("ShaderNodeTexCoord")
+        sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+        nt.links.new(tc.outputs["UV"], sep.inputs[0])
+        mask = None
+        for axis, n in (("X", tex.image.size[0]), ("Y", tex.image.size[1])):
+            sc_ = nt.nodes.new("ShaderNodeMath"); sc_.operation = "MULTIPLY"; sc_.inputs[1].default_value = n
+            nt.links.new(sep.outputs[axis], sc_.inputs[0])
+            fr = nt.nodes.new("ShaderNodeMath"); fr.operation = "FRACT"
+            nt.links.new(sc_.outputs[0], fr.inputs[0])
+            dc = nt.nodes.new("ShaderNodeMath"); dc.operation = "SUBTRACT"; dc.inputs[1].default_value = 0.5
+            nt.links.new(fr.outputs[0], dc.inputs[0])
+            ab = nt.nodes.new("ShaderNodeMath"); ab.operation = "ABSOLUTE"
+            nt.links.new(dc.outputs[0], ab.inputs[0])
+            edge = nt.nodes.new("ShaderNodeMapRange")          # 1 inside the lit part, a soft 5% edge
+            edge.inputs["From Min"].default_value = fill / 2 - 0.05
+            edge.inputs["From Max"].default_value = fill / 2
+            edge.inputs["To Min"].default_value, edge.inputs["To Max"].default_value = 1.0, 0.0
+            nt.links.new(ab.outputs[0], edge.inputs["Value"])
+            if mask is None:
+                mask = edge
+            else:
+                mul = nt.nodes.new("ShaderNodeMath"); mul.operation = "MULTIPLY"
+                nt.links.new(mask.outputs[0], mul.inputs[0]); nt.links.new(edge.outputs[0], mul.inputs[1])
+                mask = mul
+        gm = nt.nodes.new("ShaderNodeMix"); gm.data_type, gm.blend_type = "RGBA", "MULTIPLY"
+        gm.inputs["Factor"].default_value = 1.0
+        a3, b3 = [i for i in gm.inputs if i.type == "RGBA"]
+        nt.links.new(lit, a3)
+        nt.links.new(mask.outputs[0], b3)
+        lit = next(o for o in gm.outputs if o.type == "RGBA")
     nt.links.new(lit, b.inputs["Emission Color"])
     b.inputs["Emission Strength"].default_value = strength
     return m
