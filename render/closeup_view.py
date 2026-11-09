@@ -10,7 +10,8 @@ yaw in degrees, lens in mm, fstop > 0 turns on depth of field. PK_STRENGTH sets
 the legends' emission (6 saturates to white at close range; 3 keeps the
 LIT_TINT visible), PK_STATUS the status-panel suffix (_l1), PK_BORDER a crop, PK_SIDE=right
 frames the right half, PK_CLEAR_CASE=1 makes the case clear in the studio,
-PK_COVE_RGB="r,g,b" colours the studio floor, PK_SPLAY the left
+PK_COVE_RGB="r,g,b" colours the studio floor, PK_MAT_GRID="r,g,b" lays a cutting mat
+of that colour with a 10 mm grid under the board, PK_SPLAY the left
 half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
 the right half's (default -9), PK_BLOOM="threshold,mix"
 a compositor fog glow around bright pixels, PK_PANEL_FLOOR="r,g,b"
@@ -137,6 +138,38 @@ if RGB:
 else:
     cove = os.environ.get("PK_COVE_RGB")           # "r,g,b": a coloured floor (the language photos' purple mat)
     studio.cove(sc, colour=tuple(float(v) for v in cove.split(",")) if cove else (0.9, 0.9, 0.9))
+    mat_grid = os.environ.get("PK_MAT_GRID")       # "r,g,b": a cutting mat of that colour under the board,
+    if mat_grid:                                   # pale lines every 10 mm, wider ones every 50 mm
+        base = tuple(float(v) for v in mat_grid.split(","))
+        bpy.ops.mesh.primitive_plane_add(size=0.8, location=(tgt.location.x, tgt.location.y, 0.0004))
+        mat_o = bpy.context.active_object
+        mat_o.name = "cutting mat"
+        m = bpy.data.materials.new("cutting mat")
+        m.use_nodes = True
+        nt = m.node_tree
+        b = nt.nodes["Principled BSDF"]
+        b.inputs["Roughness"].default_value = 0.75
+        tc = nt.nodes.new("ShaderNodeTexCoord")
+        sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+        nt.links.new(tc.outputs["Object"], sep.inputs[0])
+        line = None
+        for step, half in ((0.010, 0.00025), (0.050, 0.0005)):
+            for axis in ("X", "Y"):
+                md = nt.nodes.new("ShaderNodeMath"); md.operation = "PINGPONG"; md.inputs[1].default_value = step / 2
+                nt.links.new(sep.outputs[axis], md.inputs[0])
+                lt = nt.nodes.new("ShaderNodeMath"); lt.operation = "LESS_THAN"; lt.inputs[1].default_value = half
+                nt.links.new(md.outputs[0], lt.inputs[0])
+                if line is None:
+                    line = lt
+                else:
+                    mx = nt.nodes.new("ShaderNodeMath"); mx.operation = "MAXIMUM"
+                    nt.links.new(line.outputs[0], mx.inputs[0]); nt.links.new(lt.outputs[0], mx.inputs[1])
+                    line = mx
+        mix = nt.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"
+        mix.inputs[6].default_value = (*base, 1); mix.inputs[7].default_value = (0.62, 0.68, 0.45, 1)
+        nt.links.new(line.outputs[0], mix.inputs["Factor"])
+        nt.links.new(mix.outputs[2], b.inputs["Base Color"])
+        mat_o.data.materials.append(m)
     studio.flag(sc)
     studio.white_look(sc)
 sc.cycles.filter_width = 1.0
