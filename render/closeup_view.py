@@ -13,8 +13,8 @@ frames the right half, PK_CLEAR_CASE=1 makes the case clear in the studio,
 PK_COVE_RGB="r,g,b" colours the studio floor, PK_MAT_GRID="r,g,b" lays a cutting mat
 of that colour with a 10 mm grid under the board, PK_SPLAY the left
 half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
-the right half's (default -9), PK_BLOOM="threshold,mix"
-a compositor fog glow around bright pixels, PK_PANEL_FLOOR="r,g,b"
+the right half's (default -9), PK_BLOOM="threshold,mix[,size]"
+a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_PANEL_FLOOR="r,g,b"
 (screens.py) gives every key panel a faint glow of that colour, PK_LIGHT scales
 the studio lights (0.15 is a dim room, for the docs' idle close-up).
 PK_RGB="h0,h1" is the night shot: the studio off, the case clear, and every
@@ -66,6 +66,10 @@ if RGB:
     rgb.clear_case()
 else:
     lighting.studio(sc, tgt, float(os.environ.get("PK_LIGHT", 1.0)))
+    if os.environ.get("PK_LIGHT_RGB"):             # "r,g,b": tint the studio lights (a warm room light)
+        _lc = tuple(float(v) for v in os.environ["PK_LIGHT_RGB"].split(","))
+        for _l in [o for o in sc.objects if o.type == "LIGHT"]:
+            _l.data.color = _lc
     if os.environ.get("PK_CLEAR_CASE"):             # the clear printed case of the docs' language photos
         rgb.clear_case()
 studio.splay(float(os.environ.get("PK_SPLAY", -2)),          # PK_SPLAY=0: columns square to the frame
@@ -185,13 +189,15 @@ if border:
     sc.render.border_min_y, sc.render.border_max_y = 1 - y1, 1 - y0
 bloom = os.environ.get("PK_BLOOM")               # "threshold,mix": a soft glow around the lit legends
 if bloom:
-    th, mix = (float(v) for v in bloom.split(","))
+    bv = [float(v) for v in bloom.split(",")]
+    th, mix = bv[0], bv[1]
+    gsize = int(bv[2]) if len(bv) > 2 else 8      # a third value: the glow's size (6..9, 9 the widest haze)
     sc.use_nodes = True
     nt = sc.node_tree
     rl = nt.nodes.get("Render Layers") or nt.nodes.new("CompositorNodeRLayers")
     comp = nt.nodes.get("Composite") or nt.nodes.new("CompositorNodeComposite")
     g = nt.nodes.new("CompositorNodeGlare")
-    g.glare_type, g.quality, g.threshold, g.mix, g.size = "FOG_GLOW", "HIGH", th, mix, 8
+    g.glare_type, g.quality, g.threshold, g.mix, g.size = "FOG_GLOW", "HIGH", th, mix, gsize
     nt.links.new(rl.outputs["Image"], g.inputs["Image"])
     nt.links.new(g.outputs["Image"], comp.inputs["Image"])
 bpy.ops.render.render(write_still=True)
