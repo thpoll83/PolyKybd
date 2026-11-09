@@ -60,6 +60,40 @@ def box3(a, r):
     return a
 
 
+def add_dust(lin, mk, amount, seed):
+    """A 2D dust layer: about 900 * amount specks per 810 x 810 px (scaled to the image),
+    1 to 4 px across at that scale (most small), a few dozen fibres, each a pale grey that
+    takes its brightness from the surface around it, so a speck reads in light and
+    stays faint in shadow."""
+    rng = np.random.default_rng(seed)
+    h, w = lin.shape[:2]
+    k = min(h, w) / PAGE_W
+    n = int(900 * amount * (h * w) / (PAGE_W * PAGE_W))
+    cov = np.zeros((h, w), np.float32)
+    ys, xs = rng.uniform(0, h, n), rng.uniform(0, w, n)
+    rs = k * (0.5 + 1.6 * rng.uniform(0, 1, n) ** 3)
+    al = rng.uniform(0.35, 0.9, n)
+    for y, x, r, a in zip(ys, xs, rs, al):
+        y0, y1, x0, x1 = int(max(0, y - 3 * r - 1)), int(min(h, y + 3 * r + 2)), int(max(0, x - 3 * r - 1)), int(min(w, x + 3 * r + 2))
+        yy, xx = np.mgrid[y0:y1, x0:x1]
+        cov[y0:y1, x0:x1] = np.maximum(cov[y0:y1, x0:x1], a * np.exp(-((yy - y) ** 2 + (xx - x) ** 2) / (2 * r * r)))
+    for _ in range(int(40 * amount * (h * w) / (PAGE_W * PAGE_W))):    # fibres: thin bent strokes
+        y, x = rng.uniform(0, h), rng.uniform(0, w)
+        ang, ln, a = rng.uniform(0, np.pi), k * rng.uniform(4, 14), rng.uniform(0.2, 0.5)
+        for t in np.linspace(0, 1, int(ln * 2) + 2):
+            ang += rng.normal(0, 0.15)
+            yy, xx = int(y + np.sin(ang) * ln * t), int(x + np.cos(ang) * ln * t)
+            if 0 <= yy < h and 0 <= xx < w:
+                cov[yy, xx] = max(cov[yy, xx], a)
+    if mk is not None:
+        cov *= (1 - mk[..., 0]) ** 2
+    near = box3(lin.mean(-1, keepdims=True), max(1, int(3 * k)))[..., 0]   # the surface's light around a speck
+    # pale grey fluff, lighter than the surface under it (0.25 linear above 0.6 of the light
+    # around it), so it reads on dark caps and in shadows as on the photo's plate
+    tone = (0.6 * near + 0.25)[..., None] * np.array([0.92, 0.9, 0.86], np.float32)
+    return lin * (1 - cov[..., None]) + tone * cov[..., None]
+
+
 def compose(d, p):
     L = read(f"{d}/Combined_legends0001.exr")
     h, w = L.shape[:2]
@@ -83,6 +117,8 @@ def compose(d, p):
         hz = box3(small, r)
         hz = np.repeat(np.repeat(hz, q, 0), q, 1)
         lin[:hh, :ww] += p["haze"] * hz
+    if p.get("dust", 0) > 0:                   # dust: soft specks and a few short fibres on the keyboard (not
+        lin = add_dust(lin, mk, p["dust"], int(p.get("dustSeed", 7)))   # the mat), lit by the scene around them
     lin *= 2.0 ** p["exposure"] * np.array([1 + 0.12 * p["warmth"], 1.0, 1 - 0.12 * p["warmth"]], np.float32)
     v = np.maximum(lin, 1e-10) @ M
     x = (np.clip(np.log2(np.maximum(v, 1e-10)), MN, MX) - MN) / (MX - MN)
