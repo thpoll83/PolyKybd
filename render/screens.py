@@ -225,7 +225,7 @@ def matrix_edge(root, board, side, strength=6.0, kle_path=KLE, atlas_name="scree
     t = nt.nodes.new("ShaderNodeTexImage")
     t.image, t.interpolation = tex, "Linear"
     nt.links.new(t.outputs["Color"], b.inputs["Emission Color"])
-    b.inputs["Emission Strength"].default_value = strength * 0.35
+    b.inputs["Emission Strength"].default_value = strength * 0.25
     verts, tris, uv = [], [], []
     for i, (x, y, r) in enumerate(keys):
         def at(fu, fv):
