@@ -171,11 +171,74 @@ def driver_chips(root, board, side, kle_path=KLE):
     m.use_nodes = True
     m["pk_role"] = "driver chip"
     bs = m.node_tree.nodes["Principled BSDF"]
-    bs.inputs["Base Color"].default_value = (0.35, 0.36, 0.38, 1)
-    bs.inputs["Metallic"].default_value = 0.85
-    bs.inputs["Roughness"].default_value = 0.12
+    bs.inputs["Base Color"].default_value = (0.22, 0.23, 0.24, 1)
+    bs.inputs["Metallic"].default_value = 0.6
+    bs.inputs["Roughness"].default_value = 0.3     # 0.12 mirrored the lights as a hard white bar
     textured_parts._mesh(root.name + " driver chips", verts, tris, uv, m, root)
     return len(kb)
+
+
+def matrix_edge(root, board, side, strength=6.0, kle_path=KLE, atlas_name="screens_layer0"):
+    """A thin line of light just below each lit display's pixel area: the edge of the OLED
+    glass, which carries the panel's own light (the photos show it under every lit key and
+    not under dark ones). Along its length its brightness follows the column sums of the
+    key's lit pixels (blurred over about 2 px), so it is brightest under the legend and fades
+    out to both sides, in the legend's colour. A 0.2 mm strip, 0.05 mm below the pixel area,
+    across its width; named "... lit legends edge", so PK_PASSES counts it with the
+    legends. Returns how many."""
+    atlas = json.load(open(os.path.join(TEX, atlas_name + ".json"), encoding="utf-8"))
+    (aw, ah), (cw, ch) = atlas["size"], atlas["cell"]
+    img = bpy.data.images.load(os.path.join(TEX, atlas_name + ".png"), check_existing=True)
+    px = np.array(img.pixels[:], dtype=np.float32).reshape(img.size[1], img.size[0], 4)[::-1, :, :3]
+    kb = textured_parts.board_keys(board)
+    (tx, ty), dz = textured_parts.fit(root, kb)
+    kle = [k for k in keymatch.kle_keys(kle_path) if (int(k[0].split(",")[0]) < 5) == (side == "left")]
+    labels, _ = keymatch.match(np.array([[x, -y] for x, y, _ in kb]), kle)
+    X, Y0, Y1 = textured_parts.DISP_X, textured_parts.DISP_Y0, textured_parts.DISP_Y1
+    z = textured_parts.DISP_TOP + dz + LIFT
+    fv0, fv1 = keymatch.A_V0 - 0.25 / 11.0, keymatch.A_V0 - 0.05 / 11.0
+    g = np.exp(-0.5 * (np.arange(-6, 7) / 2.0) ** 2)
+    g /= g.sum()
+    keys, rows = [], []
+    for (x, y, r), label in zip(kb, labels):
+        cell = atlas["keys"].get(label)
+        if cell is None:
+            continue
+        c = px[cell[1]:cell[1] + ch, cell[0]:cell[0] + cw] * np.array(LIT_TINT[:3])
+        if c.max() <= 0.1:
+            continue
+        prof = np.stack([np.convolve(c[..., k].sum(0), g, mode="same") for k in range(3)], -1)   # (cw, 3)
+        keys.append((x, y, r))
+        rows.append(prof)
+    if not rows:
+        return 0
+    rows = np.array(rows) / max(np.array(rows).max(), 1e-6)          # (n, cw, 3), the brightest column 1
+    n = len(rows)
+    tex = bpy.data.images.new(f"matrix edge {atlas_name}", cw, n, float_buffer=True)
+    rgba = np.concatenate([rows, np.ones((n, cw, 1))], -1)
+    tex.pixels.foreach_set(rgba.astype(np.float32).ravel())
+    m = bpy.data.materials.new(f"matrix edge {atlas_name}")
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+    b.inputs["Base Color"].default_value = (0, 0, 0, 1)
+    t = nt.nodes.new("ShaderNodeTexImage")
+    t.image, t.interpolation = tex, "Linear"
+    nt.links.new(t.outputs["Color"], b.inputs["Emission Color"])
+    b.inputs["Emission Strength"].default_value = strength * 0.35
+    verts, tris, uv = [], [], []
+    for i, (x, y, r) in enumerate(keys):
+        def at(fu, fv):
+            p = np.array([-X + 2 * X * fu, Y0 + (Y1 - Y0) * fv])
+            xy = textured_parts._rot(p, r) + np.array([x, y]) + np.array([tx, ty])
+            return (xy[0], xy[1], z)
+        base = len(verts)
+        verts += [at(keymatch.A_U0, fv0), at(keymatch.A_U1, fv0), at(keymatch.A_U1, fv1), at(keymatch.A_U0, fv1)]
+        v = (i + 0.5) / n
+        uv += [(0, v), (1, v), (1, v), (0, v)]
+        tris += [(base, base + 1, base + 2), (base, base + 2, base + 3)]
+    textured_parts._mesh(f"{root.name} lit legends edge", verts, tris, uv, m, root)
+    return n
 
 
 def status(root, side, strength=4.0, suffix=""):

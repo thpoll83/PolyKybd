@@ -60,8 +60,9 @@ for _m in bpy.data.materials:                      # PK_STEM_RGB="r,g,b": light 
         _b.inputs["Roughness"].default_value = float(os.environ["PK_CAP_ROUGH"])
 PROFILE = os.environ.get("PK_PROFILE")
 print("lit", screens.keys(root, board, SIDE, strength=float(os.environ.get("PK_STRENGTH", 6.0)), atlas_name=atlas), screens.status(root, SIDE, suffix=os.environ.get("PK_STATUS", "")))
-if os.environ.get("PK_CHIP"):                      # the OLED driver chips on the displays' glass ledges
-    print("chips", screens.driver_chips(root, board, SIDE))
+if os.environ.get("PK_CHIP"):                      # the OLED driver chips on the displays' glass ledges,
+    print("chips", screens.driver_chips(root, board, SIDE))   # and the lit glass edge under each lit display
+    print("matrix edges", screens.matrix_edge(root, board, SIDE, float(os.environ.get("PK_STRENGTH", 6.0)), atlas_name=atlas))
 if os.environ.get("PK_DENT"):                     # "depth_mm[,rim_mm]": a real dented top
     _d = [float(v) for v in os.environ["PK_DENT"].split(",")]
     profile.dent(root, board, *_d)
