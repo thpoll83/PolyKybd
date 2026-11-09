@@ -7,7 +7,9 @@ passes_dir holds Combined_{studio,floor,sheen,legends}0001.exr and mat0001.exr
 (the cutting mat's mask); the settings are the page's "Copy settings" line:
 exposure (stops), contrast, saturation, warmth (-1..1), studio, floor, sheen and
 glow (multipliers), hue (degrees, + = bluer), haze (amount), radius (haze size in
-px at the page's 810 px), and matBright, matHue, matSat (the mat alone). `square`
+px at the page's 810 px), matBright, matHue, matSat (the mat alone), edge and
+edgeRadius (the letters' light on their caps' edges, from the capedge mask), and
+dust, dustSeed. `square`
 crops the centre square, as the page shows it.
 
 The maths is the tuning page's own (the "POLY KYBD Close-up Tuner" artifact): the
@@ -117,6 +119,19 @@ def compose(d, p):
         hz = box3(small, r)
         hz = np.repeat(np.repeat(hz, q, 0), q, 1)
         lin[:hh, :ww] += p["haze"] * hz
+    if p.get("edge", 0) > 0:                   # the light a lit display scatters into its cap, caught on the
+        try:                                       # cap's bevelled edges and corners (the capedge mask), in the
+            ce = read(f"{d}/capedge0001.exr")[..., :1]   # letters' own colour, fading with distance from them
+        except Exception:
+            ce = None
+        if ce is not None:
+            k = min(h, w) / PAGE_W
+            q = 4 * max(1, round(k))
+            hh, ww = h // q * q, w // q * q
+            small = Lt[:hh, :ww].reshape(hh // q, q, ww // q, q, 3).mean((1, 3))
+            near = box3(small, max(1, round(p.get("edgeRadius", 30) * k / q / 1.7)))
+            near = np.repeat(np.repeat(near, q, 0), q, 1)
+            lin[:hh, :ww] += p["edge"] * ce[:hh, :ww] ** 2 * near
     if p.get("dust", 0) > 0:                   # dust: soft specks and a few short fibres on the keyboard (not
         lin = add_dust(lin, mk, p["dust"], int(p.get("dustSeed", 7)))   # the mat), lit by the scene around them
     lin *= 2.0 ** p["exposure"] * np.array([1 + 0.12 * p["warmth"], 1.0, 1 - 0.12 * p["warmth"]], np.float32)

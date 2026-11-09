@@ -256,6 +256,16 @@ if passes:                                         # a tuning page (studio light
     if "mat" not in vl.aovs:                       # a mask of the cutting mat (PK_MAT_GRID), filtered like
         vl.aovs.add().name = "mat"                 # the image, so a page can recolour the mat alone
         vl.aovs["mat"].type = "VALUE"
+    if "capedge" not in vl.aovs:                   # where a cap's glass meets the eye at a grazing angle (its
+        vl.aovs.add().name = "capedge"             # bevelled edges and corners), for a page to add the light a
+        vl.aovs["capedge"].type = "VALUE"          # lit display scatters into its cap
+    for _m in bpy.data.materials:
+        if _m.get("pk_role") == "keycap glass" and _m.use_nodes:
+            _lw = _m.node_tree.nodes.new("ShaderNodeLayerWeight")
+            _lw.inputs["Blend"].default_value = 0.35
+            _ce = _m.node_tree.nodes.new("ShaderNodeOutputAOV")
+            _ce.name = "capedge"
+            _m.node_tree.links.new(_lw.outputs["Facing"], _ce.inputs["Value"])
     _mm = bpy.data.materials.get("cutting mat")
     if _mm:
         _aov = _mm.node_tree.nodes.new("ShaderNodeOutputAOV")
@@ -268,7 +278,7 @@ if passes:                                         # a tuning page (studio light
     fo.base_path = passes
     fo.format.file_format, fo.format.color_depth = "OPEN_EXR", "16"
     fo.file_slots.clear()
-    for name in ("Image", "mat") + tuple("Combined_" + g_ for g_ in groups):
+    for name in ("Image", "mat", "capedge") + tuple("Combined_" + g_ for g_ in groups):
         fo.file_slots.new(name)
         src = rl.outputs[name]
         # the light group passes are not denoised by Cycles; the legends' pass stays raw, since
