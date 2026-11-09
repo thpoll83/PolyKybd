@@ -271,7 +271,9 @@ if passes:                                         # a tuning page (studio light
     for name in ("Image", "mat") + tuple("Combined_" + g_ for g_ in groups):
         fo.file_slots.new(name)
         src = rl.outputs[name]
-        if name.startswith("Combined_"):           # the light group passes are not denoised by Cycles
+        # the light group passes are not denoised by Cycles; the legends' pass stays raw, since
+        # the denoiser smooths the displays' pixel grid (PK_RASTER) away
+        if name.startswith("Combined_") and name != "Combined_legends":
             dn = nt.nodes.new("CompositorNodeDenoise")
             nt.links.new(src, dn.inputs["Image"])
             nt.links.new(rl.outputs["Denoising Normal"], dn.inputs["Normal"])
