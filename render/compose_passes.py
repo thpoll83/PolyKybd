@@ -96,6 +96,20 @@ def add_dust(lin, mk, amount, seed):
     return lin * (1 - cov[..., None]) + tone * cov[..., None]
 
 
+def upsample(a, q, h, w):
+    """Bilinear enlargement of a quarter-size (1/q) image to h x w: np.repeat left q x q
+    blocks visible in the haze at 4K."""
+    sh, sw = a.shape[:2]
+    ys = np.clip((np.arange(h) + 0.5) / q - 0.5, 0, sh - 1)
+    xs = np.clip((np.arange(w) + 0.5) / q - 0.5, 0, sw - 1)
+    y0, x0 = np.floor(ys).astype(int), np.floor(xs).astype(int)
+    y1, x1 = np.minimum(y0 + 1, sh - 1), np.minimum(x0 + 1, sw - 1)
+    fy, fx = (ys - y0)[:, None, None], (xs - x0)[None, :, None]
+    top = a[y0][:, x0] * (1 - fx) + a[y0][:, x1] * fx
+    bot = a[y1][:, x0] * (1 - fx) + a[y1][:, x1] * fx
+    return (top * (1 - fy) + bot * fy).astype(np.float32)
+
+
 def compose(d, p):
     L = read(f"{d}/Combined_legends0001.exr")
     h, w = L.shape[:2]
@@ -117,8 +131,7 @@ def compose(d, p):
         small = Lt[:hh, :ww].reshape(hh // q, q, ww // q, q, 3).mean((1, 3))
         r = max(1, round(p["radius"] * (min(h, w) / PAGE_W) / q / 1.7))
         hz = box3(small, r)
-        hz = np.repeat(np.repeat(hz, q, 0), q, 1)
-        lin[:hh, :ww] += p["haze"] * hz
+        lin[:hh, :ww] += p["haze"] * upsample(hz, q, hh, ww)
     if p.get("edge", 0) > 0:                   # the light a lit display scatters into its cap, caught on the
         try:                                       # cap's bevelled edges and corners (the capedge mask), in the
             ce = read(f"{d}/capedge0001.exr")[..., :1]   # letters' own colour, fading with distance from them
@@ -130,7 +143,7 @@ def compose(d, p):
             hh, ww = h // q * q, w // q * q
             small = Lt[:hh, :ww].reshape(hh // q, q, ww // q, q, 3).mean((1, 3))
             near = box3(small, max(1, round(p.get("edgeRadius", 30) * k / q / 1.7)))
-            near = np.repeat(np.repeat(near, q, 0), q, 1)
+            near = upsample(near, q, hh, ww)
             lin[:hh, :ww] += p["edge"] * ce[:hh, :ww] ** 2 * near
     if p.get("dust", 0) > 0:                   # dust: soft specks and a few short fibres on the keyboard (not
         lin = add_dust(lin, mk, p["dust"], int(p.get("dustSeed", 7)))   # the mat), lit by the scene around them
