@@ -119,6 +119,13 @@ if sheen:                                          # tops mirror it to the camer
     _lo.rotation_euler = (tgt.location - _p).to_track_quat("-Z", "Y").to_euler()
     _lo.visible_diffuse = False                    # reflections only: it does not light the scene
     _lo.visible_camera = False
+    _caps = bpy.data.collections.new("sheen caps")  # and only the caps see it (light linking): the plate's
+    for _o in root.children_recursive:              # aluminium mirrored it as a bright smear
+        if _o.type == "MESH" and any(sl.material and sl.material.get("pk_role") == "keycap glass"
+                                     for sl in _o.material_slots):
+            _caps.objects.link(_o)
+    _lo.light_linking.receiver_collection = _caps
+    print("sheen caps", len(_caps.objects))
 cam.data.dof.use_dof = aperture > 0
 if aperture > 0:
     cam.data.dof.focus_object = tgt
