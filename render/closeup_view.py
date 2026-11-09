@@ -15,7 +15,7 @@ of that colour with a 10 mm grid (lines lr,lg,lb) under the board, PK_STEM_RGB="
 recolours the keycap stems and PK_CAP_ROUGH frosts the caps, PK_SPLAY the left
 half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
 the right half's (default -9), PK_BLOOM="threshold,mix[,size]"
-a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_PANEL_FLOOR="r,g,b"
+a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_SHEEN="W[,size]" a panel the cap tops mirror, PK_PANEL_FLOOR="r,g,b"
 (screens.py) gives every key panel a faint glow of that colour, PK_LIGHT scales
 the studio lights (0.15 is a dim room, for the docs' idle close-up).
 PK_RGB="h0,h1" is the night shot: the studio off, the case clear, and every
@@ -105,6 +105,20 @@ if os.environ.get("PK_ROLL"):                       # degrees: turn the camera a
     for _c in list(cam.constraints):
         cam.constraints.remove(_c)
     cam.matrix_world = _mw @ mathutils.Matrix.Rotation(math.radians(float(os.environ["PK_ROLL"])), 4, "Z")
+sheen = os.environ.get("PK_SHEEN")                 # "strength[,size]": a soft white panel where the flat cap
+if sheen:                                          # tops mirror it to the camera (the camera mirrored in the
+    _sv = [float(v) for v in sheen.split(",")]     # board plane, 1.6x as far), seen only in reflections: the
+    _d = cam.location - tgt.location               # milky sheen of a room light on clear caps
+    _p = tgt.location + mathutils.Vector((-_d.x, -_d.y, _d.z)) * 1.6
+    _ld = bpy.data.lights.new("cap sheen", "AREA")
+    _ld.shape, _ld.size, _ld.size_y = "RECTANGLE", _sv[1] if len(_sv) > 1 else 0.5, _sv[1] if len(_sv) > 1 else 0.5
+    _ld.energy = _sv[0]
+    _lo = bpy.data.objects.new("cap sheen", _ld)
+    sc.collection.objects.link(_lo)
+    _lo.location = _p
+    _lo.rotation_euler = (tgt.location - _p).to_track_quat("-Z", "Y").to_euler()
+    _lo.visible_diffuse = False                    # reflections only: it does not light the scene
+    _lo.visible_camera = False
 cam.data.dof.use_dof = aperture > 0
 if aperture > 0:
     cam.data.dof.focus_object = tgt
