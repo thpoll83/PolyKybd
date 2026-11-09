@@ -70,9 +70,12 @@ def _material(name, image, strength):
     # PK_RASTER=<fill>: the OLED's pixel grid, each pixel lit over `fill` of its pitch
     # (0.86 as tutorial_video.py's pixel_grid), dark gaps between; the atlas has one
     # texel per display pixel, so the grid is the texture's own texel grid
-    raster = os.environ.get("PK_RASTER")
-    if raster:
-        fill = float(raster)
+    raster = os.environ.get("PK_RASTER")           # "fill[,keep]": keep raises the emission by what the gaps
+    if raster:                                     # take, so the display's mean brightness stays as without
+        _rv = raster.split(",")                    # the grid (each axis keeps fill - 0.05 of its light)
+        fill = float(_rv[0])
+        if len(_rv) > 1 and _rv[1] == "keep":
+            strength = strength / (fill - 0.05) ** 2
         tc = nt.nodes.new("ShaderNodeTexCoord")
         sep = nt.nodes.new("ShaderNodeSeparateXYZ")
         nt.links.new(tc.outputs["UV"], sep.inputs[0])
