@@ -27,7 +27,7 @@ PROFILES = {
     "stepped-uniform": ("S",) * 5,
     "curved": ("R1", "R2", "R3", "R4", "R5"),
 }
-ROLES = {"keycap glass", "display face", "stem"}
+ROLES = {"keycap glass", "display face", "stem", "driver chip"}
 PIVOT_Z = 12.0                  # the stem model's offset on every key footprint
 SOCKET_H = 3.4                  # mm of stem above its base that grips the switch stem (top at z 16.2)
 REACH = 13.0                    # mm from a key's centre that still belongs to it (a 1.25U cap reaches 11.3)
