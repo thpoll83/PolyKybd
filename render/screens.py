@@ -157,7 +157,8 @@ def driver_chips(root, board, side, kle_path=KLE):
     z0 = textured_parts.DISP_TOP + dz + LIFT       # on the glass, above the decal (units are mm here)
     z1 = z0 + 0.3
     fu0, fu1 = 3.1 / 12.2, 9.1 / 12.2
-    fv0, fv1 = 1 - 7.8 / 11.0, 1 - 7.0 / 11.0
+    c0, c1 = (float(v) for v in os.environ.get("PK_CHIP_AT", "7.0,7.8").split(","))   # mm from the panel's top
+    fv0, fv1 = 1 - c1 / 11.0, 1 - c0 / 11.0
     verts, tris, uv = [], [], []
     for x, y, r in kb:
         def at(fu, fv, zz):
