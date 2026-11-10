@@ -253,7 +253,10 @@ def matrix_edge(root, board, side, strength=6.0, kle_path=KLE, atlas_name="scree
     labels, _ = keymatch.match(np.array([[x, -y] for x, y, _ in kb]), kle)
     X, Y0, Y1 = textured_parts.DISP_X, textured_parts.DISP_Y0, textured_parts.DISP_Y1
     z = textured_parts.DISP_TOP + dz + LIFT
-    fv0, fv1 = keymatch.A_V0 - 0.25 / 11.0, keymatch.A_V0 - 0.05 / 11.0
+    # PK_EDGE_AT="from,to": mm below the active area (default 0.05,0.25). 0.35,0.55 puts it
+    # under the dark panel window (which ends 0.3 mm below the active area), on its edge
+    e0, e1 = (float(v) for v in os.environ.get("PK_EDGE_AT", "0.05,0.25").split(","))
+    fv0, fv1 = keymatch.A_V0 - e1 / 11.0, keymatch.A_V0 - e0 / 11.0
     g = np.exp(-0.5 * (np.arange(-6, 7) / 2.0) ** 2)
     g /= g.sum()
     keys, rows = [], []
