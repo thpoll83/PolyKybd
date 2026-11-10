@@ -15,7 +15,7 @@ of that colour with a 10 mm grid (lines lr,lg,lb) under the board, PK_STEM_RGB="
 recolours the keycap stems and PK_CAP_ROUGH frosts the caps, PK_SPLAY the left
 half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
 the right half's (default -9), PK_BLOOM="threshold,mix[,size]"
-a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_SHEEN="W[,size]" a panel the cap tops mirror, PK_PASSES=<dir> light-group EXRs for a tuning page, PK_CHIP=1 the OLED driver chips, PK_PANEL_FLOOR="r,g,b"
+a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_SHEEN="W[,size]" a panel the cap tops mirror, PK_PASSES=<dir> light-group EXRs for a tuning page, PK_CHIP=1 the OLED driver chips (PK_CHIP_LOOK="base,metallic,roughness", PK_CHIP_LIGHT="W[,size]" a highlight only they reflect, PK_CHIP_GLOW a faint glow for dark scenes), PK_PANEL_FLOOR="r,g,b"
 (screens.py) gives every key panel a faint glow of that colour, PK_LIGHT scales
 the studio lights (0.15 is a dim room, for the docs' idle close-up).
 PK_RGB="h0,h1" is the night shot: the studio off, the case clear, and every
@@ -108,27 +108,35 @@ if os.environ.get("PK_ROLL"):                       # degrees: turn the camera a
     for _c in list(cam.constraints):
         cam.constraints.remove(_c)
     cam.matrix_world = _mw @ mathutils.Matrix.Rotation(math.radians(float(os.environ["PK_ROLL"])), 4, "Z")
-sheen = os.environ.get("PK_SHEEN")                 # "strength[,size]": a soft white panel where the flat cap
-if sheen:                                          # tops mirror it to the camera (the camera mirrored in the
-    _sv = [float(v) for v in sheen.split(",")]     # board plane, 1.6x as far), seen only in reflections: the
-    _d = cam.location - tgt.location               # milky sheen of a room light on clear caps
+def reflector(name, spec, roles):
+    """A soft white panel where flat horizontal tops (cap tops, chip tops) mirror it to the
+    camera (the camera mirrored in the board plane, 1.6x as far), seen only in reflections
+    and only by the parts whose material role is in `roles` (light linking): it adds a
+    highlight on them and lights nothing else. spec: "W[,size m]"."""
+    _sv = [float(v) for v in spec.split(",")]
+    _d = cam.location - tgt.location
     _p = tgt.location + mathutils.Vector((-_d.x, -_d.y, _d.z)) * 1.6
-    _ld = bpy.data.lights.new("cap sheen", "AREA")
+    _ld = bpy.data.lights.new(name, "AREA")
     _ld.shape, _ld.size, _ld.size_y = "RECTANGLE", _sv[1] if len(_sv) > 1 else 0.5, _sv[1] if len(_sv) > 1 else 0.5
     _ld.energy = _sv[0]
-    _lo = bpy.data.objects.new("cap sheen", _ld)
+    _lo = bpy.data.objects.new(name, _ld)
     sc.collection.objects.link(_lo)
     _lo.location = _p
     _lo.rotation_euler = (tgt.location - _p).to_track_quat("-Z", "Y").to_euler()
-    _lo.visible_diffuse = False                    # reflections only: it does not light the scene
+    _lo.visible_diffuse = False
     _lo.visible_camera = False
-    _caps = bpy.data.collections.new("sheen caps")  # and only the caps see it (light linking): the plate's
-    for _o in root.children_recursive:              # aluminium mirrored it as a bright smear
-        if _o.type == "MESH" and any(sl.material and sl.material.get("pk_role") in ("keycap glass", "driver chip")
-                                     for sl in _o.material_slots):   # (and the driver chips' flat tops)
-            _caps.objects.link(_o)
-    _lo.light_linking.receiver_collection = _caps
-    print("sheen caps", len(_caps.objects))
+    _coll = bpy.data.collections.new(name + " receivers")
+    for _o in root.children_recursive:
+        if _o.type == "MESH" and any(sl.material and sl.material.get("pk_role") in roles for sl in _o.material_slots):
+            _coll.objects.link(_o)
+    _lo.light_linking.receiver_collection = _coll
+    print(name, "receivers", len(_coll.objects))
+
+
+if os.environ.get("PK_SHEEN"):                     # the milky sheen of a room light on clear caps (and the
+    reflector("cap sheen", os.environ["PK_SHEEN"], ("keycap glass", "driver chip"))   # chips' flat tops)
+if os.environ.get("PK_CHIP_LIGHT"):                # the chips alone: a highlight on them in a dark scene
+    reflector("chip light", os.environ["PK_CHIP_LIGHT"], ("driver chip",))
 cam.data.dof.use_dof = aperture > 0
 if aperture > 0:
     cam.data.dof.focus_object = tgt

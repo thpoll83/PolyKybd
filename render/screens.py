@@ -169,14 +169,42 @@ def driver_chips(root, board, side, kle_path=KLE):
                   at(fu0, fv0, z1), at(fu1, fv0, z1), at(fu1, fv1, z1), at(fu0, fv1, z1)]
         for q in ((4, 5, 6, 7), (0, 3, 2, 1), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)):
             tris += [(b + q[0], b + q[1], b + q[2]), (b + q[0], b + q[2], b + q[3])]
-        uv += [(0.0, 0.0)] * 8
+        uv += [(0.0, 0.0), (1.0, 0.0), (1.0, 0.0), (0.0, 0.0)] * 2     # u along the chip's length
     m = bpy.data.materials.get("driver chip") or bpy.data.materials.new("driver chip")
     m.use_nodes = True
     m["pk_role"] = "driver chip"
     bs = m.node_tree.nodes["Principled BSDF"]
-    bs.inputs["Base Color"].default_value = (0.22, 0.23, 0.24, 1)
-    bs.inputs["Metallic"].default_value = 0.6
-    bs.inputs["Roughness"].default_value = 0.3     # 0.12 mirrored the lights as a hard white bar
+    look = [float(v) for v in os.environ.get("PK_CHIP_LOOK", "0.22,0.6,0.3").split(",")]   # base, metallic,
+    bs.inputs["Base Color"].default_value = (look[0], look[0] * 1.045, look[0] * 1.09, 1)  # roughness; at
+    bs.inputs["Metallic"].default_value = look[1]  # roughness 0.12 it mirrored the lights as a hard white bar
+    bs.inputs["Roughness"].default_value = look[2]
+    # its mark fades out to both ends: a matte black finish takes over towards them, by
+    # (1 - (2u - 1)^2)^1.5 along the length, as the photos' marks do
+    nt = m.node_tree
+    out = nt.nodes["Material Output"]
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    sx = nt.nodes.new("ShaderNodeSeparateXYZ")
+    nt.links.new(tc.outputs["UV"], sx.inputs[0])
+    t = nt.nodes.new("ShaderNodeMath"); t.operation = "MULTIPLY_ADD"
+    t.inputs[1].default_value, t.inputs[2].default_value = 2.0, -1.0
+    nt.links.new(sx.outputs["X"], t.inputs[0])
+    sq = nt.nodes.new("ShaderNodeMath"); sq.operation = "POWER"; sq.inputs[1].default_value = 2.0
+    nt.links.new(t.outputs[0], sq.inputs[0])
+    inv = nt.nodes.new("ShaderNodeMath"); inv.operation = "SUBTRACT"; inv.inputs[0].default_value = 1.0
+    nt.links.new(sq.outputs[0], inv.inputs[1])
+    fade = nt.nodes.new("ShaderNodeMath"); fade.operation = "POWER"; fade.inputs[1].default_value = 1.5
+    nt.links.new(inv.outputs[0], fade.inputs[0])
+    matte = nt.nodes.new("ShaderNodeBsdfDiffuse")
+    matte.inputs["Color"].default_value = (0.01, 0.01, 0.011, 1)
+    mix = nt.nodes.new("ShaderNodeMixShader")
+    nt.links.new(fade.outputs[0], mix.inputs["Fac"])
+    nt.links.new(matte.outputs[0], mix.inputs[1])
+    nt.links.new(bs.outputs[0], mix.inputs[2])
+    nt.links.new(mix.outputs[0], out.inputs["Surface"])
+    glow = float(os.environ.get("PK_CHIP_GLOW", 0))   # a faint grey glow on the chip, for dark scenes
+    if glow > 0:                                     # where nothing lights it through the cap
+        bs.inputs["Emission Color"].default_value = (0.75, 0.8, 0.9, 1)
+        bs.inputs["Emission Strength"].default_value = glow
     textured_parts._mesh(root.name + " driver chips", verts, tris, uv, m, root)
     return len(kb)
 
