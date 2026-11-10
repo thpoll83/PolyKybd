@@ -173,8 +173,9 @@ def driver_chips(root, board, side, kle_path=KLE):
     # The chip only ADDS light: a transparent body (whatever lies under it shows unchanged)
     # plus a glossy reflection and an optional glow, both faded out to the chip's ends by
     # (1 - (2u - 1)^2)^1.5 along its length. PK_CHIP_GLOSS="gain,roughness" (default
-    # 0.3,0.4) sets the reflection; PK_CHIP_GLOW a grey glow for dark scenes, where no
-    # light reaches the chip through the cap.
+    # 0.3,0.4) sets the reflection; PK_CHIP_GLOW a grey glow on the top face for dark scenes,
+    # where no light reaches the chip through the cap; PK_CHIP_FADE (default 1.5) the fade's
+    # exponent.
     m = bpy.data.materials.get("driver chip") or bpy.data.materials.new("driver chip")
     m.use_nodes = True
     m["pk_role"] = "driver chip"
@@ -191,7 +192,8 @@ def driver_chips(root, board, side, kle_path=KLE):
     nt.links.new(t.outputs[0], sq.inputs[0])
     inv = nt.nodes.new("ShaderNodeMath"); inv.operation = "SUBTRACT"; inv.inputs[0].default_value = 1.0
     nt.links.new(sq.outputs[0], inv.inputs[1])
-    fade = nt.nodes.new("ShaderNodeMath"); fade.operation = "POWER"; fade.inputs[1].default_value = 1.5
+    fade = nt.nodes.new("ShaderNodeMath"); fade.operation = "POWER"
+    fade.inputs[1].default_value = float(os.environ.get("PK_CHIP_FADE", 1.5))   # higher = a shorter mark
     nt.links.new(inv.outputs[0], fade.inputs[0])
     gain, rough = (float(v) for v in os.environ.get("PK_CHIP_GLOSS", "0.3,0.4").split(","))
     g = nt.nodes.new("ShaderNodeMath"); g.operation = "MULTIPLY"; g.inputs[1].default_value = gain
@@ -208,7 +210,15 @@ def driver_chips(root, board, side, kle_path=KLE):
         em = nt.nodes.new("ShaderNodeEmission")
         em.inputs["Color"].default_value = (0.75, 0.8, 0.9, 1)
         k = nt.nodes.new("ShaderNodeMath"); k.operation = "MULTIPLY"; k.inputs[1].default_value = glow
-        nt.links.new(fade.outputs[0], k.inputs[0]); nt.links.new(k.outputs[0], em.inputs["Strength"])
+        nt.links.new(fade.outputs[0], k.inputs[0])
+        # only the chip's top face glows: lit side faces read as a thicker band over the panel
+        geo = nt.nodes.new("ShaderNodeNewGeometry")
+        nz = nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(geo.outputs["Normal"], nz.inputs[0])
+        up = nt.nodes.new("ShaderNodeMath"); up.operation = "GREATER_THAN"; up.inputs[1].default_value = 0.5
+        nt.links.new(nz.outputs["Z"], up.inputs[0])
+        k2 = nt.nodes.new("ShaderNodeMath"); k2.operation = "MULTIPLY"
+        nt.links.new(k.outputs[0], k2.inputs[0]); nt.links.new(up.outputs[0], k2.inputs[1])
+        nt.links.new(k2.outputs[0], em.inputs["Strength"])
         add2 = nt.nodes.new("ShaderNodeAddShader")
         nt.links.new(add.outputs[0], add2.inputs[0]); nt.links.new(em.outputs[0], add2.inputs[1])
         top = add2
