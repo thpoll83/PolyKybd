@@ -277,12 +277,17 @@ def matrix_edge(root, board, side, strength=6.0, kle_path=KLE, atlas_name="scree
     m = bpy.data.materials.new(f"matrix edge {atlas_name}")
     m.use_nodes = True
     nt = m.node_tree
-    b = nt.nodes["Principled BSDF"]
-    b.inputs["Base Color"].default_value = (0, 0, 0, 1)
+    # only ADDS light: an opaque strip drew a black band under the image on light shots
+    nt.nodes.remove(nt.nodes["Principled BSDF"])
     t = nt.nodes.new("ShaderNodeTexImage")
     t.image, t.interpolation = tex, "Linear"
-    nt.links.new(t.outputs["Color"], b.inputs["Emission Color"])
-    b.inputs["Emission Strength"].default_value = strength * 0.25
+    em = nt.nodes.new("ShaderNodeEmission")
+    nt.links.new(t.outputs["Color"], em.inputs["Color"])
+    em.inputs["Strength"].default_value = strength * 0.25
+    tr = nt.nodes.new("ShaderNodeBsdfTransparent")
+    add = nt.nodes.new("ShaderNodeAddShader")
+    nt.links.new(tr.outputs[0], add.inputs[0]); nt.links.new(em.outputs[0], add.inputs[1])
+    nt.links.new(add.outputs[0], nt.nodes["Material Output"].inputs["Surface"])
     verts, tris, uv = [], [], []
     for i, (x, y, r) in enumerate(keys):
         def at(fu, fv):
