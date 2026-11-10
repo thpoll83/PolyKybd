@@ -287,7 +287,7 @@ def matrix_edge(root, board, side, strength=6.0, kle_path=KLE, atlas_name="scree
     t.image, t.interpolation = tex, "Linear"
     em = nt.nodes.new("ShaderNodeEmission")
     nt.links.new(t.outputs["Color"], em.inputs["Color"])
-    em.inputs["Strength"].default_value = strength * 0.25
+    em.inputs["Strength"].default_value = strength * 0.25 * float(os.environ.get("PK_EDGE_GAIN", 1))   # PK_EDGE_GAIN scales the line
     tr = nt.nodes.new("ShaderNodeBsdfTransparent")
     add = nt.nodes.new("ShaderNodeAddShader")
     nt.links.new(tr.outputs[0], add.inputs[0]); nt.links.new(em.outputs[0], add.inputs[1])

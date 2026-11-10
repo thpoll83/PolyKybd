@@ -60,7 +60,29 @@ for _m in bpy.data.materials:                      # PK_STEM_RGB="r,g,b": light 
         _b.inputs["Roughness"].default_value = float(os.environ["PK_CAP_ROUGH"])
 PROFILE = os.environ.get("PK_PROFILE")
 print("lit", screens.keys(root, board, SIDE, strength=float(os.environ.get("PK_STRENGTH", 6.0)), atlas_name=atlas), screens.status(root, SIDE, suffix=os.environ.get("PK_STATUS", "")))
-if os.environ.get("PK_CHIP"):                      # the OLED driver chips on the displays' glass ledges,
+TUNE = os.environ.get("PK_MARK_TUNE")             # a directory: chip marks and edge lines at many positions,
+MARKS = {}                                         # each in its own light group, for a page that moves them
+CHIP_POS = [6.6 + 0.3 * i for i in range(9)]       # chip top edge, mm from the panel's top (0.8 mm deep)
+LINE_POS = [0.05 + 0.1 * i for i in range(10)]     # line top, mm below the active area (0.2 mm deep)
+TUNE_K = float(os.environ.get("PK_MARK_K", 0.01))                                    # the marks' light in the image is TUNE_K x one unit
+if TUNE:
+    os.environ["PK_CHIP_GLOSS"], os.environ["PK_CHIP_GLOW"] = "0,0.4", str(TUNE_K)
+    for i, a in enumerate(CHIP_POS):
+        before = set(bpy.data.objects)
+        os.environ["PK_CHIP_AT"] = f"{a},{a + 0.8}"
+        screens.driver_chips(root, board, SIDE)
+        for o in set(bpy.data.objects) - before:
+            MARKS[o.name] = f"chip{i}"
+    for i, a in enumerate(LINE_POS):
+        before = set(bpy.data.objects)
+        os.environ["PK_EDGE_AT"] = f"{a},{a + 0.2}"
+        screens.matrix_edge(root, board, SIDE, float(os.environ.get("PK_STRENGTH", 6.0)), atlas_name=atlas)
+        for o in set(bpy.data.objects) - before:
+            MARKS[o.name] = f"line{i}"
+            for n_ in o.active_material.node_tree.nodes:
+                if n_.type == "EMISSION":
+                    n_.inputs["Strength"].default_value *= TUNE_K
+elif os.environ.get("PK_CHIP"):                    # the OLED driver chips on the displays' glass ledges,
     print("chips", screens.driver_chips(root, board, SIDE))   # and the lit glass edge under each lit display
     print("matrix edges", screens.matrix_edge(root, board, SIDE, float(os.environ.get("PK_STRENGTH", 6.0)), atlas_name=atlas))
 if os.environ.get("PK_DENT"):                     # "depth_mm[,rim_mm]": a real dented top
@@ -295,6 +317,34 @@ if passes:                                         # a tuning page (studio light
         # the light group passes are not denoised by Cycles; the legends' pass stays raw, since
         # the denoiser smooths the displays' pixel grid (PK_RASTER) away
         if name.startswith("Combined_") and name != "Combined_legends":
+            dn = nt.nodes.new("CompositorNodeDenoise")
+            nt.links.new(src, dn.inputs["Image"])
+            nt.links.new(rl.outputs["Denoising Normal"], dn.inputs["Normal"])
+            nt.links.new(rl.outputs["Denoising Albedo"], dn.inputs["Albedo"])
+            src = dn.outputs["Image"]
+        nt.links.new(src, fo.inputs[name])
+if TUNE:                                           # every other emitter and the world in "scene"; the image
+    vl = sc.view_layers[0]                         # carries the marks at TUNE_K, which a page can ignore
+    groups = ["scene"] + sorted(set(MARKS.values()))
+    for g_ in groups:
+        if g_ not in vl.lightgroups:
+            vl.lightgroups.add(name=g_)
+    for o in sc.objects:
+        o.lightgroup = MARKS.get(o.name, "scene")
+    if sc.world:
+        sc.world.lightgroup = "scene"
+    vl.cycles.denoising_store_passes = True
+    sc.use_nodes = True
+    nt = sc.node_tree
+    rl = nt.nodes.get("Render Layers") or nt.nodes.new("CompositorNodeRLayers")
+    fo = nt.nodes.new("CompositorNodeOutputFile")
+    fo.base_path = TUNE
+    fo.format.file_format, fo.format.color_depth = "OPEN_EXR", "32"
+    fo.file_slots.clear()
+    for name in ["Image"] + ["Combined_" + g_ for g_ in groups[1:]]:
+        fo.file_slots.new(name)
+        src = rl.outputs[name]
+        if name != "Image":
             dn = nt.nodes.new("CompositorNodeDenoise")
             nt.links.new(src, dn.inputs["Image"])
             nt.links.new(rl.outputs["Denoising Normal"], dn.inputs["Normal"])
