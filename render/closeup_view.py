@@ -15,7 +15,7 @@ of that colour with a 10 mm grid (lines lr,lg,lb) under the board, PK_STEM_RGB="
 recolours the keycap stems and PK_CAP_ROUGH frosts the caps, PK_SPLAY the left
 half's turn (default -2; 0 squares its columns to the frame), PK_SPLAY_RIGHT
 the right half's (default -9), PK_BLOOM="threshold,mix[,size]"
-a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_SHEEN="W[,size]" a panel the cap tops mirror, PK_PASSES=<dir> light-group EXRs for a tuning page, PK_CHIP=1 the OLED driver chips (PK_CHIP_GLOSS="gain,roughness", PK_CHIP_GLOW a faint glow for dark scenes; both only add light), PK_PANEL_FLOOR="r,g,b"
+a compositor fog glow around bright pixels, PK_LIGHT_RGB="r,g,b" tints the studio lights, PK_ROLL=<deg> turns the camera about its view axis, PK_SHEEN="W[,size]" a panel the cap tops mirror, PK_PASSES=<dir> light-group EXRs for a tuning page, PK_CHIP=1 the OLED driver chips (PK_CHIP_GLOSS="gain,roughness", PK_CHIP_GLOW a faint glow for dark scenes, PK_CHIP_FADE the fade exponent, PK_CHIP_TOP_ONLY=1 a reflection on the top face only; all only add light), PK_PANEL_FLOOR="r,g,b"
 (screens.py) gives every key panel a faint glow of that colour, PK_LIGHT scales
 the studio lights (0.15 is a dim room, for the docs' idle close-up).
 PK_RGB="h0,h1" is the night shot: the studio off, the case clear, and every

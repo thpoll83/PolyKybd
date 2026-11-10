@@ -198,6 +198,14 @@ def driver_chips(root, board, side, kle_path=KLE):
     gain, rough = (float(v) for v in os.environ.get("PK_CHIP_GLOSS", "0.3,0.4").split(","))
     g = nt.nodes.new("ShaderNodeMath"); g.operation = "MULTIPLY"; g.inputs[1].default_value = gain
     nt.links.new(fade.outputs[0], g.inputs[0])
+    if os.environ.get("PK_CHIP_TOP_ONLY"):          # reflect on the top face only: the side faces
+        geo0 = nt.nodes.new("ShaderNodeNewGeometry")   # draw a bright edge along the image's bottom
+        nz0 = nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(geo0.outputs["Normal"], nz0.inputs[0])
+        up0 = nt.nodes.new("ShaderNodeMath"); up0.operation = "GREATER_THAN"; up0.inputs[1].default_value = 0.5
+        nt.links.new(nz0.outputs["Z"], up0.inputs[0])
+        g2 = nt.nodes.new("ShaderNodeMath"); g2.operation = "MULTIPLY"
+        nt.links.new(g.outputs[0], g2.inputs[0]); nt.links.new(up0.outputs[0], g2.inputs[1])
+        g = g2
     gl = nt.nodes.new("ShaderNodeBsdfGlossy")
     gl.inputs["Roughness"].default_value = rough
     nt.links.new(g.outputs[0], gl.inputs["Color"])
