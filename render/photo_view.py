@@ -77,6 +77,11 @@ for side in ("left", "right"):
     root = bpy.data.objects[f"split72_{side}.wrl"]
     print(f"{side}: {screens.keys(root, boards[side], side, atlas_name=ATLAS)} legends lit, "
           f"status panel {screens.status(root, side, suffix=STATUS)} mm")
+    # PK_CHIP=1: the OLED driver chips and the lit glass edge under each display,
+    # with the same PK_CHIP_* and PK_EDGE_* settings as closeup_view.py
+    if os.environ.get("PK_CHIP"):
+        print(f"{side}: chips", screens.driver_chips(root, boards[side], side),
+              "matrix edges", screens.matrix_edge(root, boards[side], side, atlas_name=ATLAS))
 materials.scene_settings(sc)
 tgt = bpy.data.objects.get("target")
 lighting.studio(sc, tgt, LIGHT)
