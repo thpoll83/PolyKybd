@@ -69,6 +69,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from kicad_sch_trace import SchNets, trace  # noqa: E402
+import kicad_netlist  # noqa: E402
 
 BASE = Path(__file__).resolve().parent.parent / 'variations' / 'poly_corne'
 SRC = BASE / 'poly_corne_split42_left.kicad_sch'
@@ -440,8 +441,67 @@ def verify():
                 fails += 1
                 print(f'  FAIL LTR559 {pname}: {ltr.get(pname)} != {net}')
     fails += verify_buses()
+    fails += verify_kicad_netlist()
     print(f'verify: {len(EXPECTED)} keys + MCU pins + column membership + bus '
           f'attachment + LTR559 checked, {fails} failures')
+    return fails
+
+
+# What KiCad's own netlister must report (kicad_netlist.py). Left -> right
+# changes exactly these pads; the LTR-559 block adds exactly these parts.
+NETLIST_DELTA = {
+    ('D1_25', '1'): ('Col4', 'Col1'), ('D1_26', '1'): ('Col5', 'Col2'),
+    ('D1_27', '1'): ('Col6', 'Col3'),
+    ('J25', '11'): ('/SCLK4', '/SCLK1'), ('J25', '12'): ('/SDIN4', '/SDIN1'),
+    ('J26', '11'): ('/SCLK5', '/SCLK2'), ('J26', '12'): ('/SDIN5', '/SDIN2'),
+    ('J27', '11'): ('/SCLK6', '/SCLK3'), ('J27', '12'): ('/SDIN6', '/SDIN3'),
+}
+LTR_PAD_NETS = {
+    ('U27', '1'): 'I2C_SDA', ('U27', '2'): '/LTR_INT',
+    ('U27', '3'): 'Net-(U27-LDR)', ('U27', '4'): 'Net-(U27-LDR)',
+    ('U27', '5'): 'VDD', ('U27', '6'): 'GND', ('U27', '7'): 'I2C_SCL',
+    ('U27', '8'): 'VDD',
+    ('C27', '1'): 'VDD', ('C27', '2'): 'GND',
+    ('C28', '1'): 'VDD', ('C28', '2'): 'GND',
+    ('R26', '1'): 'VDD', ('R26', '2'): 'I2C_SDA',
+    ('R27', '1'): 'VDD', ('R27', '2'): 'I2C_SCL',
+    ('R28', '1'): 'VDD', ('R28', '2'): '/LTR_INT',
+}
+
+
+def verify_kicad_netlist():
+    """Ask KiCad itself. This is the only check that looks inside the
+    sub-sheets and applies KiCad's connectivity rules; the text tracer above
+    reads top-level wires and labels. Skipped when kicad-cli is missing."""
+    if not kicad_netlist.available():
+        print('  note: kicad-cli not found, KiCad netlist check skipped')
+        return 0
+    fails = 0
+    _, _, left, _ = kicad_netlist.export(SRC)
+    comps, _, right, messages = kicad_netlist.export(DST)
+    for m in messages:
+        fails += 1
+        print(f'  FAIL kicad-cli: {m}')
+    delta = {k: (left[k], right[k]) for k in left if k in right and left[k] != right[k]}
+    if delta != NETLIST_DELTA:
+        fails += 1
+        for k in sorted(set(delta) | set(NETLIST_DELTA)):
+            if delta.get(k) != NETLIST_DELTA.get(k):
+                print(f'  FAIL netlist delta {k}: got {delta.get(k)} '
+                      f'expected {NETLIST_DELTA.get(k)}')
+    gone = sorted(set(left) - set(right))
+    if gone:
+        fails += 1
+        print(f'  FAIL pads missing on the right: {gone[:8]}')
+    added = {k: v for k, v in right.items() if k not in left}
+    if added != LTR_PAD_NETS:
+        fails += 1
+        for k in sorted(set(added) | set(LTR_PAD_NETS)):
+            if added.get(k) != LTR_PAD_NETS.get(k):
+                print(f'  FAIL LTR-559 pad {k}: got {added.get(k)} '
+                      f'expected {LTR_PAD_NETS.get(k)}')
+    print(f'  KiCad netlist: {len(right)} pads, {len(delta)} changed from the '
+          f'left, {len(added)} added')
     return fails
 
 
