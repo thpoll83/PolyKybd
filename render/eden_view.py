@@ -115,6 +115,14 @@ if PASS in MAP_PASSES:
     screens.TEX = tex                             # the status quads load a real panel image;
     for side, root, board in halves:              # their material is replaced below
         screens.status(root, side, strength=1.0)
+elif env("PK_LEGENDS"):
+    # PK_LEGENDS="atlas,status suffix": lit legends and status panels in a light pass, as
+    # the stills have them (midi_anim.py rewrites the atlas per frame). Added before the
+    # profile below, which re-poses them with their displays.
+    _atlas, _suffix = (env("PK_LEGENDS") + ",").split(",")[:2]
+    for side, root, board in halves:
+        screens.keys(root, board, side, strength=float(env("PK_STRENGTH", 5.0)), atlas_name=_atlas)
+        screens.status(root, side, strength=float(env("PK_STRENGTH", 5.0)), suffix=_suffix)
 for side, root, board in halves:
     if env("PK_DENT"):
         profile.dent(root, board, *[float(v) for v in env("PK_DENT").split(",")])
@@ -721,5 +729,7 @@ if env("PK_SHOTS"):                               # out is a directory: <out>/<s
             continue
         shot(os.path.join(out, s["name"] + EXT), s.get("focus"), s.get("elev"), s.get("azim", 0.0),
              s.get("lens"), s.get("margin"), s.get("press"), s.get("fstop", 0), s.get("size", 1.0))
+elif env("PK_NO_SHOT"):                          # the scene only: midi_anim.py renders it
+    pass
 else:
     shot(out)
