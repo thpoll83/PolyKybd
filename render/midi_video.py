@@ -9,7 +9,7 @@ bundled Python (OpenImageIO, PyOpenColorIO, numpy, Pillow).
 - The keycap screens show the MIDI layer `_ML`: textures/screens_layer8.png and
   status_{left,right}_l8.png from export_screens.py. A key that is down shows its
   screen inverted, as the firmware draws a key event.
-- The music is the opening (A section, played twice) of Beethoven's Für Elise, right
+- The music is Beethoven's Für Elise, A A B A (bars 1..13 and the theme again), right
   hand only: every note of it is on a key of the MIDI layer at the start octave
   (C4..F5, with D#5 and G#4 on the black-key row), so each sound in the video is a key
   that goes down in the picture. The sound is a simple additive piano (partials with
@@ -53,13 +53,23 @@ BARS_1_7 = [
     ("B4", 2), ("r", 1), ("E4", 1), ("C5", 1), ("B4", 1),
 ]
 ENDING_1 = [("A4", 2), ("r", 2), ("E5", 1), ("D#5", 1)]       # leads back to bar 1
-ENDING_2 = [("A4", 6)]
-SCORE = PICKUP + BARS_1_7 + ENDING_1 + BARS_1_7 + ENDING_2
-SIXTEENTH = float(env("PK_SIXTEENTH", 0.19))                 # s
-INTRO, OUTRO = 2.2, 2.4                                       # s of stillness around the music
+ENDING_2 = [("A4", 2), ("r", 1), ("B4", 1), ("C5", 1), ("D5", 1)]   # leads into the B section
+# bars 10..13; the original's bridge back (E5 up to E6) leaves the keys' range, so bar
+# 13 leads back to the theme with E4 E5 D#5 instead
+B_SECTION = [
+    ("E5", 3), ("G4", 1), ("F5", 1), ("E5", 1),
+    ("D5", 3), ("F4", 1), ("E5", 1), ("D5", 1),
+    ("C5", 3), ("E4", 1), ("D5", 1), ("C5", 1),
+    ("B4", 2), ("r", 1), ("E4", 1), ("E5", 1), ("D#5", 1),
+]
+FINAL = [("A4", 6)]
+# A, A, B, A: the theme twice, the B section, the theme to the end
+SCORE = PICKUP + BARS_1_7 + ENDING_1 + BARS_1_7 + ENDING_2 + B_SECTION + BARS_1_7 + FINAL
+SIXTEENTH = float(env("PK_SIXTEENTH", 0.23))                 # s
+INTRO, OUTRO = 2.6, 2.6                                       # s of stillness around the music
 # First the player presses OCT 3 (MI_OC2, left bottom row): the keys then play, and
 # their legends name, one octave lower (C3..F4). PK_OCT_PRESS=0 leaves the octave alone.
-OCT_KEY, OCT_AT, OCT_LEN = "4,3", 0.7, 0.25
+OCT_KEY, OCT_AT, OCT_LEN = "4,3", 0.8, 0.3
 OCT_SHIFT = -12 if env("PK_OCT_PRESS", "1") != "0" else 0
 
 # the MIDI layer's note keys (split72 _ML, matrix "row,col") at the start octave
@@ -83,6 +93,8 @@ def events():
         # a ritardando over the last two bars: up to 1.6 times slower
         left = sum(dd for _, dd in SCORE[i:])
         slow = 1.0 + 0.6 * max(0.0, 1.0 - left / 14.0) if i >= len(SCORE) - 12 - n_last else 1.0
+        # and a gentle start: the first bar a little slower, easing into the tempo
+        slow *= 1.0 + 0.18 * max(0.0, 1.0 - i / 8.0)
         length = d * SIXTEENTH * slow
         if note != "r":
             out.append((note, t, length))
@@ -344,7 +356,14 @@ def frames(layers, out, fps):
         path = os.path.join(layers, name, shot + ".exr") if shot else os.path.join(layers, name + ".exr")
         return np.asarray(oiio.ImageBuf(path).get_pixels(oiio.FLOAT))[..., :3]
 
-    labels = sorted(json.load(open(os.path.join(TEX, "screens_layer0.json"), encoding="utf-8"))["keys"])
+    # the id pass numbers its cells as eden_view.py does: screens_layer0's cells plus a
+    # free cell for each KLE key the export left out (6,1 and 8,0), sorted. Counting only
+    # the export's 72 put every right-half screen from 6,2 on one key to the side.
+    sys.path.insert(0, HERE)
+    import keymatch  # noqa: E402
+    ref = json.load(open(os.path.join(TEX, "screens_layer0.json"), encoding="utf-8"))
+    kle = os.path.join(HERE, "..", "..", "PolyKybdHost", "polyhost", "res", "polykybd-split72.json")
+    labels = sorted(keymatch.code_atlas(ref, kle))
     nk = len(labels)
 
     def load(shot):
