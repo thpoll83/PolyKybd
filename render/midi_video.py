@@ -66,12 +66,17 @@ FINAL = [("A4", 6)]
 # A, A, B, A: the theme twice, the B section, the theme to the end. Each section has its
 # own tempo, its loudness (MIDI velocity) and the pause before it, in seconds.
 SECTIONS = [
-    # name, notes, tempo factor (>1 slower), base velocity, pause before
-    ("A1", PICKUP + BARS_1_7 + ENDING_1, 1.00, 46, 0.0),
-    ("A2", BARS_1_7 + ENDING_2, 0.98, 52, 0.0),
-    ("B", B_SECTION, 0.93, 64, 0.10),
-    ("A3", BARS_1_7 + FINAL, 1.03, 42, 0.18),
+    # name, notes, tempo factor (>1 slower), velocity preset key, pause before (s)
+    # The keyboard's keys cannot sense how hard they are pressed: every note plays at the
+    # layer's current velocity, set by its preset keys (QMK: setting x 12), so the
+    # dynamics change between sections, by a key press, as on the real board.
+    ("A1", PICKUP + BARS_1_7 + ENDING_1, 1.00, "mp", 0.0),
+    ("A2", BARS_1_7 + ENDING_2, 0.98, "mp", 0.0),
+    ("B", B_SECTION, 0.93, "f", 0.30),
+    ("A3", BARS_1_7 + FINAL, 1.03, "mp", 0.35),
 ]
+VEL_KEY = {"mp": ("5,3", 60), "f": ("5,5", 96)}              # MI_VL5, MI_VL8 (right top row)
+PED_KEY = "1,0"                                               # MI_SUST, "Ped." (left)
 SCORE = [n for _, notes, *_ in SECTIONS for n in notes]
 SIXTEENTH = float(env("PK_SIXTEENTH", 0.23))                 # s
 INTRO, OUTRO = 2.6, 2.6                                       # s of stillness around the music
@@ -93,69 +98,102 @@ def midi_number(name):
     return NAMES.index(name[:-1]) + 12 * (int(name[-1]) + 1)
 
 
-def events():
-    """(note, start s, length s) of every note, and its velocity, played rather than
-    clocked. The rules are the main ones of the KTH performance rule system:
+def performance():
+    """The performance, as key presses: what the player's fingers do, from which the
+    sound follows exactly as the keyboard would send it.
 
-    - phrase arch: a 4-bar phrase (24 sixteenths) starts and ends broader and moves on in
-      the middle, and it grows louder towards its middle;
-    - each section its own tempo and loudness (SECTIONS), a ritardando into the end of
-      every section (the last one longest) and a short breath before the B section and
-      before the return of the theme;
-    - the long A of each cadence comes a little late (an agogic accent) and softer, and
-      a bar's first note a little louder;
-    - a hand is not a clock: about 8 ms of timing and 3 of velocity at random.
-    PK_HUMAN=0 plays it straight, at SIXTEENTH a sixteenth."""
+    Timing is played rather than clocked, after the main KTH performance rules: a
+    phrase arch (a 4-bar phrase starts and ends broader and moves on in the middle),
+    each section its own tempo, a ritardando into every section end (the last one
+    longest), a breath before the B section and before the return, the cadence's long A
+    a little late, and about 8 ms of random spread. PK_HUMAN=0 plays it to the clock.
+
+    - each note's key is down from its start until just before the next note (legato),
+      or for the note's full value before a rest; the last A is held until it fades;
+    - the sustain pedal key goes down just after each bar that starts on a long note
+      (the arpeggio bars and the B section, as this piece is pedalled) and comes up just
+      before the next bar;
+    - OCT 3 first, then the velocity preset of each section a moment before it starts.
+
+    Returns notes [(note, down s, up s, velocity)], controls [(key, down s, up s)],
+    pedal [(down s, up s)], states [(time s, atlas name)] and the total length."""
     human = env("PK_HUMAN", "1") != "0"
     rng = np.random.default_rng(11)
-    out, vel, t = [], [], INTRO
-    for si, (name, notes, tempo, base, pause) in enumerate(SECTIONS):
+    starts, t = [], INTRO
+    sect_start = {}
+    bars = []                                          # (time, first note's length in 16ths)
+    for si, (name, notes, tempo, dyn, pause) in enumerate(SECTIONS):
         t += pause if human else 0.0
+        sect_start[name] = t
         total = sum(d for _, d in notes)
-        # the theme's pickup sits before the first full bar, so phrases count from there
         pos = -2 if name == "A1" else 0
         last = si == len(SECTIONS) - 1
         for i, (note, d) in enumerate(notes):
-            x = (pos % 24) / 24.0                       # place in the 4-bar phrase, 0..1
-            left = total - (pos + (2 if name == "A1" else 0))   # sixteenths to the section end
+            x = (pos % 24) / 24.0
+            left = total - (pos + (2 if name == "A1" else 0))
             f = 1.0
             if human:
                 f = tempo * (1.0 + 0.11 * (2 * x - 1) ** 2 - 0.035)
                 rit_len = 14 if last else 8
-                if left <= rit_len:                     # into the section's end
+                if left <= rit_len:
                     f *= 1.0 + (0.65 if last else 0.18) * (1 - left / rit_len)
-                if si == 0 and i < 8:                   # easing in at the very start
+                if si == 0 and i < 8:
                     f *= 1.0 + 0.2 * (1 - i / 8)
             elif last and left <= 14:
                 f = 1.0 + 0.6 * (1 - left / 14)
             length = d * SIXTEENTH * f
-            if note != "r":
-                start = t
-                v = base
-                if human:
-                    if note == "A4" and d >= 2:          # the cadence's A: late and soft
-                        start += 0.04
-                        v -= 6
-                    v += 12 * math.sin(math.pi * x) + (4 if pos % 6 == 0 else 0)
-                    start += rng.normal(0, 0.008)
-                    v += rng.normal(0, 3)
-                else:
-                    v = 56
-                out.append((note, max(INTRO, start), length))
-                vel.append(int(np.clip(v, 25, 110)))
+            if pos % 6 == 0:
+                bars.append((t, d if note != "r" else 0))
+            start = t
+            if human and note != "r":
+                if note == "A4" and d >= 2:
+                    start += 0.04
+                start += rng.normal(0, 0.008)
+            starts.append((note, max(INTRO, start), t + length, VEL_KEY[dyn][1]))
             t += length
             pos += d
-    return out, vel, t + OUTRO
+    end = t
+    notes = []
+    for i, (note, s, s_end, vel) in enumerate(starts):
+        if note == "r":
+            continue
+        nxt = starts[i + 1] if i + 1 < len(starts) else None
+        if nxt is None:
+            up = end + 1.6                               # the last A rings out
+        elif nxt[0] == "r":
+            up = s_end - 0.02                            # full value before a rest
+        else:
+            up = nxt[1] - 0.012                          # legato into the next note
+        notes.append((note, s, max(s + 0.09, up), vel))
+    pedal = []
+    for k, (bt, d) in enumerate(bars):
+        if d >= 2:
+            nb = bars[k + 1][0] if k + 1 < len(bars) else end + 2.2
+            pedal.append((bt + 0.06, nb - 0.03))
+    controls = [(OCT_KEY, OCT_AT, OCT_AT + OCT_LEN)] if OCT_SHIFT else []
+    states = [(0.0, "screens_layer8")]
+    if OCT_SHIFT:
+        states.append((OCT_AT, "screens_layer8_oct3"))
+    cur = 127
+    for name, _, _, dyn, _ in SECTIONS:
+        key, vel = VEL_KEY[dyn]
+        if vel != cur:
+            at = 1.6 if name == "A1" else sect_start[name] - 0.24
+            controls.append((key, at, at + 0.2))
+            states.append((at, "screens_layer8_oct3_v%d" % vel if OCT_SHIFT else "screens_layer8_v%d" % vel))
+            cur = vel
+    return notes, controls, pedal, sorted(states), end + OUTRO
 
 
-EVENTS, VELOCITY, TOTAL = events()
+NOTES, CONTROLS, PEDAL, STATES, TOTAL = performance()
+EVENTS = [(n, s, u - s) for n, s, u, _ in NOTES]          # (note, start, held for)
+VELOCITY = [v for *_, v in NOTES]
 
 
 def presses():
-    """(key, down s, up s) of every key press: the octave key, then each note's key for
-    80% of the note (at least 90 ms), so a repeated note shows the key come up between."""
-    out = [(OCT_KEY, OCT_AT, OCT_AT + OCT_LEN)] if OCT_SHIFT else []
-    return out + [(NOTE_KEY[n], s, s + max(0.09, 0.8 * d)) for n, s, d in EVENTS]
+    """(key, down s, up s) of every key the player presses."""
+    return (CONTROLS + [(PED_KEY, a, b) for a, b in PEDAL]
+            + [(NOTE_KEY[n], s, u) for n, s, u, _ in NOTES])
 
 
 PRESSES = presses()
@@ -266,15 +304,19 @@ def read_wav(path):
     return data
 
 
-def midi_file(path, vel=56):
-    """The score as a Standard MIDI File: one track, 960 ticks per quarter at 60 bpm,
-    so a tick is 1/960 s. Each note sounds for 1.15 times its length (legato), as the
-    synth's notes do; velocity varies a little, as a player's does."""
+def midi_file(path):
+    """What the keyboard sends, as a Standard MIDI File: one track, 960 ticks per
+    quarter at 60 bpm, so a tick is 1/960 s. A note-on when a note key goes down, at the
+    current preset velocity, a note-off when it comes up, and the sustain pedal (CC 64)
+    while the Ped. key is down."""
     ev = []
     for (note, s, d), v in zip(EVENTS, VELOCITY):
         n = midi_number(note) + OCT_SHIFT
         ev.append((s, 0x90, n, v))
-        ev.append((s + d * 1.15, 0x80, n, 0))
+        ev.append((s + d, 0x80, n, 0))
+    for a, b in PEDAL:
+        ev.append((a, 0xB0, 64, 127))
+        ev.append((b, 0xB0, 64, 0))
     ev.sort(key=lambda e: (e[0], e[1] == 0x90))       # a release before a press at one time
     def vlq(x):
         b = [x & 0x7F]
@@ -311,7 +353,7 @@ def soundtrack(path):
         out[:min(len(out), len(x))] = x[:len(out)]
     for note, s, d in ([] if env("PK_SF2") else EVENTS):
         f0 = 440 * 2 ** ((midi_number(note) + OCT_SHIFT - 69) / 12)
-        x = TONES[env("PK_TONE", "felt")](f0, d * 1.15, rng=rng)
+        x = TONES[env("PK_TONE", "felt")](f0, d, rng=rng)
         i = int(s * SR)
         out[i:i + len(x)] += x[:len(out) - i]
     # a small room: exponentially decaying noise, darker as it decays
@@ -464,10 +506,10 @@ def frames(layers, out, fps):
             out[nk + side, :64, :128] = st[:64, :128]
         return out
 
-    # the legends at the start octave, and after OCT 3 (export_screens.py with the dump's
-    # configuration word set to octave index 4: midi_cfg_pack(4, 0, 127, 0) = 0x807F0004)
-    legends = stack("screens_layer8")
-    legends_after = stack("screens_layer8_oct3") if OCT_SHIFT else legends
+    # every legend state of the performance: the start octave, OCT 3, and each velocity
+    # preset (export_screens.py with the dump's configuration word set accordingly:
+    # midi_cfg_pack(4, 0, 127 | 36 | 72, 0) = 0x807F0004, 0x80240004, 0x80480004)
+    atlases = {name: stack(name) for _, name in STATES}
     index = {lab: i for i, lab in enumerate(labels)}
     for key, _, _ in PRESSES:
         assert key in index, key
@@ -495,7 +537,7 @@ def frames(layers, out, fps):
     atexit.register(shutil.rmtree, tmp, ignore_errors=True)
     for n, t in enumerate(times):
         k = coefficients(t * 1000) * rainbow
-        panels = (legends_after if t >= OCT_AT else legends).copy()
+        panels = atlases[[name for at, name in STATES if at <= t][-1]].copy()
         for key in held(t):                            # a key event inverts its screen
             i = index[key]
             panels[i, :40, :72] = 1.0 - panels[i, :40, :72]
