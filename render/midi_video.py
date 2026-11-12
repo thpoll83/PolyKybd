@@ -208,10 +208,52 @@ def read_wav(path):
     return data
 
 
+def midi_file(path, vel=56):
+    """The score as a Standard MIDI File: one track, 960 ticks per quarter at 60 bpm,
+    so a tick is 1/960 s. Each note sounds for 1.15 times its length (legato), as the
+    synth's notes do; velocity varies a little, as a player's does."""
+    rng = np.random.default_rng(3)
+    ev = []
+    for note, s, d in EVENTS:
+        n = midi_number(note) + OCT_SHIFT
+        v = int(np.clip(vel + rng.normal(0, 4) + (6 if note in ("E5", "A4") else 0), 30, 100))
+        ev.append((s, 0x90, n, v))
+        ev.append((s + d * 1.15, 0x80, n, 0))
+    ev.sort(key=lambda e: (e[0], e[1] == 0x90))       # a release before a press at one time
+    def vlq(x):
+        b = [x & 0x7F]
+        while x > 0x7F:
+            x >>= 7
+            b.insert(0, (x & 0x7F) | 0x80)
+        return bytes(b)
+    trk, last = bytearray(b"\x00\xff\x51\x03\x0f\x42\x40"), 0   # tempo: 1 000 000 us per quarter
+    trk += b"\x00\xc0\x00"                           # program 0, acoustic grand
+    for t, st, n, v in ev:
+        tick = int(round(t * 960))
+        trk += vlq(tick - last) + bytes([st, n, v])
+        last = tick
+    trk += b"\x00\xff\x2f\x00"
+    with open(path, "wb") as f:
+        f.write(b"MThd" + (6).to_bytes(4, "big") + (0).to_bytes(2, "big") + (1).to_bytes(2, "big")
+                + (960).to_bytes(2, "big"))
+        f.write(b"MTrk" + len(trk).to_bytes(4, "big") + trk)
+
+
 def soundtrack(path):
     rng = np.random.default_rng(7)
     out = np.zeros(int((TOTAL + 2) * SR))
-    for note, s, d in EVENTS:
+    if env("PK_SF2"):
+        # a sampled piano: the score through FluidSynth and the soundfont at PK_SF2
+        # (the video used the Salamander Grand Piano, CC BY 3.0, Alexander Holm)
+        with tempfile.TemporaryDirectory() as tmp:
+            mid, wav = os.path.join(tmp, "score.mid"), os.path.join(tmp, "sf2.wav")
+            midi_file(mid)
+            subprocess.run(["fluidsynth", "-ni", "-q", "-g", "0.8", "-r", str(SR), "-R", "1", "-C", "0",
+                            "-o", "synth.reverb.room-size=0.35", "-o", "synth.reverb.level=0.35",
+                            "-F", wav, env("PK_SF2"), mid], check=True, capture_output=True)
+            x = read_wav(wav)
+        out[:min(len(out), len(x))] = x[:len(out)]
+    for note, s, d in ([] if env("PK_SF2") else EVENTS):
         f0 = 440 * 2 ** ((midi_number(note) + OCT_SHIFT - 69) / 12)
         x = TONES[env("PK_TONE", "felt")](f0, d * 1.15, rng=rng)
         i = int(s * SR)
@@ -223,6 +265,8 @@ def soundtrack(path):
     ir[0] = 0
     nfft = 1 << (len(out) + len(ir)).bit_length()
     wet = np.fft.irfft(np.fft.rfft(out, nfft) * np.fft.rfft(ir, nfft), nfft)[:len(out)]
+    if env("PK_SF2"):                                 # FluidSynth's own reverb is in it
+        wet = wet * 0
     mix = out + float(env("PK_REVERB", 0.22)) * wet / (np.abs(wet).max() + 1e-9) * np.abs(out).max()
     mix /= np.abs(mix).max()
     # the switches: a press as the key goes down, a release as it comes up
