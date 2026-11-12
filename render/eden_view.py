@@ -170,7 +170,10 @@ if env("PK_GAP"):                 # mm between the halves' facing edges: move bo
     print("eden gap", round(gap * 1000, 1), "->", round((half_box(halves[1][1])[0] - half_box(halves[0][1])[1]) * 1000, 1), "mm")
 CABLES = env("PK_CABLES", "").split("+")
 if "bridge" in CABLES:
-    bridge_cable.add(sc, [(root, board) for _, root, board in halves])
+    # PK_BRIDGE="depth,toward,spread,clear" (bridge_cable.add): toward -1 hangs the U in
+    # front of the keyboard, where a camera from above sees it (the MIDI video)
+    _bk = dict(zip(("depth", "toward", "spread", "clear"), (float(v) for v in env("PK_BRIDGE", "").split(",") if v)))
+    bridge_cable.add(sc, [(root, board) for _, root, board in halves], **_bk)
 if "host" in CABLES:
     bridge_cable.add_host(sc, halves[0][1], halves[0][2])
 bpy.context.view_layer.update()
@@ -687,6 +690,24 @@ def shot(path, focus=None, elev=None, azim=0.0, lens=None, margin=None, presses=
         cam.data.dof.focus_object = tgt
         cam.data.dof.aperture_fstop = fstop
     print("eden camera", PASS, os.path.basename(path), "dist", round(dist, 3), "elev", math.degrees(e), "frame", W, H)
+    if env("PK_OUTLINES"):
+        # every key's cap outline in this camera's light-pass pixels (x right, y down):
+        # the footprint at the display top and 9 mm lower, so the cap's sides are in it
+        # (midi_video.py swaps a pressed key's pixels inside it)
+        from bpy_extras.object_utils import world_to_camera_view
+        bpy.context.view_layer.update()
+        res = {}
+        for lab, (root, (x, y, r, dz)) in KEYS.items():
+            w_, h_ = SIZES.get(lab, (1.0, 1.0))
+            hw, hh = w_ * 19.05 / 2, h_ * 19.05 / 2
+            pts = []
+            for z in (textured_parts.DISP_TOP + dz, textured_parts.DISP_TOP + dz - 9.0):
+                for u, v in ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh)):
+                    p = root.matrix_world @ mathutils.Vector((*(textured_parts._rot((u, v), r) + (x, y)), z))
+                    c = world_to_camera_view(sc, cam, p)
+                    pts.append([c.x * W / scale, (1 - c.y) * H / scale])
+            res[lab] = pts
+        json.dump(res, open(os.path.splitext(path)[0] + ".outlines.json", "w"))
     sc.render.filepath = path
     bpy.ops.render.render(write_still=True)
     unpress()

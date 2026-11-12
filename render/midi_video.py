@@ -95,6 +95,36 @@ def held(t):
     return {NOTE_KEY[n] for n, s, d in EVENTS if s <= t < s + max(0.09, 0.8 * d)}
 
 
+def depths(t):
+    """How far down each pressed key is, 0..1: 30 ms down, held, 50 ms back up."""
+    out = {}
+    for n, s, d in EVENTS:
+        up_at = s + max(0.09, 0.8 * d)
+        if s - 0.03 <= t < up_at + 0.05:
+            x = min(1.0, (t - (s - 0.03)) / 0.03, (up_at + 0.05 - t) / 0.05)
+            key = NOTE_KEY[n]
+            out[key] = max(out.get(key, 0.0), x)
+    return out
+
+
+def hull(p):
+    """Indices of the convex hull of 2D points p (monotone chain)."""
+    idx = sorted(range(len(p)), key=lambda i: (p[i][0], p[i][1]))
+
+    def cross(o, a, b):
+        return (p[a][0] - p[o][0]) * (p[b][1] - p[o][1]) - (p[a][1] - p[o][1]) * (p[b][0] - p[o][0])
+    lo, hi = [], []
+    for i in idx:
+        while len(lo) >= 2 and cross(lo[-2], lo[-1], i) <= 0:
+            lo.pop()
+        lo.append(i)
+    for i in reversed(idx):
+        while len(hi) >= 2 and cross(hi[-2], hi[-1], i) <= 0:
+            hi.pop()
+        hi.append(i)
+    return lo[:-1] + hi[:-1]
+
+
 # --- the sound -----------------------------------------------------------------------
 def piano_note(f0, length, vel=0.55, rng=None):
     """One note: additive partials with stiffness, per-partial decay, two strings."""
@@ -119,6 +149,43 @@ def piano_note(f0, length, vel=0.55, rng=None):
     return (sig * att + hammer) * damp
 
 
+def felt_note(f0, length, vel=0.4, rng=None):
+    """A felt piano: the hammer wrapped in felt, so few and quickly fading upper partials,
+    a 12 ms attack, no hammer click and a long, quiet tail."""
+    n = int((length + 1.8) * SR)
+    t = np.arange(n) / SR
+    B = 0.00025 * (f0 / 261.6) ** 0.5
+    sig = np.zeros(n)
+    for k in range(1, 9):
+        fk = k * f0 * math.sqrt(1 + B * k * k)
+        if fk > 6000:
+            break
+        amp = 0.62 ** (k - 1) / k ** 0.6
+        tau = 3.2 * (261.6 / f0) ** 0.3 / (1 + 0.9 * (k - 1))
+        env_k = np.exp(-t / tau)
+        for det in (-0.5, 0.5):
+            sig += 0.5 * amp * env_k * np.sin(2 * math.pi * fk * 2 ** (det / 1200) * t + rng.uniform(0, 2 * math.pi))
+    att = 1 - np.exp(-t / 0.012)
+    damp = np.where(t < length, 1.0, np.exp(-(t - length) / 0.45))
+    return sig * att * damp * vel
+
+
+def epiano_note(f0, length, vel=0.5, rng=None):
+    """An electric piano (tine and tone bar): a sine with a short, quiet 1:1 FM bark at
+    the start, a bell partial at 14x that dies in 40 ms, and a slow tremolo-free decay."""
+    n = int((length + 1.4) * SR)
+    t = np.arange(n) / SR
+    index = 1.3 * vel * np.exp(-t / 0.18)                  # brightness falls quickly
+    body = np.sin(2 * math.pi * f0 * t + index * np.sin(2 * math.pi * f0 * t))
+    bell = 0.12 * np.sin(2 * math.pi * f0 * 14.0 * t) * np.exp(-t / 0.04)
+    env_ = np.exp(-t / (2.4 * (261.6 / f0) ** 0.3)) * (1 - np.exp(-t / 0.004))
+    damp = np.where(t < length, 1.0, np.exp(-(t - length) / 0.3))
+    return (body + bell) * env_ * damp * vel
+
+
+TONES = {"piano": piano_note, "felt": felt_note, "epiano": epiano_note}
+
+
 def read_wav(path):
     with wave.open(path) as w:
         ch, sw, sr = w.getnchannels(), w.getsampwidth(), w.getframerate()
@@ -135,7 +202,7 @@ def soundtrack(path):
     out = np.zeros(int((TOTAL + 2) * SR))
     for note, s, d in EVENTS:
         f0 = 440 * 2 ** ((midi_number(note) - 69) / 12)
-        x = piano_note(f0, d * 1.15, rng=rng)
+        x = TONES[env("PK_TONE", "felt")](f0, d * 1.15, rng=rng)
         i = int(s * SR)
         out[i:i + len(x)] += x[:len(out) - i]
     # a small room: exponentially decaying noise, darker as it decays
@@ -148,10 +215,10 @@ def soundtrack(path):
     mix = out + float(env("PK_REVERB", 0.22)) * wet / (np.abs(wet).max() + 1e-9) * np.abs(out).max()
     mix /= np.abs(mix).max()
     # the switches: a press as the key goes down, a release as it comes up
-    click_level = float(env("PK_CLICK", 0.10))
+    click_level = float(env("PK_CLICK", 0))
     keys = os.path.join(HERE, "audio", "keys")
     down, up = read_wav(os.path.join(keys, "largekey_1.wav")), read_wav(os.path.join(keys, "largekey_up_1.wav"))
-    for note, s, d in EVENTS:
+    for note, s, d in (EVENTS if click_level > 0 else []):
         for snd, at in ((down, s), (up, s + max(0.09, 0.8 * d))):
             i = int(at * SR)
             mix[i:i + len(snd)] += click_level * snd[:len(mix) - i] / (np.abs(snd).max() + 1e-9)
@@ -212,36 +279,58 @@ def frames(layers, out, fps):
     import PyOpenColorIO as ocio
     from PIL import Image
 
-    def exr(name):
-        return np.asarray(oiio.ImageBuf(os.path.join(layers, name + ".exr")).get_pixels(oiio.FLOAT))[..., :3]
+    # Two layouts of <layer dir>: <pass>.exr (one shot, every key up), or <pass>/up.exr and
+    # <pass>/down.exr (eden_view.py with PK_SHOTS: the note keys pressed 3.5 mm in "down",
+    # and PK_OUTLINES' <shot>.outlines.json with every key's outline in the picture)
+    two = os.path.isdir(os.path.join(layers, "uv"))
+    shots = ("up", "down") if two else ("",)
 
-    base, w, c1, s1 = (exr(n) for n in ("base", "w", "c1", "s1"))
-    if os.path.exists(os.path.join(layers, "ambient.exr")):
-        base = base + exr("ambient") * float(env("PK_AMBIENT", 0.07))
-    cos_l, sin_l = 2 * c1 - w, 2 * s1 - w
-    uv, idm = exr("uv"), exr("id")
-    H, W = base.shape[:2]
-    assert uv.shape[:2] == (2 * H, 2 * W), (uv.shape, base.shape)
+    def exr(name, shot):
+        path = os.path.join(layers, name, shot + ".exr") if shot else os.path.join(layers, name + ".exr")
+        return np.asarray(oiio.ImageBuf(path).get_pixels(oiio.FLOAT))[..., :3]
 
     labels = sorted(json.load(open(os.path.join(TEX, "screens_layer0.json"), encoding="utf-8"))["keys"])
-    seen = idm[..., 2] > 0.05
-    raw = np.floor(idm[..., 0] / np.maximum(idm[..., 2], 1e-6) * 128).astype(int)
-    u = uv[..., 0] / np.maximum(uv[..., 2], 1e-6)
-    v = uv[..., 1] / np.maximum(uv[..., 2], 1e-6)
-    trans = np.where(seen, uv[..., 2], 0.0).astype(np.float32)
-    # one stack of panels: the key cells 0..71, then the two status panels at 72, 73,
-    # all on a 64 x 128 canvas so one fancy index draws every screen of a frame
     nk = len(labels)
-    cell = np.full(seen.shape, -1)
-    keym = seen & (raw >= 0) & (raw < nk)
-    cell[keym] = raw[keym]
-    for side, sid in ((0, 126), (1, 127)):
-        m = seen & (raw == sid)
-        cell[m] = nk + side
-    py = np.where(cell >= nk, np.clip(v * 64, 0, 63), np.clip(v * 40, 0, 39)).astype(int)
-    px = np.where(cell >= nk, np.clip(u * 128, 0, 127), np.clip(u * 72, 0, 71)).astype(int)
-    vis = cell >= 0
-    cidx, pyv, pxv = cell[vis], py[vis], px[vis]
+
+    def load(shot):
+        """A shot's light layers and its screen lookup."""
+        base, w, c1, s1 = (exr(n, shot) for n in ("base", "w", "c1", "s1"))
+        base = base + exr("ambient", shot) * float(env("PK_AMBIENT", 0.07))
+        uv, idm = exr("uv", shot), exr("id", shot)
+        H, W = base.shape[:2]
+        assert uv.shape[:2] == (2 * H, 2 * W), (uv.shape, base.shape)
+        seen = idm[..., 2] > 0.05
+        raw = np.floor(idm[..., 0] / np.maximum(idm[..., 2], 1e-6) * 128).astype(int)
+        u = uv[..., 0] / np.maximum(uv[..., 2], 1e-6)
+        v = uv[..., 1] / np.maximum(uv[..., 2], 1e-6)
+        # one stack of panels: the key cells 0..71, then the two status panels at 72, 73,
+        # all on a 64 x 128 canvas so one fancy index draws every screen of a frame
+        cell = np.full(seen.shape, -1)
+        keym = seen & (raw >= 0) & (raw < nk)
+        cell[keym] = raw[keym]
+        for side, sid in ((0, 126), (1, 127)):
+            cell[seen & (raw == sid)] = nk + side
+        py = np.where(cell >= nk, np.clip(v * 64, 0, 63), np.clip(v * 40, 0, 39)).astype(int)
+        px = np.where(cell >= nk, np.clip(u * 128, 0, 127), np.clip(u * 72, 0, 71)).astype(int)
+        vis = cell >= 0
+        return dict(base=base, w=w, cos=2 * c1 - w, sin=2 * s1 - w, H=H, W=W, vis=vis,
+                    trans=np.where(seen, uv[..., 2], 0.0).astype(np.float32),
+                    cidx=cell[vis], py=py[vis], px=px[vis])
+
+    S = {sh: load(sh) for sh in shots}
+    H, W = S[shots[0]]["H"], S[shots[0]]["W"]
+    masks = {}
+    if two:
+        from PIL import ImageDraw
+        outl = json.load(open(os.path.join(layers, "base", "down.outlines.json"), encoding="utf-8"))
+        for key in set(NOTE_KEY.values()):
+            # the cap's outline: the hull of its top and lower footprints, feathered a pixel
+            pts = np.array(outl[key])
+            from_hull = pts[hull(pts)]
+            m = Image.new("L", (W * 4, H * 4), 0)
+            ImageDraw.Draw(m).polygon([tuple(p * 4) for p in from_hull], fill=255)
+            m = np.asarray(m.resize((W, H), Image.BOX), np.float32) / 255
+            masks[key] = blur(m, 1)
 
     atlas = np.asarray(Image.open(os.path.join(TEX, "screens_layer8.png")).convert("L"), np.float32) / 255
     amap = json.load(open(os.path.join(TEX, "screens_layer8.json"), encoding="utf-8"))["keys"]
@@ -280,14 +369,27 @@ def frames(layers, out, fps):
     atexit.register(shutil.rmtree, tmp, ignore_errors=True)
     for n, t in enumerate(times):
         k = coefficients(t * 1000) * rainbow
-        lin = base + w * k[0] + cos_l * k[1] + sin_l * k[2]
         panels = legends.copy()
         for key in held(t):                            # a key event inverts its screen
             i = index[key]
             panels[i, :40, :72] = 1.0 - panels[i, :40, :72]
-        lit = np.zeros(seen.shape, np.float32)
-        lit[vis] = panels[cidx, pyv, pxv]
-        scr = (lit * trans).reshape(H, 2, W, 2).mean((1, 3))
+        out_lin = {}
+        for sh in shots:
+            L = S[sh]
+            lin = L["base"] + L["w"] * k[0] + L["cos"] * k[1] + L["sin"] * k[2]
+            lit = np.zeros(L["vis"].shape, np.float32)
+            lit[L["vis"]] = panels[L["cidx"], L["py"], L["px"]]
+            scr = (lit * L["trans"]).reshape(H, 2, W, 2).mean((1, 3))
+            out_lin[sh] = (lin, scr)
+        if two:
+            # each key's travel: the up shot, the down shot inside its outline, or between
+            m = np.zeros((H, W), np.float32)
+            for key, d in depths(t).items():
+                m = np.maximum(m, masks[key] * d)
+            lin = out_lin["up"][0] * (1 - m[..., None]) + out_lin["down"][0] * m[..., None]
+            scr = out_lin["up"][1] * (1 - m) + out_lin["down"][1] * m
+        else:
+            lin, scr = out_lin[""]
         glow = blur(scr, max(1, W // 320))
         lin = lin + (scr + bloom * glow)[..., None] * tint * screen
         img = np.ascontiguousarray(np.clip(lin, 0, None).astype(np.float32))
