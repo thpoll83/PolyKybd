@@ -1,11 +1,27 @@
 # split42 (poly_corne) — board redesign notes for the next revision
 
 Collected 2026-07-17. Applies to `poly_corne_split42_left` v1.0 (the only fabbed
-layout — **all boards in hand are the LEFT layout**). Note:
-`poly_corne_split42_right.kicad_pcb` is a **byte-identical copy of
-`poly_kybd_split72_right.kicad_pcb`** (an untouched stub — the split42 right side has
-not been designed yet; that design work is item 0 below). Items 1 and 3 are confirmed
+layout — **all boards in hand are the LEFT layout**). Note: when these notes were
+written, `poly_corne_split42_right.kicad_pcb` was a **byte-identical copy of
+`poly_kybd_split72_right.kicad_pcb`** (an untouched stub; the split42 right side had
+not been designed, and that design work is item 0 below). Items 1 and 3 are confirmed
 defects of v1.0-left; 2 and 4 are feature additions.
+
+> **Status 2026-11-12: the right board is no longer the split72 stub.**
+> `poly_kybd/tools/gen_split42_right_pcb.py` generates it from the routed left
+> board and the right schematic (details and numbers: `poly_kybd/tools/README.md`
+> → *The generated split42 right board*). It is placed and partly routed, not
+> finished: 346 connections between the key clusters and the blocks are open.
+>
+> | item | state on the generated right board |
+> |---|---|
+> | 0 | placement and the per-key copper generated; routing between clusters and blocks open |
+> | 1 | done: `U26` pads 1–10 and 5–6 are tied in copper. The left board is unchanged, and KiCad's DRC on it reports both pads as unconnected |
+> | 2 | open: the header is not in the schematic yet |
+> | 3 | done on the right: `J18` is placed with its cluster copper. The left board is unchanged |
+> | 4 | schematic block (`poly_kybd/ltr559.kicad_sch`) and footprint (`poly_kb:LTR-559ALS-01`) exist; the six parts are a group beside the outline until the housing window is fixed |
+>
+> The sections below describe v1.0-left and are kept as written.
 
 > **Re-validated 2026-07-29 against the board files on `master`.** All five points
 > still stand — `git log` shows the `poly_corne` boards untouched since these notes

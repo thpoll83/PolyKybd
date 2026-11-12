@@ -2,9 +2,13 @@
 
 Python tools that treat the KiCad files as data, so variant work (split42,
 future layouts) is mechanical, auditable and verifiable instead of manual
-copy-and-edit. None of them need a KiCad installation — they operate on the
+copy-and-edit. Most of them need no KiCad installation: they read the
 `.kicad_sch`/`.kicad_pcb` text (KiCad 9 format; `extract_key_cluster.py`
-needs `pip install kiutils`).
+needs `pip install kiutils`). Two need KiCad 9 (`kicad_netlist.py`:
+`kicad-cli`; `gen_split42_right_pcb.py`: `kicad-cli` and the `pcbnew` Python
+module). The install recipe for a cloud container is in
+[`render/README.md`](../../render/README.md) → *Setting up a fresh cloud
+container*.
 
 ## Tools
 
@@ -12,6 +16,8 @@ needs `pip install kiutils`).
 |------|--------------|
 | `kicad_sch_trace.py <board.kicad_sch>…` | Traces top-level connectivity and prints the **per-key wiring table** (Row / Col / SCLK / SDIN chain / shift-register CS output per `K_*` sheet). This is the electrical contract the firmware (`MATRIX_*_PINS`, `key_display[]`) must match — diff it between boards or against the firmware instead of eyeballing sheets. |
 | `gen_split42_right_sch.py` | **Generates** `poly_corne_split42_right.kicad_sch` from the left schematic per the split72 L/R convention (nets walk the board in physical x-order, nothing mirrored): the grid is a straight net-copy of the left and only the thumb row is re-attached to the drawn-outer-left columns (`K_C=Col1`, `K_V=Col2`, `K_B=Col3`, CS unchanged), then **verifies** the result against the table derived from the firmware's `keyboard.json` + `split42.c key_display[]`. Non-zero exit on any mismatch. |
+| `kicad_netlist.py <board.kicad_sch> [REF …]` | KiCad's own netlist through `kicad-cli sch export netlist`: the pad nets of every component, sub-sheets included. This is the authoritative answer to "which pad is on which net"; the text tracer above reads the top level only. `gen_split42_right_sch.py` uses it to check the generated schematic (exactly 9 thumb pads differ from the left, plus the 18 pads of the LTR-559 block), and `gen_split42_right_pcb.py` takes every pad's net from it. |
+| `gen_split42_right_pcb.py [--no-verify]` | **Generates** `poly_corne_split42_right.kicad_pcb` from the routed LEFT board and the right schematic: outline and mechanical parts mirrored, the golden key cluster (placement and copper) on every key, the functional blocks moved as rigid groups with their copper, every pad's net from KiCad's netlist, GND zones refilled. It does not route between clusters and blocks. It ends with KiCad's DRC on both boards and exits non-zero when the right board has a finding the left board does not have. Run it with the Python that has `pcbnew` (`/usr/bin/python3.12` on Ubuntu 24.04). See *The generated split42 right board* below. |
 | `extract_key_cluster.py <board.kicad_pcb> [--json out.json]` | Extracts the **per-key PCB cluster template** (switch + display FPC socket + passives, in switch-local coordinates) and reports which keys deviate from the majority placement. The JSON is the "golden cluster" input for automated placement. |
 | `gen_variant_sch.py variants/<v>.yaml [--verify]` | **The universal-generator first cut** (the roadmap's `gen_schematic` stage): generates a top-level `.kicad_sch` per side from a KLE layout (`layouts/*.kle.json`, geometry + matrix position per key) + a variant YAML (`variants/*.yaml`, the complete electrical parameter set). Instantiates the hand-drawn sub-sheets (key cell, ni_buffer2, shift_registers, rp_pico) at KLE-derived positions with deterministic UUIDs and wires them by rule. `--verify` traces the generated file AND the hand-made reference and diffs the canonical contracts (per-key Row/Col/chain/CS/LED-chain + MCU pin map + buffers + SR wiring) — proven to reproduce **both hand-made split72 sides** with zero mismatches. Output in `tools/out/` (gitignored). |
 
@@ -94,6 +100,76 @@ On the PCB side (`poly_corne_split42_left` v1.0, measured with
 - Thumb clusters use ad-hoc refs (`J25/J26/J27` instead of `J7/J14/J21`),
   and **`J18` is missing entirely** (v1.0 defect, see
   `SPLIT42_REDESIGN_NOTES.md` item 3).
+- The cluster's COPPER is a template too, on 7 of the 21 keys (see the next
+  section). The other 14 differ in details of the routing.
+
+## The generated split42 right board (2026-11-12)
+
+`gen_split42_right_pcb.py` follows the method that the hand-made split72
+pair shows. Measured on the split72 left and right boards:
+
+| what | how the right board relates to the left |
+|---|---|
+| outline, mounting holes, switches | exact mirror, rotation −a |
+| mechanical parts (USB, buttons, headers) | exact mirror position, rotation −a |
+| ESD array at the link USB | moves with USB2, rotated 180° |
+| chip blocks (MCU, regulators, crystal) | rigid translation, same rotation, to about the mirrored place |
+| key clusters | the same UNMIRRORED cluster on both halves |
+
+What the run produces today (the log prints these numbers):
+
+- **Golden cluster**: 7 of the 21 left keys (`K_A K_D K_F K_G K_Q K_R K_S`)
+  share placement and internal copper to 0.01 mm. `K_A` is the donor; the
+  template is 70 tracks and vias. All 21 right keys get it, 1449 copper items
+  in total. A right key with matrix position (row, col) sits at the mirrored
+  place of the left key (row, 7 − col).
+- **`J18`** (missing on the left board) is placed like the other 20 sockets.
+- **Four passives** cannot take the golden place because a hole, a
+  mechanical part or the outline is there on the mirrored board (`C1_6` and
+  `C4_6` in cell `K_5`, `D1_25` in `K_C`, `D1_8` in `K_L2`). Each is moved by
+  the smallest step that clears everything, and the copper that led to it is
+  left out.
+- **Blocks** (found by clustering: MCU with flash, regulators, crystal, both
+  USB groups) are placed at the mirrored place and then moved by the smallest
+  step that clears the parts already there. The regulator block fits only
+  with a quarter turn. A block keeps only complete connections of its copper
+  (pad to pad, or pad to a GND via).
+- **U26** has pads 1–10 and 5–6 tied in copper (redesign note 1).
+- **The LTR-559 block** (`U27 C27 C28 R26 R27 R28`, footprint
+  `poly_kb:LTR-559ALS-01` drawn from the land pattern on page 38 of the
+  Lite-On datasheet) is a group LEFT OF THE OUTLINE. Its place depends on
+  the housing window, so it is not placed.
+- **346 connections are open** and are the manual part: rows, columns, the
+  SCLK/SDIN chains, CS, RESET and D-C, power.
+
+The check at the end is KiCad's DRC with the schematic parity test, with the
+left board as the baseline. The right board passes with 0 shorts, 0 courtyard
+overlaps, no clearance below the left board's own 0.150 mm, and the same 12
+parity items as the left (footprint names that the v3.3 sheet changed, and
+`U9.9`).
+
+### pcbnew traps this found
+
+- ⚠️ **`import pcbnew` works only in the Python KiCad was built for.** On
+  Ubuntu 24.04 that is `/usr/bin/python3.12`. Another `python3` on PATH
+  fails at import.
+- ⚠️ **Remove thousands of items with `board.Delete(item)`, not
+  `board.Remove(item)`.** After about 5000 `Remove()` calls the SWIG proxies
+  were corrupt, and an unrelated call failed with `'SwigPyObject' object has
+  no attribute …`.
+- ⚠️ **Fill zones on a board that was loaded again.** A fill done in the
+  process that moved the zones used the old zone bounding boxes; DRC then
+  reported `actual 0 mm` clearances against the fill. Save, `LoadBoard()`,
+  `BuildConnectivity()`, `ZONE_FILLER(board).Fill(board.Zones())`, save.
+- ⚠️ **`SaveBoard()` rewrites the `.kicad_pro` beside the board.** The
+  generator writes the project file itself afterwards, from the left
+  board's.
+- **`pcbnew.KIID.SeedGenerator(n)`** makes the UUIDs, and with them the
+  whole file, reproducible. Anything that iterates over a `set` of pcbnew
+  objects must be sorted first, or two runs differ.
+- ⚠️ **A placement check that looks at pads only is not enough.** The first
+  placer did, and the board had 33 shorts and courtyard overlaps. The model
+  needs courtyards, pads and tracks per layer, and holes.
 
 ## Where this is going: KLE + YAML → schematic + placed PCB
 

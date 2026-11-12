@@ -17,7 +17,8 @@ description: >-
 This repo (**thpoll83/PolyKybd**) holds the PolyKybd hardware — KiCad 9 boards under
 `poly_kybd/`. This skill is the tool-aware way to answer "what is on this net?", "do
 these two boards differ?", and "is the symptom a board fault or firmware?" — without
-the KiCad GUI, which is **not installable here**.
+the KiCad GUI. KiCad 9's command line and Python module can be installed when the
+question needs KiCad's own answer (see the table).
 
 The recurring high-value move is a **variant diff**: compare the same net (by NAME)
 between a *failing* board and a *known-good* one (e.g. split42 vs split72). Identical
@@ -32,7 +33,7 @@ concrete lead.
 | **kiutils** | structured parse (footprints, pads, positions) | Correct pad world-position needs rotation **sign = −1**; validate against a known-good board. |
 | **kicad-tools** (`rjwalters` PyPI, `import kicad_tools as kt`) | pure-Python **DRC** | `IncrementalDRC(pcb, DesignRules(track_w, clearance, via_d, via_drill, hole))` then `.full_check()`; `kt.PCB.load(path)`; `.get_ratsnest()`. `net_count` is an **attribute**, not a method. `DRCReport.load` only *parses* a report — it does not run DRC. |
 | **kicad-skip** | alt structured parse | installed; interchangeable with kiutils for most reads. |
-| ~~pcbnew / KiCad GUI~~ | — | **UNAVAILABLE** (see Pitfalls). Don't try to install it. |
+| **`kicad-cli` and `pcbnew`** (KiCad 9) | KiCad's own netlist, DRC with schematic parity, editing a board | Not preinstalled; the PPA install takes about 5 minutes (see Pitfalls). `import pcbnew` needs `/usr/bin/python3.12`. `poly_kybd/tools/kicad_netlist.py` wraps the netlist export; the traps of the Python API are in `poly_kybd/tools/README.md` → *pcbnew traps this found*. |
 
 ## Procedure
 
