@@ -71,14 +71,14 @@ SECTIONS = [
     # layer's current velocity (127 from the start). A section may set another with a
     # preset key (VEL_KEY; QMK: setting x 12); none does, so the whole piece is at 127.
     ("A1", PICKUP + BARS_1_7 + ENDING_1, 1.00, None, 0.0),
-    ("A2", BARS_1_7 + ENDING_2, 0.98, None, 0.0),
-    ("B", B_SECTION, 0.93, None, 0.30),
-    ("A3", BARS_1_7 + FINAL, 1.03, None, 0.35),
+    ("A2", BARS_1_7 + ENDING_2, 0.99, None, 0.0),
+    ("B", B_SECTION, 0.96, None, 0.15),
+    ("A3", BARS_1_7 + FINAL, 1.01, None, 0.20),
 ]
 START_VELOCITY = 127
 VEL_KEY = {"mp": ("5,3", 60), "f": ("5,5", 96)}              # MI_VL5, MI_VL8 (right top row)
-# the two Ped. keys (MI_SUST): the pedal goes to the hand that is free. A bar with notes
-# on the left half is pedalled by the right thumb, any other bar by the left half's key.
+# the two Ped. keys (MI_SUST): the pedal goes to the hand that is free when it goes
+# down, the one that did not just strike the bar's first note.
 PED_LEFT, PED_RIGHT = "1,0", "9,3"
 SCORE = [n for _, notes, *_ in SECTIONS for n in notes]
 SIXTEENTH = float(env("PK_SIXTEENTH", 0.23))                 # s
@@ -109,7 +109,7 @@ def performance():
     phrase arch (a 4-bar phrase starts and ends broader and moves on in the middle),
     each section its own tempo, a ritardando into every section end (the last one
     longest), a breath before the B section and before the return, the cadence's long A
-    a little late, and about 8 ms of random spread. PK_HUMAN=0 plays it to the clock.
+    a little late, and about 5 ms of random spread, all kept small. PK_HUMAN=0 plays it to the clock.
 
     - each note's key is down from its start until just before the next note (legato),
       or for the note's full value before a rest; the last A is held until it fades;
@@ -136,12 +136,12 @@ def performance():
             left = total - (pos + (2 if name == "A1" else 0))
             f = 1.0
             if human:
-                f = tempo * (1.0 + 0.11 * (2 * x - 1) ** 2 - 0.035)
+                f = tempo * (1.0 + 0.06 * (2 * x - 1) ** 2 - 0.02)
                 rit_len = 14 if last else 8
                 if left <= rit_len:
-                    f *= 1.0 + (0.65 if last else 0.18) * (1 - left / rit_len)
+                    f *= 1.0 + (0.45 if last else 0.10) * (1 - left / rit_len)
                 if si == 0 and i < 8:
-                    f *= 1.0 + 0.2 * (1 - i / 8)
+                    f *= 1.0 + 0.1 * (1 - i / 8)
             elif last and left <= 14:
                 f = 1.0 + 0.6 * (1 - left / 14)
             length = d * SIXTEENTH * f
@@ -150,8 +150,8 @@ def performance():
             start = t
             if human and note != "r":
                 if note == "A4" and d >= 2:
-                    start += 0.04
-                start += rng.normal(0, 0.008)
+                    start += 0.025
+                start += rng.normal(0, 0.005)
             starts.append((note, max(INTRO, start), t + length, VEL_KEY[dyn][1] if dyn else None))
             t += length
             pos += d
@@ -176,8 +176,12 @@ def performance():
         if d >= 2:
             nb = bars[k + 1][0] if k + 1 < len(bars) else end + 2.2
             a, b = bt + 0.06, nb - 0.03
-            left = any(int(NOTE_KEY[n].split(",")[0]) < 5 for n, s, *_ in notes if a - 0.1 <= s < b)
-            pedal.append((a, b, PED_RIGHT if left else PED_LEFT))
+            # the hand that is free when the pedal goes down: not the one that just
+            # struck the bar's first note. The two Ped. keys send the same CC 64, and
+            # releasing either lifts the pedal, so one key holds it for the whole bar.
+            first = min((nn for nn in notes if nn[1] >= bt - 0.06), key=lambda nn: nn[1])
+            left_struck = int(NOTE_KEY[first[0]].split(",")[0]) < 5
+            pedal.append((a, b, PED_RIGHT if left_struck else PED_LEFT))
     controls = [(OCT_KEY, OCT_AT, OCT_AT + OCT_LEN)] if OCT_SHIFT else []
     states = [(0.0, "screens_layer8")]
     if OCT_SHIFT:
