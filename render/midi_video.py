@@ -441,6 +441,19 @@ def blur(a, r):
     return a
 
 
+def credit_filter(extra=""):
+    """ffmpeg's -vf for the video: PK_CREDIT as small light grey text along the bottom
+    (the soundfont's attribution, which its CC BY licence asks for), after `extra`."""
+    text = env("PK_CREDIT", "")
+    parts = [extra] if extra else []
+    if text:
+        font = env("PK_CREDIT_FONT", "/usr/share/fonts/truetype/freefont/FreeSans.ttf")
+        esc = text.replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'")
+        parts.append(f"drawtext=fontfile={font}:text='{esc}':fontsize=h*0.022:fontcolor=white@0.55"
+                     ":x=(w-text_w)/2:y=h-text_h-h*0.03")
+    return ["-vf", ",".join(parts)] if parts else []
+
+
 def frames(layers, out, fps):
     import OpenImageIO as oiio
     import PyOpenColorIO as ocio
@@ -603,7 +616,7 @@ def frames(layers, out, fps):
     wav = os.path.join(tmp, "sound.wav")
     soundtrack(wav)
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-framerate", str(fps), "-i", os.path.join(tmp, "%05d.png"),
-                    "-ss", str(t0), "-t", str(len(times) / fps), "-i", wav,
+                    "-ss", str(t0), "-t", str(len(times) / fps), "-i", wav, *credit_filter(),
                     "-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
                     "-shortest", "-movflags", "+faststart", out], check=True)
     print("wrote", out, len(times), "frames")

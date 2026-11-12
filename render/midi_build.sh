@@ -19,6 +19,8 @@
 #   PK_GPU    OPTIX | CUDA | HIP | ONEAPI to render on a GPU (default: CPU)
 #   PK_SF2    a piano soundfont for the soundtrack (the image sets the Salamander Grand
 #             Piano, CC BY 3.0); unset, the soundtrack is the built-in felt piano
+#   PK_CREDIT text along the bottom of the video, such as the soundfont's attribution
+#             (the image sets the Salamander credit)
 #   SCENE     the saved scene (default: render/out/hero.blend)
 # ⚠️ Run ONE Blender at a time: each holds about 6 GB, and three at once ran a 15 GB
 # machine out of memory, which killed render passes half way.

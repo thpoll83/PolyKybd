@@ -50,7 +50,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends fluidsynth \
         | tar -xJ -C /opt/sf2 --strip-components=1
 
 ENV BLENDER=blender HOSTPY=/opt/hostpy/bin/python \
-    PK_SF2=/opt/sf2/SalamanderGrandPiano-V3+20200602.sf2
+    PK_SF2=/opt/sf2/SalamanderGrandPiano-V3+20200602.sf2 \
+    PK_CREDIT="Piano: Salamander Grand Piano by Alexander Holm, CC BY 3.0"
 # /work holds PolyKybd, PolyKybdHost and qmk_firmware side by side
 WORKDIR /work/PolyKybd
 # "scene" builds render/out/hero.blend; "midi-anim" / "midi-fixed" the MIDI video

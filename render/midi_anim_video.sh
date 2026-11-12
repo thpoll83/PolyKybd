@@ -17,7 +17,12 @@ for ((i = 0; i < N; i++)); do
 done
 "$BPY" "$HERE/midi_video.py" "$TMP/sound.wav"
 DUR=$(echo "$N / $FPS" | bc -l)
+VF="fade=t=out:st=$(echo "$DUR - 2" | bc -l):d=2"
+if [ -n "${PK_CREDIT:-}" ]; then          # the soundfont's attribution along the bottom
+    FONT=${PK_CREDIT_FONT:-/usr/share/fonts/truetype/freefont/FreeSans.ttf}
+    VF="$VF,drawtext=fontfile=$FONT:text='${PK_CREDIT//:/\\:}':fontsize=h*0.022:fontcolor=white@0.55:x=(w-text_w)/2:y=h-text_h-h*0.03"
+fi
 ffmpeg -loglevel error -y -framerate "$FPS" -i "$TMP/%05d.png" -i "$TMP/sound.wav" \
-  -vf "fade=t=out:st=$(echo "$DUR - 2" | bc -l):d=2" -af "afade=t=out:st=$(echo "$DUR - 2" | bc -l):d=2" \
+  -vf "$VF" -af "afade=t=out:st=$(echo "$DUR - 2" | bc -l):d=2" \
   -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a aac -b:a 192k -shortest -movflags +faststart "$OUT"
 echo "wrote $OUT ($N frames)"

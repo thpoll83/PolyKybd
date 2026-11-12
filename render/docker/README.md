@@ -83,5 +83,6 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$PWD":/work polykybd-render midi-
 - Both resume. Delete the frame or layer folder to start over, for example after the
   camera path (`SHOTS` in `render/midi_anim.py`) or the shot list changes.
 - ⚠️ Give the container at least 8 GB of RAM: one Blender holds about 6 GB with the scene.
-- The soundtrack plays the Salamander Grand Piano (CC BY 3.0). Credit it where the video
-  is published: "Piano: Salamander Grand Piano by Alexander Holm, CC BY 3.0".
+- The soundtrack plays the Salamander Grand Piano (CC BY 3.0), and the video carries its
+  credit along the bottom ("Piano: Salamander Grand Piano by Alexander Holm, CC BY 3.0",
+  `PK_CREDIT`; `-e PK_CREDIT=` leaves it out). Credit it where the video is published too.
