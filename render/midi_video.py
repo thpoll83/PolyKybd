@@ -56,7 +56,11 @@ ENDING_1 = [("A4", 2), ("r", 2), ("E5", 1), ("D#5", 1)]       # leads back to ba
 ENDING_2 = [("A4", 6)]
 SCORE = PICKUP + BARS_1_7 + ENDING_1 + BARS_1_7 + ENDING_2
 SIXTEENTH = float(env("PK_SIXTEENTH", 0.19))                 # s
-INTRO, OUTRO = 1.6, 2.4                                       # s of stillness around the music
+INTRO, OUTRO = 2.2, 2.4                                       # s of stillness around the music
+# First the player presses OCT 3 (MI_OC2, left bottom row): the keys then play, and
+# their legends name, one octave lower (C3..F4). PK_OCT_PRESS=0 leaves the octave alone.
+OCT_KEY, OCT_AT, OCT_LEN = "4,3", 0.7, 0.25
+OCT_SHIFT = -12 if env("PK_OCT_PRESS", "1") != "0" else 0
 
 # the MIDI layer's note keys (split72 _ML, matrix "row,col") at the start octave
 NOTE_KEY = {
@@ -89,20 +93,27 @@ def events():
 EVENTS, TOTAL = events()
 
 
+def presses():
+    """(key, down s, up s) of every key press: the octave key, then each note's key for
+    80% of the note (at least 90 ms), so a repeated note shows the key come up between."""
+    out = [(OCT_KEY, OCT_AT, OCT_AT + OCT_LEN)] if OCT_SHIFT else []
+    return out + [(NOTE_KEY[n], s, s + max(0.09, 0.8 * d)) for n, s, d in EVENTS]
+
+
+PRESSES = presses()
+
+
 def held(t):
-    """The keys down at time t: each note's key from its start for 80% of its length
-    (at least 90 ms), so repeated notes show the key coming up in between."""
-    return {NOTE_KEY[n] for n, s, d in EVENTS if s <= t < s + max(0.09, 0.8 * d)}
+    """The keys down at time t."""
+    return {k for k, a, b in PRESSES if a <= t < b}
 
 
 def depths(t):
     """How far down each pressed key is, 0..1: 30 ms down, held, 50 ms back up."""
     out = {}
-    for n, s, d in EVENTS:
-        up_at = s + max(0.09, 0.8 * d)
+    for key, s, up_at in PRESSES:
         if s - 0.03 <= t < up_at + 0.05:
             x = min(1.0, (t - (s - 0.03)) / 0.03, (up_at + 0.05 - t) / 0.05)
-            key = NOTE_KEY[n]
             out[key] = max(out.get(key, 0.0), x)
     return out
 
@@ -201,7 +212,7 @@ def soundtrack(path):
     rng = np.random.default_rng(7)
     out = np.zeros(int((TOTAL + 2) * SR))
     for note, s, d in EVENTS:
-        f0 = 440 * 2 ** ((midi_number(note) - 69) / 12)
+        f0 = 440 * 2 ** ((midi_number(note) + OCT_SHIFT - 69) / 12)
         x = TONES[env("PK_TONE", "felt")](f0, d * 1.15, rng=rng)
         i = int(s * SR)
         out[i:i + len(x)] += x[:len(out) - i]
@@ -323,7 +334,7 @@ def frames(layers, out, fps):
     if two:
         from PIL import ImageDraw
         outl = json.load(open(os.path.join(layers, "base", "down.outlines.json"), encoding="utf-8"))
-        for key in set(NOTE_KEY.values()):
+        for key in {k for k, _, _ in PRESSES}:
             # the cap's outline: the hull of its top and lower footprints, feathered a pixel
             pts = np.array(outl[key])
             from_hull = pts[hull(pts)]
@@ -332,18 +343,26 @@ def frames(layers, out, fps):
             m = np.asarray(m.resize((W, H), Image.BOX), np.float32) / 255
             masks[key] = blur(m, 1)
 
-    atlas = np.asarray(Image.open(os.path.join(TEX, "screens_layer8.png")).convert("L"), np.float32) / 255
-    amap = json.load(open(os.path.join(TEX, "screens_layer8.json"), encoding="utf-8"))["keys"]
-    legends = np.zeros((nk + 2, 64, 128), np.float32)
-    for i, lab in enumerate(labels):
-        if lab in amap:
-            x, y = amap[lab]
-            legends[i, :40, :72] = atlas[y:y + 40, x:x + 72]
-    for side, name in enumerate(("left", "right")):
-        st = np.asarray(Image.open(os.path.join(TEX, f"status_{name}_l8.png")).convert("L"), np.float32) / 255
-        legends[nk + side, :64, :128] = st[:64, :128]
+    def stack(name):
+        """Every screen of the layer from one atlas (the status panels are the same)."""
+        atlas = np.asarray(Image.open(os.path.join(TEX, name + ".png")).convert("L"), np.float32) / 255
+        amap = json.load(open(os.path.join(TEX, name + ".json"), encoding="utf-8"))["keys"]
+        out = np.zeros((nk + 2, 64, 128), np.float32)
+        for i, lab in enumerate(labels):
+            if lab in amap:
+                x, y = amap[lab]
+                out[i, :40, :72] = atlas[y:y + 40, x:x + 72]
+        for side, sname in enumerate(("left", "right")):
+            st = np.asarray(Image.open(os.path.join(TEX, f"status_{sname}_l8.png")).convert("L"), np.float32) / 255
+            out[nk + side, :64, :128] = st[:64, :128]
+        return out
+
+    # the legends at the start octave, and after OCT 3 (export_screens.py with the dump's
+    # configuration word set to octave index 4: midi_cfg_pack(4, 0, 127, 0) = 0x807F0004)
+    legends = stack("screens_layer8")
+    legends_after = stack("screens_layer8_oct3") if OCT_SHIFT else legends
     index = {lab: i for i, lab in enumerate(labels)}
-    for key in NOTE_KEY.values():
+    for key, _, _ in PRESSES:
         assert key in index, key
 
     cfg = ocio.Config.CreateFromFile(env("BLENDER_OCIO") or os.path.join(
@@ -369,7 +388,7 @@ def frames(layers, out, fps):
     atexit.register(shutil.rmtree, tmp, ignore_errors=True)
     for n, t in enumerate(times):
         k = coefficients(t * 1000) * rainbow
-        panels = legends.copy()
+        panels = (legends_after if t >= OCT_AT else legends).copy()
         for key in held(t):                            # a key event inverts its screen
             i = index[key]
             panels[i, :40, :72] = 1.0 - panels[i, :40, :72]
