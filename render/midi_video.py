@@ -63,8 +63,16 @@ B_SECTION = [
     ("B4", 2), ("r", 1), ("E4", 1), ("E5", 1), ("D#5", 1),
 ]
 FINAL = [("A4", 6)]
-# A, A, B, A: the theme twice, the B section, the theme to the end
-SCORE = PICKUP + BARS_1_7 + ENDING_1 + BARS_1_7 + ENDING_2 + B_SECTION + BARS_1_7 + FINAL
+# A, A, B, A: the theme twice, the B section, the theme to the end. Each section has its
+# own tempo, its loudness (MIDI velocity) and the pause before it, in seconds.
+SECTIONS = [
+    # name, notes, tempo factor (>1 slower), base velocity, pause before
+    ("A1", PICKUP + BARS_1_7 + ENDING_1, 1.00, 46, 0.0),
+    ("A2", BARS_1_7 + ENDING_2, 0.98, 52, 0.0),
+    ("B", B_SECTION, 0.93, 64, 0.10),
+    ("A3", BARS_1_7 + FINAL, 1.03, 42, 0.18),
+]
+SCORE = [n for _, notes, *_ in SECTIONS for n in notes]
 SIXTEENTH = float(env("PK_SIXTEENTH", 0.23))                 # s
 INTRO, OUTRO = 2.6, 2.6                                       # s of stillness around the music
 # First the player presses OCT 3 (MI_OC2, left bottom row): the keys then play, and
@@ -86,23 +94,61 @@ def midi_number(name):
 
 
 def events():
-    """(note, start s, length s): every note of SCORE, with the last bar slowing down."""
-    out, t = [], INTRO
-    n_last = len(ENDING_2)
-    for i, (note, d) in enumerate(SCORE):
-        # a ritardando over the last two bars: up to 1.6 times slower
-        left = sum(dd for _, dd in SCORE[i:])
-        slow = 1.0 + 0.6 * max(0.0, 1.0 - left / 14.0) if i >= len(SCORE) - 12 - n_last else 1.0
-        # and a gentle start: the first bar a little slower, easing into the tempo
-        slow *= 1.0 + 0.18 * max(0.0, 1.0 - i / 8.0)
-        length = d * SIXTEENTH * slow
-        if note != "r":
-            out.append((note, t, length))
-        t += length
-    return out, t + OUTRO
+    """(note, start s, length s) of every note, and its velocity, played rather than
+    clocked. The rules are the main ones of the KTH performance rule system:
+
+    - phrase arch: a 4-bar phrase (24 sixteenths) starts and ends broader and moves on in
+      the middle, and it grows louder towards its middle;
+    - each section its own tempo and loudness (SECTIONS), a ritardando into the end of
+      every section (the last one longest) and a short breath before the B section and
+      before the return of the theme;
+    - the long A of each cadence comes a little late (an agogic accent) and softer, and
+      a bar's first note a little louder;
+    - a hand is not a clock: about 8 ms of timing and 3 of velocity at random.
+    PK_HUMAN=0 plays it straight, at SIXTEENTH a sixteenth."""
+    human = env("PK_HUMAN", "1") != "0"
+    rng = np.random.default_rng(11)
+    out, vel, t = [], [], INTRO
+    for si, (name, notes, tempo, base, pause) in enumerate(SECTIONS):
+        t += pause if human else 0.0
+        total = sum(d for _, d in notes)
+        # the theme's pickup sits before the first full bar, so phrases count from there
+        pos = -2 if name == "A1" else 0
+        last = si == len(SECTIONS) - 1
+        for i, (note, d) in enumerate(notes):
+            x = (pos % 24) / 24.0                       # place in the 4-bar phrase, 0..1
+            left = total - (pos + (2 if name == "A1" else 0))   # sixteenths to the section end
+            f = 1.0
+            if human:
+                f = tempo * (1.0 + 0.11 * (2 * x - 1) ** 2 - 0.035)
+                rit_len = 14 if last else 8
+                if left <= rit_len:                     # into the section's end
+                    f *= 1.0 + (0.65 if last else 0.18) * (1 - left / rit_len)
+                if si == 0 and i < 8:                   # easing in at the very start
+                    f *= 1.0 + 0.2 * (1 - i / 8)
+            elif last and left <= 14:
+                f = 1.0 + 0.6 * (1 - left / 14)
+            length = d * SIXTEENTH * f
+            if note != "r":
+                start = t
+                v = base
+                if human:
+                    if note == "A4" and d >= 2:          # the cadence's A: late and soft
+                        start += 0.04
+                        v -= 6
+                    v += 12 * math.sin(math.pi * x) + (4 if pos % 6 == 0 else 0)
+                    start += rng.normal(0, 0.008)
+                    v += rng.normal(0, 3)
+                else:
+                    v = 56
+                out.append((note, max(INTRO, start), length))
+                vel.append(int(np.clip(v, 25, 110)))
+            t += length
+            pos += d
+    return out, vel, t + OUTRO
 
 
-EVENTS, TOTAL = events()
+EVENTS, VELOCITY, TOTAL = events()
 
 
 def presses():
@@ -224,11 +270,9 @@ def midi_file(path, vel=56):
     """The score as a Standard MIDI File: one track, 960 ticks per quarter at 60 bpm,
     so a tick is 1/960 s. Each note sounds for 1.15 times its length (legato), as the
     synth's notes do; velocity varies a little, as a player's does."""
-    rng = np.random.default_rng(3)
     ev = []
-    for note, s, d in EVENTS:
+    for (note, s, d), v in zip(EVENTS, VELOCITY):
         n = midi_number(note) + OCT_SHIFT
-        v = int(np.clip(vel + rng.normal(0, 4) + (6 if note in ("E5", "A4") else 0), 30, 100))
         ev.append((s, 0x90, n, v))
         ev.append((s + d * 1.15, 0x80, n, 0))
     ev.sort(key=lambda e: (e[0], e[1] == 0x90))       # a release before a press at one time
