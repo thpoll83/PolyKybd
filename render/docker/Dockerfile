@@ -41,8 +41,18 @@ RUN /opt/blender-${BLENDER_VERSION}-linux-x64/${BLENDER_VERSION%.*}/python/bin/p
 RUN python3 -m venv /opt/hostpy \
     && /opt/hostpy/bin/pip install --no-cache-dir numpy==2.4.6 pillow==12.3.0 openpyxl==3.1.5 fonttools==4.66.1
 
-ENV BLENDER=blender HOSTPY=/opt/hostpy/bin/python
+# the MIDI video's soundtrack: FluidSynth plays the performance through the Salamander
+# Grand Piano (Alexander Holm, CC BY 3.0: credit it where the video is published)
+RUN apt-get update && apt-get install -y --no-install-recommends fluidsynth \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /opt/sf2 \
+    && curl -sSL "https://freepats.zenvoid.org/Piano/SalamanderGrandPiano/SalamanderGrandPiano-SF2-V3+20200602.tar.xz" \
+        | tar -xJ -C /opt/sf2 --strip-components=1
+
+ENV BLENDER=blender HOSTPY=/opt/hostpy/bin/python \
+    PK_SF2=/opt/sf2/SalamanderGrandPiano-V3+20200602.sf2
 # /work holds PolyKybd, PolyKybdHost and qmk_firmware side by side
 WORKDIR /work/PolyKybd
-# "scene" builds render/out/hero.blend; anything else goes to render/tutorial_build.sh
+# "scene" builds render/out/hero.blend; "midi-anim" / "midi-fixed" the MIDI video
+# (render/midi_build.sh); anything else goes to render/tutorial_build.sh
 ENTRYPOINT ["render/docker/entry.sh"]

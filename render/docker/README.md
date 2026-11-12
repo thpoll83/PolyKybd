@@ -51,3 +51,37 @@ needs. At 2048 px the CPU run takes about 7.5 hours on 4 cores; a recent GPU sho
 under an hour. The encode at the end runs on the CPU either way. It splits the frames over
 one process per core (at most 16; `-e PK_JOBS=N` sets the number), each needing a few GB
 of RAM at 2048 px, and joins the pieces without re-encoding.
+
+## The MIDI video (Für Elise on the MIDI layer)
+
+The same image renders the MIDI layer video (`render/midi_build.sh`). It needs the same
+three checkouts, with `PolyKybd` on `render/workspaces` and `PolyKybdHost` on `main`, and
+the scene `render/out/hero.blend` (build it with `scene` as above).
+
+```bash
+cd <folder with the three checkouts>
+docker build -t polykybd-render PolyKybd/render/docker
+
+# a quick look at the camera path: 480 px, 8 samples, every 2nd frame (about 1 h on 4 cores)
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD":/work polykybd-render midi-anim 480 8 25 2
+
+# the moving-camera video: width samples fps step (defaults 1280 64 25 1)
+docker run --rm --user "$(id -u):$(id -g)" --gpus all -e PK_GPU=OPTIX -v "$PWD":/work polykybd-render midi-anim 1920 64
+
+# the fixed-camera video and its GIF: width samples (defaults 2560 256)
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD":/work polykybd-render midi-fixed
+```
+
+- `midi-anim` renders every frame in Cycles (1,150 at 25 fps), so it is the slow one:
+  about 7 s a frame at 360 px and 6 samples on 4 CPU cores, and it grows with pixels times
+  samples. Use a GPU (`PK_GPU`, as above) for anything past a preview. Frames land in
+  `PolyKybd/render/out/midi_anim_<width>/`, the video beside them as
+  `midi_anim_<width>.mp4`.
+- `midi-fixed` renders 14 layers once and composes the frames in 2D: about 3 h at 2560 px
+  and 256 samples on 4 CPU cores, then a few minutes for the frames. Output:
+  `render/out/midi_fixed_<width>.mp4` and `.gif`.
+- Both resume. Delete the frame or layer folder to start over, for example after the
+  camera path (`SHOTS` in `render/midi_anim.py`) or the shot list changes.
+- ⚠️ Give the container at least 8 GB of RAM: one Blender holds about 6 GB with the scene.
+- The soundtrack plays the Salamander Grand Piano (CC BY 3.0). Credit it where the video
+  is published: "Piano: Salamander Grand Piano by Alexander Holm, CC BY 3.0".

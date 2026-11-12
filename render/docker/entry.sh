@@ -2,6 +2,8 @@
 # The image's entry point, run from the PolyKybd checkout.
 #
 #   scene                 export both boards (KiCad) and build render/out/hero.blend
+#   midi-anim  [width] [samples] [fps] [step]   the MIDI video, moving camera
+#   midi-fixed [width] [samples]                 the MIDI video, fixed camera
 #   [width] [samples] [out dir]   the tutorial video (render/tutorial_build.sh)
 set -euo pipefail
 # ⚠️ with docker run --user, HOME is / and not writable. kicad-cli then has no config
@@ -19,4 +21,8 @@ if [ "${1:-}" = "scene" ]; then
     ls -la render/out/hero.blend
     exit 0
 fi
+case "${1:-}" in
+    midi-anim)  shift; exec render/midi_build.sh anim "$@" ;;
+    midi-fixed) shift; exec render/midi_build.sh fixed "$@" ;;
+esac
 exec render/tutorial_build.sh "$@"
