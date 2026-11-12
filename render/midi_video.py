@@ -66,17 +66,20 @@ FINAL = [("A4", 6)]
 # A, A, B, A: the theme twice, the B section, the theme to the end. Each section has its
 # own tempo, its loudness (MIDI velocity) and the pause before it, in seconds.
 SECTIONS = [
-    # name, notes, tempo factor (>1 slower), velocity preset key, pause before (s)
+    # name, notes, tempo factor (>1 slower), velocity preset or None, pause before (s)
     # The keyboard's keys cannot sense how hard they are pressed: every note plays at the
-    # layer's current velocity, set by its preset keys (QMK: setting x 12), so the
-    # dynamics change between sections, by a key press, as on the real board.
-    ("A1", PICKUP + BARS_1_7 + ENDING_1, 1.00, "mp", 0.0),
-    ("A2", BARS_1_7 + ENDING_2, 0.98, "mp", 0.0),
-    ("B", B_SECTION, 0.93, "f", 0.30),
-    ("A3", BARS_1_7 + FINAL, 1.03, "mp", 0.35),
+    # layer's current velocity (127 from the start). A section may set another with a
+    # preset key (VEL_KEY; QMK: setting x 12); none does, so the whole piece is at 127.
+    ("A1", PICKUP + BARS_1_7 + ENDING_1, 1.00, None, 0.0),
+    ("A2", BARS_1_7 + ENDING_2, 0.98, None, 0.0),
+    ("B", B_SECTION, 0.93, None, 0.30),
+    ("A3", BARS_1_7 + FINAL, 1.03, None, 0.35),
 ]
+START_VELOCITY = 127
 VEL_KEY = {"mp": ("5,3", 60), "f": ("5,5", 96)}              # MI_VL5, MI_VL8 (right top row)
-PED_KEY = "1,0"                                               # MI_SUST, "Ped." (left)
+# the two Ped. keys (MI_SUST): the pedal goes to the hand that is free. A bar with notes
+# on the left half is pedalled by the right thumb, any other bar by the left half's key.
+PED_LEFT, PED_RIGHT = "1,0", "9,3"
 SCORE = [n for _, notes, *_ in SECTIONS for n in notes]
 SIXTEENTH = float(env("PK_SIXTEENTH", 0.23))                 # s
 INTRO, OUTRO = 2.6, 2.6                                       # s of stillness around the music
@@ -149,12 +152,15 @@ def performance():
                 if note == "A4" and d >= 2:
                     start += 0.04
                 start += rng.normal(0, 0.008)
-            starts.append((note, max(INTRO, start), t + length, VEL_KEY[dyn][1]))
+            starts.append((note, max(INTRO, start), t + length, VEL_KEY[dyn][1] if dyn else None))
             t += length
             pos += d
     end = t
     notes = []
+    running = START_VELOCITY
     for i, (note, s, s_end, vel) in enumerate(starts):
+        running = vel if vel is not None else running
+        vel = running
         if note == "r":
             continue
         nxt = starts[i + 1] if i + 1 < len(starts) else None
@@ -169,13 +175,17 @@ def performance():
     for k, (bt, d) in enumerate(bars):
         if d >= 2:
             nb = bars[k + 1][0] if k + 1 < len(bars) else end + 2.2
-            pedal.append((bt + 0.06, nb - 0.03))
+            a, b = bt + 0.06, nb - 0.03
+            left = any(int(NOTE_KEY[n].split(",")[0]) < 5 for n, s, *_ in notes if a - 0.1 <= s < b)
+            pedal.append((a, b, PED_RIGHT if left else PED_LEFT))
     controls = [(OCT_KEY, OCT_AT, OCT_AT + OCT_LEN)] if OCT_SHIFT else []
     states = [(0.0, "screens_layer8")]
     if OCT_SHIFT:
         states.append((OCT_AT, "screens_layer8_oct3"))
-    cur = 127
+    cur = START_VELOCITY
     for name, _, _, dyn, _ in SECTIONS:
+        if dyn is None:
+            continue
         key, vel = VEL_KEY[dyn]
         if vel != cur:
             at = 1.6 if name == "A1" else sect_start[name] - 0.24
@@ -192,7 +202,7 @@ VELOCITY = [v for *_, v in NOTES]
 
 def presses():
     """(key, down s, up s) of every key the player presses."""
-    return (CONTROLS + [(PED_KEY, a, b) for a, b in PEDAL]
+    return (CONTROLS + [(key, a, b) for a, b, key in PEDAL]
             + [(NOTE_KEY[n], s, u) for n, s, u, _ in NOTES])
 
 
@@ -314,7 +324,7 @@ def midi_file(path):
         n = midi_number(note) + OCT_SHIFT
         ev.append((s, 0x90, n, v))
         ev.append((s + d, 0x80, n, 0))
-    for a, b in PEDAL:
+    for a, b, _ in PEDAL:
         ev.append((a, 0xB0, 64, 127))
         ev.append((b, 0xB0, 64, 0))
     ev.sort(key=lambda e: (e[0], e[1] == 0x90))       # a release before a press at one time
