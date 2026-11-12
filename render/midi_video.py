@@ -77,8 +77,8 @@ SECTIONS = [
 ]
 START_VELOCITY = 127
 VEL_KEY = {"mp": ("5,3", 60), "f": ("5,5", 96)}              # MI_VL5, MI_VL8 (right top row)
-# the two Ped. keys (MI_SUST): the pedal goes to the hand that is free when it goes
-# down, the one that did not just strike the bar's first note.
+# the two Ped. keys (MI_SUST): each bar's pedal goes to the freer hand, the one that
+# strikes fewer notes while it is down (the right thumb in the arpeggio bars).
 PED_LEFT, PED_RIGHT = "1,0", "9,3"
 SCORE = [n for _, notes, *_ in SECTIONS for n in notes]
 SIXTEENTH = float(env("PK_SIXTEENTH", 0.23))                 # s
@@ -176,12 +176,12 @@ def performance():
         if d >= 2:
             nb = bars[k + 1][0] if k + 1 < len(bars) else end + 2.2
             a, b = bt + 0.06, nb - 0.03
-            # the hand that is free when the pedal goes down: not the one that just
-            # struck the bar's first note. The two Ped. keys send the same CC 64, and
+            # the freer hand: the one that strikes fewer notes while the pedal is down
+            # (a tie goes to the left). The two Ped. keys send the same CC 64, and
             # releasing either lifts the pedal, so one key holds it for the whole bar.
-            first = min((nn for nn in notes if nn[1] >= bt - 0.06), key=lambda nn: nn[1])
-            left_struck = int(NOTE_KEY[first[0]].split(",")[0]) < 5
-            pedal.append((a, b, PED_RIGHT if left_struck else PED_LEFT))
+            struck = [int(NOTE_KEY[nn[0]].split(",")[0]) < 5 for nn in notes if a <= nn[1] < b]
+            n_left = sum(struck)
+            pedal.append((a, b, PED_RIGHT if n_left > len(struck) - n_left else PED_LEFT))
     controls = [(OCT_KEY, OCT_AT, OCT_AT + OCT_LEN)] if OCT_SHIFT else []
     states = [(0.0, "screens_layer8")]
     if OCT_SHIFT:
