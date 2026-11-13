@@ -111,18 +111,37 @@ def set_rainbow(t):
         n.inputs["To Max"].default_value = HUE_SPAN - off
 
 
+# the legend texture's node in the screens' material: each screen state (legend atlas +
+# held keys) gets an image datablock of its own, and the node is pointed at it. With
+# persistent data, Cycles keeps a texture it has uploaded, so rewriting one image's
+# pixels in place showed the first frame's screens for the whole video.
+LEGEND_NODES = [n for m in bpy.data.materials if m.use_nodes for n in m.node_tree.nodes
+                if n.type == "TEX_IMAGE" and n.image == img]
+_state_images = {}
+
+
 def set_screens(t):
     name = [n for at, n in mv.STATES if at <= t][-1]
-    px, cells = ATLASES[name]
-    px = px.copy()
-    for key in mv.held(t):
-        if key in cells:
-            x, y = cells[key]
-            px[y:y + 40, x:x + 72] = 1.0 - px[y:y + 40, x:x + 72]
-    rgba = np.ones((AH, AW, 4), np.float32)
-    rgba[:, :, :3] = px[::-1][:AH, :AW]                 # Blender's rows run up
-    img.pixels.foreach_set(rgba.ravel())
-    img.update()
+    held = tuple(sorted(mv.held(t)))
+    key = (name, held)
+    im = _state_images.get(key)
+    if im is None:
+        px, cells = ATLASES[name]
+        px = px.copy()
+        for k in held:
+            if k in cells:
+                x, y = cells[k]
+                px[y:y + 40, x:x + 72] = 1.0 - px[y:y + 40, x:x + 72]
+        rgba = np.ones((AH, AW, 4), np.float32)
+        rgba[:, :, :3] = px[::-1][:AH, :AW]             # Blender's rows run up
+        im = bpy.data.images.new(f"screens {len(_state_images)}", AW, AH, alpha=False)
+        im.colorspace_settings.name = img.colorspace_settings.name
+        im.pixels.foreach_set(rgba.ravel())
+        im.update()
+        _state_images[key] = im
+    for n in LEGEND_NODES:
+        if n.image != im:
+            n.image = im
 
 
 # --- the camera ------------------------------------------------------------------------
