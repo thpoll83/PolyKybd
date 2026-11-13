@@ -136,10 +136,11 @@ def ease(u):
     return u * u * (3 - 2 * u)
 
 
-def orbit(u, az0, az1, elev, dist, lens):
+def orbit(u, az0, az1, elev, dist, lens, cx=None):
+    """Around a point on the keys (cx: its x, default the board's centre)."""
     az = math.radians(az0 + (az1 - az0) * ease(u))
     e = math.radians(elev)
-    aim = mathutils.Vector((centre.x, centre.y, TOP))
+    aim = mathutils.Vector((centre.x if cx is None else cx, centre.y if cx is None else HOME_Y, TOP))
     pos = aim + mathutils.Vector((dist * math.cos(e) * math.sin(az), -dist * math.cos(e) * math.cos(az), dist * math.sin(e)))
     return pos, aim, lens
 
@@ -157,22 +158,46 @@ def flyover(u, x0, x1, height, ahead, lens):
 def pan(u, x0, x1, elev, dist, lens, y_off=0.0):
     x = x0 + (x1 - x0) * ease(u)
     e = math.radians(elev)
-    aim = mathutils.Vector((x, centre.y + y_off, TOP))
+    aim = mathutils.Vector((x, HOME_Y + y_off, TOP))
     pos = aim + mathutils.Vector((0, -dist * math.cos(e), dist * math.sin(e)))
     return pos, aim, lens
 
 
-L, R = lo.x + 0.22 * W_BOARD, hi.x - 0.22 * W_BOARD     # the two halves' middles
+# the two halves' middles, from the keys themselves: x the mean of each half's keys, and
+# y (HOME_Y) the home rows' (matrix row 2 on the left, 7 on the right)
+def _key_world(lab):
+    root, (x, y, r, dz) = g["KEYS"][lab]
+    return root.matrix_world @ mathutils.Vector((x, y, 0))
+
+
+_kw = {lab: _key_world(lab) for lab in g["KEYS"]}
+L = sum(v.x for lab, v in _kw.items() if int(lab.split(",")[0]) < 5) / sum(1 for lab in _kw if int(lab.split(",")[0]) < 5)
+R = sum(v.x for lab, v in _kw.items() if int(lab.split(",")[0]) >= 5) / sum(1 for lab in _kw if int(lab.split(",")[0]) >= 5)
+_home = [v.y for lab, v in _kw.items() if lab.split(",")[0] in ("2", "7")]
+HOME_Y = sum(_home) / len(_home)
+print("midi_anim aim: left", round(L, 3), "right", round(R, 3), "centre", round(centre.x, 3), "home y", round(HOME_Y, 3), "centre y", round(centre.y, 3))
 END = mv.TOTAL
-# (start s, function of u in 0..1): each shot runs to the next one's start (5..8 s)
+
+
+def zoom_out(u):
+    """The end: from close on the right half, where the piece ends, out to the whole
+    board; only here does the aim move to the centre, between the halves."""
+    k = ease(u)
+    cx = R + (centre.x - R) * k
+    return orbit(0.0, 8, 8, 52 - 8 * k, 0.26 + 0.46 * k, 50 - 10 * k, cx)
+
+
+# (start s, function of u in 0..1): each shot runs to the next one's start (5..8 s).
+# The camera aims at a half's keys, never at the empty gap between them, and each move
+# is slow: an orbit turns 40 degrees, a pan travels 7 to 8 cm.
 SHOTS = [
-    (0.0, lambda u: orbit(u, -55, 35, 38, 0.62, 40)),                  # around the centre, left to right
-    (7.0, lambda u: flyover(u, hi.x + 0.03, lo.x - 0.03, 0.045, 0.12, 22)),   # low, right to left
-    (13.5, lambda u: pan(u, L, centre.x, 62, 0.30, 45)),               # over the left half towards the middle
-    (20.0, lambda u: pan(u, centre.x - 0.05, R + 0.03, 28, 0.32, 45, 0.02)),  # low along the front, to the right
-    (26.5, lambda u: orbit(u, 30, -20, 55, 0.50, 45)),                 # around, back to the left
-    (33.0, lambda u: pan(u, R, L, 70, 0.42, 40)),                      # high, right to left
-    (39.5, lambda u: orbit(u, -10, 10, 50, 0.70 - 0.35 * ease(u), 40 + 30 * ease(u))),   # wide, then in
+    (0.0, lambda u: orbit(u, -30, 10, 40, 0.40, 45, L)),                 # around the left half (OCT 3)
+    (7.0, lambda u: flyover(u, hi.x - 0.01, R - 0.05, 0.05, 0.06, 24)),  # low over the right half, to the left
+    (13.5, lambda u: pan(u, L - 0.035, L + 0.04, 62, 0.30, 45)),         # over the left half
+    (20.0, lambda u: pan(u, R - 0.04, R + 0.035, 30, 0.30, 45, 0.02)),   # low along the right half's front
+    (26.5, lambda u: orbit(u, 25, -15, 55, 0.40, 45, R)),                # around the right half
+    (33.0, lambda u: pan(u, L + 0.04, L - 0.035, 70, 0.34, 42)),         # high over the left half
+    (39.5, zoom_out),                                                     # close on the right, out to both
 ]
 
 
@@ -206,7 +231,10 @@ for n in range(first, last + 1, step):
         continue
     t = n / fps
     pos, aim, lens = camera(t)
+    # the scene's camera tracks the "target" empty (a Track To constraint), so the aim
+    # goes to the target: setting the camera's rotation alone changed nothing
     cam.location = pos
+    tgt.matrix_world = mathutils.Matrix.Translation(aim)
     cam.rotation_euler = (aim - pos).to_track_quat("-Z", "Y").to_euler()
     cam.data.lens = lens
     # move the keys only when their travel changed: an untouched mesh keeps its BVH
