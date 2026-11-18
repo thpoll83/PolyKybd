@@ -100,11 +100,63 @@ LAYOUTS = [
     },
 ]
 
-VARIABLE = {"¥|Bksp", "\\|Enter", "#|Enter", "<|Shift", "ろ|/?|Fn", "無変換|Fn", "変換|Fn"}
+# Universal main block (layout B) without the F-row
+B_ROWS = {k: v for k, v in LAYOUTS[3]["rows"].items() if k != "f"}
+B_ROWS["n"] = [(1, "Esc|`")] + NUM[1:] + [(1, "¥|Bksp"), (1, "Bksp")]
+
+# 65 %: main block plus one nav column = 16U; arrows tucked into shift/bottom rows
+R65_N = B_ROWS["n"] + [(1, "Del")]
+R65_T = B_ROWS["t"] + [(1, "PgUp")]
+R65_C = B_ROWS["c"] + [(1, "PgDn")]
+R65_S = [(1.25, "Shift"), (1, "<|Shift")] + SHIFT + [(1.5, "Shift"), ("gap", .25), (1, "↑"), (1, "End")]
+R65_B = [(1.25, "Ctrl"), (1.25, "Win"), (1.25, "Alt"), (1.5, "無変換|Fn"), (2, "Space"),
+         (1.5, "Space"), (1.25, "変換|Fn"), (1.25, "AltGr"), (1.5, "Ctrl"), ("gap", .25),
+         (1, "←"), (1, "↓"), (1, "→")]
+
+COMPACT = [
+    {
+        "name": "C: universal, no F-row, full nav cluster (78 keys)",
+        "note": "F1-F12 on a Fn layer over the number row; Esc shares the ` key; PrtSc/ScrLk/Pause on a layer",
+        "rows": B_ROWS,
+        "nav": [("n", NAV_X, ["Ins", "Home", "PgUp"]), ("t", NAV_X, ["Del", "End", "PgDn"]),
+                ("s", NAV_X + 1, ["↑"]), ("b", NAV_X, ["←", "↓", "→"])],
+        "split": True,
+    },
+    {
+        "name": "D: universal, no F-row, nav as one column + floating arrows (74 keys)",
+        "note": "Ins/Home/End on a layer; right Win dropped; 17.25U wide instead of 18.25U",
+        "rows": {**B_ROWS,
+                 "b": [(1.25, "Ctrl"), (1.25, "Win"), (1.25, "Alt"), (1.5, "無変換|Fn"), (2, "Space"),
+                       (1.5, "Space"), (1.25, "変換|Fn"), (1.25, "AltGr"), (1.25, "Menu"), (1.5, "Ctrl"),
+                       ("gap", .25), (1, "←"), (1, "↓"), (1, "→")]},
+        "main_w": {"b": 17.25},
+        "nav": [("n", NAV_X, ["Del"]), ("t", NAV_X, ["PgUp"]), ("c", NAV_X, ["PgDn"]),
+                ("s", NAV_X, ["↑"])],
+        "split": True,
+    },
+    {
+        "name": "E: universal 65 % (73 keys)",
+        "note": "Nav column Del/PgUp/PgDn/End; right Win, Menu and the JIS ろ key move to a layer; 16U wide",
+        "rows": {"n": R65_N, "t": R65_T, "c": R65_C, "s": R65_S, "b": R65_B},
+        "nav": [], "main_w": 16,
+        "split": True,
+    },
+    {
+        "name": "F: 65 % that fits the current 5x8 matrix (71 keys, 40 per half max)",
+        "note": "As E, but Backspace is one 2U key (JIS ¥ on a layer) and End moves to a layer",
+        "rows": {"n": B_ROWS["n"][:13] + [(2, "Bksp"), (1, "Del")], "t": R65_T, "c": R65_C,
+                 "s": R65_S[:-1] + [("gap", 1)], "b": R65_B},
+        "nav": [], "main_w": 16,
+        "split": True,
+    },
+]
+
+VARIABLE = {"Esc|`", "¥|Bksp", "\\|Enter", "#|Enter", "<|Shift", "ろ|/?|Fn", "無変換|Fn", "変換|Fn"}
 
 
 def place(layout):
     keys = []  # (row, x, w, label)
+    main_w = layout.get("main_w", 15)
     for r, items in layout["rows"].items():
         x = 0.0
         for it in items:
@@ -114,9 +166,10 @@ def place(layout):
             w, lab = it
             keys.append((r, x, w, lab))
             x += w
-        if abs(x - 15) > 1e-9:
-            sys.exit(f"{layout['name']}: row {r} is {x}U, not 15U")
-    for r, x0, labs in nav(None):
+        want = main_w.get(r, 15) if isinstance(main_w, dict) else main_w
+        if abs(x - want) > 1e-9:
+            sys.exit(f"{layout['name']}: row {r} is {x}U, not {want}U")
+    for r, x0, labs in layout.get("nav", nav(None)):
         for i, lab in enumerate(labs):
             keys.append((r, x0 + i, 1, lab))
     return keys
@@ -145,9 +198,12 @@ def svg_board(layout, keys, oy):
     out.append(f'<text x="{PAD*U}" y="{oy+22}" class="t">{esc(title)}</text>')
     out.append(f'<text x="{PAD*U}" y="{oy+40}" class="note">{esc(layout["note"])}</text>')
     by = oy + 52
+    dy = 0 if "f" in layout["rows"] else -1.25
+    width = max(x + w for _, x, w, _ in keys)
+    nrows = 6 if dy == 0 else 5
     left = right = 0
     for r, x, w, lab in keys:
-        px, py = (PAD + x) * U, by + Y[r] * U
+        px, py = (PAD + x) * U, by + (Y[r] + dy) * U
         bad = w not in ALLOWED
         side = "hl" if layout["split"] and x < CUT[r] else ("hr" if layout["split"] else "plain")
         left += side == "hl"
@@ -163,28 +219,28 @@ def svg_board(layout, keys, oy):
         pts = []
         for r in "fnt csb".replace(" ", ""):
             pass
-        rows = ["f", "n", "t", "c", "s", "b"]
+        rows = [r for r in ["f", "n", "t", "c", "s", "b"] if r in layout["rows"]]
         tops = {"f": 0, "n": 1.25, "t": 2.25, "c": 3.25, "s": 4.25, "b": 5.25}
         path = []
         for r in rows:
             cx = (PAD + CUT[r]) * U
-            y0 = by + (tops[r] - (0.125 if r == "n" else 0)) * U
-            y1 = by + (tops[r] + 1 + (0.125 if r == "f" else 0)) * U
+            y0 = by + (tops[r] + dy - (0.125 if r == "n" and dy == 0 else 0)) * U
+            y1 = by + (tops[r] + dy + 1 + (0.125 if r == "f" else 0)) * U
             path += [(cx, y0), (cx, y1)]
         d = "M " + " L ".join(f"{a:.1f},{b:.1f}" for a, b in path)
         out.append(f'<path d="{d}" class="cut"/>')
-        out.append(f'<text x="{(PAD+18.25)*U}" y="{by+6.75*U}" class="note" text-anchor="end">'
+        out.append(f'<text x="{(PAD+width)*U}" y="{by+(6.75+dy)*U}" class="note" text-anchor="end">'
                    f'left {left} + right {right} = {left+right} keys</text>')
     else:
-        out.append(f'<text x="{(PAD+18.25)*U}" y="{by+6.75*U}" class="note" text-anchor="end">'
+        out.append(f'<text x="{(PAD+width)*U}" y="{by+(6.75+dy)*U}" class="note" text-anchor="end">'
                    f'{count(keys)} keys</text>')
-    return "\n".join(out), by + 7.1 * U, left, right
+    return "\n".join(out), by + (7.1 + dy) * U, left, right
 
 
-def main(path):
+def render(layouts, path):
     parts, oy = [], 0
     summary = []
-    for lay in LAYOUTS:
+    for lay in layouts:
         keys = place(lay)
         if lay["split"]:
             check_cuts(keys)
@@ -208,4 +264,6 @@ def main(path):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "tkl_layouts.svg")
+    render(LAYOUTS, "tkl_layouts.svg")
+    print()
+    render(COMPACT, "compact_layouts.svg")
