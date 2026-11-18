@@ -3,7 +3,7 @@
     blender -b --python render/layout_scene.py -- LAYOUT_KEYS.json LEGENDS.png out.png \
         [samples] [width] [joined|apart] [elevation_deg]
 
-LAYOUT_KEYS.json and LEGENDS.png come from docs/layout_study/export_layout_e.py.
+LAYOUT_KEYS.json and LEGENDS.png come from poly_kybd/variations/split72s/layout_study/export_layout_e.py.
 Every key is a copy of the real 1U key (SW_K_2: switch, socket, display carrier, display,
 flex cable, outer cap) as key_scene.py imports it. For a wider key the walls of the outer
 cap and of the display carrier move out in x (vertices beyond STRETCH_FROM), so the
@@ -17,7 +17,7 @@ PLATE_MARGIN wider than the keys on the outer edges, the case 4 mm wider than th
 turns each half 8 degrees. Saves out.blend next to the PNG.
 
 PK_PLATE_ART=mask.png renders the plate as a PCB: black solder mask with the mask image
-(white = silkscreen, exported by docs/layout_study/plate_trace_tool.html) on top.
+(white = silkscreen, exported by poly_kybd/variations/split72s/layout_study/plate_trace_tool.html) on top.
 """
 import json
 import math
@@ -166,7 +166,7 @@ def plate_art_material(path):
     """Black solder mask with the mask image (white = silkscreen) on the plate top.
 
     The image covers the plate from its top-left corner (-PLATE_MARGIN, +PLATE_MARGIN in
-    the key frame, y up) to the bottom-right, the way docs/layout_study/plate_trace_tool.html
+    the key frame, y up) to the bottom-right, the way poly_kybd/variations/split72s/layout_study/plate_trace_tool.html
     exports it; object coordinates (mm) are mapped onto it directly."""
     pw, ph = W * U + 2 * PLATE_MARGIN, NROWS * U + 2 * PLATE_MARGIN
     m = bpy.data.materials.new("plate art")

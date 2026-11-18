@@ -48,8 +48,8 @@ part. The case and plate are plain extrusions of each half's outline, without sc
 holes, USB ports or switch cut-outs.
 
 ```bash
-blender -b --python render/layout_scene.py -- docs/layout_study/layout_e_keys.json \
-    docs/layout_study/layout_e_legends.png render/out/layout_e.png 64 1600 joined 34
+blender -b --python render/layout_scene.py -- poly_kybd/variations/split72s/layout_study/layout_e_keys.json \
+    poly_kybd/variations/split72s/layout_study/layout_e_legends.png render/out/layout_e.png 64 1600 joined 34
 ```
 
 Arguments after the output: Cycles samples, width in pixels, `joined` or `apart`,
