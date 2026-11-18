@@ -55,6 +55,8 @@ keys_path, legends_path, out = (os.path.abspath(a) for a in argv[:3])
 samples = int(argv[3]) if len(argv) > 3 else 32
 width = int(argv[4]) if len(argv) > 4 else 1600
 mode = argv[5] if len(argv) > 5 else "joined"
+if mode not in ("joined", "apart"):
+    sys.exit(f"mode must be joined or apart, not {mode!r}")
 elev = float(argv[6]) if len(argv) > 6 else 32.0
 
 data = json.load(open(keys_path, encoding="utf-8"))
@@ -188,11 +190,22 @@ def plate_art_material(path):
     a_in, b_in = [i for i in col.inputs if i.type == "RGBA"]
     a_in.default_value = (0.010, 0.011, 0.013, 1)        # black solder mask
     b_in.default_value = (0.80, 0.78, 0.72, 1)           # white silkscreen
-    nt.links.new(tex.outputs["Color"], col.inputs["Factor"])
+    # silkscreen only on faces that point up: the side walls and the underside stay plain mask
+    geo = nt.nodes.new("ShaderNodeNewGeometry")
+    nz = nt.nodes.new("ShaderNodeSeparateXYZ")
+    up = nt.nodes.new("ShaderNodeMath")
+    up.operation, up.inputs[1].default_value = "GREATER_THAN", 0.5
+    on_top = nt.nodes.new("ShaderNodeMath")
+    on_top.operation = "MULTIPLY"
+    nt.links.new(geo.outputs["Normal"], nz.inputs[0])
+    nt.links.new(nz.outputs["Z"], up.inputs[0])
+    nt.links.new(tex.outputs["Color"], on_top.inputs[0])
+    nt.links.new(up.outputs[0], on_top.inputs[1])
+    nt.links.new(on_top.outputs[0], col.inputs["Factor"])
     nt.links.new(next(o for o in col.outputs if o.type == "RGBA"), b.inputs["Base Color"])
     rough = nt.nodes.new("ShaderNodeMapRange")           # glossy mask, matte silk
     rough.inputs["To Min"].default_value, rough.inputs["To Max"].default_value = 0.22, 0.65
-    nt.links.new(tex.outputs["Color"], rough.inputs["Value"])
+    nt.links.new(on_top.outputs[0], rough.inputs["Value"])
     nt.links.new(rough.outputs["Result"], b.inputs["Roughness"])
     b.inputs["Coat Weight"].default_value = 0.3
     return m
@@ -213,6 +226,26 @@ def legend_mesh(half_keys, parent, t, dz, mat):
         u0, u1 = k["cell"] * CW / aw, (k["cell"] + 1) * CW / aw
         uv += [(u0, 1), (u1, 1), (u1, 0), (u0, 0)]
     return textured_parts._mesh("legends", verts, tris, uv, mat, parent)
+
+
+def fit_camera(sc, cam, objs, elev_rad, margin=0.04):
+    """Move the camera back along its line of sight until every vertex of objs is inside
+    the frame with `margin` (fraction of the frame) to spare. Never moves it closer."""
+    from bpy_extras.object_utils import world_to_camera_view
+    bpy.context.view_layer.update()     # world matrices include the board's mm -> m scale
+    pts = []
+    for o in objs:
+        mw = o.matrix_world
+        pts += [mw @ v.co for v in o.data.vertices]
+    for _ in range(60):
+        bpy.context.view_layer.update()
+        ok = all(margin <= c.x <= 1 - margin and margin <= c.y <= 1 - margin and c.z > 0
+                 for c in (world_to_camera_view(sc, cam, p) for p in pts))
+        if ok:
+            return
+        d = cam.location.length * 1.03
+        cam.location = (0.0, -d * math.cos(elev_rad), d * math.sin(elev_rad))
+    print("WARNING: the camera could not fit the board")
 
 
 def main():
@@ -313,16 +346,17 @@ def main():
     e_ = math.radians(elev)
     cam.location = (0.0, -dist * math.cos(e_), dist * math.sin(e_))
     cam.constraints.new("TRACK_TO").target = tgt
-    bpy.context.view_layer.update()
+    sc.render.resolution_x, sc.render.resolution_y = width, int(width * 9 / 16)
+    fit_camera(sc, cam, [bpy.data.objects[f"case {h}"] for h in ("left", "right")], e_)
     studio.flag(sc)                     # black card in the caps' mirror direction
 
     sc.render.engine = "CYCLES"
     sc.cycles.device = "CPU"
     sc.cycles.samples = samples
     materials.scene_settings(sc)
-    sc.render.resolution_x, sc.render.resolution_y = width, int(width * 9 / 16)
     sc.render.filepath = out
     sc.view_settings.view_transform = "AgX"
+    os.makedirs(os.path.dirname(out), exist_ok=True)       # render/out is not in git
     bpy.ops.wm.save_as_mainfile(filepath=out.rsplit(".", 1)[0] + ".blend", compress=True)
     bpy.ops.render.render(write_still=True)
 

@@ -14,7 +14,7 @@ connected position the halves touch along that line.
 | `e_vs_65.svg/.png` | Layout E next to a standard ANSI 65 % board |
 | `numpad_layouts.svg/.png` | Number blocks N1 (4x5, 20 keys) and N2 (5x5, 25 keys), all 1U, and E with N1 docked on the right |
 | `export_layout_e.py` | Writes the JSON files below from `tkl_layouts.py` |
-| `layout_e.kle.json` | Layout E for keyboard-layout-editor.com (paste into the Raw data tab) |
+| `layout_e.kle.json` | Layout E for keyboard-layout-editor.com: open the file with the site's JSON upload (the Raw data tab expects the rows without the outer brackets) |
 | `layout_e.qmk.json` | Layout E as a QMK `layouts` entry, 6x7 matrix per half (rows 0-5 left, 6-11 right) |
 | `layout_e_keys.json`, `layout_e_legends.png` | Input for `render/layout_scene.py` |
 | `numpad_n1.kle.json`, `numpad_n1.qmk.json` | Number block N1, 5x4 matrix |
@@ -27,7 +27,8 @@ Regenerate:
 
 ```bash
 python3 tkl_layouts.py
-python3 export_layout_e.py
+python3 export_layout_e.py      # needs DejaVu Sans, or --font PATH
+python3 make_trace_tool.py      # the trace tool embeds layout_e_keys.json
 ```
 
 ## Layout E

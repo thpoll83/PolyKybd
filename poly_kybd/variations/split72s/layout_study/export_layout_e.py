@@ -10,9 +10,16 @@ Writes, next to this script:
 - layout_e_keys.json  every key with position, width, half, legend, for the renderer
 - layout_e_legends.png  one 72x40 legend cell per key (white on black), for the renderer
 - numpad_n1.kle.json, numpad_n1.qmk.json  the 20-key number block N1, 5x4 matrix
+
+The legends need a TrueType font: DejaVu Sans by default (Debian/Ubuntu: apt install
+fonts-dejavu-core), or any other with --font PATH. After a change here, rebuild the trace
+tool (make_trace_tool.py), which embeds layout_e_keys.json.
 """
+import argparse
 import json
 import os
+import shutil
+import subprocess
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -28,7 +35,28 @@ RENDER_LEGEND = {"Esc|`": "Esc", "\\|Enter": "\\", "#|Enter": "#", "<|Shift": "<
                  "→": "▶", "↑": "▲"}
 
 
+FONT = None   # set in main()
+
+
+def find_font(path=None):
+    """DejaVu Sans unless a path is given; fontconfig finds it outside the Debian path."""
+    if path:
+        if not os.path.isfile(path):
+            raise SystemExit(f"font not found: {path}")
+        return path
+    default = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+    if os.path.isfile(default):
+        return default
+    if shutil.which("fc-match"):
+        found = subprocess.run(["fc-match", "-f", "%{file}", "DejaVu Sans"], capture_output=True, text=True).stdout
+        if found and "DejaVuSans" in os.path.basename(found) and os.path.isfile(found):
+            return found
+    raise SystemExit("DejaVu Sans not found: install it (Debian/Ubuntu: apt install fonts-dejavu-core) "
+                     "or pass --font PATH to another TrueType font")
+
+
 def keys():
+    t.check_cuts(t.place(E))            # every key on one side of the split line
     out = []
     order = "ntcsb"
     for r, x, w, lab in t.place(E):
@@ -82,7 +110,7 @@ def legends(ks, path):
     for i, k in enumerate(ks):
         txt = k["legend"]
         size = 26 if len(txt) == 1 else (17 if len(txt) <= 4 else 13)
-        f = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", size)
+        f = ImageFont.truetype(FONT, size)
         bx = d.textbbox((0, 0), txt, font=f)
         d.text((i * cw + (cw - bx[2] - bx[0]) / 2, (ch - bx[3] - bx[1]) / 2), txt, fill=255, font=f)
         k["cell"] = i
@@ -98,27 +126,32 @@ def export_numpad():
     for row in range(5):
         for c, k in enumerate([k for k in ks if k["row"] == row]):
             k["matrix"] = [row, c]
-    json.dump(kle(ks, "PolyKybd number block N1"), open(os.path.join(HERE, "numpad_n1.kle.json"), "w"), ensure_ascii=False, indent=1)
+    json.dump(kle(ks, "PolyKybd number block N1"), open(os.path.join(HERE, "numpad_n1.kle.json"), "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1)
     qmk = {"matrix_size": {"rows": 5, "cols": 4},
            "layouts": {"LAYOUT_numpad20": {"layout": [
                {"label": k["label"], "matrix": k["matrix"], "x": k["x"], "y": k["row"],
                 **({"w": k["w"]} if k["w"] != 1 else {})} for k in ks]}}}
-    json.dump(qmk, open(os.path.join(HERE, "numpad_n1.qmk.json"), "w"), ensure_ascii=False, indent=1)
+    json.dump(qmk, open(os.path.join(HERE, "numpad_n1.qmk.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("numpad", len(ks), "keys")
 
 
 def main():
+    global FONT
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--font", help="TrueType font for the legends (default DejaVu Sans)")
+    FONT = find_font(ap.parse_args().font)
     ks = keys()
     assign_matrix(ks)
     legends(ks, os.path.join(HERE, "layout_e_legends.png"))
-    json.dump(kle(ks), open(os.path.join(HERE, "layout_e.kle.json"), "w"), ensure_ascii=False, indent=1)
+    json.dump(kle(ks), open(os.path.join(HERE, "layout_e.kle.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     qmk = {"matrix_size": {"rows": 2 * ROWS_PER_SIDE, "cols": COLS},
            "layouts": {"LAYOUT_universal65": {"layout": [
                {"label": k["label"], "matrix": k["matrix"], "x": k["x"], "y": k["row"],
                 **({"w": k["w"]} if k["w"] != 1 else {})} for k in ks]}}}
-    json.dump(qmk, open(os.path.join(HERE, "layout_e.qmk.json"), "w"), ensure_ascii=False, indent=1)
+    json.dump(qmk, open(os.path.join(HERE, "layout_e.qmk.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump({"cut": t.CUT, "pitch_mm": 19.05, "cell": [72, 40], "keys": ks},
-              open(os.path.join(HERE, "layout_e_keys.json"), "w"), ensure_ascii=False, indent=1)
+              open(os.path.join(HERE, "layout_e_keys.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     for half in ("left", "right"):
         hk = [k for k in ks if k["half"] == half]
         print(half, len(hk), "keys; matrix rows used:", sorted({k["matrix"][0] for k in hk}))

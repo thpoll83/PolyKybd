@@ -18,6 +18,11 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
+def script_safe(js):
+    """JSON inside <script>: "</" would end the element (a file name such as "</script>.jpg")."""
+    return js.replace("</", "<\\/")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--image", help="photo to embed")
@@ -32,10 +37,10 @@ def main():
         mime = mimetypes.guess_type(a.image)[0] or "image/jpeg"
         b64 = base64.b64encode(open(a.image, "rb").read()).decode()
         image = json.dumps({"src": f"data:{mime};base64,{b64}", "name": os.path.basename(a.image)})
-    defaults = json.dumps(json.load(open(a.settings))) if a.settings else "null"
+    defaults = json.dumps(json.load(open(a.settings, encoding="utf-8"))) if a.settings else "null"
     t = open(os.path.join(HERE, "plate_trace_tool.template.html"), encoding="utf-8").read()
-    t = (t.replace("/*LAYOUT*/null", json.dumps(layout)).replace("/*IMAGE*/null", image)
-          .replace("/*DEFAULTS*/null", defaults))
+    t = (t.replace("/*LAYOUT*/null", script_safe(json.dumps(layout))).replace("/*IMAGE*/null", script_safe(image))
+          .replace("/*DEFAULTS*/null", script_safe(defaults)))
     open(a.out, "w", encoding="utf-8").write(t)
     print(a.out, f"{len(t) / 1024:.0f} KB")
 

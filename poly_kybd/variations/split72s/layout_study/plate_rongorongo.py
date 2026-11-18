@@ -250,10 +250,10 @@ def main():
     title = (f'<text x="{-MARGIN}" y="{-MARGIN - 6}" font-family="sans-serif" font-size="5" fill="#222">'
              f'Layout E plate, Rongorongo-style glyph lines (own simplified drawings, not from a tablet), '
              f'{len(GLYPHS)} glyphs, {n} lines, {LINE} mm silk lines</text>')
-    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{vw * 8:.0f}" height="{vh * 8:.0f}" '
+    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{vw}mm" height="{vh}mm" '
            f'viewBox="{vx} {vy} {vw} {vh}"><defs>{clip}</defs>'
            f'<rect x="{vx}" y="{vy}" width="{vw}" height="{vh}" fill="#d9d9d6"/>{title}{"".join(body)}</svg>')
-    open(os.path.join(HERE, "plate_rongorongo.svg"), "w").write(svg)
+    open(os.path.join(HERE, "plate_rongorongo.svg"), "w", encoding="utf-8").write(svg)
 
     # glyph sheet: each glyph large, for review
     cells, cols = [], 10
@@ -267,7 +267,7 @@ def main():
     sheet = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{cols * 160}" height="{rows * 220}" '
              f'viewBox="0 0 {cols * 16} {rows * 22}"><rect width="{cols * 16}" height="{rows * 22}" fill="#fff"/>'
              f'{"".join(cells)}</svg>')
-    open(os.path.join(HERE, "rongorongo_glyphs.svg"), "w").write(sheet)
+    open(os.path.join(HERE, "rongorongo_glyphs.svg"), "w", encoding="utf-8").write(sheet)
     print(f"{n} lines, {len(lines)} glyphs placed, {sum(len(v) for v in holes.values())} cut-outs")
 
 

@@ -317,7 +317,7 @@ def render(layouts, path):
            f'viewBox="0 0 {W:.0f} {oy:.0f}"><style>{css}</style>'
            f'<rect width="100%" height="100%" fill="#fff" stroke="none"/>'
            + "\n".join(parts) + "</svg>")
-    open(path, "w").write(svg)
+    open(path, "w", encoding="utf-8").write(svg)
     for n, t, l, r in summary:
         print(f"{t:3d} keys  L{l:3d} R{r:3d}  {n}")
 

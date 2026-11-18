@@ -15,9 +15,11 @@ Tablet B. Licences and the credit line: [ATTRIBUTION.md](ATTRIBUTION.md).
 
 The plate is turned 4.5 degrees counter-clockwise on the photo, centred at photo pixel
 (1170, 610), at 0.164 mm per photo pixel; 99.7 % of the plate lies on the tablet. The trace
-uses light strokes on dark, 1.6 mm background blur, threshold 17, +0.05 mm grow, specks
-under 0.2 mm² removed and holes under 0.45 mm² filled. 2.9 % of the ink is thinner than
-0.21 mm.
+uses light strokes on dark, 0.16 mm pre-smooth, 1.6 mm background blur, threshold 17,
+specks under 0.2 mm² removed and holes under 0.45 mm² filled. The saved grow of 0.05 mm is
+0.4 px at 8 px/mm and rounds to 0, so no dilation is applied. 1.3 % of the ink is in strokes
+narrower than 0.21 mm (measured along the shortest of the horizontal, vertical and diagonal
+runs through each pixel).
 
 ## Rebuild
 

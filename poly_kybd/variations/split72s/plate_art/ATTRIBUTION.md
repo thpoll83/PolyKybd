@@ -25,6 +25,6 @@ artwork carries a CC BY-SA 4.0 work. Credit it in the product documentation as:
 
 > Plate artwork: Rongorongo Tablet B (Aruku-Kurenga), verso. Photograph Trocadéro Museum,
 > published in S.-C. Chauvet, *L'île de Pâques et ses mystères*, 1935, CC BY-SA 3.0.
-> Tracing by PolyKybd, CC BY-SA 4.0.
+> Tracing by PolyKybd, CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/).
 
 The tablets are part of the heritage of the Rapa Nui people.

@@ -23,6 +23,8 @@ NOTICE = """<!-- Rongorongo Tablet B (Aruku-Kurenga), verso. Photograph Trocader
 def main():
     mask, out = sys.argv[1], sys.argv[2]
     res = float(sys.argv[3]) if len(sys.argv) > 3 else 8.0
+    if not res > 0:
+        raise SystemExit(f"px_per_mm must be > 0, got {sys.argv[3]}")
     m = np.asarray(Image.open(mask).convert("L")) > 127
     with tempfile.TemporaryDirectory() as tmp:
         pbm, raw = f"{tmp}/mask.pbm", f"{tmp}/raw.svg"
@@ -31,7 +33,7 @@ def main():
         g = re.search(r"(<g transform=.*</g>)", open(raw).read(), re.S).group(1)
     h, w = m.shape
     pw, ph = w / res, h / res
-    open(out, "w").write(
+    open(out, "w", encoding="utf-8").write(
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{pw:.3f}mm" height="{ph:.3f}mm" viewBox="0 0 {pw:.3f} {ph:.3f}">\n'
         f'{NOTICE}\n<g transform="scale({1 / res})" fill="#000">{g}</g>\n</svg>\n')
     print(f"{out}: {pw:.2f} x {ph:.2f} mm, {len(re.findall('<path', g))} paths")
