@@ -5,9 +5,10 @@
 
 LAYOUT_KEYS.json and LEGENDS.png come from docs/layout_study/export_layout_e.py.
 Every key is a copy of the real 1U key (SW_K_2: switch, socket, display carrier, display,
-flex cable, outer cap) as key_scene.py imports it. For a wider key the outer cap and the
-display carrier are stretched in x around their centre, so the corner radii stay as
-they are; the display stays 1U, centred. Each display shows its legend from LEGENDS.png
+flex cable, outer cap) as key_scene.py imports it. For a wider key the walls of the outer
+cap and of the display carrier move out in x (vertices beyond STRETCH_FROM), so the
+corner radii, the display pocket and the stem hole stay as they are; the display stays
+1U, centred. Each display shows its legend from LEGENDS.png
 (one 72x40 cell per key). The case and plate are plain extrusions of each half's outline:
 the case 4 mm wider than the keys on the outer edges and flush at the split line, the
 plate (z 3.4 to 5.0 mm, like the real one) without switch holes.
@@ -40,6 +41,10 @@ CASE_MARGIN = 4.0                      # mm of case outside the keys on the oute
 CASE_Z0, CASE_Z1 = -9.0, 3.4           # case body; the plate sits on it
 PLATE_Z0, PLATE_Z1 = 3.4, 5.0
 STRETCH = ("outercap", "keycap_stem")  # model files that grow with the key width
+# Only vertices this far from the key centre move when a part is stretched: the cap and
+# carrier walls (6.5 to 9 mm) move out, the display pocket (+-6.04 mm) and the MX stem
+# hole stay 1:1 in the middle.
+STRETCH_FROM = 6.5
 
 argv = sys.argv[sys.argv.index("--") + 1:]
 keys_path, legends_path, out = (os.path.abspath(a) for a in argv[:3])
@@ -91,14 +96,15 @@ def template():
 
 
 def stretched(obj, extra, cache):
-    """obj's mesh (in the key's frame) with every vertex moved +-extra/2 mm in x."""
+    """obj's mesh (in the key's frame) with its outer vertices moved +-extra/2 mm in x."""
     key = (obj.data.name, extra)
     if key not in cache:
         me = obj.data.copy()
         co = np.empty(len(me.vertices) * 3, dtype=np.float32)
         me.vertices.foreach_get("co", co)
         co = co.reshape(-1, 3)
-        co[:, 0] += np.sign(co[:, 0]) * extra / 2
+        outer = np.abs(co[:, 0]) > STRETCH_FROM
+        co[outer, 0] += np.sign(co[outer, 0]) * extra / 2
         me.vertices.foreach_set("co", co.ravel())
         me.update()
         cache[key] = me
@@ -110,7 +116,7 @@ def outline(half, margin):
     stairs = []
     for i, r in enumerate(ROWS[:NROWS]):
         x = CUT[r] * U
-        y0 = -i * U - (margin if i == 0 else 0)
+        y0 = -i * U + (margin if i == 0 else 0)
         y1 = -(i + 1) * U - (margin if i == NROWS - 1 else 0)
         stairs += [(x, y0), (x, y1)]
     if half == "left":
