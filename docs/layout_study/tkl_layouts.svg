@@ -1,0 +1,805 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="876" height="1514" viewBox="0 0 876 1514"><style>
+    .t{font:600 15px sans-serif;fill:#222}.note{font:12px sans-serif;fill:#555}
+    .k{font-family:sans-serif;text-anchor:middle;fill:#222}.w{font:9px sans-serif;text-anchor:end;fill:#888}
+    rect{stroke:#666;stroke-width:1}.plain{fill:#f2f2f2}.hl{fill:#e7f3e3}.hr{fill:#fbf0dc}
+    .var{fill:#dbe8fb;stroke:#3c6fc4}.bad{fill:#fde0e0;stroke:#c33;stroke-width:2}
+    .cut{fill:none;stroke:#c33;stroke-width:3;stroke-dasharray:7 4}</style><rect width="100%" height="100%" fill="#fff" stroke="none"/><text x="18.400000000000002" y="22" class="t">ANSI TKL reference (87 keys)</text>
+<text x="18.400000000000002" y="40" class="note">Red = width we cannot build (1.75, 2.25, 2.75, 6.25)</text>
+<rect x="20.400000000000002" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="41.400000000000006" y="79.0" font-size="11" class="k">Esc</text>
+<rect x="112.39999999999999" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="133.39999999999998" y="79.0" font-size="11" class="k">F1</text>
+<rect x="158.4" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="179.4" y="79.0" font-size="11" class="k">F2</text>
+<rect x="204.4" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="225.4" y="79.0" font-size="11" class="k">F3</text>
+<rect x="250.4" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="271.4" y="79.0" font-size="11" class="k">F4</text>
+<rect x="319.40000000000003" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="340.40000000000003" y="79.0" font-size="11" class="k">F5</text>
+<rect x="365.40000000000003" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="386.40000000000003" y="79.0" font-size="11" class="k">F6</text>
+<rect x="411.40000000000003" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="432.40000000000003" y="79.0" font-size="11" class="k">F7</text>
+<rect x="457.40000000000003" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="478.40000000000003" y="79.0" font-size="11" class="k">F8</text>
+<rect x="526.4" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="547.4" y="79.0" font-size="11" class="k">F9</text>
+<rect x="572.4" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="593.4" y="79.0" font-size="11" class="k">F10</text>
+<rect x="618.4" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="639.4" y="79.0" font-size="11" class="k">F11</text>
+<rect x="664.4" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="685.4" y="79.0" font-size="11" class="k">F12</text>
+<rect x="20.400000000000002" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="41.400000000000006" y="136.5" font-size="11" class="k">`</text>
+<rect x="66.39999999999999" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="87.39999999999999" y="136.5" font-size="11" class="k">1</text>
+<rect x="112.39999999999999" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="133.39999999999998" y="136.5" font-size="11" class="k">2</text>
+<rect x="158.4" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="179.4" y="136.5" font-size="11" class="k">3</text>
+<rect x="204.4" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="225.4" y="136.5" font-size="11" class="k">4</text>
+<rect x="250.4" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="271.4" y="136.5" font-size="11" class="k">5</text>
+<rect x="296.40000000000003" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="317.40000000000003" y="136.5" font-size="11" class="k">6</text>
+<rect x="342.40000000000003" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="363.40000000000003" y="136.5" font-size="11" class="k">7</text>
+<rect x="388.40000000000003" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="409.40000000000003" y="136.5" font-size="11" class="k">8</text>
+<rect x="434.40000000000003" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="455.40000000000003" y="136.5" font-size="11" class="k">9</text>
+<rect x="480.40000000000003" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="501.40000000000003" y="136.5" font-size="11" class="k">0</text>
+<rect x="526.4" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="547.4" y="136.5" font-size="11" class="k">-</text>
+<rect x="572.4" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="593.4" y="136.5" font-size="11" class="k">=</text>
+<rect x="618.4" y="111.5" width="88" height="42" rx="5" class="plain"/>
+<text x="662.4" y="136.5" font-size="11" class="k">Bksp</text>
+<text x="702.4" y="148.5" class="w">2</text>
+<rect x="20.400000000000002" y="157.5" width="65.0" height="42" rx="5" class="plain"/>
+<text x="52.900000000000006" y="182.5" font-size="11" class="k">Tab</text>
+<text x="81.4" y="194.5" class="w">1.5</text>
+<rect x="89.39999999999999" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="110.39999999999999" y="182.5" font-size="11" class="k">Q</text>
+<rect x="135.4" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="156.4" y="182.5" font-size="11" class="k">W</text>
+<rect x="181.4" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="202.4" y="182.5" font-size="11" class="k">E</text>
+<rect x="227.4" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="248.4" y="182.5" font-size="11" class="k">R</text>
+<rect x="273.40000000000003" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="294.40000000000003" y="182.5" font-size="11" class="k">T</text>
+<rect x="319.40000000000003" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="340.40000000000003" y="182.5" font-size="11" class="k">Y</text>
+<rect x="365.40000000000003" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="386.40000000000003" y="182.5" font-size="11" class="k">U</text>
+<rect x="411.40000000000003" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="432.40000000000003" y="182.5" font-size="11" class="k">I</text>
+<rect x="457.40000000000003" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="478.40000000000003" y="182.5" font-size="11" class="k">O</text>
+<rect x="503.40000000000003" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="524.4000000000001" y="182.5" font-size="11" class="k">P</text>
+<rect x="549.4" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="570.4" y="182.5" font-size="11" class="k">[</text>
+<rect x="595.4" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="616.4" y="182.5" font-size="11" class="k">]</text>
+<rect x="641.4" y="157.5" width="65.0" height="42" rx="5" class="plain"/>
+<text x="673.9" y="182.5" font-size="11" class="k">\</text>
+<text x="702.4" y="194.5" class="w">1.5</text>
+<rect x="20.400000000000002" y="203.5" width="76.5" height="42" rx="5" class="bad"/>
+<text x="58.650000000000006" y="228.5" font-size="11" class="k">Caps</text>
+<text x="92.9" y="240.5" class="w">1.75</text>
+<rect x="100.89999999999999" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="121.89999999999999" y="228.5" font-size="11" class="k">A</text>
+<rect x="146.9" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="167.9" y="228.5" font-size="11" class="k">S</text>
+<rect x="192.9" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="213.9" y="228.5" font-size="11" class="k">D</text>
+<rect x="238.9" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="259.9" y="228.5" font-size="11" class="k">F</text>
+<rect x="284.90000000000003" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="305.90000000000003" y="228.5" font-size="11" class="k">G</text>
+<rect x="330.90000000000003" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="351.90000000000003" y="228.5" font-size="11" class="k">H</text>
+<rect x="376.90000000000003" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="397.90000000000003" y="228.5" font-size="11" class="k">J</text>
+<rect x="422.90000000000003" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="443.90000000000003" y="228.5" font-size="11" class="k">K</text>
+<rect x="468.90000000000003" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="489.90000000000003" y="228.5" font-size="11" class="k">L</text>
+<rect x="514.9" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="535.9" y="228.5" font-size="11" class="k">;</text>
+<rect x="560.9" y="203.5" width="42" height="42" rx="5" class="plain"/>
+<text x="581.9" y="228.5" font-size="11" class="k">'</text>
+<rect x="606.9" y="203.5" width="99.5" height="42" rx="5" class="bad"/>
+<text x="656.65" y="228.5" font-size="11" class="k">Enter</text>
+<text x="702.4" y="240.5" class="w">2.25</text>
+<rect x="20.400000000000002" y="249.5" width="99.5" height="42" rx="5" class="bad"/>
+<text x="70.15" y="274.5" font-size="11" class="k">Shift</text>
+<text x="115.9" y="286.5" class="w">2.25</text>
+<rect x="123.89999999999999" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="144.89999999999998" y="274.5" font-size="11" class="k">Z</text>
+<rect x="169.9" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="190.9" y="274.5" font-size="11" class="k">X</text>
+<rect x="215.9" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="236.9" y="274.5" font-size="11" class="k">C</text>
+<rect x="261.90000000000003" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="282.90000000000003" y="274.5" font-size="11" class="k">V</text>
+<rect x="307.90000000000003" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="328.90000000000003" y="274.5" font-size="11" class="k">B</text>
+<rect x="353.90000000000003" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="374.90000000000003" y="274.5" font-size="11" class="k">N</text>
+<rect x="399.90000000000003" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="420.90000000000003" y="274.5" font-size="11" class="k">M</text>
+<rect x="445.90000000000003" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="466.90000000000003" y="274.5" font-size="11" class="k">,</text>
+<rect x="491.90000000000003" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="512.9000000000001" y="274.5" font-size="11" class="k">.</text>
+<rect x="537.9" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="558.9" y="274.5" font-size="11" class="k">/</text>
+<rect x="583.9" y="249.5" width="122.5" height="42" rx="5" class="bad"/>
+<text x="645.15" y="274.5" font-size="11" class="k">Shift</text>
+<text x="702.4" y="286.5" class="w">2.75</text>
+<rect x="20.400000000000002" y="295.5" width="53.5" height="42" rx="5" class="plain"/>
+<text x="47.150000000000006" y="320.5" font-size="11" class="k">Ctrl</text>
+<text x="69.9" y="332.5" class="w">1.25</text>
+<rect x="77.89999999999999" y="295.5" width="53.5" height="42" rx="5" class="plain"/>
+<text x="104.64999999999999" y="320.5" font-size="11" class="k">Win</text>
+<text x="127.39999999999998" y="332.5" class="w">1.25</text>
+<rect x="135.4" y="295.5" width="53.5" height="42" rx="5" class="plain"/>
+<text x="162.15" y="320.5" font-size="11" class="k">Alt</text>
+<text x="184.9" y="332.5" class="w">1.25</text>
+<rect x="192.9" y="295.5" width="283.5" height="42" rx="5" class="bad"/>
+<text x="334.65" y="320.5" font-size="11" class="k">Space</text>
+<text x="472.4" y="332.5" class="w">6.25</text>
+<rect x="480.40000000000003" y="295.5" width="53.5" height="42" rx="5" class="plain"/>
+<text x="507.15000000000003" y="320.5" font-size="11" class="k">Alt</text>
+<text x="529.9000000000001" y="332.5" class="w">1.25</text>
+<rect x="537.9" y="295.5" width="53.5" height="42" rx="5" class="plain"/>
+<text x="564.65" y="320.5" font-size="11" class="k">Win</text>
+<text x="587.4" y="332.5" class="w">1.25</text>
+<rect x="595.4" y="295.5" width="53.5" height="42" rx="5" class="plain"/>
+<text x="622.15" y="320.5" font-size="11" class="k">Menu</text>
+<text x="644.9" y="332.5" class="w">1.25</text>
+<rect x="652.9" y="295.5" width="53.5" height="42" rx="5" class="plain"/>
+<text x="679.65" y="320.5" font-size="11" class="k">Ctrl</text>
+<text x="702.4" y="332.5" class="w">1.25</text>
+<rect x="721.9" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="742.9" y="79.0" font-size="11" class="k">PrtSc</text>
+<rect x="767.9" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="788.9" y="79.0" font-size="11" class="k">ScrLk</text>
+<rect x="813.9" y="54" width="42" height="42" rx="5" class="plain"/>
+<text x="834.9" y="79.0" font-size="11" class="k">Pause</text>
+<rect x="721.9" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="742.9" y="136.5" font-size="11" class="k">Ins</text>
+<rect x="767.9" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="788.9" y="136.5" font-size="11" class="k">Home</text>
+<rect x="813.9" y="111.5" width="42" height="42" rx="5" class="plain"/>
+<text x="834.9" y="136.5" font-size="11" class="k">PgUp</text>
+<rect x="721.9" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="742.9" y="182.5" font-size="11" class="k">Del</text>
+<rect x="767.9" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="788.9" y="182.5" font-size="11" class="k">End</text>
+<rect x="813.9" y="157.5" width="42" height="42" rx="5" class="plain"/>
+<text x="834.9" y="182.5" font-size="11" class="k">PgDn</text>
+<rect x="767.9" y="249.5" width="42" height="42" rx="5" class="plain"/>
+<text x="788.9" y="274.5" font-size="11" class="k">↑</text>
+<rect x="721.9" y="295.5" width="42" height="42" rx="5" class="plain"/>
+<text x="742.9" y="320.5" font-size="11" class="k">←</text>
+<rect x="767.9" y="295.5" width="42" height="42" rx="5" class="plain"/>
+<text x="788.9" y="320.5" font-size="11" class="k">↓</text>
+<rect x="813.9" y="295.5" width="42" height="42" rx="5" class="plain"/>
+<text x="834.9" y="320.5" font-size="11" class="k">→</text>
+<text x="857.9" y="362.5" class="note" text-anchor="end">87 keys</text>
+<text x="18.400000000000002" y="400.59999999999997" class="t">ISO TKL reference (88 keys)</text>
+<text x="18.400000000000002" y="418.59999999999997" class="note">ISO Enter is L-shaped (1.5 top, 1.25 bottom) and cannot be built</text>
+<rect x="20.400000000000002" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="41.400000000000006" y="457.59999999999997" font-size="11" class="k">Esc</text>
+<rect x="112.39999999999999" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="133.39999999999998" y="457.59999999999997" font-size="11" class="k">F1</text>
+<rect x="158.4" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="179.4" y="457.59999999999997" font-size="11" class="k">F2</text>
+<rect x="204.4" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="225.4" y="457.59999999999997" font-size="11" class="k">F3</text>
+<rect x="250.4" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="271.4" y="457.59999999999997" font-size="11" class="k">F4</text>
+<rect x="319.40000000000003" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="340.40000000000003" y="457.59999999999997" font-size="11" class="k">F5</text>
+<rect x="365.40000000000003" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="386.40000000000003" y="457.59999999999997" font-size="11" class="k">F6</text>
+<rect x="411.40000000000003" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="432.40000000000003" y="457.59999999999997" font-size="11" class="k">F7</text>
+<rect x="457.40000000000003" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="478.40000000000003" y="457.59999999999997" font-size="11" class="k">F8</text>
+<rect x="526.4" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="547.4" y="457.59999999999997" font-size="11" class="k">F9</text>
+<rect x="572.4" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="593.4" y="457.59999999999997" font-size="11" class="k">F10</text>
+<rect x="618.4" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="639.4" y="457.59999999999997" font-size="11" class="k">F11</text>
+<rect x="664.4" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="685.4" y="457.59999999999997" font-size="11" class="k">F12</text>
+<rect x="20.400000000000002" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="41.400000000000006" y="515.0999999999999" font-size="11" class="k">`</text>
+<rect x="66.39999999999999" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="87.39999999999999" y="515.0999999999999" font-size="11" class="k">1</text>
+<rect x="112.39999999999999" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="133.39999999999998" y="515.0999999999999" font-size="11" class="k">2</text>
+<rect x="158.4" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="179.4" y="515.0999999999999" font-size="11" class="k">3</text>
+<rect x="204.4" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="225.4" y="515.0999999999999" font-size="11" class="k">4</text>
+<rect x="250.4" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="271.4" y="515.0999999999999" font-size="11" class="k">5</text>
+<rect x="296.40000000000003" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="317.40000000000003" y="515.0999999999999" font-size="11" class="k">6</text>
+<rect x="342.40000000000003" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="363.40000000000003" y="515.0999999999999" font-size="11" class="k">7</text>
+<rect x="388.40000000000003" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="409.40000000000003" y="515.0999999999999" font-size="11" class="k">8</text>
+<rect x="434.40000000000003" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="455.40000000000003" y="515.0999999999999" font-size="11" class="k">9</text>
+<rect x="480.40000000000003" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="501.40000000000003" y="515.0999999999999" font-size="11" class="k">0</text>
+<rect x="526.4" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="547.4" y="515.0999999999999" font-size="11" class="k">-</text>
+<rect x="572.4" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="593.4" y="515.0999999999999" font-size="11" class="k">=</text>
+<rect x="618.4" y="490.09999999999997" width="88" height="42" rx="5" class="plain"/>
+<text x="662.4" y="515.0999999999999" font-size="11" class="k">Bksp</text>
+<text x="702.4" y="527.0999999999999" class="w">2</text>
+<rect x="20.400000000000002" y="536.0999999999999" width="65.0" height="42" rx="5" class="plain"/>
+<text x="52.900000000000006" y="561.0999999999999" font-size="11" class="k">Tab</text>
+<text x="81.4" y="573.0999999999999" class="w">1.5</text>
+<rect x="89.39999999999999" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="110.39999999999999" y="561.0999999999999" font-size="11" class="k">Q</text>
+<rect x="135.4" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="156.4" y="561.0999999999999" font-size="11" class="k">W</text>
+<rect x="181.4" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="202.4" y="561.0999999999999" font-size="11" class="k">E</text>
+<rect x="227.4" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="248.4" y="561.0999999999999" font-size="11" class="k">R</text>
+<rect x="273.40000000000003" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="294.40000000000003" y="561.0999999999999" font-size="11" class="k">T</text>
+<rect x="319.40000000000003" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="340.40000000000003" y="561.0999999999999" font-size="11" class="k">Y</text>
+<rect x="365.40000000000003" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="386.40000000000003" y="561.0999999999999" font-size="11" class="k">U</text>
+<rect x="411.40000000000003" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="432.40000000000003" y="561.0999999999999" font-size="11" class="k">I</text>
+<rect x="457.40000000000003" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="478.40000000000003" y="561.0999999999999" font-size="11" class="k">O</text>
+<rect x="503.40000000000003" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="524.4000000000001" y="561.0999999999999" font-size="11" class="k">P</text>
+<rect x="549.4" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="570.4" y="561.0999999999999" font-size="11" class="k">[</text>
+<rect x="595.4" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="616.4" y="561.0999999999999" font-size="11" class="k">]</text>
+<rect x="641.4" y="536.0999999999999" width="65.0" height="42" rx="5" class="plain"/>
+<text x="673.9" y="561.0999999999999" font-size="11" class="k">Enter*</text>
+<text x="702.4" y="573.0999999999999" class="w">1.5</text>
+<rect x="20.400000000000002" y="582.0999999999999" width="76.5" height="42" rx="5" class="bad"/>
+<text x="58.650000000000006" y="607.0999999999999" font-size="11" class="k">Caps</text>
+<text x="92.9" y="619.0999999999999" class="w">1.75</text>
+<rect x="100.89999999999999" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="121.89999999999999" y="607.0999999999999" font-size="11" class="k">A</text>
+<rect x="146.9" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="167.9" y="607.0999999999999" font-size="11" class="k">S</text>
+<rect x="192.9" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="213.9" y="607.0999999999999" font-size="11" class="k">D</text>
+<rect x="238.9" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="259.9" y="607.0999999999999" font-size="11" class="k">F</text>
+<rect x="284.90000000000003" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="305.90000000000003" y="607.0999999999999" font-size="11" class="k">G</text>
+<rect x="330.90000000000003" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="351.90000000000003" y="607.0999999999999" font-size="11" class="k">H</text>
+<rect x="376.90000000000003" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="397.90000000000003" y="607.0999999999999" font-size="11" class="k">J</text>
+<rect x="422.90000000000003" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="443.90000000000003" y="607.0999999999999" font-size="11" class="k">K</text>
+<rect x="468.90000000000003" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="489.90000000000003" y="607.0999999999999" font-size="11" class="k">L</text>
+<rect x="514.9" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="535.9" y="607.0999999999999" font-size="11" class="k">;</text>
+<rect x="560.9" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="581.9" y="607.0999999999999" font-size="11" class="k">'</text>
+<rect x="606.9" y="582.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="627.9" y="607.0999999999999" font-size="11" class="k">#</text>
+<rect x="652.9" y="582.0999999999999" width="53.5" height="42" rx="5" class="plain"/>
+<text x="679.65" y="607.0999999999999" font-size="11" class="k">Enter*</text>
+<text x="702.4" y="619.0999999999999" class="w">1.25</text>
+<rect x="20.400000000000002" y="628.0999999999999" width="53.5" height="42" rx="5" class="plain"/>
+<text x="47.150000000000006" y="653.0999999999999" font-size="11" class="k">Shift</text>
+<text x="69.9" y="665.0999999999999" class="w">1.25</text>
+<rect x="77.89999999999999" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="98.89999999999999" y="653.0999999999999" font-size="11" class="k">&lt;</text>
+<rect x="123.89999999999999" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="144.89999999999998" y="653.0999999999999" font-size="11" class="k">Z</text>
+<rect x="169.9" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="190.9" y="653.0999999999999" font-size="11" class="k">X</text>
+<rect x="215.9" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="236.9" y="653.0999999999999" font-size="11" class="k">C</text>
+<rect x="261.90000000000003" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="282.90000000000003" y="653.0999999999999" font-size="11" class="k">V</text>
+<rect x="307.90000000000003" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="328.90000000000003" y="653.0999999999999" font-size="11" class="k">B</text>
+<rect x="353.90000000000003" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="374.90000000000003" y="653.0999999999999" font-size="11" class="k">N</text>
+<rect x="399.90000000000003" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="420.90000000000003" y="653.0999999999999" font-size="11" class="k">M</text>
+<rect x="445.90000000000003" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="466.90000000000003" y="653.0999999999999" font-size="11" class="k">,</text>
+<rect x="491.90000000000003" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="512.9000000000001" y="653.0999999999999" font-size="11" class="k">.</text>
+<rect x="537.9" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="558.9" y="653.0999999999999" font-size="11" class="k">/</text>
+<rect x="583.9" y="628.0999999999999" width="122.5" height="42" rx="5" class="bad"/>
+<text x="645.15" y="653.0999999999999" font-size="11" class="k">Shift</text>
+<text x="702.4" y="665.0999999999999" class="w">2.75</text>
+<rect x="20.400000000000002" y="674.0999999999999" width="53.5" height="42" rx="5" class="plain"/>
+<text x="47.150000000000006" y="699.0999999999999" font-size="11" class="k">Ctrl</text>
+<text x="69.9" y="711.0999999999999" class="w">1.25</text>
+<rect x="77.89999999999999" y="674.0999999999999" width="53.5" height="42" rx="5" class="plain"/>
+<text x="104.64999999999999" y="699.0999999999999" font-size="11" class="k">Win</text>
+<text x="127.39999999999998" y="711.0999999999999" class="w">1.25</text>
+<rect x="135.4" y="674.0999999999999" width="53.5" height="42" rx="5" class="plain"/>
+<text x="162.15" y="699.0999999999999" font-size="11" class="k">Alt</text>
+<text x="184.9" y="711.0999999999999" class="w">1.25</text>
+<rect x="192.9" y="674.0999999999999" width="283.5" height="42" rx="5" class="bad"/>
+<text x="334.65" y="699.0999999999999" font-size="11" class="k">Space</text>
+<text x="472.4" y="711.0999999999999" class="w">6.25</text>
+<rect x="480.40000000000003" y="674.0999999999999" width="53.5" height="42" rx="5" class="plain"/>
+<text x="507.15000000000003" y="699.0999999999999" font-size="11" class="k">AltGr</text>
+<text x="529.9000000000001" y="711.0999999999999" class="w">1.25</text>
+<rect x="537.9" y="674.0999999999999" width="53.5" height="42" rx="5" class="plain"/>
+<text x="564.65" y="699.0999999999999" font-size="11" class="k">Win</text>
+<text x="587.4" y="711.0999999999999" class="w">1.25</text>
+<rect x="595.4" y="674.0999999999999" width="53.5" height="42" rx="5" class="plain"/>
+<text x="622.15" y="699.0999999999999" font-size="11" class="k">Menu</text>
+<text x="644.9" y="711.0999999999999" class="w">1.25</text>
+<rect x="652.9" y="674.0999999999999" width="53.5" height="42" rx="5" class="plain"/>
+<text x="679.65" y="699.0999999999999" font-size="11" class="k">Ctrl</text>
+<text x="702.4" y="711.0999999999999" class="w">1.25</text>
+<rect x="721.9" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="742.9" y="457.59999999999997" font-size="11" class="k">PrtSc</text>
+<rect x="767.9" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="788.9" y="457.59999999999997" font-size="11" class="k">ScrLk</text>
+<rect x="813.9" y="432.59999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="834.9" y="457.59999999999997" font-size="11" class="k">Pause</text>
+<rect x="721.9" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="742.9" y="515.0999999999999" font-size="11" class="k">Ins</text>
+<rect x="767.9" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="788.9" y="515.0999999999999" font-size="11" class="k">Home</text>
+<rect x="813.9" y="490.09999999999997" width="42" height="42" rx="5" class="plain"/>
+<text x="834.9" y="515.0999999999999" font-size="11" class="k">PgUp</text>
+<rect x="721.9" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="742.9" y="561.0999999999999" font-size="11" class="k">Del</text>
+<rect x="767.9" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="788.9" y="561.0999999999999" font-size="11" class="k">End</text>
+<rect x="813.9" y="536.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="834.9" y="561.0999999999999" font-size="11" class="k">PgDn</text>
+<rect x="767.9" y="628.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="788.9" y="653.0999999999999" font-size="11" class="k">↑</text>
+<rect x="721.9" y="674.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="742.9" y="699.0999999999999" font-size="11" class="k">←</text>
+<rect x="767.9" y="674.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="788.9" y="699.0999999999999" font-size="11" class="k">↓</text>
+<rect x="813.9" y="674.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="834.9" y="699.0999999999999" font-size="11" class="k">→</text>
+<text x="857.9" y="741.0999999999999" class="note" text-anchor="end">88 keys</text>
+<text x="18.400000000000002" y="779.1999999999999" class="t">A: ANSI only, buildable (90 keys)</text>
+<text x="18.400000000000002" y="797.1999999999999" class="note">Gaps replace the 0.25/0.75 remainders; space bar becomes 2+1 thumb keys per side</text>
+<rect x="20.400000000000002" y="811.1999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="41.400000000000006" y="836.1999999999999" font-size="11" class="k">Esc</text>
+<rect x="112.39999999999999" y="811.1999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="133.39999999999998" y="836.1999999999999" font-size="11" class="k">F1</text>
+<rect x="158.4" y="811.1999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="179.4" y="836.1999999999999" font-size="11" class="k">F2</text>
+<rect x="204.4" y="811.1999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="225.4" y="836.1999999999999" font-size="11" class="k">F3</text>
+<rect x="250.4" y="811.1999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="271.4" y="836.1999999999999" font-size="11" class="k">F4</text>
+<rect x="319.40000000000003" y="811.1999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="340.40000000000003" y="836.1999999999999" font-size="11" class="k">F5</text>
+<rect x="365.40000000000003" y="811.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="386.40000000000003" y="836.1999999999999" font-size="11" class="k">F6</text>
+<rect x="411.40000000000003" y="811.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="432.40000000000003" y="836.1999999999999" font-size="11" class="k">F7</text>
+<rect x="457.40000000000003" y="811.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="478.40000000000003" y="836.1999999999999" font-size="11" class="k">F8</text>
+<rect x="526.4" y="811.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="547.4" y="836.1999999999999" font-size="11" class="k">F9</text>
+<rect x="572.4" y="811.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="593.4" y="836.1999999999999" font-size="11" class="k">F10</text>
+<rect x="618.4" y="811.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="639.4" y="836.1999999999999" font-size="11" class="k">F11</text>
+<rect x="664.4" y="811.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="685.4" y="836.1999999999999" font-size="11" class="k">F12</text>
+<rect x="20.400000000000002" y="868.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="41.400000000000006" y="893.6999999999999" font-size="11" class="k">`</text>
+<rect x="66.39999999999999" y="868.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="87.39999999999999" y="893.6999999999999" font-size="11" class="k">1</text>
+<rect x="112.39999999999999" y="868.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="133.39999999999998" y="893.6999999999999" font-size="11" class="k">2</text>
+<rect x="158.4" y="868.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="179.4" y="893.6999999999999" font-size="11" class="k">3</text>
+<rect x="204.4" y="868.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="225.4" y="893.6999999999999" font-size="11" class="k">4</text>
+<rect x="250.4" y="868.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="271.4" y="893.6999999999999" font-size="11" class="k">5</text>
+<rect x="296.40000000000003" y="868.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="317.40000000000003" y="893.6999999999999" font-size="11" class="k">6</text>
+<rect x="342.40000000000003" y="868.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="363.40000000000003" y="893.6999999999999" font-size="11" class="k">7</text>
+<rect x="388.40000000000003" y="868.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="409.40000000000003" y="893.6999999999999" font-size="11" class="k">8</text>
+<rect x="434.40000000000003" y="868.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="455.40000000000003" y="893.6999999999999" font-size="11" class="k">9</text>
+<rect x="480.40000000000003" y="868.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="501.40000000000003" y="893.6999999999999" font-size="11" class="k">0</text>
+<rect x="526.4" y="868.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="547.4" y="893.6999999999999" font-size="11" class="k">-</text>
+<rect x="572.4" y="868.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="593.4" y="893.6999999999999" font-size="11" class="k">=</text>
+<rect x="618.4" y="868.6999999999999" width="88" height="42" rx="5" class="hr"/>
+<text x="662.4" y="893.6999999999999" font-size="11" class="k">Bksp</text>
+<text x="702.4" y="905.6999999999999" class="w">2</text>
+<rect x="20.400000000000002" y="914.6999999999999" width="65.0" height="42" rx="5" class="hl"/>
+<text x="52.900000000000006" y="939.6999999999999" font-size="11" class="k">Tab</text>
+<text x="81.4" y="951.6999999999999" class="w">1.5</text>
+<rect x="89.39999999999999" y="914.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="110.39999999999999" y="939.6999999999999" font-size="11" class="k">Q</text>
+<rect x="135.4" y="914.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="156.4" y="939.6999999999999" font-size="11" class="k">W</text>
+<rect x="181.4" y="914.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="202.4" y="939.6999999999999" font-size="11" class="k">E</text>
+<rect x="227.4" y="914.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="248.4" y="939.6999999999999" font-size="11" class="k">R</text>
+<rect x="273.40000000000003" y="914.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="294.40000000000003" y="939.6999999999999" font-size="11" class="k">T</text>
+<rect x="319.40000000000003" y="914.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="340.40000000000003" y="939.6999999999999" font-size="11" class="k">Y</text>
+<rect x="365.40000000000003" y="914.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="386.40000000000003" y="939.6999999999999" font-size="11" class="k">U</text>
+<rect x="411.40000000000003" y="914.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="432.40000000000003" y="939.6999999999999" font-size="11" class="k">I</text>
+<rect x="457.40000000000003" y="914.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="478.40000000000003" y="939.6999999999999" font-size="11" class="k">O</text>
+<rect x="503.40000000000003" y="914.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="524.4000000000001" y="939.6999999999999" font-size="11" class="k">P</text>
+<rect x="549.4" y="914.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="570.4" y="939.6999999999999" font-size="11" class="k">[</text>
+<rect x="595.4" y="914.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="616.4" y="939.6999999999999" font-size="11" class="k">]</text>
+<rect x="641.4" y="914.6999999999999" width="65.0" height="42" rx="5" class="hr"/>
+<text x="673.9" y="939.6999999999999" font-size="11" class="k">\</text>
+<text x="702.4" y="951.6999999999999" class="w">1.5</text>
+<rect x="20.400000000000002" y="960.6999999999999" width="65.0" height="42" rx="5" class="hl"/>
+<text x="52.900000000000006" y="985.6999999999999" font-size="11" class="k">Caps</text>
+<text x="81.4" y="997.6999999999999" class="w">1.5</text>
+<rect x="100.89999999999999" y="960.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="121.89999999999999" y="985.6999999999999" font-size="11" class="k">A</text>
+<rect x="146.9" y="960.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="167.9" y="985.6999999999999" font-size="11" class="k">S</text>
+<rect x="192.9" y="960.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="213.9" y="985.6999999999999" font-size="11" class="k">D</text>
+<rect x="238.9" y="960.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="259.9" y="985.6999999999999" font-size="11" class="k">F</text>
+<rect x="284.90000000000003" y="960.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="305.90000000000003" y="985.6999999999999" font-size="11" class="k">G</text>
+<rect x="330.90000000000003" y="960.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="351.90000000000003" y="985.6999999999999" font-size="11" class="k">H</text>
+<rect x="376.90000000000003" y="960.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="397.90000000000003" y="985.6999999999999" font-size="11" class="k">J</text>
+<rect x="422.90000000000003" y="960.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="443.90000000000003" y="985.6999999999999" font-size="11" class="k">K</text>
+<rect x="468.90000000000003" y="960.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="489.90000000000003" y="985.6999999999999" font-size="11" class="k">L</text>
+<rect x="514.9" y="960.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="535.9" y="985.6999999999999" font-size="11" class="k">;</text>
+<rect x="560.9" y="960.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="581.9" y="985.6999999999999" font-size="11" class="k">'</text>
+<rect x="618.4" y="960.6999999999999" width="88" height="42" rx="5" class="hr"/>
+<text x="662.4" y="985.6999999999999" font-size="11" class="k">Enter</text>
+<text x="702.4" y="997.6999999999999" class="w">2</text>
+<rect x="20.400000000000002" y="1006.6999999999999" width="88" height="42" rx="5" class="hl"/>
+<text x="64.4" y="1031.6999999999998" font-size="11" class="k">Shift</text>
+<text x="104.4" y="1043.6999999999998" class="w">2</text>
+<rect x="123.89999999999999" y="1006.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="144.89999999999998" y="1031.6999999999998" font-size="11" class="k">Z</text>
+<rect x="169.9" y="1006.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="190.9" y="1031.6999999999998" font-size="11" class="k">X</text>
+<rect x="215.9" y="1006.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="236.9" y="1031.6999999999998" font-size="11" class="k">C</text>
+<rect x="261.90000000000003" y="1006.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="282.90000000000003" y="1031.6999999999998" font-size="11" class="k">V</text>
+<rect x="307.90000000000003" y="1006.6999999999999" width="42" height="42" rx="5" class="hl"/>
+<text x="328.90000000000003" y="1031.6999999999998" font-size="11" class="k">B</text>
+<rect x="353.90000000000003" y="1006.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="374.90000000000003" y="1031.6999999999998" font-size="11" class="k">N</text>
+<rect x="399.90000000000003" y="1006.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="420.90000000000003" y="1031.6999999999998" font-size="11" class="k">M</text>
+<rect x="445.90000000000003" y="1006.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="466.90000000000003" y="1031.6999999999998" font-size="11" class="k">,</text>
+<rect x="491.90000000000003" y="1006.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="512.9000000000001" y="1031.6999999999998" font-size="11" class="k">.</text>
+<rect x="537.9" y="1006.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="558.9" y="1031.6999999999998" font-size="11" class="k">/</text>
+<rect x="583.9" y="1006.6999999999999" width="88" height="42" rx="5" class="hr"/>
+<text x="627.9" y="1031.6999999999998" font-size="11" class="k">Shift</text>
+<text x="667.9" y="1043.6999999999998" class="w">2</text>
+<rect x="20.400000000000002" y="1052.6999999999998" width="53.5" height="42" rx="5" class="hl"/>
+<text x="47.150000000000006" y="1077.6999999999998" font-size="11" class="k">Ctrl</text>
+<text x="69.9" y="1089.6999999999998" class="w">1.25</text>
+<rect x="77.89999999999999" y="1052.6999999999998" width="53.5" height="42" rx="5" class="hl"/>
+<text x="104.64999999999999" y="1077.6999999999998" font-size="11" class="k">Win</text>
+<text x="127.39999999999998" y="1089.6999999999998" class="w">1.25</text>
+<rect x="135.4" y="1052.6999999999998" width="53.5" height="42" rx="5" class="hl"/>
+<text x="162.15" y="1077.6999999999998" font-size="11" class="k">Alt</text>
+<text x="184.9" y="1089.6999999999998" class="w">1.25</text>
+<rect x="192.9" y="1052.6999999999998" width="65.0" height="42" rx="5" class="hl"/>
+<text x="225.4" y="1077.6999999999998" font-size="11" class="k">Fn</text>
+<text x="253.89999999999998" y="1089.6999999999998" class="w">1.5</text>
+<rect x="261.90000000000003" y="1052.6999999999998" width="88" height="42" rx="5" class="hl"/>
+<text x="305.90000000000003" y="1077.6999999999998" font-size="11" class="k">Space</text>
+<text x="345.90000000000003" y="1089.6999999999998" class="w">2</text>
+<rect x="353.90000000000003" y="1052.6999999999998" width="65.0" height="42" rx="5" class="hr"/>
+<text x="386.40000000000003" y="1077.6999999999998" font-size="11" class="k">Space</text>
+<text x="414.90000000000003" y="1089.6999999999998" class="w">1.5</text>
+<rect x="422.90000000000003" y="1052.6999999999998" width="53.5" height="42" rx="5" class="hr"/>
+<text x="449.65000000000003" y="1077.6999999999998" font-size="11" class="k">Fn</text>
+<text x="472.40000000000003" y="1089.6999999999998" class="w">1.25</text>
+<rect x="480.40000000000003" y="1052.6999999999998" width="53.5" height="42" rx="5" class="hr"/>
+<text x="507.15000000000003" y="1077.6999999999998" font-size="11" class="k">AltGr</text>
+<text x="529.9000000000001" y="1089.6999999999998" class="w">1.25</text>
+<rect x="537.9" y="1052.6999999999998" width="53.5" height="42" rx="5" class="hr"/>
+<text x="564.65" y="1077.6999999999998" font-size="11" class="k">Win</text>
+<text x="587.4" y="1089.6999999999998" class="w">1.25</text>
+<rect x="595.4" y="1052.6999999999998" width="53.5" height="42" rx="5" class="hr"/>
+<text x="622.15" y="1077.6999999999998" font-size="11" class="k">Menu</text>
+<text x="644.9" y="1089.6999999999998" class="w">1.25</text>
+<rect x="652.9" y="1052.6999999999998" width="53.5" height="42" rx="5" class="hr"/>
+<text x="679.65" y="1077.6999999999998" font-size="11" class="k">Ctrl</text>
+<text x="702.4" y="1089.6999999999998" class="w">1.25</text>
+<rect x="721.9" y="811.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="836.1999999999999" font-size="11" class="k">PrtSc</text>
+<rect x="767.9" y="811.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="788.9" y="836.1999999999999" font-size="11" class="k">ScrLk</text>
+<rect x="813.9" y="811.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="834.9" y="836.1999999999999" font-size="11" class="k">Pause</text>
+<rect x="721.9" y="868.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="893.6999999999999" font-size="11" class="k">Ins</text>
+<rect x="767.9" y="868.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="788.9" y="893.6999999999999" font-size="11" class="k">Home</text>
+<rect x="813.9" y="868.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="834.9" y="893.6999999999999" font-size="11" class="k">PgUp</text>
+<rect x="721.9" y="914.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="939.6999999999999" font-size="11" class="k">Del</text>
+<rect x="767.9" y="914.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="788.9" y="939.6999999999999" font-size="11" class="k">End</text>
+<rect x="813.9" y="914.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="834.9" y="939.6999999999999" font-size="11" class="k">PgDn</text>
+<rect x="767.9" y="1006.6999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="788.9" y="1031.6999999999998" font-size="11" class="k">↑</text>
+<rect x="721.9" y="1052.6999999999998" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="1077.6999999999998" font-size="11" class="k">←</text>
+<rect x="767.9" y="1052.6999999999998" width="42" height="42" rx="5" class="hr"/>
+<text x="788.9" y="1077.6999999999998" font-size="11" class="k">↓</text>
+<rect x="813.9" y="1052.6999999999998" width="42" height="42" rx="5" class="hr"/>
+<text x="834.9" y="1077.6999999999998" font-size="11" class="k">→</text>
+<path d="M 363.4,809.2 L 363.4,860.9 L 340.4,860.9 L 340.4,912.7 L 317.4,912.7 L 317.4,958.7 L 328.9,958.7 L 328.9,1004.7 L 351.9,1004.7 L 351.9,1050.7 L 351.9,1050.7 L 351.9,1096.7" class="cut"/>
+<text x="857.9" y="1119.6999999999998" class="note" text-anchor="end">left 36 + right 54 = 90 keys</text>
+<text x="18.400000000000002" y="1157.8" class="t">B: universal ANSI / ISO / JIS / ABNT2, buildable (94 keys), recommended</text>
+<text x="18.400000000000002" y="1175.8" class="note">Blue = key whose legend or role changes with the language; no gaps in the main block</text>
+<rect x="20.400000000000002" y="1189.8" width="42" height="42" rx="5" class="hl"/>
+<text x="41.400000000000006" y="1214.8" font-size="11" class="k">Esc</text>
+<rect x="112.39999999999999" y="1189.8" width="42" height="42" rx="5" class="hl"/>
+<text x="133.39999999999998" y="1214.8" font-size="11" class="k">F1</text>
+<rect x="158.4" y="1189.8" width="42" height="42" rx="5" class="hl"/>
+<text x="179.4" y="1214.8" font-size="11" class="k">F2</text>
+<rect x="204.4" y="1189.8" width="42" height="42" rx="5" class="hl"/>
+<text x="225.4" y="1214.8" font-size="11" class="k">F3</text>
+<rect x="250.4" y="1189.8" width="42" height="42" rx="5" class="hl"/>
+<text x="271.4" y="1214.8" font-size="11" class="k">F4</text>
+<rect x="319.40000000000003" y="1189.8" width="42" height="42" rx="5" class="hl"/>
+<text x="340.40000000000003" y="1214.8" font-size="11" class="k">F5</text>
+<rect x="365.40000000000003" y="1189.8" width="42" height="42" rx="5" class="hr"/>
+<text x="386.40000000000003" y="1214.8" font-size="11" class="k">F6</text>
+<rect x="411.40000000000003" y="1189.8" width="42" height="42" rx="5" class="hr"/>
+<text x="432.40000000000003" y="1214.8" font-size="11" class="k">F7</text>
+<rect x="457.40000000000003" y="1189.8" width="42" height="42" rx="5" class="hr"/>
+<text x="478.40000000000003" y="1214.8" font-size="11" class="k">F8</text>
+<rect x="526.4" y="1189.8" width="42" height="42" rx="5" class="hr"/>
+<text x="547.4" y="1214.8" font-size="11" class="k">F9</text>
+<rect x="572.4" y="1189.8" width="42" height="42" rx="5" class="hr"/>
+<text x="593.4" y="1214.8" font-size="11" class="k">F10</text>
+<rect x="618.4" y="1189.8" width="42" height="42" rx="5" class="hr"/>
+<text x="639.4" y="1214.8" font-size="11" class="k">F11</text>
+<rect x="664.4" y="1189.8" width="42" height="42" rx="5" class="hr"/>
+<text x="685.4" y="1214.8" font-size="11" class="k">F12</text>
+<rect x="20.400000000000002" y="1247.3" width="42" height="42" rx="5" class="hl"/>
+<text x="41.400000000000006" y="1272.3" font-size="11" class="k">`</text>
+<rect x="66.39999999999999" y="1247.3" width="42" height="42" rx="5" class="hl"/>
+<text x="87.39999999999999" y="1272.3" font-size="11" class="k">1</text>
+<rect x="112.39999999999999" y="1247.3" width="42" height="42" rx="5" class="hl"/>
+<text x="133.39999999999998" y="1272.3" font-size="11" class="k">2</text>
+<rect x="158.4" y="1247.3" width="42" height="42" rx="5" class="hl"/>
+<text x="179.4" y="1272.3" font-size="11" class="k">3</text>
+<rect x="204.4" y="1247.3" width="42" height="42" rx="5" class="hl"/>
+<text x="225.4" y="1272.3" font-size="11" class="k">4</text>
+<rect x="250.4" y="1247.3" width="42" height="42" rx="5" class="hl"/>
+<text x="271.4" y="1272.3" font-size="11" class="k">5</text>
+<rect x="296.40000000000003" y="1247.3" width="42" height="42" rx="5" class="hl"/>
+<text x="317.40000000000003" y="1272.3" font-size="11" class="k">6</text>
+<rect x="342.40000000000003" y="1247.3" width="42" height="42" rx="5" class="hr"/>
+<text x="363.40000000000003" y="1272.3" font-size="11" class="k">7</text>
+<rect x="388.40000000000003" y="1247.3" width="42" height="42" rx="5" class="hr"/>
+<text x="409.40000000000003" y="1272.3" font-size="11" class="k">8</text>
+<rect x="434.40000000000003" y="1247.3" width="42" height="42" rx="5" class="hr"/>
+<text x="455.40000000000003" y="1272.3" font-size="11" class="k">9</text>
+<rect x="480.40000000000003" y="1247.3" width="42" height="42" rx="5" class="hr"/>
+<text x="501.40000000000003" y="1272.3" font-size="11" class="k">0</text>
+<rect x="526.4" y="1247.3" width="42" height="42" rx="5" class="hr"/>
+<text x="547.4" y="1272.3" font-size="11" class="k">-</text>
+<rect x="572.4" y="1247.3" width="42" height="42" rx="5" class="hr"/>
+<text x="593.4" y="1272.3" font-size="11" class="k">=</text>
+<rect x="618.4" y="1247.3" width="42" height="42" rx="5" class="var"/>
+<text x="639.4" y="1272.3" font-size="11" class="k">¥/Bksp</text>
+<rect x="664.4" y="1247.3" width="42" height="42" rx="5" class="hr"/>
+<text x="685.4" y="1272.3" font-size="11" class="k">Bksp</text>
+<rect x="20.400000000000002" y="1293.3" width="65.0" height="42" rx="5" class="hl"/>
+<text x="52.900000000000006" y="1318.3" font-size="11" class="k">Tab</text>
+<text x="81.4" y="1330.3" class="w">1.5</text>
+<rect x="89.39999999999999" y="1293.3" width="42" height="42" rx="5" class="hl"/>
+<text x="110.39999999999999" y="1318.3" font-size="11" class="k">Q</text>
+<rect x="135.4" y="1293.3" width="42" height="42" rx="5" class="hl"/>
+<text x="156.4" y="1318.3" font-size="11" class="k">W</text>
+<rect x="181.4" y="1293.3" width="42" height="42" rx="5" class="hl"/>
+<text x="202.4" y="1318.3" font-size="11" class="k">E</text>
+<rect x="227.4" y="1293.3" width="42" height="42" rx="5" class="hl"/>
+<text x="248.4" y="1318.3" font-size="11" class="k">R</text>
+<rect x="273.40000000000003" y="1293.3" width="42" height="42" rx="5" class="hl"/>
+<text x="294.40000000000003" y="1318.3" font-size="11" class="k">T</text>
+<rect x="319.40000000000003" y="1293.3" width="42" height="42" rx="5" class="hr"/>
+<text x="340.40000000000003" y="1318.3" font-size="11" class="k">Y</text>
+<rect x="365.40000000000003" y="1293.3" width="42" height="42" rx="5" class="hr"/>
+<text x="386.40000000000003" y="1318.3" font-size="11" class="k">U</text>
+<rect x="411.40000000000003" y="1293.3" width="42" height="42" rx="5" class="hr"/>
+<text x="432.40000000000003" y="1318.3" font-size="11" class="k">I</text>
+<rect x="457.40000000000003" y="1293.3" width="42" height="42" rx="5" class="hr"/>
+<text x="478.40000000000003" y="1318.3" font-size="11" class="k">O</text>
+<rect x="503.40000000000003" y="1293.3" width="42" height="42" rx="5" class="hr"/>
+<text x="524.4000000000001" y="1318.3" font-size="11" class="k">P</text>
+<rect x="549.4" y="1293.3" width="42" height="42" rx="5" class="hr"/>
+<text x="570.4" y="1318.3" font-size="11" class="k">[</text>
+<rect x="595.4" y="1293.3" width="42" height="42" rx="5" class="hr"/>
+<text x="616.4" y="1318.3" font-size="11" class="k">]</text>
+<rect x="641.4" y="1293.3" width="65.0" height="42" rx="5" class="var"/>
+<text x="673.9" y="1318.3" font-size="9" class="k">\/Enter</text>
+<text x="702.4" y="1330.3" class="w">1.5</text>
+<rect x="20.400000000000002" y="1339.3" width="65.0" height="42" rx="5" class="hl"/>
+<text x="52.900000000000006" y="1364.3" font-size="11" class="k">Caps</text>
+<text x="81.4" y="1376.3" class="w">1.5</text>
+<rect x="100.89999999999999" y="1339.3" width="42" height="42" rx="5" class="hl"/>
+<text x="121.89999999999999" y="1364.3" font-size="11" class="k">A</text>
+<rect x="146.9" y="1339.3" width="42" height="42" rx="5" class="hl"/>
+<text x="167.9" y="1364.3" font-size="11" class="k">S</text>
+<rect x="192.9" y="1339.3" width="42" height="42" rx="5" class="hl"/>
+<text x="213.9" y="1364.3" font-size="11" class="k">D</text>
+<rect x="238.9" y="1339.3" width="42" height="42" rx="5" class="hl"/>
+<text x="259.9" y="1364.3" font-size="11" class="k">F</text>
+<rect x="284.90000000000003" y="1339.3" width="42" height="42" rx="5" class="hl"/>
+<text x="305.90000000000003" y="1364.3" font-size="11" class="k">G</text>
+<rect x="330.90000000000003" y="1339.3" width="42" height="42" rx="5" class="hr"/>
+<text x="351.90000000000003" y="1364.3" font-size="11" class="k">H</text>
+<rect x="376.90000000000003" y="1339.3" width="42" height="42" rx="5" class="hr"/>
+<text x="397.90000000000003" y="1364.3" font-size="11" class="k">J</text>
+<rect x="422.90000000000003" y="1339.3" width="42" height="42" rx="5" class="hr"/>
+<text x="443.90000000000003" y="1364.3" font-size="11" class="k">K</text>
+<rect x="468.90000000000003" y="1339.3" width="42" height="42" rx="5" class="hr"/>
+<text x="489.90000000000003" y="1364.3" font-size="11" class="k">L</text>
+<rect x="514.9" y="1339.3" width="42" height="42" rx="5" class="hr"/>
+<text x="535.9" y="1364.3" font-size="11" class="k">;</text>
+<rect x="560.9" y="1339.3" width="42" height="42" rx="5" class="hr"/>
+<text x="581.9" y="1364.3" font-size="11" class="k">'</text>
+<rect x="606.9" y="1339.3" width="42" height="42" rx="5" class="var"/>
+<text x="627.9" y="1364.3" font-size="9" class="k">#/Enter</text>
+<rect x="652.9" y="1339.3" width="53.5" height="42" rx="5" class="hr"/>
+<text x="679.65" y="1364.3" font-size="11" class="k">Enter</text>
+<text x="702.4" y="1376.3" class="w">1.25</text>
+<rect x="20.400000000000002" y="1385.3" width="53.5" height="42" rx="5" class="hl"/>
+<text x="47.150000000000006" y="1410.3" font-size="11" class="k">Shift</text>
+<text x="69.9" y="1422.3" class="w">1.25</text>
+<rect x="77.89999999999999" y="1385.3" width="42" height="42" rx="5" class="var"/>
+<text x="98.89999999999999" y="1410.3" font-size="9" class="k">&lt;/Shift</text>
+<rect x="123.89999999999999" y="1385.3" width="42" height="42" rx="5" class="hl"/>
+<text x="144.89999999999998" y="1410.3" font-size="11" class="k">Z</text>
+<rect x="169.9" y="1385.3" width="42" height="42" rx="5" class="hl"/>
+<text x="190.9" y="1410.3" font-size="11" class="k">X</text>
+<rect x="215.9" y="1385.3" width="42" height="42" rx="5" class="hl"/>
+<text x="236.9" y="1410.3" font-size="11" class="k">C</text>
+<rect x="261.90000000000003" y="1385.3" width="42" height="42" rx="5" class="hl"/>
+<text x="282.90000000000003" y="1410.3" font-size="11" class="k">V</text>
+<rect x="307.90000000000003" y="1385.3" width="42" height="42" rx="5" class="hl"/>
+<text x="328.90000000000003" y="1410.3" font-size="11" class="k">B</text>
+<rect x="353.90000000000003" y="1385.3" width="42" height="42" rx="5" class="hr"/>
+<text x="374.90000000000003" y="1410.3" font-size="11" class="k">N</text>
+<rect x="399.90000000000003" y="1385.3" width="42" height="42" rx="5" class="hr"/>
+<text x="420.90000000000003" y="1410.3" font-size="11" class="k">M</text>
+<rect x="445.90000000000003" y="1385.3" width="42" height="42" rx="5" class="hr"/>
+<text x="466.90000000000003" y="1410.3" font-size="11" class="k">,</text>
+<rect x="491.90000000000003" y="1385.3" width="42" height="42" rx="5" class="hr"/>
+<text x="512.9000000000001" y="1410.3" font-size="11" class="k">.</text>
+<rect x="537.9" y="1385.3" width="42" height="42" rx="5" class="hr"/>
+<text x="558.9" y="1410.3" font-size="11" class="k">/</text>
+<rect x="583.9" y="1385.3" width="53.5" height="42" rx="5" class="var"/>
+<text x="610.65" y="1410.3" font-size="9" class="k">ろ//?/Fn</text>
+<text x="633.4" y="1422.3" class="w">1.25</text>
+<rect x="641.4" y="1385.3" width="65.0" height="42" rx="5" class="hr"/>
+<text x="673.9" y="1410.3" font-size="11" class="k">Shift</text>
+<text x="702.4" y="1422.3" class="w">1.5</text>
+<rect x="20.400000000000002" y="1431.3" width="53.5" height="42" rx="5" class="hl"/>
+<text x="47.150000000000006" y="1456.3" font-size="11" class="k">Ctrl</text>
+<text x="69.9" y="1468.3" class="w">1.25</text>
+<rect x="77.89999999999999" y="1431.3" width="53.5" height="42" rx="5" class="hl"/>
+<text x="104.64999999999999" y="1456.3" font-size="11" class="k">Win</text>
+<text x="127.39999999999998" y="1468.3" class="w">1.25</text>
+<rect x="135.4" y="1431.3" width="53.5" height="42" rx="5" class="hl"/>
+<text x="162.15" y="1456.3" font-size="11" class="k">Alt</text>
+<text x="184.9" y="1468.3" class="w">1.25</text>
+<rect x="192.9" y="1431.3" width="65.0" height="42" rx="5" class="var"/>
+<text x="225.4" y="1456.3" font-size="11" class="k">無変換/Fn</text>
+<text x="253.89999999999998" y="1468.3" class="w">1.5</text>
+<rect x="261.90000000000003" y="1431.3" width="88" height="42" rx="5" class="hl"/>
+<text x="305.90000000000003" y="1456.3" font-size="11" class="k">Space</text>
+<text x="345.90000000000003" y="1468.3" class="w">2</text>
+<rect x="353.90000000000003" y="1431.3" width="65.0" height="42" rx="5" class="hr"/>
+<text x="386.40000000000003" y="1456.3" font-size="11" class="k">Space</text>
+<text x="414.90000000000003" y="1468.3" class="w">1.5</text>
+<rect x="422.90000000000003" y="1431.3" width="53.5" height="42" rx="5" class="var"/>
+<text x="449.65000000000003" y="1456.3" font-size="11" class="k">変換/Fn</text>
+<text x="472.40000000000003" y="1468.3" class="w">1.25</text>
+<rect x="480.40000000000003" y="1431.3" width="53.5" height="42" rx="5" class="hr"/>
+<text x="507.15000000000003" y="1456.3" font-size="11" class="k">AltGr</text>
+<text x="529.9000000000001" y="1468.3" class="w">1.25</text>
+<rect x="537.9" y="1431.3" width="53.5" height="42" rx="5" class="hr"/>
+<text x="564.65" y="1456.3" font-size="11" class="k">Win</text>
+<text x="587.4" y="1468.3" class="w">1.25</text>
+<rect x="595.4" y="1431.3" width="53.5" height="42" rx="5" class="hr"/>
+<text x="622.15" y="1456.3" font-size="11" class="k">Menu</text>
+<text x="644.9" y="1468.3" class="w">1.25</text>
+<rect x="652.9" y="1431.3" width="53.5" height="42" rx="5" class="hr"/>
+<text x="679.65" y="1456.3" font-size="11" class="k">Ctrl</text>
+<text x="702.4" y="1468.3" class="w">1.25</text>
+<rect x="721.9" y="1189.8" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="1214.8" font-size="11" class="k">PrtSc</text>
+<rect x="767.9" y="1189.8" width="42" height="42" rx="5" class="hr"/>
+<text x="788.9" y="1214.8" font-size="11" class="k">ScrLk</text>
+<rect x="813.9" y="1189.8" width="42" height="42" rx="5" class="hr"/>
+<text x="834.9" y="1214.8" font-size="11" class="k">Pause</text>
+<rect x="721.9" y="1247.3" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="1272.3" font-size="11" class="k">Ins</text>
+<rect x="767.9" y="1247.3" width="42" height="42" rx="5" class="hr"/>
+<text x="788.9" y="1272.3" font-size="11" class="k">Home</text>
+<rect x="813.9" y="1247.3" width="42" height="42" rx="5" class="hr"/>
+<text x="834.9" y="1272.3" font-size="11" class="k">PgUp</text>
+<rect x="721.9" y="1293.3" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="1318.3" font-size="11" class="k">Del</text>
+<rect x="767.9" y="1293.3" width="42" height="42" rx="5" class="hr"/>
+<text x="788.9" y="1318.3" font-size="11" class="k">End</text>
+<rect x="813.9" y="1293.3" width="42" height="42" rx="5" class="hr"/>
+<text x="834.9" y="1318.3" font-size="11" class="k">PgDn</text>
+<rect x="767.9" y="1385.3" width="42" height="42" rx="5" class="hr"/>
+<text x="788.9" y="1410.3" font-size="11" class="k">↑</text>
+<rect x="721.9" y="1431.3" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="1456.3" font-size="11" class="k">←</text>
+<rect x="767.9" y="1431.3" width="42" height="42" rx="5" class="hr"/>
+<text x="788.9" y="1456.3" font-size="11" class="k">↓</text>
+<rect x="813.9" y="1431.3" width="42" height="42" rx="5" class="hr"/>
+<text x="834.9" y="1456.3" font-size="11" class="k">→</text>
+<path d="M 363.4,1187.8 L 363.4,1239.5 L 340.4,1239.5 L 340.4,1291.3 L 317.4,1291.3 L 317.4,1337.3 L 328.9,1337.3 L 328.9,1383.3 L 351.9,1383.3 L 351.9,1429.3 L 351.9,1429.3 L 351.9,1475.3" class="cut"/>
+<text x="857.9" y="1498.3" class="note" text-anchor="end">left 37 + right 57 = 94 keys</text></svg>
