@@ -169,7 +169,40 @@ COMPACT = [
     },
 ]
 
-VARIABLE = {"Esc|`", "#|ろ|/?", "¥|Bksp", "\\|Enter", "#|Enter", "<|Shift", "ろ|/?|Fn", "無変換|Fn", "変換|Fn"}
+# Number block: 5 rows like layout E. The tall + and Enter become two 1U keys each.
+NP4 = {"n": [(1, "Num"), (1, "/"), (1, "*"), (1, "-")],
+       "t": [(1, "7"), (1, "8"), (1, "9"), (1, "+")],
+       "c": [(1, "4"), (1, "5"), (1, "6"), (1, "+|=")],
+       "s": [(1, "1"), (1, "2"), (1, "3"), (1, "Enter")],
+       "b": [(2, "0"), (1, "."), (1, "Enter")]}
+NP5 = {"n": [(1, "Bksp")] + NP4["n"], "t": [(1, "(")] + NP4["t"], "c": [(1, ")")] + NP4["c"],
+       "s": [(1, "=")] + NP4["s"], "b": [(1, "Tab")] + NP4["b"]}
+NP_X = 16.25          # the number block docks to the right edge of layout E
+
+
+def _docked(e_rows, pad):
+    return {r: e_rows[r] + pad[r] for r in "ntcsb"}
+
+
+NUMPAD = [
+    {
+        "name": "N1: number block, 4 columns (19 keys)",
+        "note": "Tall + and Enter are two 1U keys each; the second + can be = (blue)",
+        "rows": NP4, "nav": [], "main_w": 4, "split": False,
+    },
+    {
+        "name": "N2: number block, 5 columns (24 keys)",
+        "note": "Extra left column: Bksp, ( ) = Tab for calculator use",
+        "rows": NP5, "nav": [], "main_w": 5, "split": False,
+    },
+    {
+        "name": "E + N1 docked (91 keys)",
+        "note": "The number block joins the right half flush, like the split; 20.25U wide",
+        "rows": "E+N1", "nav": [], "main_w": NP_X + 4, "split": True, "pad_x": NP_X,
+    },
+]
+
+VARIABLE = {"+|=", "Esc|`", "#|ろ|/?", "¥|Bksp", "\\|Enter", "#|Enter", "<|Shift", "ろ|/?|Fn", "無変換|Fn", "変換|Fn"}
 
 
 def place(layout):
@@ -219,11 +252,14 @@ def svg_board(layout, keys, oy):
     dy = 0 if "f" in layout["rows"] else -1.25
     width = max(x + w for _, x, w, _ in keys)
     nrows = 6 if dy == 0 else 5
-    left = right = 0
+    left = right = pads = 0
     for r, x, w, lab in keys:
         px, py = (PAD + x) * U, by + (Y[r] + dy) * U
         bad = w not in ALLOWED
         side = "hl" if layout["split"] and x < CUT[r] else ("hr" if layout["split"] else "plain")
+        if layout.get("pad_x") is not None and x >= layout["pad_x"]:
+            side = "pad"
+        pads += side == "pad"
         left += side == "hl"
         right += side == "hr"
         cls = "bad" if bad else ("var" if lab in VARIABLE else side)
@@ -247,8 +283,12 @@ def svg_board(layout, keys, oy):
             path += [(cx, y0), (cx, y1)]
         d = "M " + " L ".join(f"{a:.1f},{b:.1f}" for a, b in path)
         out.append(f'<path d="{d}" class="cut"/>')
+        if layout.get("pad_x") is not None:
+            px = (PAD + layout["pad_x"]) * U
+            out.append(f'<path d="M {px:.1f},{by-0.125*U:.1f} L {px:.1f},{by+(5.125)*U:.1f}" class="cut"/>')
         out.append(f'<text x="{(PAD+width)*U}" y="{by+(6.75+dy)*U}" class="note" text-anchor="end">'
-                   f'left {left} + right {right} = {left+right} keys</text>')
+                   f'left {left} + right {right}' + (f' + number block {pads}' if pads else '')
+                   + f' = {left+right+pads} keys</text>')
     else:
         out.append(f'<text x="{(PAD+width)*U}" y="{by+(6.75+dy)*U}" class="note" text-anchor="end">'
                    f'{count(keys)} keys</text>')
@@ -265,11 +305,11 @@ def render(layouts, path):
         s, oy, l, r = svg_board(lay, keys, oy)
         parts.append(s)
         summary.append((lay["name"], count(keys), l, r))
-    W = (18.25 + 2 * PAD) * U
+    W = (max(18.25, *(max(x + w for _, x, w, _ in place(l)) for l in layouts)) + 2 * PAD) * U
     css = """
     .t{font:600 15px sans-serif;fill:#222}.note{font:12px sans-serif;fill:#555}
     .k{font-family:sans-serif;text-anchor:middle;fill:#222}.w{font:9px sans-serif;text-anchor:end;fill:#888}
-    rect{stroke:#666;stroke-width:1}.plain{fill:#f2f2f2}.hl{fill:#e7f3e3}.hr{fill:#fbf0dc}
+    rect{stroke:#666;stroke-width:1}.plain{fill:#f2f2f2}.hl{fill:#e7f3e3}.hr{fill:#fbf0dc}.pad{fill:#efe6f7}
     .var{fill:#dbe8fb;stroke:#3c6fc4}.bad{fill:#fde0e0;stroke:#c33;stroke-width:2}
     .cut{fill:none;stroke:#c33;stroke-width:3;stroke-dasharray:7 4}"""
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{oy:.0f}" '
@@ -281,9 +321,14 @@ def render(layouts, path):
         print(f"{t:3d} keys  L{l:3d} R{r:3d}  {n}")
 
 
+NUMPAD[2]["rows"] = _docked(COMPACT[2]["rows"], NP4)
+
+
 if __name__ == "__main__":
     render(LAYOUTS, "tkl_layouts.svg")
     print()
     render(COMPACT, "compact_layouts.svg")
     print()
     render([REF65, COMPACT[2]], "e_vs_65.svg")
+    print()
+    render(NUMPAD, "numpad_layouts.svg")
