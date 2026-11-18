@@ -351,7 +351,7 @@
 <path d="M 340.4,373.1 L 340.4,419.1 L 317.4,419.1 L 317.4,465.1 L 328.9,465.1 L 328.9,511.1 L 351.9,511.1 L 351.9,557.1 L 351.9,557.1 L 351.9,603.1" class="cut"/>
 <text x="811.9" y="626.0999999999999" class="note" text-anchor="end">left 31 + right 43 = 74 keys</text>
 <text x="18.400000000000002" y="664.1999999999999" class="t">E: universal 65 % (72 keys)</text>
-<text x="18.400000000000002" y="682.1999999999999" class="note">2U Backspace, 2U right space, 1.25U right Ctrl; JIS ¥/ろ, right Win and Menu on a layer; 16U wide</text>
+<text x="18.400000000000002" y="682.1999999999999" class="note">2U Enter and Backspace; # (ISO) / ろ (JIS) beside a 1U right Shift; 1.25U nav column and arrows set off by 0.25U; 16.5U wide</text>
 <rect x="20.400000000000002" y="696.1999999999999" width="42" height="42" rx="5" class="var"/>
 <text x="41.400000000000006" y="721.1999999999999" font-size="11" class="k">Esc/`</text>
 <rect x="66.39999999999999" y="696.1999999999999" width="42" height="42" rx="5" class="hl"/>
@@ -381,8 +381,9 @@
 <rect x="618.4" y="696.1999999999999" width="88" height="42" rx="5" class="hr"/>
 <text x="662.4" y="721.1999999999999" font-size="11" class="k">Bksp</text>
 <text x="702.4" y="733.1999999999999" class="w">2</text>
-<rect x="710.4" y="696.1999999999999" width="42" height="42" rx="5" class="hr"/>
-<text x="731.4" y="721.1999999999999" font-size="11" class="k">Del</text>
+<rect x="721.9" y="696.1999999999999" width="53.5" height="42" rx="5" class="hr"/>
+<text x="748.65" y="721.1999999999999" font-size="11" class="k">Del</text>
+<text x="771.4" y="733.1999999999999" class="w">1.25</text>
 <rect x="20.400000000000002" y="742.1999999999999" width="65.0" height="42" rx="5" class="hl"/>
 <text x="52.900000000000006" y="767.1999999999999" font-size="11" class="k">Tab</text>
 <text x="81.4" y="779.1999999999999" class="w">1.5</text>
@@ -413,8 +414,9 @@
 <rect x="641.4" y="742.1999999999999" width="65.0" height="42" rx="5" class="var"/>
 <text x="673.9" y="767.1999999999999" font-size="9" class="k">\/Enter</text>
 <text x="702.4" y="779.1999999999999" class="w">1.5</text>
-<rect x="710.4" y="742.1999999999999" width="42" height="42" rx="5" class="hr"/>
-<text x="731.4" y="767.1999999999999" font-size="11" class="k">PgUp</text>
+<rect x="721.9" y="742.1999999999999" width="53.5" height="42" rx="5" class="hr"/>
+<text x="748.65" y="767.1999999999999" font-size="11" class="k">PgUp</text>
+<text x="771.4" y="779.1999999999999" class="w">1.25</text>
 <rect x="20.400000000000002" y="788.1999999999999" width="65.0" height="42" rx="5" class="hl"/>
 <text x="52.900000000000006" y="813.1999999999999" font-size="11" class="k">Caps</text>
 <text x="81.4" y="825.1999999999999" class="w">1.5</text>
@@ -440,13 +442,12 @@
 <text x="535.9" y="813.1999999999999" font-size="11" class="k">;</text>
 <rect x="560.9" y="788.1999999999999" width="42" height="42" rx="5" class="hr"/>
 <text x="581.9" y="813.1999999999999" font-size="11" class="k">'</text>
-<rect x="606.9" y="788.1999999999999" width="42" height="42" rx="5" class="var"/>
-<text x="627.9" y="813.1999999999999" font-size="9" class="k">#/Enter</text>
-<rect x="652.9" y="788.1999999999999" width="53.5" height="42" rx="5" class="hr"/>
-<text x="679.65" y="813.1999999999999" font-size="11" class="k">Enter</text>
-<text x="702.4" y="825.1999999999999" class="w">1.25</text>
-<rect x="710.4" y="788.1999999999999" width="42" height="42" rx="5" class="hr"/>
-<text x="731.4" y="813.1999999999999" font-size="11" class="k">PgDn</text>
+<rect x="618.4" y="788.1999999999999" width="88" height="42" rx="5" class="hr"/>
+<text x="662.4" y="813.1999999999999" font-size="11" class="k">Enter</text>
+<text x="702.4" y="825.1999999999999" class="w">2</text>
+<rect x="721.9" y="788.1999999999999" width="53.5" height="42" rx="5" class="hr"/>
+<text x="748.65" y="813.1999999999999" font-size="11" class="k">PgDn</text>
+<text x="771.4" y="825.1999999999999" class="w">1.25</text>
 <rect x="20.400000000000002" y="834.1999999999999" width="53.5" height="42" rx="5" class="hl"/>
 <text x="47.150000000000006" y="859.1999999999999" font-size="11" class="k">Shift</text>
 <text x="69.9" y="871.1999999999999" class="w">1.25</text>
@@ -472,13 +473,14 @@
 <text x="512.9000000000001" y="859.1999999999999" font-size="11" class="k">.</text>
 <rect x="537.9" y="834.1999999999999" width="42" height="42" rx="5" class="hr"/>
 <text x="558.9" y="859.1999999999999" font-size="11" class="k">/</text>
-<rect x="583.9" y="834.1999999999999" width="65.0" height="42" rx="5" class="hr"/>
-<text x="616.4" y="859.1999999999999" font-size="11" class="k">Shift</text>
-<text x="644.9" y="871.1999999999999" class="w">1.5</text>
-<rect x="664.4" y="834.1999999999999" width="42" height="42" rx="5" class="hr"/>
-<text x="685.4" y="859.1999999999999" font-size="11" class="k">↑</text>
-<rect x="710.4" y="834.1999999999999" width="42" height="42" rx="5" class="hr"/>
-<text x="731.4" y="859.1999999999999" font-size="11" class="k">End</text>
+<rect x="583.9" y="834.1999999999999" width="42" height="42" rx="5" class="var"/>
+<text x="604.9" y="859.1999999999999" font-size="11" class="k">#/ろ//?</text>
+<rect x="629.9" y="834.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="650.9" y="859.1999999999999" font-size="11" class="k">Shift</text>
+<rect x="675.9" y="834.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="696.9" y="859.1999999999999" font-size="11" class="k">↑</text>
+<rect x="721.9" y="834.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="859.1999999999999" font-size="11" class="k">End</text>
 <rect x="20.400000000000002" y="880.1999999999999" width="53.5" height="42" rx="5" class="hl"/>
 <text x="47.150000000000006" y="905.1999999999999" font-size="11" class="k">Ctrl</text>
 <text x="69.9" y="917.1999999999999" class="w">1.25</text>
@@ -506,14 +508,14 @@
 <rect x="560.9" y="880.1999999999999" width="53.5" height="42" rx="5" class="hr"/>
 <text x="587.65" y="905.1999999999999" font-size="11" class="k">Ctrl</text>
 <text x="610.4" y="917.1999999999999" class="w">1.25</text>
-<rect x="618.4" y="880.1999999999999" width="42" height="42" rx="5" class="hr"/>
-<text x="639.4" y="905.1999999999999" font-size="11" class="k">←</text>
-<rect x="664.4" y="880.1999999999999" width="42" height="42" rx="5" class="hr"/>
-<text x="685.4" y="905.1999999999999" font-size="11" class="k">↓</text>
-<rect x="710.4" y="880.1999999999999" width="42" height="42" rx="5" class="hr"/>
-<text x="731.4" y="905.1999999999999" font-size="11" class="k">→</text>
+<rect x="629.9" y="880.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="650.9" y="905.1999999999999" font-size="11" class="k">←</text>
+<rect x="675.9" y="880.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="696.9" y="905.1999999999999" font-size="11" class="k">↓</text>
+<rect x="721.9" y="880.1999999999999" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="905.1999999999999" font-size="11" class="k">→</text>
 <path d="M 340.4,694.2 L 340.4,740.2 L 317.4,740.2 L 317.4,786.2 L 328.9,786.2 L 328.9,832.2 L 351.9,832.2 L 351.9,878.2 L 351.9,878.2 L 351.9,924.2" class="cut"/>
-<text x="754.4" y="947.1999999999999" class="note" text-anchor="end">left 31 + right 41 = 72 keys</text>
+<text x="777.4" y="947.1999999999999" class="note" text-anchor="end">left 31 + right 41 = 72 keys</text>
 <text x="18.400000000000002" y="985.3" class="t">F: 65 % that fits the current 5x8 matrix (71 keys, 40 per half max)</text>
 <text x="18.400000000000002" y="1003.3" class="note">As E, but End moves to a layer</text>
 <rect x="20.400000000000002" y="1017.3" width="42" height="42" rx="5" class="var"/>
@@ -545,8 +547,9 @@
 <rect x="618.4" y="1017.3" width="88" height="42" rx="5" class="hr"/>
 <text x="662.4" y="1042.3" font-size="11" class="k">Bksp</text>
 <text x="702.4" y="1054.3" class="w">2</text>
-<rect x="710.4" y="1017.3" width="42" height="42" rx="5" class="hr"/>
-<text x="731.4" y="1042.3" font-size="11" class="k">Del</text>
+<rect x="721.9" y="1017.3" width="53.5" height="42" rx="5" class="hr"/>
+<text x="748.65" y="1042.3" font-size="11" class="k">Del</text>
+<text x="771.4" y="1054.3" class="w">1.25</text>
 <rect x="20.400000000000002" y="1063.3" width="65.0" height="42" rx="5" class="hl"/>
 <text x="52.900000000000006" y="1088.3" font-size="11" class="k">Tab</text>
 <text x="81.4" y="1100.3" class="w">1.5</text>
@@ -577,8 +580,9 @@
 <rect x="641.4" y="1063.3" width="65.0" height="42" rx="5" class="var"/>
 <text x="673.9" y="1088.3" font-size="9" class="k">\/Enter</text>
 <text x="702.4" y="1100.3" class="w">1.5</text>
-<rect x="710.4" y="1063.3" width="42" height="42" rx="5" class="hr"/>
-<text x="731.4" y="1088.3" font-size="11" class="k">PgUp</text>
+<rect x="721.9" y="1063.3" width="53.5" height="42" rx="5" class="hr"/>
+<text x="748.65" y="1088.3" font-size="11" class="k">PgUp</text>
+<text x="771.4" y="1100.3" class="w">1.25</text>
 <rect x="20.400000000000002" y="1109.3" width="65.0" height="42" rx="5" class="hl"/>
 <text x="52.900000000000006" y="1134.3" font-size="11" class="k">Caps</text>
 <text x="81.4" y="1146.3" class="w">1.5</text>
@@ -604,13 +608,12 @@
 <text x="535.9" y="1134.3" font-size="11" class="k">;</text>
 <rect x="560.9" y="1109.3" width="42" height="42" rx="5" class="hr"/>
 <text x="581.9" y="1134.3" font-size="11" class="k">'</text>
-<rect x="606.9" y="1109.3" width="42" height="42" rx="5" class="var"/>
-<text x="627.9" y="1134.3" font-size="9" class="k">#/Enter</text>
-<rect x="652.9" y="1109.3" width="53.5" height="42" rx="5" class="hr"/>
-<text x="679.65" y="1134.3" font-size="11" class="k">Enter</text>
-<text x="702.4" y="1146.3" class="w">1.25</text>
-<rect x="710.4" y="1109.3" width="42" height="42" rx="5" class="hr"/>
-<text x="731.4" y="1134.3" font-size="11" class="k">PgDn</text>
+<rect x="618.4" y="1109.3" width="88" height="42" rx="5" class="hr"/>
+<text x="662.4" y="1134.3" font-size="11" class="k">Enter</text>
+<text x="702.4" y="1146.3" class="w">2</text>
+<rect x="721.9" y="1109.3" width="53.5" height="42" rx="5" class="hr"/>
+<text x="748.65" y="1134.3" font-size="11" class="k">PgDn</text>
+<text x="771.4" y="1146.3" class="w">1.25</text>
 <rect x="20.400000000000002" y="1155.3" width="53.5" height="42" rx="5" class="hl"/>
 <text x="47.150000000000006" y="1180.3" font-size="11" class="k">Shift</text>
 <text x="69.9" y="1192.3" class="w">1.25</text>
@@ -636,11 +639,12 @@
 <text x="512.9000000000001" y="1180.3" font-size="11" class="k">.</text>
 <rect x="537.9" y="1155.3" width="42" height="42" rx="5" class="hr"/>
 <text x="558.9" y="1180.3" font-size="11" class="k">/</text>
-<rect x="583.9" y="1155.3" width="65.0" height="42" rx="5" class="hr"/>
-<text x="616.4" y="1180.3" font-size="11" class="k">Shift</text>
-<text x="644.9" y="1192.3" class="w">1.5</text>
-<rect x="664.4" y="1155.3" width="42" height="42" rx="5" class="hr"/>
-<text x="685.4" y="1180.3" font-size="11" class="k">↑</text>
+<rect x="583.9" y="1155.3" width="42" height="42" rx="5" class="var"/>
+<text x="604.9" y="1180.3" font-size="11" class="k">#/ろ//?</text>
+<rect x="629.9" y="1155.3" width="42" height="42" rx="5" class="hr"/>
+<text x="650.9" y="1180.3" font-size="11" class="k">Shift</text>
+<rect x="675.9" y="1155.3" width="42" height="42" rx="5" class="hr"/>
+<text x="696.9" y="1180.3" font-size="11" class="k">↑</text>
 <rect x="20.400000000000002" y="1201.3" width="53.5" height="42" rx="5" class="hl"/>
 <text x="47.150000000000006" y="1226.3" font-size="11" class="k">Ctrl</text>
 <text x="69.9" y="1238.3" class="w">1.25</text>
@@ -668,11 +672,11 @@
 <rect x="560.9" y="1201.3" width="53.5" height="42" rx="5" class="hr"/>
 <text x="587.65" y="1226.3" font-size="11" class="k">Ctrl</text>
 <text x="610.4" y="1238.3" class="w">1.25</text>
-<rect x="618.4" y="1201.3" width="42" height="42" rx="5" class="hr"/>
-<text x="639.4" y="1226.3" font-size="11" class="k">←</text>
-<rect x="664.4" y="1201.3" width="42" height="42" rx="5" class="hr"/>
-<text x="685.4" y="1226.3" font-size="11" class="k">↓</text>
-<rect x="710.4" y="1201.3" width="42" height="42" rx="5" class="hr"/>
-<text x="731.4" y="1226.3" font-size="11" class="k">→</text>
+<rect x="629.9" y="1201.3" width="42" height="42" rx="5" class="hr"/>
+<text x="650.9" y="1226.3" font-size="11" class="k">←</text>
+<rect x="675.9" y="1201.3" width="42" height="42" rx="5" class="hr"/>
+<text x="696.9" y="1226.3" font-size="11" class="k">↓</text>
+<rect x="721.9" y="1201.3" width="42" height="42" rx="5" class="hr"/>
+<text x="742.9" y="1226.3" font-size="11" class="k">→</text>
 <path d="M 340.4,1015.3 L 340.4,1061.3 L 317.4,1061.3 L 317.4,1107.3 L 328.9,1107.3 L 328.9,1153.3 L 351.9,1153.3 L 351.9,1199.3 L 351.9,1199.3 L 351.9,1245.3" class="cut"/>
-<text x="754.4" y="1268.3" class="note" text-anchor="end">left 31 + right 40 = 71 keys</text></svg>
+<text x="777.4" y="1268.3" class="note" text-anchor="end">left 31 + right 40 = 71 keys</text></svg>

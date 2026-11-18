@@ -105,13 +105,17 @@ B_ROWS = {k: v for k, v in LAYOUTS[3]["rows"].items() if k != "f"}
 B_ROWS["n"] = [(1, "Esc|`")] + NUM[1:] + [(1, "¥|Bksp"), (1, "Bksp")]
 
 # 65 %: main block plus one nav column = 16U; arrows tucked into shift/bottom rows
-R65_N = B_ROWS["n"][:13] + [(2, "Bksp"), (1, "Del")]
-R65_T = B_ROWS["t"] + [(1, "PgUp")]
-R65_C = B_ROWS["c"] + [(1, "PgDn")]
-R65_S = [(1.25, "Shift"), (1, "<|Shift")] + SHIFT + [(1.5, "Shift"), ("gap", .25), (1, "↑"), (1, "End")]
+NAVC = [("gap", .25)]  # gap between the main block and the 1.25U nav column
+R65_N = B_ROWS["n"][:13] + [(2, "Bksp")] + NAVC + [(1.25, "Del")]
+R65_T = B_ROWS["t"] + NAVC + [(1.25, "PgUp")]
+R65_C = ([(1.5, "Caps"), ("gap", .25)] + CAPS + [("gap", .25), (2, "Enter")]
+         + NAVC + [(1.25, "PgDn")])
+R65_S = ([(1.25, "Shift"), (1, "<|Shift")] + SHIFT + [(1, "#|ろ|/?"), (1, "Shift")]
+         + [(1, "↑"), (1, "End")])
 R65_B = [(1.25, "Ctrl"), (1.25, "Win"), (1.25, "Alt"), (1.5, "無変換|Fn"), (2, "Space"),
-         (2, "Space"), (1.25, "変換|Fn"), (1.25, "AltGr"), (1.25, "Ctrl"),
+         (2, "Space"), (1.25, "変換|Fn"), (1.25, "AltGr"), (1.25, "Ctrl"), ("gap", .25),
          (1, "←"), (1, "↓"), (1, "→")]
+R65_W = {"n": 16.5, "t": 16.5, "c": 16.5, "s": 16.25, "b": 16.25}
 
 COMPACT = [
     {
@@ -136,9 +140,9 @@ COMPACT = [
     },
     {
         "name": "E: universal 65 % (72 keys)",
-        "note": "2U Backspace, 2U right space, 1.25U right Ctrl; JIS ¥/ろ, right Win and Menu on a layer; 16U wide",
+        "note": "2U Enter and Backspace; # (ISO) / ろ (JIS) beside a 1U right Shift; 1.25U nav column and arrows set off by 0.25U; 16.5U wide",
         "rows": {"n": R65_N, "t": R65_T, "c": R65_C, "s": R65_S, "b": R65_B},
-        "nav": [], "main_w": 16,
+        "nav": [], "main_w": R65_W,
         "split": True,
     },
     {
@@ -146,12 +150,12 @@ COMPACT = [
         "note": "As E, but End moves to a layer",
         "rows": {"n": R65_N, "t": R65_T, "c": R65_C,
                  "s": R65_S[:-1] + [("gap", 1)], "b": R65_B},
-        "nav": [], "main_w": 16,
+        "nav": [], "main_w": R65_W,
         "split": True,
     },
 ]
 
-VARIABLE = {"Esc|`", "¥|Bksp", "\\|Enter", "#|Enter", "<|Shift", "ろ|/?|Fn", "無変換|Fn", "変換|Fn"}
+VARIABLE = {"Esc|`", "#|ろ|/?", "¥|Bksp", "\\|Enter", "#|Enter", "<|Shift", "ろ|/?|Fn", "無変換|Fn", "変換|Fn"}
 
 
 def place(layout):
