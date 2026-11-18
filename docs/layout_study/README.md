@@ -19,6 +19,8 @@ connected position the halves touch along that line.
 | `layout_e_keys.json`, `layout_e_legends.png` | Input for `render/layout_scene.py` |
 | `numpad_n1.kle.json`, `numpad_n1.qmk.json` | Number block N1, 5x4 matrix |
 | `plate_rongorongo.py` | Plate artwork proposal: the layout E plate with the split72 switch cut-outs and Rongorongo-style glyph lines in the visible strips. Writes the two SVGs below |
+| `plate_trace_tool.html` | Interactive page: place the plate on a photo (move, rotate, scale, stretch, coverage readout and optimise), trace the strokes (threshold, grow/shrink, speck and hole removal, silk min width check), export the mask PNG for potrace and the settings JSON. Load the photo in the page |
+| `plate_trace_tool.template.html`, `make_trace_tool.py` | Source of the page and its generator; `--image PHOTO --out OUT.html` embeds a photo (mind its licence) |
 | `plate_rongorongo.svg/.png`, `rongorongo_glyphs.svg/.png` | The plate proposal and the 30 glyphs (outlined bodies, 0.35 mm lines, about 11 mm high). The glyphs are own drawings, not copied from a tablet |
 
 Regenerate:

@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plate trace tool</title>
+<style>
+:root {
+  --bg: #f4f3f0; --panel: #ffffff; --ink: #1d1d1f; --muted: #6b6b70; --line: #d8d6d0;
+  --accent: #d9731a; --accent2: #2f6fd6; --plate: #121314; --silk: #ece8dc; --warn: #e0352b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17181a; --panel: #212226; --ink: #ececec; --muted: #9a9aa0; --line: #34353a;
+  }
+}
+:root[data-theme="dark"] { --bg: #17181a; --panel: #212226; --ink: #ececec; --muted: #9a9aa0; --line: #34353a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 13px/1.4 system-ui, sans-serif; }
+header { display: flex; gap: 12px; align-items: center; padding: 8px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+header h1 { font-size: 15px; margin: 0; }
+header .hint { color: var(--muted); }
+main { display: grid; grid-template-columns: 1fr 330px; gap: 0; min-height: calc(100vh - 44px); }
+@media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+.views { display: grid; grid-template-rows: minmax(260px, 1fr) auto; min-width: 0; }
+.photo-wrap { position: relative; min-height: 260px; border-bottom: 1px solid var(--line); }
+#photo { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+.result-wrap { padding: 10px 16px 16px; overflow: auto; }
+#result { width: 100%; height: auto; display: block; background: #d9d9d6; border-radius: 6px; }
+.stats { color: var(--muted); margin: 6px 0 0; }
+aside { background: var(--panel); border-left: 1px solid var(--line); padding: 10px 14px 24px; overflow-y: auto; max-height: calc(100vh - 44px); }
+@media (max-width: 900px) { aside { max-height: none; border-left: 0; border-top: 1px solid var(--line); } }
+fieldset { border: 1px solid var(--line); border-radius: 8px; margin: 0 0 12px; padding: 8px 10px 10px; }
+legend { font-weight: 600; padding: 0 4px; }
+.row { display: grid; grid-template-columns: 112px 1fr 64px; gap: 6px; align-items: center; margin: 4px 0; }
+.row label { color: var(--muted); }
+.row input[type=number] { width: 64px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; padding: 2px 4px; }
+.row input[type=range] { width: 100%; }
+.checks label { display: block; margin: 3px 0; }
+button, .file { background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 5px 9px; cursor: pointer; font: inherit; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.cover { font-weight: 600; }
+.cover.bad { color: var(--warn); }
+.note { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
+.drop { outline: 3px dashed var(--accent); outline-offset: -8px; }
+#busy { color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Plate trace tool</h1>
+  <label class="file">Load photo <input id="file" type="file" accept="image/*" hidden></label>
+  <span class="hint">Drag the plate to move it. Shift + wheel: rotate. Alt + wheel: scale. Wheel: zoom view. Drag elsewhere: pan. Arrow keys nudge by 1 px.</span>
+  <span id="busy"></span>
+</header>
+<main>
+  <div class="views">
+    <div class="photo-wrap" id="photoWrap"><canvas id="photo"></canvas></div>
+    <div class="result-wrap">
+      <canvas id="result"></canvas>
+      <p class="stats" id="stats">Load a photo (button above, or drop a file on the photo area).</p>
+    </div>
+  </div>
+  <aside>
+    <fieldset>
+      <legend>Placement</legend>
+      <div class="row"><label for="cx">Centre x (px)</label><input id="cx_r" type="range" min="0" max="3000" step="1"><input id="cx" type="number" step="1"></div>
+      <div class="row"><label for="cy">Centre y (px)</label><input id="cy_r" type="range" min="0" max="3000" step="1"><input id="cy" type="number" step="1"></div>
+      <div class="row"><label for="ang">Angle (deg, ccw)</label><input id="ang_r" type="range" min="-20" max="20" step="0.1"><input id="ang" type="number" step="0.1"></div>
+      <div class="row"><label for="mmpp">Scale (mm/px)</label><input id="mmpp_r" type="range" min="0.05" max="0.5" step="0.001"><input id="mmpp" type="number" step="0.001"></div>
+      <div class="row"><label for="sx">Stretch x</label><input id="sx_r" type="range" min="0.5" max="2" step="0.01"><input id="sx" type="number" step="0.01"></div>
+      <div class="row"><label for="sy">Stretch y</label><input id="sy_r" type="range" min="0.5" max="2" step="0.01"><input id="sy" type="number" step="0.01"></div>
+      <p class="note">Scale is plate mm per photo pixel. Stretch above 1 shows less of the photo along that axis, so the glyphs get wider (x) or taller (y).</p>
+      <div class="row"><label for="mask">Tablet mask</label><input id="mask_r" type="range" min="40" max="240" step="1"><input id="mask" type="number" step="1"></div>
+      <p>Coverage: <span id="cover" class="cover">-</span> of the plate lies on the tablet</p>
+      <div class="btns"><button id="optimise" class="primary">Optimise coverage</button><button id="resetPlace">Reset</button></div>
+      <p class="note">The mask counts photo pixels darker than the mask value (after blurring) as tablet. Optimise searches angle +-3 deg and centre +-120 px around the current placement, keeping scale and stretch.</p>
+    </fieldset>
+    <fieldset>
+      <legend>Tracing</legend>
+      <div class="checks">
+        <label><input type="radio" name="mode" value="light" checked> light strokes on dark (carved grooves in the photo)</label>
+        <label><input type="radio" name="mode" value="dark"> dark strokes on light (drawings, transcriptions)</label>
+      </div>
+      <div class="row"><label for="res">Resolution (px/mm)</label><input id="res_r" type="range" min="3" max="14" step="1"><input id="res" type="number" step="1"></div>
+      <div class="row"><label for="pre">Pre-smooth (mm)</label><input id="pre_r" type="range" min="0" max="0.6" step="0.02"><input id="pre" type="number" step="0.02"></div>
+      <div class="row"><label for="bgr">Background (mm)</label><input id="bgr_r" type="range" min="0.3" max="5" step="0.05"><input id="bgr" type="number" step="0.05"></div>
+      <div class="row"><label for="thr">Threshold</label><input id="thr_r" type="range" min="1" max="80" step="0.5"><input id="thr" type="number" step="0.5"></div>
+      <div class="row"><label for="grow">Grow / shrink (mm)</label><input id="grow_r" type="range" min="-0.3" max="0.3" step="0.025"><input id="grow" type="number" step="0.025"></div>
+      <div class="row"><label for="speck">Remove specks (mm²)</label><input id="speck_r" type="range" min="0" max="5" step="0.05"><input id="speck" type="number" step="0.05"></div>
+      <div class="row"><label for="hole">Fill holes (mm²)</label><input id="hole_r" type="range" min="0" max="3" step="0.05"><input id="hole" type="number" step="0.05"></div>
+      <div class="row"><label for="minw">Silk min width (mm)</label><input id="minw_r" type="range" min="0" max="0.5" step="0.01"><input id="minw" type="number" step="0.01"></div>
+      <p class="note">Background: radius of the blur that is subtracted before the threshold; it removes uneven lighting. Threshold: grey levels above the background. Strokes thinner than the silk min width are shown red.</p>
+    </fieldset>
+    <fieldset>
+      <legend>View</legend>
+      <div class="checks">
+        <label><input id="showHoles" type="checkbox" checked> cut-outs in the result</label>
+        <label><input id="showThin" type="checkbox" checked> thin strokes in red</label>
+        <label><input id="showRaw" type="checkbox"> photo instead of trace</label>
+        <label><input id="showKeys" type="checkbox" checked> cut-outs on the photo</label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Export</legend>
+      <div class="btns">
+        <button id="dlMask">Mask PNG (for potrace)</button>
+        <button id="dlPreview">Preview PNG</button>
+        <button id="dlSettings">Settings JSON</button>
+      </div>
+      <label class="file" style="display:inline-block;margin-top:6px">Load settings <input id="loadSettings" type="file" accept="application/json" hidden></label>
+      <p class="note">The mask is white ink on black, one pixel per 1/resolution mm, the plate outline without cut-outs; origin = plate top-left corner. Settings hold every value on this page.</p>
+    </fieldset>
+  </aside>
+</main>
+<script>
+"use strict";
+// ---- data filled in by make_trace_tool.py -------------------------------------------
+const LAYOUT = {"margin": 5.0, "cut": {"f": 7.5, "n": 7, "t": 6.5, "c": 6.75, "s": 7.25, "b": 7.25}, "keys": [{"x": 0.0, "w": 1, "row": 0, "half": "left"}, {"x": 1.0, "w": 1, "row": 0, "half": "left"}, {"x": 2.0, "w": 1, "row": 0, "half": "left"}, {"x": 3.0, "w": 1, "row": 0, "half": "left"}, {"x": 4.0, "w": 1, "row": 0, "half": "left"}, {"x": 5.0, "w": 1, "row": 0, "half": "left"}, {"x": 6.0, "w": 1, "row": 0, "half": "left"}, {"x": 7.0, "w": 1, "row": 0, "half": "right"}, {"x": 8.0, "w": 1, "row": 0, "half": "right"}, {"x": 9.0, "w": 1, "row": 0, "half": "right"}, {"x": 10.0, "w": 1, "row": 0, "half": "right"}, {"x": 11.0, "w": 1, "row": 0, "half": "right"}, {"x": 12.0, "w": 1, "row": 0, "half": "right"}, {"x": 13.0, "w": 2, "row": 0, "half": "right"}, {"x": 15.0, "w": 1.25, "row": 0, "half": "right"}, {"x": 0.0, "w": 1.5, "row": 1, "half": "left"}, {"x": 1.5, "w": 1, "row": 1, "half": "left"}, {"x": 2.5, "w": 1, "row": 1, "half": "left"}, {"x": 3.5, "w": 1, "row": 1, "half": "left"}, {"x": 4.5, "w": 1, "row": 1, "half": "left"}, {"x": 5.5, "w": 1, "row": 1, "half": "left"}, {"x": 6.5, "w": 1, "row": 1, "half": "right"}, {"x": 7.5, "w": 1, "row": 1, "half": "right"}, {"x": 8.5, "w": 1, "row": 1, "half": "right"}, {"x": 9.5, "w": 1, "row": 1, "half": "right"}, {"x": 10.5, "w": 1, "row": 1, "half": "right"}, {"x": 11.5, "w": 1, "row": 1, "half": "right"}, {"x": 12.5, "w": 1, "row": 1, "half": "right"}, {"x": 13.5, "w": 1.5, "row": 1, "half": "right"}, {"x": 15.0, "w": 1.25, "row": 1, "half": "right"}, {"x": 0.0, "w": 1.5, "row": 2, "half": "left"}, {"x": 1.75, "w": 1, "row": 2, "half": "left"}, {"x": 2.75, "w": 1, "row": 2, "half": "left"}, {"x": 3.75, "w": 1, "row": 2, "half": "left"}, {"x": 4.75, "w": 1, "row": 2, "half": "left"}, {"x": 5.75, "w": 1, "row": 2, "half": "left"}, {"x": 6.75, "w": 1, "row": 2, "half": "right"}, {"x": 7.75, "w": 1, "row": 2, "half": "right"}, {"x": 8.75, "w": 1, "row": 2, "half": "right"}, {"x": 9.75, "w": 1, "row": 2, "half": "right"}, {"x": 10.75, "w": 1, "row": 2, "half": "right"}, {"x": 11.75, "w": 1, "row": 2, "half": "right"}, {"x": 13.0, "w": 2, "row": 2, "half": "right"}, {"x": 15.0, "w": 1.25, "row": 2, "half": "right"}, {"x": 0.0, "w": 1.25, "row": 3, "half": "left"}, {"x": 1.25, "w": 1, "row": 3, "half": "left"}, {"x": 2.25, "w": 1, "row": 3, "half": "left"}, {"x": 3.25, "w": 1, "row": 3, "half": "left"}, {"x": 4.25, "w": 1, "row": 3, "half": "left"}, {"x": 5.25, "w": 1, "row": 3, "half": "left"}, {"x": 6.25, "w": 1, "row": 3, "half": "left"}, {"x": 7.25, "w": 1, "row": 3, "half": "right"}, {"x": 8.25, "w": 1, "row": 3, "half": "right"}, {"x": 9.25, "w": 1, "row": 3, "half": "right"}, {"x": 10.25, "w": 1, "row": 3, "half": "right"}, {"x": 11.25, "w": 1, "row": 3, "half": "right"}, {"x": 12.25, "w": 1, "row": 3, "half": "right"}, {"x": 13.25, "w": 1, "row": 3, "half": "right"}, {"x": 14.25, "w": 1, "row": 3, "half": "right"}, {"x": 15.25, "w": 1, "row": 3, "half": "right"}, {"x": 0.0, "w": 1.25, "row": 4, "half": "left"}, {"x": 1.25, "w": 1.25, "row": 4, "half": "left"}, {"x": 2.5, "w": 1.25, "row": 4, "half": "left"}, {"x": 3.75, "w": 1.5, "row": 4, "half": "left"}, {"x": 5.25, "w": 2, "row": 4, "half": "left"}, {"x": 7.25, "w": 2, "row": 4, "half": "right"}, {"x": 9.25, "w": 1.5, "row": 4, "half": "right"}, {"x": 10.75, "w": 1.25, "row": 4, "half": "right"}, {"x": 12.0, "w": 1.25, "row": 4, "half": "right"}, {"x": 13.25, "w": 1, "row": 4, "half": "right"}, {"x": 14.25, "w": 1, "row": 4, "half": "right"}, {"x": 15.25, "w": 1, "row": 4, "half": "right"}]};
+const DEFAULT_IMAGE = null;
+const DEFAULTS = null;
+// --------------------------------------------------------------------------------------
+const U = 19.05, M = LAYOUT.margin;
+const KW = Math.max(...LAYOUT.keys.map(k => k.x + k.w)) * U;   // key area width, mm
+const KH = 5 * U;
+const PW = KW + 2 * M, PH = KH + 2 * M;                        // plate size, mm
+const PC = [KW / 2, KH / 2];                                   // plate centre in key mm
+const ROWS = "ntcsb";
+
+function halfOutline(half) {
+  const st = [];
+  for (let i = 0; i < 5; i++) {
+    const x = LAYOUT.cut[ROWS[i]] * U;
+    st.push([x, i * U - (i === 0 ? M : 0)], [x, (i + 1) * U + (i === 4 ? M : 0)]);
+  }
+  if (half === "left") return [[-M, -M], ...st, [-M, KH + M]];
+  return [[KW + M, -M], [KW + M, KH + M], ...st.reverse()];
+}
+function cutout(cx, cy) {
+  const h = 7.0;
+  return [[-h, -h], [-2.5, -h], [-2.5, -h - 0.66], [2.5, -h - 0.66], [2.5, -h], [h, -h], [h, -6], [h + 0.8, -6],
+          [h + 0.8, 6], [h, 6], [h, h], [-h, h], [-h, 6], [-h - 0.8, 6], [-h - 0.8, -6], [-h, -6]]
+    .map(([x, y]) => [cx + x, cy + y]);
+}
+const OUTLINES = { left: halfOutline("left"), right: halfOutline("right") };
+const HOLES = LAYOUT.keys.map(k => cutout((k.x + k.w / 2) * U, (k.row + 0.5) * U));
+
+// ---- state ----------------------------------------------------------------------------
+const P = Object.assign({ cx: 1170, cy: 610, ang: 4.5, mmpp: 0.175, sx: 1, sy: 1, mask: 150,
+  mode: "light", res: 8, pre: 0.1, bgr: 1.2, thr: 17, grow: 0, speck: 0.3, hole: 0.05, minw: 0.15 }, DEFAULTS || {});
+try { Object.assign(P, JSON.parse(localStorage.getItem("plateTraceTool") || "{}")); } catch (e) { /* storage blocked */ }
+function save() { try { localStorage.setItem("plateTraceTool", JSON.stringify(P)); } catch (e) { /* storage blocked */ } }
+
+const photoC = document.getElementById("photo"), resC = document.getElementById("result");
+let img = null, imgName = "", grayMask = null, maskW = 0, maskH = 0, MS = 8;
+const view = { z: 1, x: 0, y: 0 };      // photo canvas: screen = (photo - [x,y]) * z
+
+// plate mm (key coordinates) -> photo px
+function toPhoto(x, y) {
+  const c = Math.cos(P.ang * Math.PI / 180), s = Math.sin(P.ang * Math.PI / 180);
+  const u = (x - PC[0]) / (P.mmpp * P.sx), v = (y - PC[1]) / (P.mmpp * P.sy);
+  return [P.cx + u * c + v * s, P.cy - u * s + v * c];
+}
+function toPlate(px, py) {
+  const c = Math.cos(P.ang * Math.PI / 180), s = Math.sin(P.ang * Math.PI / 180);
+  const dx = px - P.cx, dy = py - P.cy;
+  const u = dx * c - dy * s, v = dx * s + dy * c;
+  return [PC[0] + u * P.mmpp * P.sx, PC[1] + v * P.mmpp * P.sy];
+}
+function inPoly(pt, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i], [xj, yj] = poly[j];
+    if ((yi > pt[1]) !== (yj > pt[1]) && pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+// ---- controls -------------------------------------------------------------------------
+const NUMS = ["cx", "cy", "ang", "mmpp", "sx", "sy", "mask", "res", "pre", "bgr", "thr", "grow", "speck", "hole", "minw"];
+const PLACEMENT = new Set(["cx", "cy", "ang", "mmpp", "sx", "sy"]);
+function syncInputs() {
+  for (const k of NUMS) {
+    document.getElementById(k).value = +(+P[k]).toFixed(4);
+    document.getElementById(k + "_r").value = P[k];
+  }
+  document.querySelector(`input[name=mode][value=${P.mode}]`).checked = true;
+}
+for (const k of NUMS) {
+  for (const id of [k, k + "_r"]) {
+    document.getElementById(id).addEventListener("input", e => {
+      const v = parseFloat(e.target.value);
+      if (!Number.isFinite(v)) return;
+      P[k] = v; syncInputs(); changed(k);
+    });
+  }
+}
+document.querySelectorAll("input[name=mode]").forEach(r => r.addEventListener("change", e => { P.mode = e.target.value; changed("mode"); }));
+["showHoles", "showThin", "showRaw"].forEach(id => document.getElementById(id).addEventListener("change", () => drawResult()));
+document.getElementById("showKeys").addEventListener("change", () => drawPhoto());
+
+let traceTimer = 0;
+function changed(k) {
+  save();
+  if (k === "mask") buildMask();
+  drawPhoto();
+  if (k === "mask") return;
+  clearTimeout(traceTimer);
+  document.getElementById("busy").textContent = "tracing...";
+  traceTimer = setTimeout(trace, PLACEMENT.has(k) ? 120 : 60);
+}
+
+// ---- photo view -----------------------------------------------------------------------
+function fitView() {
+  const r = photoC.getBoundingClientRect();
+  view.z = Math.min(r.width / img.width, r.height / img.height) * 0.98;
+  view.x = (img.width - r.width / view.z) / 2; view.y = (img.height - r.height / view.z) / 2;
+}
+function drawPhoto() {
+  const r = photoC.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  photoC.width = Math.round(r.width * dpr); photoC.height = Math.round(r.height * dpr);
+  const g = photoC.getContext("2d");
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.fillStyle = getComputedStyle(document.body).getPropertyValue("--bg"); g.fillRect(0, 0, r.width, r.height);
+  if (!img) return;
+  g.setTransform(dpr * view.z, 0, 0, dpr * view.z, -view.x * view.z * dpr, -view.y * view.z * dpr);
+  g.imageSmoothingQuality = "high";
+  g.drawImage(img, 0, 0);
+  const path = poly => { g.beginPath(); poly.forEach(([x, y], i) => { const [a, b] = toPhoto(x, y); i ? g.lineTo(a, b) : g.moveTo(a, b); }); g.closePath(); };
+  const lw = 1.5 / view.z;
+  for (const h of ["left", "right"]) {
+    path(OUTLINES[h]); g.fillStyle = "rgba(217,115,26,0.16)"; g.fill();
+    g.strokeStyle = "#d9731a"; g.lineWidth = 2.5 * lw; g.stroke();
+  }
+  if (document.getElementById("showKeys").checked) {
+    g.fillStyle = "rgba(47,111,214,0.30)"; g.strokeStyle = "rgba(90,150,255,0.9)"; g.lineWidth = lw;
+    for (const hp of HOLES) { path(hp); g.fill(); g.stroke(); }
+  }
+  updateCover();
+}
+
+// tablet mask: photo scaled down by MS, blurred, darker than P.mask
+function buildMask() {
+  if (!img) return;
+  maskW = Math.ceil(img.width / MS); maskH = Math.ceil(img.height / MS);
+  const c = document.createElement("canvas"); c.width = maskW; c.height = maskH;
+  const g = c.getContext("2d", { willReadFrequently: true });
+  g.imageSmoothingQuality = "high";
+  g.drawImage(img, 0, 0, maskW, maskH);
+  let a = toGray(g.getImageData(0, 0, maskW, maskH));
+  a = boxBlur(a, maskW, maskH, 2, 2);
+  grayMask = new Uint8Array(a.length);
+  for (let i = 0; i < a.length; i++) grayMask[i] = a[i] < P.mask ? 1 : 0;
+}
+const SAMPLES = (() => {
+  const pts = [];
+  for (let y = -M; y <= KH + M; y += 2) for (let x = -M; x <= KW + M; x += 2)
+    if (inPoly([x, y], OUTLINES.left) || inPoly([x, y], OUTLINES.right)) pts.push([x, y]);
+  return pts;
+})();
+function coverage(par) {
+  if (!grayMask) return 0;
+  const c = Math.cos(par.ang * Math.PI / 180), s = Math.sin(par.ang * Math.PI / 180);
+  let n = 0;
+  for (const [x, y] of SAMPLES) {
+    const u = (x - PC[0]) / (par.mmpp * par.sx), v = (y - PC[1]) / (par.mmpp * par.sy);
+    const px = (par.cx + u * c + v * s) / MS, py = (par.cy - u * s + v * c) / MS;
+    if (px >= 0 && py >= 0 && px < maskW && py < maskH && grayMask[(py | 0) * maskW + (px | 0)]) n++;
+  }
+  return n / SAMPLES.length;
+}
+function updateCover() {
+  const v = coverage(P), el = document.getElementById("cover");
+  el.textContent = (100 * v).toFixed(1) + " %"; el.classList.toggle("bad", v < 0.98);
+}
+document.getElementById("optimise").addEventListener("click", () => {
+  if (!img) return;
+  let best = { v: coverage(P), cx: P.cx, cy: P.cy, ang: P.ang };
+  const q = Object.assign({}, P);
+  for (let a = P.ang - 3; a <= P.ang + 3.001; a += 0.5)
+    for (let dx = -120; dx <= 120; dx += 10)
+      for (let dy = -120; dy <= 120; dy += 10) {
+        q.ang = a; q.cx = P.cx + dx; q.cy = P.cy + dy;
+        const v = coverage(q);
+        if (v > best.v + 1e-6) best = { v, cx: q.cx, cy: q.cy, ang: +a.toFixed(2) };
+      }
+  Object.assign(P, { cx: best.cx, cy: best.cy, ang: best.ang }); syncInputs(); changed("cx");
+});
+document.getElementById("resetPlace").addEventListener("click", () => {
+  Object.assign(P, { cx: img ? img.width / 2 : 1170, cy: img ? img.height / 2 : 610, ang: 0, mmpp: 0.175, sx: 1, sy: 1 });
+  syncInputs(); changed("cx");
+});
+
+// mouse: drag plate / pan, wheel zoom / rotate / scale
+let drag = null;
+photoC.addEventListener("pointerdown", e => {
+  if (!img) return;
+  const r = photoC.getBoundingClientRect();
+  const px = view.x + (e.clientX - r.left) / view.z, py = view.y + (e.clientY - r.top) / view.z;
+  const p = toPlate(px, py);
+  const onPlate = inPoly(p, OUTLINES.left) || inPoly(p, OUTLINES.right);
+  drag = { onPlate, sx: e.clientX, sy: e.clientY, cx: P.cx, cy: P.cy, vx: view.x, vy: view.y };
+  photoC.setPointerCapture(e.pointerId); photoC.style.cursor = "grabbing";
+});
+photoC.addEventListener("pointermove", e => {
+  if (!drag) return;
+  const dx = (e.clientX - drag.sx) / view.z, dy = (e.clientY - drag.sy) / view.z;
+  if (drag.onPlate) { P.cx = Math.round(drag.cx + dx); P.cy = Math.round(drag.cy + dy); syncInputs(); changed("cx"); }
+  else { view.x = drag.vx - dx; view.y = drag.vy - dy; drawPhoto(); }
+});
+photoC.addEventListener("pointerup", () => { drag = null; photoC.style.cursor = "grab"; });
+photoC.addEventListener("wheel", e => {
+  if (!img) return;
+  e.preventDefault();
+  const d = e.deltaY > 0 ? 1 : -1;
+  if (e.shiftKey) { P.ang = +(P.ang - d * 0.1).toFixed(2); syncInputs(); changed("ang"); return; }
+  if (e.altKey) { P.mmpp = +(P.mmpp * (1 + d * 0.005)).toFixed(4); syncInputs(); changed("mmpp"); return; }
+  const r = photoC.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  const px = view.x + mx / view.z, py = view.y + my / view.z;
+  view.z *= d > 0 ? 1 / 1.15 : 1.15;
+  view.x = px - mx / view.z; view.y = py - my / view.z; drawPhoto();
+}, { passive: false });
+window.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  const k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+  if (!k) return;
+  e.preventDefault(); P.cx += k[0]; P.cy += k[1]; syncInputs(); changed("cx");
+});
+// redraw whenever the photo area changes size, so the canvas bitmap is never stretched
+new ResizeObserver(() => drawPhoto()).observe(document.getElementById("photoWrap"));
+
+// ---- image processing -----------------------------------------------------------------
+function toGray(id) {
+  const d = id.data, a = new Float32Array(d.length / 4);
+  for (let i = 0, j = 0; j < a.length; i += 4, j++) a[j] = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+  return a;
+}
+// box blur with radius r, `passes` times (3 passes ~ Gaussian), edges clamped
+function boxBlur(src, w, h, r, passes) {
+  r = Math.round(r);
+  if (r < 1) return src;
+  let a = Float32Array.from(src), b = new Float32Array(a.length);
+  const n = 2 * r + 1;
+  for (let p = 0; p < passes; p++) {
+    for (let y = 0; y < h; y++) {
+      const o = y * w; let s = 0;
+      for (let k = -r; k <= r; k++) s += a[o + Math.min(w - 1, Math.max(0, k))];
+      for (let x = 0; x < w; x++) {
+        b[o + x] = s / n;
+        s += a[o + Math.min(w - 1, x + r + 1)] - a[o + Math.max(0, x - r)];
+      }
+    }
+    for (let x = 0; x < w; x++) {
+      let s = 0;
+      for (let k = -r; k <= r; k++) s += b[Math.min(h - 1, Math.max(0, k)) * w + x];
+      for (let y = 0; y < h; y++) {
+        a[y * w + x] = s / n;
+        s += b[Math.min(h - 1, y + r + 1) * w + x] - b[Math.max(0, y - r) * w + x];
+      }
+    }
+  }
+  return a;
+}
+// binary dilate (grow) or erode (shrink) with a disc-like radius, as separable square passes
+function morph(src, w, h, r, grow) {
+  r = Math.round(r);
+  if (r < 1) return src;
+  let a = src, b = new Uint8Array(src.length);
+  const want = grow ? 1 : 0;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let v = a[y * w + x];
+    if (v !== want) for (let k = 1; k <= r; k++) {
+      if ((x - k >= 0 && a[y * w + x - k] === want) || (x + k < w && a[y * w + x + k] === want)) { v = want; break; }
+    }
+    b[y * w + x] = v;
+  }
+  const c = new Uint8Array(src.length);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let v = b[y * w + x];
+    if (v !== want) for (let k = 1; k <= r; k++) {
+      if ((y - k >= 0 && b[(y - k) * w + x] === want) || (y + k < h && b[(y + k) * w + x] === want)) { v = want; break; }
+    }
+    c[y * w + x] = v;
+  }
+  return c;
+}
+// remove 8-connected components of value `val` smaller than minArea px; skip ones touching the
+// border when keepBorder is set (holes open to the outside are not holes)
+function dropSmall(bin, w, h, val, minArea, keepBorder) {
+  if (minArea < 1) return bin;
+  const lab = new Int32Array(bin.length).fill(-1), stack = new Int32Array(bin.length);
+  const out = Uint8Array.from(bin);
+  let removed = 0, kept = 0;
+  for (let i = 0; i < bin.length; i++) {
+    if (bin[i] !== val || lab[i] !== -1) continue;
+    let sp = 0, n = 0, border = false; stack[sp++] = i; lab[i] = i;
+    const members = [];
+    while (sp) {
+      const p = stack[--sp]; members.push(p); n++;
+      const x = p % w, y = (p / w) | 0;
+      if (x === 0 || y === 0 || x === w - 1 || y === h - 1) border = true;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        const xx = x + dx, yy = y + dy;
+        if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue;
+        const q = yy * w + xx;
+        if (bin[q] === val && lab[q] === -1) { lab[q] = i; stack[sp++] = q; }
+      }
+    }
+    if (n < minArea && !(keepBorder && border)) { for (const p of members) out[p] = 1 - val; removed++; } else kept++;
+  }
+  return { out, removed, kept };
+}
+
+let last = null;     // { w, h, gray, ink, thin }
+function trace() {
+  document.getElementById("busy").textContent = "";
+  if (!img) return;
+  const R = P.res, w = Math.round(PW * R), h = Math.round(PH * R);
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const g = c.getContext("2d", { willReadFrequently: true });
+  g.fillStyle = "#808080"; g.fillRect(0, 0, w, h);
+  // photo px -> plate canvas px: R * (pc + S^-1 Rot^-1 (photo - c) + M)
+  const co = Math.cos(P.ang * Math.PI / 180), si = Math.sin(P.ang * Math.PI / 180);
+  const ax = R * P.mmpp * P.sx, ay = R * P.mmpp * P.sy;
+  const q00 = ax * co, q01 = -ax * si, q10 = ay * si, q11 = ay * co;
+  const tx = R * (PC[0] + M) - (q00 * P.cx + q01 * P.cy), ty = R * (PC[1] + M) - (q10 * P.cx + q11 * P.cy);
+  g.setTransform(q00, q10, q01, q11, tx, ty);
+  g.imageSmoothingQuality = "high";
+  g.drawImage(img, 0, 0);
+  const t0 = performance.now();
+  let a = toGray(g.getImageData(0, 0, w, h));
+  const gray = a;
+  if (P.pre > 0) a = boxBlur(a, w, h, P.pre * R, 2);
+  const bg = boxBlur(a, w, h, P.bgr * R, 3);
+  let ink = new Uint8Array(a.length);
+  const sign = P.mode === "light" ? 1 : -1;
+  for (let i = 0; i < a.length; i++) ink[i] = sign * (a[i] - bg[i]) > P.thr ? 1 : 0;
+  if (P.grow > 0) ink = morph(ink, w, h, P.grow * R, true);
+  if (P.grow < 0) ink = morph(ink, w, h, -P.grow * R, false);
+  const sp = dropSmall(ink, w, h, 1, P.speck * R * R, false);
+  ink = sp.out || ink;
+  const ho = dropSmall(ink, w, h, 0, P.hole * R * R, true);
+  ink = ho.out || ink;
+  // thin: ink that an opening with the min width removes
+  let thin = null;
+  const rr = P.minw * R / 2;
+  if (rr >= 0.5) {
+    const opened = morph(morph(ink, w, h, Math.max(1, rr), false), w, h, Math.max(1, rr), true);
+    thin = new Uint8Array(ink.length);
+    for (let i = 0; i < ink.length; i++) thin[i] = ink[i] && !opened[i] ? 1 : 0;
+  }
+  last = { w, h, gray, ink, thin };
+  let nInk = 0, nThin = 0;
+  for (let i = 0; i < ink.length; i++) { nInk += ink[i]; if (thin) nThin += thin[i]; }
+  document.getElementById("stats").textContent =
+    `${w} x ${h} px (${PW.toFixed(1)} x ${PH.toFixed(1)} mm at ${R} px/mm), ink ${(100 * nInk / ink.length).toFixed(1)} %, ` +
+    `${sp.kept ?? "-"} stroke pieces kept, ${sp.removed ?? 0} specks removed, ${ho.removed ?? 0} holes filled, ` +
+    `thin (< ${P.minw} mm) ${(100 * nThin / Math.max(1, nInk)).toFixed(1)} % of the ink, ${(performance.now() - t0).toFixed(0)} ms`;
+  drawResult();
+}
+
+function drawResult() {
+  if (!last) return;
+  const { w, h, gray, ink, thin } = last, R = P.res;
+  resC.width = w; resC.height = h;
+  const g = resC.getContext("2d");
+  const id = g.createImageData(w, h), d = id.data;
+  const raw = document.getElementById("showRaw").checked, showThin = document.getElementById("showThin").checked;
+  const silk = [236, 232, 220], plate = [18, 19, 20], red = [224, 53, 43];
+  for (let i = 0, j = 0; i < ink.length; i++, j += 4) {
+    let col;
+    if (raw) { const v = gray[i]; col = [v, v, v]; }
+    else col = ink[i] ? (showThin && thin && thin[i] ? red : silk) : plate;
+    d[j] = col[0]; d[j + 1] = col[1]; d[j + 2] = col[2]; d[j + 3] = 255;
+  }
+  g.putImageData(id, 0, 0);
+  // everything outside the plate outline, and the cut-outs, in the page grey
+  g.save();
+  g.setTransform(R, 0, 0, R, M * R, M * R);
+  g.beginPath();
+  g.rect(-M - 1, -M - 1, PW + 2, PH + 2);
+  for (const hName of ["left", "right"]) {
+    OUTLINES[hName].forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath();
+  }
+  g.fillStyle = "#d9d9d6"; g.fill("evenodd");
+  if (document.getElementById("showHoles").checked) {
+    g.beginPath();
+    for (const hp of HOLES) { hp.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); }
+    g.fill();
+  }
+  g.strokeStyle = "#666"; g.lineWidth = 0.15;
+  for (const hName of ["left", "right"]) {
+    g.beginPath(); OUTLINES[hName].forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); g.stroke();
+  }
+  g.restore();
+}
+
+// ---- export ---------------------------------------------------------------------------
+function download(name, blob) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+document.getElementById("dlMask").addEventListener("click", () => {
+  if (!last) return;
+  const c = document.createElement("canvas"); c.width = last.w; c.height = last.h;
+  const g = c.getContext("2d"), id = g.createImageData(last.w, last.h);
+  for (let i = 0, j = 0; i < last.ink.length; i++, j += 4) {
+    const v = last.ink[i] ? 255 : 0; id.data[j] = id.data[j + 1] = id.data[j + 2] = v; id.data[j + 3] = 255;
+  }
+  g.putImageData(id, 0, 0);
+  c.toBlob(b => download(`plate_mask_${P.res}pxmm.png`, b), "image/png");
+});
+document.getElementById("dlPreview").addEventListener("click", () => resC.toBlob(b => download("plate_preview.png", b), "image/png"));
+document.getElementById("dlSettings").addEventListener("click", () => {
+  const out = Object.assign({ image: imgName, plate_mm: [+PW.toFixed(3), +PH.toFixed(3)], margin_mm: M }, P);
+  download("plate_trace_settings.json", new Blob([JSON.stringify(out, null, 1)], { type: "application/json" }));
+});
+document.getElementById("loadSettings").addEventListener("change", async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try { const s = JSON.parse(await f.text()); for (const k of Object.keys(P)) if (k in s) P[k] = s[k]; } catch (err) { alert("Not a settings file"); return; }
+  syncInputs(); buildMask(); changed("cx");
+});
+
+// ---- image loading --------------------------------------------------------------------
+function useImage(src, name) {
+  const im = new Image();
+  im.onload = () => {
+    img = im; imgName = name;
+    for (const k of ["cx", "cy"]) document.getElementById(k + "_r").max = k === "cx" ? im.width : im.height;
+    buildMask(); syncInputs(); trace();
+    requestAnimationFrame(() => { fitView(); drawPhoto(); });   // after the result canvas has its size
+  };
+  im.src = src;
+}
+document.getElementById("file").addEventListener("change", e => {
+  const f = e.target.files[0]; if (f) useImage(URL.createObjectURL(f), f.name);
+});
+const wrap = document.getElementById("photoWrap");
+wrap.addEventListener("dragover", e => { e.preventDefault(); wrap.classList.add("drop"); });
+wrap.addEventListener("dragleave", () => wrap.classList.remove("drop"));
+wrap.addEventListener("drop", e => {
+  e.preventDefault(); wrap.classList.remove("drop");
+  const f = e.dataTransfer.files[0]; if (f) useImage(URL.createObjectURL(f), f.name);
+});
+syncInputs();
+drawPhoto();
+if (DEFAULT_IMAGE) useImage(DEFAULT_IMAGE.src, DEFAULT_IMAGE.name);
+</script>
+</body>
+</html>
