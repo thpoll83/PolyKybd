@@ -9,9 +9,9 @@ flex cable, outer cap) as key_scene.py imports it. For a wider key the walls of 
 cap and of the display carrier move out in x (vertices beyond STRETCH_FROM), so the
 corner radii, the display pocket and the stem hole stay as they are; the display stays
 1U, centred. Each display shows its legend from LEGENDS.png
-(one 72x40 cell per key). The case and plate are plain extrusions of each half's outline:
-the case 4 mm wider than the keys on the outer edges and flush at the split line, the
-plate (z 3.4 to 5.0 mm, like the real one) without switch holes.
+(one 72x40 cell per key). The case and plate are plain extrusions of each half's outline,
+flush at the split line: the plate (z 3.4 to 5.0 mm, like the real one, no switch holes)
+PLATE_MARGIN wider than the keys on the outer edges, the case 4 mm wider than the plate.
 
 `joined` renders the halves touching; `apart` moves the right half 60 mm away and
 turns each half 8 degrees. Saves out.blend next to the PNG.
@@ -37,7 +37,8 @@ import textured_parts  # noqa: E402
 from meshmerge import merge_by_material  # noqa: E402
 
 U = 19.05
-CASE_MARGIN = 4.0                      # mm of case outside the keys on the outer edges
+PLATE_MARGIN = 5.0                     # mm of plate outside the keys on the outer edges
+CASE_MARGIN = PLATE_MARGIN + 4.0       # the case rim is 4 mm wide around the plate
 CASE_Z0, CASE_Z1 = -9.0, 3.4           # case body; the plate sits on it
 PLATE_Z0, PLATE_Z1 = 3.4, 5.0
 STRETCH = ("outercap", "keycap_stem")  # model files that grow with the key width
@@ -211,7 +212,7 @@ def main():
     for h in ("left", "right"):
         legend_mesh(placed[h], halves[h], (tx, ty), dz, legend_mat)
         prism(f"case {h}", outline(h, CASE_MARGIN), CASE_Z0, CASE_Z1, (0.35, 0.35, 0.37), halves[h], 1.2)
-        prism(f"plate {h}", outline(h, 0.0), PLATE_Z0, PLATE_Z1, (0.58, 0.59, 0.61), halves[h], 0.4)
+        prism(f"plate {h}", outline(h, PLATE_MARGIN), PLATE_Z0, PLATE_Z1, (0.58, 0.59, 0.61), halves[h], 0.4)
     # remove the template and its parts; only the board stays at the top level
     for o in list(troot.children_recursive) + [troot]:
         bpy.data.objects.remove(o, do_unlink=True)
