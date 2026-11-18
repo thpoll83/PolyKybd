@@ -105,12 +105,12 @@ B_ROWS = {k: v for k, v in LAYOUTS[3]["rows"].items() if k != "f"}
 B_ROWS["n"] = [(1, "Esc|`")] + NUM[1:] + [(1, "¥|Bksp"), (1, "Bksp")]
 
 # 65 %: main block plus one nav column = 16U; arrows tucked into shift/bottom rows
-R65_N = B_ROWS["n"] + [(1, "Del")]
+R65_N = B_ROWS["n"][:13] + [(2, "Bksp"), (1, "Del")]
 R65_T = B_ROWS["t"] + [(1, "PgUp")]
 R65_C = B_ROWS["c"] + [(1, "PgDn")]
 R65_S = [(1.25, "Shift"), (1, "<|Shift")] + SHIFT + [(1.5, "Shift"), ("gap", .25), (1, "↑"), (1, "End")]
 R65_B = [(1.25, "Ctrl"), (1.25, "Win"), (1.25, "Alt"), (1.5, "無変換|Fn"), (2, "Space"),
-         (1.5, "Space"), (1.25, "変換|Fn"), (1.25, "AltGr"), (1.5, "Ctrl"), ("gap", .25),
+         (2, "Space"), (1.25, "変換|Fn"), (1.25, "AltGr"), (1.25, "Ctrl"),
          (1, "←"), (1, "↓"), (1, "→")]
 
 COMPACT = [
@@ -135,16 +135,16 @@ COMPACT = [
         "split": True,
     },
     {
-        "name": "E: universal 65 % (73 keys)",
-        "note": "Nav column Del/PgUp/PgDn/End; right Win, Menu and the JIS ろ key move to a layer; 16U wide",
+        "name": "E: universal 65 % (72 keys)",
+        "note": "2U Backspace, 2U right space, 1.25U right Ctrl; JIS ¥/ろ, right Win and Menu on a layer; 16U wide",
         "rows": {"n": R65_N, "t": R65_T, "c": R65_C, "s": R65_S, "b": R65_B},
         "nav": [], "main_w": 16,
         "split": True,
     },
     {
         "name": "F: 65 % that fits the current 5x8 matrix (71 keys, 40 per half max)",
-        "note": "As E, but Backspace is one 2U key (JIS ¥ on a layer) and End moves to a layer",
-        "rows": {"n": B_ROWS["n"][:13] + [(2, "Bksp"), (1, "Del")], "t": R65_T, "c": R65_C,
+        "note": "As E, but End moves to a layer",
+        "rows": {"n": R65_N, "t": R65_T, "c": R65_C,
                  "s": R65_S[:-1] + [("gap", 1)], "b": R65_B},
         "nav": [], "main_w": 16,
         "split": True,
