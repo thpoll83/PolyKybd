@@ -15,6 +15,9 @@ PLATE_MARGIN wider than the keys on the outer edges, the case 4 mm wider than th
 
 `joined` renders the halves touching; `apart` moves the right half 60 mm away and
 turns each half 8 degrees. Saves out.blend next to the PNG.
+
+PK_PLATE_ART=mask.png renders the plate as a PCB: black solder mask with the mask image
+(white = silkscreen, exported by docs/layout_study/plate_trace_tool.html) on top.
 """
 import json
 import math
@@ -159,6 +162,42 @@ def prism(name, poly, z0, z1, rgb, parent, bevel=0.0):
     return ob
 
 
+def plate_art_material(path):
+    """Black solder mask with the mask image (white = silkscreen) on the plate top.
+
+    The image covers the plate from its top-left corner (-PLATE_MARGIN, +PLATE_MARGIN in
+    the key frame, y up) to the bottom-right, the way docs/layout_study/plate_trace_tool.html
+    exports it; object coordinates (mm) are mapped onto it directly."""
+    pw, ph = W * U + 2 * PLATE_MARGIN, NROWS * U + 2 * PLATE_MARGIN
+    m = bpy.data.materials.new("plate art")
+    m.use_nodes = True
+    nt = m.node_tree
+    b = nt.nodes["Principled BSDF"]
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    mp = nt.nodes.new("ShaderNodeMapping")
+    mp.inputs["Scale"].default_value = (1 / pw, 1 / ph, 1)
+    mp.inputs["Location"].default_value = (PLATE_MARGIN / pw, (NROWS * U + PLATE_MARGIN) / ph, 0)
+    tex = nt.nodes.new("ShaderNodeTexImage")
+    tex.image = bpy.data.images.load(path, check_existing=True)
+    tex.image.colorspace_settings.name = "Non-Color"
+    tex.extension = "CLIP"
+    nt.links.new(tc.outputs["Object"], mp.inputs["Vector"])
+    nt.links.new(mp.outputs["Vector"], tex.inputs["Vector"])
+    col = nt.nodes.new("ShaderNodeMix")
+    col.data_type = "RGBA"
+    a_in, b_in = [i for i in col.inputs if i.type == "RGBA"]
+    a_in.default_value = (0.010, 0.011, 0.013, 1)        # black solder mask
+    b_in.default_value = (0.80, 0.78, 0.72, 1)           # white silkscreen
+    nt.links.new(tex.outputs["Color"], col.inputs["Factor"])
+    nt.links.new(next(o for o in col.outputs if o.type == "RGBA"), b.inputs["Base Color"])
+    rough = nt.nodes.new("ShaderNodeMapRange")           # glossy mask, matte silk
+    rough.inputs["To Min"].default_value, rough.inputs["To Max"].default_value = 0.22, 0.65
+    nt.links.new(tex.outputs["Color"], rough.inputs["Value"])
+    nt.links.new(rough.outputs["Result"], b.inputs["Roughness"])
+    b.inputs["Coat Weight"].default_value = 0.3
+    return m
+
+
 def legend_mesh(half_keys, parent, t, dz, mat):
     X, Y0, Y1 = textured_parts.DISP_X, textured_parts.DISP_Y0, textured_parts.DISP_Y1
     z = textured_parts.DISP_TOP + dz + screens.LIFT
@@ -219,6 +258,13 @@ def main():
 
     materials.tag(bpy)
     print("material roles", materials.apply(bpy))
+    # PK_PLATE_ART=mask.png: a PCB plate (black mask, silkscreen art) instead of aluminium.
+    # Set after materials.apply(), which would otherwise re-style it by its colour.
+    art = os.environ.get("PK_PLATE_ART")
+    if art:
+        pm = plate_art_material(os.path.abspath(art))
+        for h in ("left", "right"):
+            bpy.data.objects[f"plate {h}"].data.materials[0] = pm
 
     # centre the board, then split the halves for `apart`
     board.location = (-W * U / 2 * 0.001, NROWS * U / 2 * 0.001, 0)   # metres, the board scale is mm
