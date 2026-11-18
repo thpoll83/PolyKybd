@@ -25,13 +25,16 @@ python3 "$here/trace_svg.py" "$tmp/mask.png" "$tmp/plate.svg" "$(cat "$tmp/res.t
 # back if either rename fails
 cp "$tmp/mask.png" "$mask.new"
 cp "$tmp/plate.svg" "$svg.new"
-cp -p "$mask" "$mask.old"
-cp -p "$svg" "$svg.old"
+# back up only the outputs that exist (one may have been deleted to force a rebuild)
+had_mask=0; had_svg=0
+if [ -e "$mask" ]; then cp -p "$mask" "$mask.old"; had_mask=1; fi
+if [ -e "$svg" ]; then cp -p "$svg" "$svg.old"; had_svg=1; fi
 if mv -f "$mask.new" "$mask" && mv -f "$svg.new" "$svg"; then
     rm -f "$mask.old" "$svg.old"
 else
-    mv -f "$mask.old" "$mask"
-    mv -f "$svg.old" "$svg"
+    # back to the previous state: the old file where there was one, none where there was none
+    if [ "$had_mask" = 1 ]; then mv -f "$mask.old" "$mask"; else rm -f "$mask"; fi
+    if [ "$had_svg" = 1 ]; then mv -f "$svg.old" "$svg"; else rm -f "$svg"; fi
     echo "publishing failed; the previous mask and SVG are back in place" >&2
     exit 1
 fi
