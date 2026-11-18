@@ -92,7 +92,7 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
       <div class="row"><label for="speck">Remove specks (mm²)</label><input id="speck_r" type="range" min="0" max="5" step="0.05"><input id="speck" type="number" step="0.05"></div>
       <div class="row"><label for="hole">Fill holes (mm²)</label><input id="hole_r" type="range" min="0" max="3" step="0.05"><input id="hole" type="number" step="0.05"></div>
       <div class="row"><label for="minw">Silk min width (mm)</label><input id="minw_r" type="range" min="0" max="0.5" step="0.01"><input id="minw" type="number" step="0.01"></div>
-      <p class="note">Background: radius of the blur that is subtracted before the threshold; it removes uneven lighting. Threshold: grey levels above the background. Strokes thinner than the silk min width are shown red.</p>
+      <p class="note">Background: radius of the blur that is subtracted before the threshold; it removes uneven lighting. Threshold: grey levels above the background. Strokes estimated thinner than the silk min width are shown red: a screening aid, check the final artwork with the silkscreen DRC.</p>
     </fieldset>
     <fieldset>
       <legend>View</legend>
@@ -149,9 +149,14 @@ const OUTLINES = { left: halfOutline("left"), right: halfOutline("right") };
 const HOLES = LAYOUT.keys.map(k => cutout((k.x + k.w / 2) * U, (k.row + 0.5) * U));
 
 // ---- state ----------------------------------------------------------------------------
-const P = Object.assign({ cx: 1170, cy: 610, ang: 4.5, mmpp: 0.175, sx: 1, sy: 1, mask: 150,
-  mode: "light", res: 8, pre: 0.1, bgr: 1.2, thr: 17, grow: 0, speck: 0.3, hole: 0.05, minw: 0.15 }, DEFAULTS || {});
-try { Object.assign(P, JSON.parse(localStorage.getItem("plateTraceTool") || "{}")); } catch (e) { /* storage blocked */ }
+const BASE = { cx: 1170, cy: 610, ang: 4.5, mmpp: 0.175, sx: 1, sy: 1, mask: 150,
+  mode: "light", res: 8, pre: 0.1, bgr: 1.2, thr: 17, grow: 0, speck: 0.3, hole: 0.05, minw: 0.15 };
+const P = Object.assign({}, BASE);
+function takeValues(src) {      // copy only the tool's own keys
+  if (src && typeof src === "object") for (const k of Object.keys(BASE)) if (k in src) P[k] = src[k];
+}
+takeValues(DEFAULTS);
+try { takeValues(JSON.parse(localStorage.getItem("plateTraceTool") || "{}")); } catch (e) { /* storage blocked */ }
 function save() { try { localStorage.setItem("plateTraceTool", JSON.stringify(P)); } catch (e) { /* storage blocked */ } }
 
 const photoC = document.getElementById("photo"), resC = document.getElementById("result");
@@ -187,9 +192,12 @@ const PLACEMENT = new Set(["cx", "cy", "ang", "mmpp", "sx", "sy"]);
 function clampP() {
   for (const k of NUMS) {
     const r = document.getElementById(k + "_r");
-    const v = parseFloat(P[k]);
-    const lo = parseFloat(r.min), hi = parseFloat(r.max);
-    P[k] = Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : parseFloat(r.value);
+    const raw = P[k];                     // only numbers and numeric strings count; parseFloat
+    const v = typeof raw === "number" || typeof raw === "string" ? parseFloat(raw) : NaN;   // would call an object's toString
+    // the position's range is the photo size, known only once a photo has loaded
+    const isPos = k === "cx" || k === "cy";
+    const lo = isPos && !img ? -Infinity : parseFloat(r.min), hi = isPos && !img ? Infinity : parseFloat(r.max);
+    P[k] = Math.min(hi, Math.max(lo, Number.isFinite(v) ? v : BASE[k]));   // invalid -> built-in default
   }
   if (P.mode !== "light" && P.mode !== "dark") P.mode = "light";
 }
@@ -205,14 +213,28 @@ for (const k of NUMS) {
   const lab = document.querySelector(`label[for=${k}]`);
   if (lab) document.getElementById(k + "_r").setAttribute("aria-label", lab.textContent);
 }
+// Sliders update at once. A number field updates on each keystroke only while the value
+// is inside its range, so "10" can be typed through "1"; it is clamped and rewritten when
+// the edit is committed (Enter, leaving the field, the spin buttons).
 for (const k of NUMS) {
-  for (const id of [k, k + "_r"]) {
-    document.getElementById(id).addEventListener("input", e => {
-      const v = parseFloat(e.target.value);
-      if (!Number.isFinite(v)) return;
-      P[k] = v; clampP(); syncInputs(); changed(k);
-    });
-  }
+  const num = document.getElementById(k), rng = document.getElementById(k + "_r");
+  rng.addEventListener("input", () => {
+    const v = parseFloat(rng.value);
+    if (!Number.isFinite(v)) return;
+    P[k] = v; clampP(); syncInputs(); changed(k);
+  });
+  num.addEventListener("input", () => {
+    const v = parseFloat(num.value), before = P[k];
+    if (!Number.isFinite(v)) return;
+    P[k] = v; clampP();
+    if (P[k] !== v) { P[k] = before; return; }        // outside the range while typing: wait for the commit
+    rng.value = P[k]; changed(k);
+  });
+  num.addEventListener("change", () => {
+    const v = parseFloat(num.value);
+    if (Number.isFinite(v)) P[k] = v;
+    clampP(); syncInputs(); changed(k);
+  });
 }
 document.querySelectorAll("input[name=mode]").forEach(r => r.addEventListener("change", e => { P.mode = e.target.value; changed("mode"); }));
 ["showHoles", "showThin", "showRaw"].forEach(id => document.getElementById(id).addEventListener("change", () => drawResult()));
@@ -434,9 +456,10 @@ function dropSmall(bin, w, h, val, minArea, keepBorder) {
   return { out, removed, kept };
 }
 
-// Stroke width at each ink pixel: the shortest of its runs of ink horizontally,
-// vertically and along both diagonals (diagonal runs times sqrt 2). Exact for straight
-// strokes at the raster's resolution: at 8 px/mm a 2 px stroke is 0.25 mm wide.
+// Estimated stroke width at each ink pixel: the shortest of its runs of ink horizontally,
+// vertically and along both diagonals (diagonal runs times sqrt 2). A screening aid, not
+// a measurement: right for strokes along those four directions (at 8 px/mm a 2 px stroke is
+// 0.25 mm wide), it can report a stroke at another angle up to about 1 px too narrow.
 function thinInk(ink, w, h, minPx) {
   const width = new Float32Array(ink.length).fill(Infinity);
   const dirs = [[1, 0, 1], [0, 1, 1], [1, 1, Math.SQRT2], [1, -1, Math.SQRT2]];
@@ -561,21 +584,27 @@ document.getElementById("dlMask").addEventListener("click", () => {
 });
 document.getElementById("dlPreview").addEventListener("click", () => { flushTrace(); resC.toBlob(b => download("plate_preview.png", b), "image/png"); });
 document.getElementById("dlSettings").addEventListener("click", () => {
-  const out = Object.assign({ image: imgName, plate_mm: [+PW.toFixed(3), +PH.toFixed(3)], margin_mm: M }, P);
+  const out = { image: imgName, plate_mm: [+PW.toFixed(3), +PH.toFixed(3)], margin_mm: M };
+  for (const k of Object.keys(BASE)) out[k] = P[k];      // only the tool's own values
   download("plate_trace_settings.json", new Blob([JSON.stringify(out, null, 1)], { type: "application/json" }));
 });
-// window.settingsImport: { ok, error, trace } after each import; trace = traceSeq of the trace
-// made with the imported values. export_mask.js waits for it instead of a fixed delay.
+// window.settingsImport: { ok, error, trace, res } after each import; trace = traceSeq of the
+// trace made with the imported values, res = its resolution (after clamping). export_mask.js
+// waits for it instead of a fixed delay and scales the SVG with res.
+let importToken = 0;
 document.getElementById("loadSettings").addEventListener("change", async e => {
   const f = e.target.files[0]; if (!f) return;
   e.target.value = "";
-  let s;
+  const token = ++importToken;
+  let s, err = null;
   try { s = JSON.parse(await f.text()); if (!s || typeof s !== "object") throw new Error("not an object"); }
-  catch (err) { window.settingsImport = { ok: false, error: "Not a settings file: " + err.message }; alert(window.settingsImport.error); return; }
-  for (const k of Object.keys(P)) if (k in s) P[k] = s[k];
+  catch (x) { err = x; }
+  if (token !== importToken) return;                      // a newer file was chosen meanwhile
+  if (err) { window.settingsImport = { ok: false, error: "Not a settings file: " + err.message }; alert(window.settingsImport.error); return; }
+  takeValues(s);
   clampP(); syncInputs(); save(); buildMask(); drawPhoto();
   clearTimeout(traceTimer);
-  try { trace(); window.settingsImport = { ok: !!img, error: img ? "" : "no photo loaded", trace: traceSeq }; }
+  try { trace(); window.settingsImport = { ok: !!img, error: img ? "" : "no photo loaded", trace: traceSeq, res: last ? last.R : null }; }
   catch (err) { window.settingsImport = { ok: false, error: "Trace failed: " + err.message }; }
 });
 

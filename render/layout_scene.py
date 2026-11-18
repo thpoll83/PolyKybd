@@ -229,14 +229,14 @@ def legend_mesh(half_keys, parent, t, dz, mat):
 
 
 def fit_camera(sc, cam, objs, elev_rad, margin=0.04):
-    """Move the camera back along its line of sight until every vertex of objs is inside
+    """Move the camera back along its line of sight until every bounding-box corner of objs is inside
     the frame with `margin` (fraction of the frame) to spare. Never moves it closer."""
     from bpy_extras.object_utils import world_to_camera_view
     bpy.context.view_layer.update()     # world matrices include the board's mm -> m scale
-    pts = []
+    pts = []                            # the 8 corners of each object's bounding box
     for o in objs:
         mw = o.matrix_world
-        pts += [mw @ v.co for v in o.data.vertices]
+        pts += [mw @ mathutils.Vector(c) for c in o.bound_box]
     for _ in range(60):
         bpy.context.view_layer.update()
         ok = all(margin <= c.x <= 1 - margin and margin <= c.y <= 1 - margin and c.z > 0
@@ -347,7 +347,8 @@ def main():
     cam.location = (0.0, -dist * math.cos(e_), dist * math.sin(e_))
     cam.constraints.new("TRACK_TO").target = tgt
     sc.render.resolution_x, sc.render.resolution_y = width, int(width * 9 / 16)
-    fit_camera(sc, cam, [bpy.data.objects[f"case {h}"] for h in ("left", "right")], e_)
+    # the cases and every key part: the caps stand 15 mm above the case
+    fit_camera(sc, cam, [o for o in board.children_recursive if o.type == "MESH"], e_)
     studio.flag(sc)                     # black card in the caps' mirror direction
 
     sc.render.engine = "CYCLES"
@@ -357,7 +358,7 @@ def main():
     sc.render.filepath = out
     sc.view_settings.view_transform = "AgX"
     os.makedirs(os.path.dirname(out), exist_ok=True)       # render/out is not in git
-    bpy.ops.wm.save_as_mainfile(filepath=out.rsplit(".", 1)[0] + ".blend", compress=True)
+    bpy.ops.wm.save_as_mainfile(filepath=os.path.splitext(out)[0] + ".blend", compress=True)
     bpy.ops.render.render(write_still=True)
 
 
