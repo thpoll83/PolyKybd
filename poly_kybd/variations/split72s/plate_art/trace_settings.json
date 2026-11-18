@@ -1,0 +1,24 @@
+{
+ "image": "tabletB_verso_photo.jpg",
+ "plate_mm": [
+  319.563,
+  105.25
+ ],
+ "margin_mm": 5,
+ "cx": 1170,
+ "cy": 610,
+ "ang": 4.5,
+ "mmpp": 0.164,
+ "sx": 1,
+ "sy": 1,
+ "mask": 174,
+ "mode": "light",
+ "res": 8,
+ "pre": 0.16,
+ "bgr": 1.6,
+ "thr": 17,
+ "grow": 0.05,
+ "speck": 0.2,
+ "hole": 0.45,
+ "minw": 0.21
+}

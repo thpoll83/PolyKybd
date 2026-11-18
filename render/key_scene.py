@@ -28,11 +28,14 @@ REPO = os.path.dirname(HERE)
 BOARD = os.path.join(REPO, "poly_kybd", "poly_kybd_split72_left.kicad_pcb")
 REF = "SW_K_2"
 
-argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
-out = os.path.abspath(argv[0] if argv else "key.png")
-samples = int(argv[1]) if len(argv) > 1 else 64
-width = int(argv[2]) if len(argv) > 2 else 1200
-view = argv[3] if len(argv) > 3 else "angle"      # "angle" or "top"
+
+
+def args():
+    argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+    return (os.path.abspath(argv[0] if argv else "key.png"),
+            int(argv[1]) if len(argv) > 1 else 64,
+            int(argv[2]) if len(argv) > 2 else 1200,
+            argv[3] if len(argv) > 3 else "angle")      # "angle" or "top"
 
 
 def key_models():
@@ -104,6 +107,7 @@ def slab(name, size, z0, z1, rgb, hole=None):
 
 
 def main():
+    out, samples, width, view = args()
     bpy.ops.wm.read_factory_settings(use_empty=True)
     addon_utils.enable("io_scene_x3d")
     sc = bpy.context.scene
@@ -159,4 +163,6 @@ def main():
     bpy.ops.render.render(write_still=True)
 
 
-main()
+# layout_scene.py imports key_models() and import_model() from here
+if __name__ == "__main__":
+    main()
