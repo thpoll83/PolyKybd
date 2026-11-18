@@ -9,7 +9,7 @@ Writes, next to this script:
                       (rows 0-5 left, 6-11 right)
 - layout_e_keys.json  every key with position, width, half, legend, for the renderer
 - layout_e_legends.png  one 72x40 legend cell per key (white on black), for the renderer
-- numpad_n1.kle.json, numpad_n1.qmk.json  the 19-key number block N1, 5x4 matrix
+- numpad_n1.kle.json, numpad_n1.qmk.json  the 20-key number block N1, 5x4 matrix
 """
 import json
 import os
@@ -100,7 +100,7 @@ def export_numpad():
             k["matrix"] = [row, c]
     json.dump(kle(ks, "PolyKybd number block N1"), open(os.path.join(HERE, "numpad_n1.kle.json"), "w"), ensure_ascii=False, indent=1)
     qmk = {"matrix_size": {"rows": 5, "cols": 4},
-           "layouts": {"LAYOUT_numpad19": {"layout": [
+           "layouts": {"LAYOUT_numpad20": {"layout": [
                {"label": k["label"], "matrix": k["matrix"], "x": k["x"], "y": k["row"],
                 **({"w": k["w"]} if k["w"] != 1 else {})} for k in ks]}}}
     json.dump(qmk, open(os.path.join(HERE, "numpad_n1.qmk.json"), "w"), ensure_ascii=False, indent=1)

@@ -169,12 +169,13 @@ COMPACT = [
     },
 ]
 
-# Number block: 5 rows like layout E. The tall + and Enter become two 1U keys each.
+# Number block: 5 rows like layout E, all 1U (a 4x5 grid that also works as a macro pad).
+# The tall + and Enter and the 2U 0 become two 1U keys each.
 NP4 = {"n": [(1, "Num"), (1, "/"), (1, "*"), (1, "-")],
        "t": [(1, "7"), (1, "8"), (1, "9"), (1, "+")],
        "c": [(1, "4"), (1, "5"), (1, "6"), (1, "+|=")],
        "s": [(1, "1"), (1, "2"), (1, "3"), (1, "Enter")],
-       "b": [(2, "0"), (1, "."), (1, "Enter")]}
+       "b": [(1, "0"), (1, "0|00"), (1, "."), (1, "Enter")]}
 NP5 = {"n": [(1, "Bksp")] + NP4["n"], "t": [(1, "(")] + NP4["t"], "c": [(1, ")")] + NP4["c"],
        "s": [(1, "=")] + NP4["s"], "b": [(1, "Tab")] + NP4["b"]}
 NP_X = 16.25          # the number block docks to the right edge of layout E
@@ -186,23 +187,23 @@ def _docked(e_rows, pad):
 
 NUMPAD = [
     {
-        "name": "N1: number block, 4 columns (19 keys)",
-        "note": "Tall + and Enter are two 1U keys each; the second + can be = (blue)",
+        "name": "N1: number block, 4x5 grid of 1U keys (20 keys)",
+        "note": "Tall + and Enter and the 2U 0 are two 1U keys each; blue keys can be =, 00; works as a macro pad",
         "rows": NP4, "nav": [], "main_w": 4, "split": False,
     },
     {
-        "name": "N2: number block, 5 columns (24 keys)",
+        "name": "N2: number block, 5x5 grid of 1U keys (25 keys)",
         "note": "Extra left column: Bksp, ( ) = Tab for calculator use",
         "rows": NP5, "nav": [], "main_w": 5, "split": False,
     },
     {
-        "name": "E + N1 docked (91 keys)",
+        "name": "E + N1 docked (92 keys)",
         "note": "The number block joins the right half flush, like the split; 20.25U wide",
         "rows": "E+N1", "nav": [], "main_w": NP_X + 4, "split": True, "pad_x": NP_X,
     },
 ]
 
-VARIABLE = {"+|=", "Esc|`", "#|ろ|/?", "¥|Bksp", "\\|Enter", "#|Enter", "<|Shift", "ろ|/?|Fn", "無変換|Fn", "変換|Fn"}
+VARIABLE = {"+|=", "0|00", "Esc|`", "#|ろ|/?", "¥|Bksp", "\\|Enter", "#|Enter", "<|Shift", "ろ|/?|Fn", "無変換|Fn", "変換|Fn"}
 
 
 def place(layout):

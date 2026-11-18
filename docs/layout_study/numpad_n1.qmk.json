@@ -4,7 +4,7 @@
   "cols": 4
  },
  "layouts": {
-  "LAYOUT_numpad19": {
+  "LAYOUT_numpad20": {
    "layout": [
     {
      "label": "Num",
@@ -157,14 +157,22 @@
       0
      ],
      "x": 0.0,
-     "y": 4,
-     "w": 2
+     "y": 4
+    },
+    {
+     "label": "0|00",
+     "matrix": [
+      4,
+      1
+     ],
+     "x": 1.0,
+     "y": 4
     },
     {
      "label": ".",
      "matrix": [
       4,
-      1
+      2
      ],
      "x": 2.0,
      "y": 4
@@ -173,7 +181,7 @@
      "label": "Enter",
      "matrix": [
       4,
-      2
+      3
      ],
      "x": 3.0,
      "y": 4

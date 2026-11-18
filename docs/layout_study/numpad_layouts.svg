@@ -3,8 +3,8 @@
     .k{font-family:sans-serif;text-anchor:middle;fill:#222}.w{font:9px sans-serif;text-anchor:end;fill:#888}
     rect{stroke:#666;stroke-width:1}.plain{fill:#f2f2f2}.hl{fill:#e7f3e3}.hr{fill:#fbf0dc}.pad{fill:#efe6f7}
     .var{fill:#dbe8fb;stroke:#3c6fc4}.bad{fill:#fde0e0;stroke:#c33;stroke-width:2}
-    .cut{fill:none;stroke:#c33;stroke-width:3;stroke-dasharray:7 4}</style><rect width="100%" height="100%" fill="#fff" stroke="none"/><text x="18.400000000000002" y="22" class="t">N1: number block, 4 columns (19 keys)</text>
-<text x="18.400000000000002" y="40" class="note">Tall + and Enter are two 1U keys each; the second + can be = (blue)</text>
+    .cut{fill:none;stroke:#c33;stroke-width:3;stroke-dasharray:7 4}</style><rect width="100%" height="100%" fill="#fff" stroke="none"/><text x="18.400000000000002" y="22" class="t">N1: number block, 4x5 grid of 1U keys (20 keys)</text>
+<text x="18.400000000000002" y="40" class="note">Tall + and Enter and the 2U 0 are two 1U keys each; blue keys can be =, 00; works as a macro pad</text>
 <rect x="20.400000000000002" y="54.0" width="42" height="42" rx="5" class="plain"/>
 <text x="41.400000000000006" y="79.0" font-size="11" class="k">Num</text>
 <rect x="66.39999999999999" y="54.0" width="42" height="42" rx="5" class="plain"/>
@@ -37,15 +37,16 @@
 <text x="133.39999999999998" y="217.0" font-size="11" class="k">3</text>
 <rect x="158.4" y="192.0" width="42" height="42" rx="5" class="plain"/>
 <text x="179.4" y="217.0" font-size="11" class="k">Enter</text>
-<rect x="20.400000000000002" y="238.0" width="88" height="42" rx="5" class="plain"/>
-<text x="64.4" y="263.0" font-size="11" class="k">0</text>
-<text x="104.4" y="275.0" class="w">2</text>
+<rect x="20.400000000000002" y="238.0" width="42" height="42" rx="5" class="plain"/>
+<text x="41.400000000000006" y="263.0" font-size="11" class="k">0</text>
+<rect x="66.39999999999999" y="238.0" width="42" height="42" rx="5" class="var"/>
+<text x="87.39999999999999" y="263.0" font-size="11" class="k">0/00</text>
 <rect x="112.39999999999999" y="238.0" width="42" height="42" rx="5" class="plain"/>
 <text x="133.39999999999998" y="263.0" font-size="11" class="k">.</text>
 <rect x="158.4" y="238.0" width="42" height="42" rx="5" class="plain"/>
 <text x="179.4" y="263.0" font-size="11" class="k">Enter</text>
-<text x="202.4" y="305.0" class="note" text-anchor="end">19 keys</text>
-<text x="18.400000000000002" y="343.09999999999997" class="t">N2: number block, 5 columns (24 keys)</text>
+<text x="202.4" y="305.0" class="note" text-anchor="end">20 keys</text>
+<text x="18.400000000000002" y="343.09999999999997" class="t">N2: number block, 5x5 grid of 1U keys (25 keys)</text>
 <text x="18.400000000000002" y="361.09999999999997" class="note">Extra left column: Bksp, ( ) = Tab for calculator use</text>
 <rect x="20.400000000000002" y="375.09999999999997" width="42" height="42" rx="5" class="plain"/>
 <text x="41.400000000000006" y="400.09999999999997" font-size="11" class="k">Bksp</text>
@@ -89,15 +90,16 @@
 <text x="225.4" y="538.0999999999999" font-size="11" class="k">Enter</text>
 <rect x="20.400000000000002" y="559.0999999999999" width="42" height="42" rx="5" class="plain"/>
 <text x="41.400000000000006" y="584.0999999999999" font-size="11" class="k">Tab</text>
-<rect x="66.39999999999999" y="559.0999999999999" width="88" height="42" rx="5" class="plain"/>
-<text x="110.39999999999999" y="584.0999999999999" font-size="11" class="k">0</text>
-<text x="150.39999999999998" y="596.0999999999999" class="w">2</text>
+<rect x="66.39999999999999" y="559.0999999999999" width="42" height="42" rx="5" class="plain"/>
+<text x="87.39999999999999" y="584.0999999999999" font-size="11" class="k">0</text>
+<rect x="112.39999999999999" y="559.0999999999999" width="42" height="42" rx="5" class="var"/>
+<text x="133.39999999999998" y="584.0999999999999" font-size="11" class="k">0/00</text>
 <rect x="158.4" y="559.0999999999999" width="42" height="42" rx="5" class="plain"/>
 <text x="179.4" y="584.0999999999999" font-size="11" class="k">.</text>
 <rect x="204.4" y="559.0999999999999" width="42" height="42" rx="5" class="plain"/>
 <text x="225.4" y="584.0999999999999" font-size="11" class="k">Enter</text>
-<text x="248.4" y="626.0999999999999" class="note" text-anchor="end">24 keys</text>
-<text x="18.400000000000002" y="664.1999999999999" class="t">E + N1 docked (91 keys)</text>
+<text x="248.4" y="626.0999999999999" class="note" text-anchor="end">25 keys</text>
+<text x="18.400000000000002" y="664.1999999999999" class="t">E + N1 docked (92 keys)</text>
 <text x="18.400000000000002" y="682.1999999999999" class="note">The number block joins the right half flush, like the split; 20.25U wide</text>
 <rect x="20.400000000000002" y="696.1999999999999" width="42" height="42" rx="5" class="var"/>
 <text x="41.400000000000006" y="721.1999999999999" font-size="11" class="k">Esc/`</text>
@@ -293,13 +295,14 @@
 <text x="696.9" y="905.1999999999999" font-size="11" class="k">↓</text>
 <rect x="721.9" y="880.1999999999999" width="42" height="42" rx="5" class="hr"/>
 <text x="742.9" y="905.1999999999999" font-size="11" class="k">→</text>
-<rect x="767.9" y="880.1999999999999" width="88" height="42" rx="5" class="pad"/>
-<text x="811.9" y="905.1999999999999" font-size="11" class="k">0</text>
-<text x="851.9" y="917.1999999999999" class="w">2</text>
+<rect x="767.9" y="880.1999999999999" width="42" height="42" rx="5" class="pad"/>
+<text x="788.9" y="905.1999999999999" font-size="11" class="k">0</text>
+<rect x="813.9" y="880.1999999999999" width="42" height="42" rx="5" class="var"/>
+<text x="834.9" y="905.1999999999999" font-size="11" class="k">0/00</text>
 <rect x="859.9" y="880.1999999999999" width="42" height="42" rx="5" class="pad"/>
 <text x="880.9" y="905.1999999999999" font-size="11" class="k">.</text>
 <rect x="905.9" y="880.1999999999999" width="42" height="42" rx="5" class="pad"/>
 <text x="926.9" y="905.1999999999999" font-size="11" class="k">Enter</text>
 <path d="M 340.4,694.2 L 340.4,740.2 L 317.4,740.2 L 317.4,786.2 L 328.9,786.2 L 328.9,832.2 L 351.9,832.2 L 351.9,878.2 L 351.9,878.2 L 351.9,924.2" class="cut"/>
 <path d="M 765.9,688.4 L 765.9,929.9" class="cut"/>
-<text x="949.9" y="947.1999999999999" class="note" text-anchor="end">left 31 + right 41 + number block 19 = 91 keys</text></svg>
+<text x="949.9" y="947.1999999999999" class="note" text-anchor="end">left 31 + right 41 + number block 20 = 92 keys</text></svg>

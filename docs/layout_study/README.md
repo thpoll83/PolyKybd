@@ -12,7 +12,7 @@ connected position the halves touch along that line.
 | `tkl_layouts.svg/.png` | ANSI and ISO TKL references, A (ANSI only, 90 keys), B (universal TKL, 94 keys) |
 | `compact_layouts.svg/.png` | No F-row: C (full nav, 78), D (one nav column, 74), E (65 %, 72), F (E without End, 71) |
 | `e_vs_65.svg/.png` | Layout E next to a standard ANSI 65 % board |
-| `numpad_layouts.svg/.png` | Number blocks N1 (19 keys) and N2 (24 keys), and E with N1 docked on the right |
+| `numpad_layouts.svg/.png` | Number blocks N1 (4x5, 20 keys) and N2 (5x5, 25 keys), all 1U, and E with N1 docked on the right |
 | `export_layout_e.py` | Writes the JSON files below from `tkl_layouts.py` |
 | `layout_e.kle.json` | Layout E for keyboard-layout-editor.com (paste into the Raw data tab) |
 | `layout_e.qmk.json` | Layout E as a QMK `layouts` entry, 6x7 matrix per half (rows 0-5 left, 6-11 right) |
