@@ -18,6 +18,8 @@ connected position the halves touch along that line.
 | `layout_e.qmk.json` | Layout E as a QMK `layouts` entry, 6x7 matrix per half (rows 0-5 left, 6-11 right) |
 | `layout_e_keys.json`, `layout_e_legends.png` | Input for `render/layout_scene.py` |
 | `numpad_n1.kle.json`, `numpad_n1.qmk.json` | Number block N1, 5x4 matrix |
+| `plate_rongorongo.py` | Plate artwork proposal: the layout E plate with the split72 switch cut-outs and Rongorongo-style glyph lines in the visible strips. Writes the two SVGs below |
+| `plate_rongorongo.svg/.png`, `rongorongo_glyphs.svg/.png` | The plate proposal and the 15 glyphs. The glyphs are own simplified drawings, not copied from a tablet |
 
 Regenerate:
 
