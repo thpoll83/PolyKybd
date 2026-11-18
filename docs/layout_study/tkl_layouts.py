@@ -117,6 +117,20 @@ R65_B = [(1.25, "Ctrl"), (1.25, "Win"), (1.25, "Alt"), (1.5, "無変換|Fn"), (2
          (1, "←"), (1, "↓"), (1, "→")]
 R65_W = {"n": 16.25, "t": 16.25, "c": 16.25, "s": 16.25, "b": 16.25}
 
+REF65 = {
+    "name": "Standard ANSI 65 % reference (68 keys)",
+    "note": "Red = width we cannot build (1.75, 2.25, 6.25)",
+    "rows": {
+        "n": NUM + [(2, "Bksp"), (1, "Del")],
+        "t": [(1.5, "Tab")] + TAB + [(1.5, "\\"), (1, "PgUp")],
+        "c": [(1.75, "Caps")] + CAPS + [(2.25, "Enter"), (1, "PgDn")],
+        "s": [(2.25, "Shift")] + SHIFT + [(1.75, "Shift"), (1, "↑"), (1, "End")],
+        "b": [(1.25, "Ctrl"), (1.25, "Win"), (1.25, "Alt"), (6.25, "Space"), (1, "Alt"),
+              (1, "Fn"), (1, "Ctrl"), (1, "←"), (1, "↓"), (1, "→")],
+    },
+    "nav": [], "main_w": 16, "split": False,
+}
+
 COMPACT = [
     {
         "name": "C: universal, no F-row, full nav cluster (78 keys)",
@@ -271,3 +285,5 @@ if __name__ == "__main__":
     render(LAYOUTS, "tkl_layouts.svg")
     print()
     render(COMPACT, "compact_layouts.svg")
+    print()
+    render([REF65, COMPACT[2]], "e_vs_65.svg")
