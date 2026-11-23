@@ -597,7 +597,7 @@ document.getElementById("loadSettings").addEventListener("change", async e => {
   e.target.value = "";
   const token = ++importToken;
   let s, err = null;
-  try { s = JSON.parse(await f.text()); if (!s || typeof s !== "object") throw new Error("not an object"); }
+  try { s = JSON.parse(await f.text()); if (!s || typeof s !== "object" || Array.isArray(s)) throw new Error("not a settings object"); }
   catch (x) { err = x; }
   if (token !== importToken) return;                      // a newer file was chosen meanwhile
   if (err) { window.settingsImport = { ok: false, error: "Not a settings file: " + err.message }; alert(window.settingsImport.error); return; }
@@ -605,7 +605,11 @@ document.getElementById("loadSettings").addEventListener("change", async e => {
   clampP(); syncInputs(); save(); buildMask(); drawPhoto();
   clearTimeout(traceTimer);
   try { trace(); window.settingsImport = { ok: !!img, error: img ? "" : "no photo loaded", trace: traceSeq, res: last ? last.R : null }; }
-  catch (err) { window.settingsImport = { ok: false, error: "Trace failed: " + err.message }; }
+  catch (err) {
+    last = null;                      // no mask export from an older trace until a trace succeeds
+    window.settingsImport = { ok: false, error: "Trace failed: " + err.message };
+    alert(window.settingsImport.error);
+  }
 });
 
 // ---- image loading --------------------------------------------------------------------

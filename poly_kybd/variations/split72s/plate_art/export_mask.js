@@ -10,6 +10,12 @@ const { pathToFileURL } = require("url");
 const { chromium } = require("playwright");
 (async () => {
   const [tool, settings, outdir] = process.argv.slice(2);
+  // an empty output folder, so a failed run cannot leave a new mask beside an old res.txt
+  if (fs.existsSync(outdir) && fs.readdirSync(outdir).length) {
+    console.error(`output folder ${outdir} is not empty`);
+    process.exit(1);
+  }
+  fs.mkdirSync(outdir, { recursive: true });
   const b = await chromium.launch();
   const errs = [];
   let failure = null;
@@ -32,6 +38,7 @@ const { chromium } = require("playwright");
     fs.writeFileSync(path.join(outdir, "res.txt"), String(res.res) + "\n");
   } catch (e) {
     failure = e;
+    for (const f of ["mask.png", "res.txt"]) fs.rmSync(path.join(outdir, f), { force: true });
   } finally {
     await b.close();
   }
