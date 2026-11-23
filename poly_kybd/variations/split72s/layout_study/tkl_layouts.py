@@ -293,6 +293,12 @@ def svg_board(layout, keys, oy):
     else:
         out.append(f'<text x="{(PAD+width)*U}" y="{by+(6.75+dy)*U}" class="note" text-anchor="end">'
                    f'{count(keys)} keys</text>')
+    for ax, ay, wmm, hmm, label in layout.get("areas", []):
+        px, py = (PAD + ax) * U, by + (ay + Y["n"] + dy) * U     # ay counts from the top key row
+        w, h = wmm / MM_U * U, hmm / MM_U * U
+        out.append(f'<rect x="{px:.1f}" y="{py:.1f}" width="{w:.1f}" height="{h:.1f}" rx="3" class="area"/>')
+        out.append(f'<text x="{px + w / 2:.1f}" y="{py + h / 2 - 2:.1f}" font-size="9" class="k">{esc(label)}</text>')
+        out.append(f'<text x="{px + w / 2:.1f}" y="{py + h / 2 + 9:.1f}" font-size="8" class="k">{wmm:g} x {hmm:g} mm</text>')
     return "\n".join(out), by + (7.1 + dy) * U, left, right
 
 
@@ -310,7 +316,7 @@ def render(layouts, path):
     css = """
     .t{font:600 15px sans-serif;fill:#222}.note{font:12px sans-serif;fill:#555}
     .k{font-family:sans-serif;text-anchor:middle;fill:#222}.w{font:9px sans-serif;text-anchor:end;fill:#888}
-    rect{stroke:#666;stroke-width:1}.plain{fill:#f2f2f2}.hl{fill:#e7f3e3}.hr{fill:#fbf0dc}.pad{fill:#efe6f7}
+    rect{stroke:#666;stroke-width:1}.plain{fill:#f2f2f2}.hl{fill:#e7f3e3}.hr{fill:#fbf0dc}.pad{fill:#efe6f7}.area{fill:#fff7d6;stroke:#b8860b;stroke-width:1.5;stroke-dasharray:4 3}
     .var{fill:#dbe8fb;stroke:#3c6fc4}.bad{fill:#fde0e0;stroke:#c33;stroke-width:2}
     .cut{fill:none;stroke:#c33;stroke-width:3;stroke-dasharray:7 4}"""
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{oy:.0f}" '
@@ -325,6 +331,55 @@ def render(layouts, path):
 NUMPAD[2]["rows"] = _docked(COMPACT[2]["rows"], NP4)
 
 
+# Room for the status display holder (27 x 26 mm cut-out, parts/display_holder) and the
+# expansion port lid (17 x 14 mm cut-out plus a 1 mm flange, parts/cover_insert) above the
+# arrow keys. The nav column goes; the arrows sit 0.25U right of the modifiers.
+DISPLAY_MM, EXPANSION_MM = (27.0, 26.0), (19.0, 16.0)
+MM_U = 19.05          # mm per key unit (U above is pixels per unit)
+_E2_TOP = {"n": B_ROWS["n"][:13] + [(2, "Bksp")],
+           "t": B_ROWS["t"],
+           "c": [(1.5, "Caps"), ("gap", .25)] + CAPS + [("gap", .25), (2, "Enter")]}
+_E2_SHIFT = [(1.25, "Shift"), (1, "<|Shift")] + SHIFT + [(1, "#|ろ|/?"), (1, "Shift"), ("gap", .25)]
+_E2_BOTTOM = [(1.25, "Ctrl"), (1.25, "Win"), (1.25, "Alt"), (1.5, "無変換|Fn"), (2, "Space"),
+              (2, "Space"), (1.5, "変換|Fn"), (1.25, "AltGr"), (1.25, "Ctrl")]
+
+
+def _area(x_u, y_u, size_mm, label):
+    return (x_u, y_u, size_mm[0], size_mm[1], label)
+
+
+STATUS = [
+    {
+        "name": "E (current): no room above the arrows (72 keys)",
+        "note": "Nav column Del/PgUp/PgDn/End fills the strip above the arrows",
+        "rows": {"n": R65_N, "t": R65_T, "c": R65_C, "s": R65_S, "b": R65_B},
+        "nav": [], "main_w": R65_W, "split": True,
+    },
+    {
+        "name": "E2: display and expansion port above the arrows, Del beside the up arrow (69 keys)",
+        "note": "PgUp/PgDn/Home/End on Fn + arrows; arrows 0.25U from the modifiers; right half 38 keys, fits the current 5x8 matrix",
+        "rows": {**{r: v + [("gap", 1.5)] for r, v in _E2_TOP.items()},
+                 "s": _E2_SHIFT + [(1, "↑"), (1, "Del")],
+                 "b": _E2_BOTTOM + [("gap", .25), (1, "←"), (1, "↓"), (1, "→")]},
+        "nav": [], "main_w": 16.5, "split": True,
+        # stacked in the 1.5U x 3U strip
+        "areas": [_area(15.0 + (1.5 - DISPLAY_MM[0] / MM_U) / 2, 0.15, DISPLAY_MM, "status display"),
+                  _area(15.0 + (1.5 - EXPANSION_MM[0] / MM_U) / 2, 1.85, EXPANSION_MM, "expansion port")],
+    },
+    {
+        "name": "E3: display and expansion port above the arrows, PgUp and PgDn beside the up arrow (71 keys)",
+        "note": "Home/End/Del on Fn; Menu key added left of the arrows; 17.5U wide; right half 40 keys, fits the current 5x8 matrix",
+        "rows": {**{r: v + [("gap", 2.5)] for r, v in _E2_TOP.items()},
+                 "s": _E2_SHIFT + [(1, "PgUp"), (1, "↑"), (1, "PgDn")],
+                 "b": _E2_BOTTOM + [(1, "Menu"), ("gap", .25), (1, "←"), (1, "↓"), (1, "→")]},
+        "nav": [], "main_w": 17.5, "split": True,
+        # side by side: 27 + 1.6 + 19 mm = 47.6 mm = the 2.5U strip
+        "areas": [_area(15.0, (3 - DISPLAY_MM[1] / MM_U) / 2, DISPLAY_MM, "status display"),
+                  _area(15.0 + (DISPLAY_MM[0] + 1.6) / MM_U, (3 - EXPANSION_MM[1] / MM_U) / 2, EXPANSION_MM, "expansion port")],
+    },
+]
+
+
 if __name__ == "__main__":
     render(LAYOUTS, "tkl_layouts.svg")
     print()
@@ -333,3 +388,5 @@ if __name__ == "__main__":
     render([REF65, COMPACT[2]], "e_vs_65.svg")
     print()
     render(NUMPAD, "numpad_layouts.svg")
+    print()
+    render(STATUS, "status_layouts.svg")

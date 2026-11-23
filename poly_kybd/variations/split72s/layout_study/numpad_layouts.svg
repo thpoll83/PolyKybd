@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="968" height="963" viewBox="0 0 968 963"><style>
     .t{font:600 15px sans-serif;fill:#222}.note{font:12px sans-serif;fill:#555}
     .k{font-family:sans-serif;text-anchor:middle;fill:#222}.w{font:9px sans-serif;text-anchor:end;fill:#888}
-    rect{stroke:#666;stroke-width:1}.plain{fill:#f2f2f2}.hl{fill:#e7f3e3}.hr{fill:#fbf0dc}.pad{fill:#efe6f7}
+    rect{stroke:#666;stroke-width:1}.plain{fill:#f2f2f2}.hl{fill:#e7f3e3}.hr{fill:#fbf0dc}.pad{fill:#efe6f7}.area{fill:#fff7d6;stroke:#b8860b;stroke-width:1.5;stroke-dasharray:4 3}
     .var{fill:#dbe8fb;stroke:#3c6fc4}.bad{fill:#fde0e0;stroke:#c33;stroke-width:2}
     .cut{fill:none;stroke:#c33;stroke-width:3;stroke-dasharray:7 4}</style><rect width="100%" height="100%" fill="#fff" stroke="none"/><text x="18.400000000000002" y="22" class="t">N1: number block, 4x5 grid of 1U keys (20 keys)</text>
 <text x="18.400000000000002" y="40" class="note">Tall + and Enter and the 2U 0 are two 1U keys each; blue keys can be =, 00; works as a macro pad</text>
