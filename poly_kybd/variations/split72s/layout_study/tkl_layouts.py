@@ -359,11 +359,16 @@ def _centred(cx_u, top_u, size_mm, label, cls="area"):
     return _area(cx_u - size_mm[0] / MM_U / 2, top_u, size_mm, label, cls)
 
 
-def _status_stack(cx_u, up_top_u, gap_u=0.1):
+def _status_stack(cx_u, up_top_u, strip_top_u=0.0):
     """Expansion port straight above the key whose top is up_top_u, the status display
-    cut-out above the port, display module and visible screen inside the cut-out."""
-    port_top = up_top_u - gap_u - EXPANSION_MM[1] / MM_U
-    cut_top = port_top - gap_u - DISPLAY_CUT_MM[1] / MM_U
+    cut-out above the port, display module and visible screen inside the cut-out. The
+    free height is split into three equal gaps: above the cut-out, between cut-out and
+    port, and between port and key. (On the split72 the gap between the display cut-out
+    and the port cut-out is 18.8 mm, from the J39 model offsets; 3U leaves 13.2 mm.)"""
+    free = (up_top_u - strip_top_u) - DISPLAY_CUT_MM[1] / MM_U - EXPANSION_MM[1] / MM_U
+    gap_u = free / 3
+    cut_top = strip_top_u + gap_u
+    port_top = cut_top + DISPLAY_CUT_MM[1] / MM_U + gap_u
     module_top = cut_top + (DISPLAY_CUT_MM[1] - DISPLAY_MODULE_MM[1]) / 2 / MM_U
     active_top = module_top + (DISPLAY_MODULE_MM[1] - DISPLAY_ACTIVE_MM[1]) / 2 / MM_U
     return [_centred(cx_u, cut_top, DISPLAY_CUT_MM, "status display cut-out"),

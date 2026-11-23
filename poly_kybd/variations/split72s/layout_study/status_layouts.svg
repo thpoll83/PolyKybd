@@ -493,11 +493,11 @@
 <text x="800.4" y="905.1999999999999" font-size="11" class="k">→</text>
 <path d="M 340.4,694.2 L 340.4,740.2 L 317.4,740.2 L 317.4,786.2 L 328.9,786.2 L 328.9,832.2 L 351.9,832.2 L 351.9,878.2 L 351.9,878.2 L 351.9,924.2" class="cut"/>
 <text x="823.4" y="947.1999999999999" class="note" text-anchor="end">left 31 + right 40 = 71 keys</text>
-<rect x="719.4" y="716.8" width="70.0" height="67.6" rx="3" class="area"/>
-<text x="754.4" y="725.8" font-size="7.5" class="k">status display cut-out</text>
-<text x="754.4" y="781.4" font-size="7.5" class="k">29 x 28 mm</text>
-<rect x="721.8" y="727.0" width="65.2" height="47.1" rx="3" class="module"/>
-<rect x="728.2" y="737.4" width="52.4" height="26.3" rx="3" class="screen"/>
-<rect x="731.5" y="789.0" width="45.9" height="38.6" rx="3" class="area"/>
-<text x="754.4" y="798.0" font-size="7.5" class="k">expansion port</text>
-<text x="754.4" y="824.6" font-size="7.5" class="k">19 x 16 mm</text></svg>
+<rect x="719.4" y="704.8" width="70.0" height="67.6" rx="3" class="area"/>
+<text x="754.4" y="713.8" font-size="7.5" class="k">status display cut-out</text>
+<text x="754.4" y="769.4" font-size="7.5" class="k">29 x 28 mm</text>
+<rect x="721.8" y="715.0" width="65.2" height="47.1" rx="3" class="module"/>
+<rect x="728.2" y="725.4" width="52.4" height="26.3" rx="3" class="screen"/>
+<rect x="731.5" y="783.0" width="45.9" height="38.6" rx="3" class="area"/>
+<text x="754.4" y="792.0" font-size="7.5" class="k">expansion port</text>
+<text x="754.4" y="818.6" font-size="7.5" class="k">19 x 16 mm</text></svg>
