@@ -293,12 +293,15 @@ def svg_board(layout, keys, oy):
     else:
         out.append(f'<text x="{(PAD+width)*U}" y="{by+(6.75+dy)*U}" class="note" text-anchor="end">'
                    f'{count(keys)} keys</text>')
-    for ax, ay, wmm, hmm, label in layout.get("areas", []):
+    for ax, ay, wmm, hmm, label, cls in layout.get("areas", []):
         px, py = (PAD + ax) * U, by + (ay + Y["n"] + dy) * U     # ay counts from the top key row
         w, h = wmm / MM_U * U, hmm / MM_U * U
-        out.append(f'<rect x="{px:.1f}" y="{py:.1f}" width="{w:.1f}" height="{h:.1f}" rx="3" class="area"/>')
-        out.append(f'<text x="{px + w / 2:.1f}" y="{py + h / 2 - 2:.1f}" font-size="9" class="k">{esc(label)}</text>')
-        out.append(f'<text x="{px + w / 2:.1f}" y="{py + h / 2 + 9:.1f}" font-size="8" class="k">{wmm:g} x {hmm:g} mm</text>')
+        out.append(f'<rect x="{px:.1f}" y="{py:.1f}" width="{w:.1f}" height="{h:.1f}" rx="3" class="{cls}"/>')
+        if cls == "area":
+            out.append(f'<text x="{px + w / 2:.1f}" y="{py + 9:.1f}" font-size="7.5" class="k">{esc(label)}</text>')
+            out.append(f'<text x="{px + w / 2:.1f}" y="{py + h - 3:.1f}" font-size="7.5" class="k">{wmm:g} x {hmm:g} mm</text>')
+        elif label:
+            out.append(f'<text x="{px + w / 2:.1f}" y="{py + h / 2 + 3:.1f}" font-size="7" class="k" fill="#ddd">{esc(label)} {wmm:g} x {hmm:g}</text>')
     return "\n".join(out), by + (7.1 + dy) * U, left, right
 
 
@@ -316,7 +319,7 @@ def render(layouts, path):
     css = """
     .t{font:600 15px sans-serif;fill:#222}.note{font:12px sans-serif;fill:#555}
     .k{font-family:sans-serif;text-anchor:middle;fill:#222}.w{font:9px sans-serif;text-anchor:end;fill:#888}
-    rect{stroke:#666;stroke-width:1}.plain{fill:#f2f2f2}.hl{fill:#e7f3e3}.hr{fill:#fbf0dc}.pad{fill:#efe6f7}.area{fill:#fff7d6;stroke:#b8860b;stroke-width:1.5;stroke-dasharray:4 3}
+    rect{stroke:#666;stroke-width:1}.plain{fill:#f2f2f2}.hl{fill:#e7f3e3}.hr{fill:#fbf0dc}.pad{fill:#efe6f7}.area{fill:#fff7d6;stroke:#b8860b;stroke-width:1.5;stroke-dasharray:4 3}.module{fill:#c9c2a8;stroke:#7a7050;stroke-width:1}.screen{fill:#202020;stroke:none}
     .var{fill:#dbe8fb;stroke:#3c6fc4}.bad{fill:#fde0e0;stroke:#c33;stroke-width:2}
     .cut{fill:none;stroke:#c33;stroke-width:3;stroke-dasharray:7 4}"""
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{oy:.0f}" '
@@ -335,6 +338,9 @@ NUMPAD[2]["rows"] = _docked(COMPACT[2]["rows"], NP4)
 # expansion port lid (17 x 14 mm cut-out plus a 1 mm flange, parts/cover_insert) above the
 # arrow keys. The nav column goes; the arrows sit 0.25U right of the modifiers.
 DISPLAY_MM, EXPANSION_MM = (27.0, 26.0), (19.0, 16.0)
+CLEARANCE_MM = 1.0                                  # assumed gap around the display holder
+DISPLAY_CUT_MM = (DISPLAY_MM[0] + 2 * CLEARANCE_MM, DISPLAY_MM[1] + 2 * CLEARANCE_MM)
+DISPLAY_MODULE_MM, DISPLAY_ACTIVE_MM = (27.0, 19.5), (21.7, 10.9)   # display_holder.scad
 MM_U = 19.05          # mm per key unit (U above is pixels per unit)
 _E2_TOP = {"n": B_ROWS["n"][:13] + [(2, "Bksp")],
            "t": B_ROWS["t"],
@@ -344,8 +350,26 @@ _E2_BOTTOM = [(1.25, "Ctrl"), (1.25, "Win"), (1.25, "Alt"), (1.5, "無変換|Fn"
               (2, "Space"), (1.5, "変換|Fn"), (1.25, "AltGr"), (1.25, "Ctrl")]
 
 
-def _area(x_u, y_u, size_mm, label):
-    return (x_u, y_u, size_mm[0], size_mm[1], label)
+def _area(x_u, y_u, size_mm, label, cls="area"):
+    return (x_u, y_u, size_mm[0], size_mm[1], label, cls)
+
+
+def _centred(cx_u, top_u, size_mm, label, cls="area"):
+    """An area centred on cx_u (key units), top edge at top_u."""
+    return _area(cx_u - size_mm[0] / MM_U / 2, top_u, size_mm, label, cls)
+
+
+def _status_stack(cx_u, up_top_u, gap_u=0.1):
+    """Expansion port straight above the key whose top is up_top_u, the status display
+    cut-out above the port, display module and visible screen inside the cut-out."""
+    port_top = up_top_u - gap_u - EXPANSION_MM[1] / MM_U
+    cut_top = port_top - gap_u - DISPLAY_CUT_MM[1] / MM_U
+    module_top = cut_top + (DISPLAY_CUT_MM[1] - DISPLAY_MODULE_MM[1]) / 2 / MM_U
+    active_top = module_top + (DISPLAY_MODULE_MM[1] - DISPLAY_ACTIVE_MM[1]) / 2 / MM_U
+    return [_centred(cx_u, cut_top, DISPLAY_CUT_MM, "status display cut-out"),
+            _centred(cx_u, module_top, DISPLAY_MODULE_MM, "", "module"),
+            _centred(cx_u, active_top, DISPLAY_ACTIVE_MM, "", "screen"),
+            _centred(cx_u, port_top, EXPANSION_MM, "expansion port")]
 
 
 STATUS = [
@@ -368,14 +392,13 @@ STATUS = [
     },
     {
         "name": "E3: display and expansion port above the arrows, PgUp and PgDn beside the up arrow (71 keys)",
-        "note": "Home/End/Del on Fn; Menu key added left of the arrows; 17.5U wide; right half 40 keys, fits the current 5x8 matrix",
+        "note": "Expansion port centred over the up arrow, status display above it; Home/End/Del on Fn; Menu key; 17.5U; right half 40 keys (5x8)",
         "rows": {**{r: v + [("gap", 2.5)] for r, v in _E2_TOP.items()},
                  "s": _E2_SHIFT + [(1, "PgUp"), (1, "↑"), (1, "PgDn")],
                  "b": _E2_BOTTOM + [(1, "Menu"), ("gap", .25), (1, "←"), (1, "↓"), (1, "→")]},
         "nav": [], "main_w": 17.5, "split": True,
-        # side by side: 27 + 1.6 + 19 mm = 47.6 mm = the 2.5U strip
-        "areas": [_area(15.0, (3 - DISPLAY_MM[1] / MM_U) / 2, DISPLAY_MM, "status display"),
-                  _area(15.0 + (DISPLAY_MM[0] + 1.6) / MM_U, (3 - EXPANSION_MM[1] / MM_U) / 2, EXPANSION_MM, "expansion port")],
+        # the up arrow spans 15.5 to 16.5U, its top is row 3
+        "areas": _status_stack(16.0, 3.0),
     },
 ]
 
