@@ -397,13 +397,13 @@ STATUS = [
     },
     {
         "name": "E3: display and expansion port above the arrows, PgUp and PgDn beside the up arrow (71 keys)",
-        "note": "Expansion port centred over the up arrow, status display above it; Home/End/Del on Fn; Menu key; 17.5U; right half 40 keys (5x8)",
-        "rows": {**{r: v + [("gap", 2.5)] for r, v in _E2_TOP.items()},
-                 "s": _E2_SHIFT + [(1, "PgUp"), (1, "↑"), (1, "PgDn")],
-                 "b": _E2_BOTTOM + [(1, "Menu"), ("gap", .25), (1, "←"), (1, "↓"), (1, "→")]},
-        "nav": [], "main_w": 17.5, "split": True,
-        # the up arrow spans 15.5 to 16.5U, its top is row 3
-        "areas": _status_stack(16.0, 3.0),
+        "note": "Expansion port centred over the up arrow, status display above it; Home/End/Del on Fn; right Shift and Menu 1.25U; arrows 0.5U from the modifiers; 18U; right half 40 keys (5x8)",
+        "rows": {**{r: v + [("gap", 3.0)] for r, v in _E2_TOP.items()},
+                 "s": _E2_SHIFT[:-2] + [(1.25, "Shift"), ("gap", .5), (1, "PgUp"), (1, "↑"), (1, "PgDn")],
+                 "b": _E2_BOTTOM + [(1.25, "Menu"), ("gap", .5), (1, "←"), (1, "↓"), (1, "→")]},
+        "nav": [], "main_w": 18.0, "split": True,
+        # the up arrow spans 16.0 to 17.0U, its top is row 3
+        "areas": _status_stack(16.5, 3.0),
     },
 ]
 
