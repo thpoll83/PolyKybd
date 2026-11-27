@@ -82,7 +82,7 @@ if TUNE:
             for n_ in o.active_material.node_tree.nodes:
                 if n_.type == "EMISSION":
                     n_.inputs["Strength"].default_value *= TUNE_K
-elif os.environ.get("PK_CHIP"):                    # the OLED driver chips on the displays' glass ledges,
+elif screens.marks_on():                    # the OLED driver chips on the displays' glass ledges,
     print("chips", screens.driver_chips(root, board, SIDE))   # and the lit glass edge under each lit display
     print("matrix edges", screens.matrix_edge(root, board, SIDE, float(os.environ.get("PK_STRENGTH", 6.0)), atlas_name=atlas))
 if os.environ.get("PK_DENT"):                     # "depth_mm[,rim_mm]": a real dented top

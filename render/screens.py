@@ -32,6 +32,21 @@ if _os.environ.get("PK_TINT"):
     LIT_TINT = (*[float(c) for c in _os.environ["PK_TINT"].split(",")], 1.0)
 
 
+# The display marks every render uses (the light-shot values the docs close-ups were
+# signed off with, polykybd-docs#169, the edge line at half its gain since): the OLED driver chip on the glass ledge and the lit
+# glass edge under each display. Each is only a default: an env var already set wins,
+# and PK_CHIP=0 turns both off.
+MARK_DEFAULTS = {"PK_CHIP": "1", "PK_CHIP_GLOSS": "0,0.4", "PK_CHIP_FADE": "6",
+                 "PK_CHIP_AT": "8.1,8.9", "PK_CHIP_GLOW": "0.018",
+                 "PK_EDGE_AT": "0.25,0.45", "PK_EDGE_GAIN": "0.50"}
+for _k, _v in MARK_DEFAULTS.items():
+    _os.environ.setdefault(_k, _v)
+
+
+def marks_on():
+    """Whether a render draws the driver chips and the glass edge lines."""
+    return _os.environ.get("PK_CHIP", "1") != "0"
+
 def _material(name, image, strength):
     """Glossy black glass whose lit pixels emit the image's colour."""
     m = bpy.data.materials.get(name) or bpy.data.materials.new(name)
