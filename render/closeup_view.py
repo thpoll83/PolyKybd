@@ -245,11 +245,13 @@ else:
         nt.links.new(line.outputs[0], mix.inputs["Factor"])
         nt.links.new(mix.outputs[2], b.inputs["Base Color"])
         mat_o.data.materials.append(m)
-    studio.flag(sc)
+    # PK_FLAG="w,h": a larger black card in the caps' mirror direction (less studio light on the caps)
+    studio.flag(sc, **({"size": tuple(float(v) for v in os.environ["PK_FLAG"].split(","))} if os.environ.get("PK_FLAG") else {}))
     studio.white_look(sc)
 sc.cycles.filter_width = 1.0
 sc.cycles.samples = samples
-sc.render.resolution_x, sc.render.resolution_y = width, int(round(width * 9 / 16))
+# PK_ASPECT=<height/width> frames another aspect than 16:9 (766/1129 for the emoji-layer photo)
+sc.render.resolution_x, sc.render.resolution_y = width, int(round(width * float(os.environ.get("PK_ASPECT", 9 / 16))))
 sc.render.resolution_percentage = 100
 sc.render.filepath = out
 border = os.environ.get("PK_BORDER")

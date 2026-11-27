@@ -38,7 +38,8 @@ import lang_layer_demo as lld  # noqa: E402
 # ⚠️ PolyKybdHost's lang_layer_demo draws the firmware's column-native glyphs correctly only
 # on the branch fix/lang-layer-demo-column-glyphs (until it is merged): on main the Lang
 # menu's flags come out as diagonal "snowflakes", and the 160 / 10 cards cannot be drawn
-if not hasattr(lld, "_glyph_pixels"):
+# PK_SKIP_LLD_CHECK=1: a caller that draws no Lang menu (emoji_atlas.py) does not need the fix
+if not hasattr(lld, "_glyph_pixels") and not os.environ.get("PK_SKIP_LLD_CHECK"):
     raise SystemExit("PolyKybdHost is on a branch without the column-native glyph fix: run "
                      "'git -C ../PolyKybdHost checkout fix/lang-layer-demo-column-glyphs' "
                      "(see render/docker/README.md)")
@@ -52,8 +53,20 @@ OW, OH = 72, 40
 SW, SH = 128, 64
 STATUS_FONT = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf"
 CJK_FONT = "/usr/share/fonts/opentype/ipafont-gothic/ipag.ttf"
-KEYMAP = os.path.join(PK, "split72", "keymaps", "default", "keymap.c")
-MATRICES = ld.parse_layout_matrix(os.path.join(PK, "split72", "keyboard.json"))
+def _pkf(*parts):
+    """A firmware file or folder, at its place before or after the move into features/,
+    keys_com/ and fonts/."""
+    alts = [parts, ("features",) + parts, ("keys_com",) + parts]
+    if parts[0] == "base":
+        alts.append(parts[1:])
+    for p in (os.path.join(PK, *a) for a in alts):
+        if os.path.exists(p):
+            return p
+    return os.path.join(PK, *parts)
+
+
+KEYMAP = _pkf("split72", "keymaps", "default", "keymap.c")
+MATRICES = ld.parse_layout_matrix(_pkf("split72", "keyboard.json"))
 NO_DISPLAY = {"3,7", "8,0"}                        # the encoders
 
 
@@ -77,18 +90,18 @@ def _arr(img):
 class Screens:
     def __init__(self, lang="en-US"):
         self.lang = lang
-        named = op.load_named_glyphs(os.path.join(PK, "lang", "named_glyphs.h"))
-        self.L = op.Lang(os.path.join(PK, "lang", "lang_lut.xlsx"), named)
-        self.fonts = load_all_fonts(os.path.join(PK, "base", "fonts"))
+        named = op.load_named_glyphs(_pkf("lang", "named_glyphs.h"))
+        self.L = op.Lang(_pkf("lang", "lang_lut.xlsx"), named)
+        self.fonts = load_all_fonts(_pkf("base", "fonts"))
         self.R = op.Renderer(self.fonts)
-        self.static = ld.parse_static_text_map(os.path.join(PK, "keycode_helper.c"))
+        self.static = ld.parse_static_text_map(_pkf("keycode_helper.c"))
         self._layers = {}
         self._status_font = {s: ImageFont.truetype(STATUS_FONT, s) for s in (13, 15, 17)}
         # the Lang menu
         roles = lld.parse_ll_roles(KEYMAP)
-        off, langs, labels, spp, nreg = lld.parse_lang_layer(os.path.join(PK, "lang_layer.c"),
-                                                             os.path.join(PK, "lang_layer.h"))
-        tiny = lld.load_one_font(os.path.join(PK, "base", "fonts", "nano_font.h"),
+        off, langs, labels, spp, nreg = lld.parse_lang_layer(_pkf("lang_layer.c"),
+                                                             _pkf("lang_layer.h"))
+        tiny = lld.load_one_font(_pkf("base", "fonts", "nano_font.h"),
                                  "NotoSans_Regular_Nano_10px7b")
         cur = self.L.langs.index(lang) if lang in self.L.langs else -1
         self.ll_ctx = (dict(zip(MATRICES, roles)), off, langs, labels, spp, nreg, self.L, self.R,
@@ -96,14 +109,14 @@ class Screens:
         self.nreg = nreg
         # the emoji menu, pixel-exact
         self.emj_roles = dict(zip(MATRICES, ed.parse_emj_layer_roles(KEYMAP)))
-        self.emj_cats = ed.parse_categories(os.path.join(PK, "emoji", "emoji_data.h"))
-        self.emj_icons = ed.parse_tab_icons(os.path.join(PK, "emoji", "emoji_layer.c"))
+        self.emj_cats = ed.parse_categories(_pkf("emoji", "emoji_data.h"))
+        self.emj_icons = ed.parse_tab_icons(_pkf("emoji", "emoji_layer.c"))
         ed.ARROW_PREV, ed.ARROW_NEXT = chr(0x83), chr(0x84)
         kle = json.load(open(os.path.join(HOST, "polyhost", "res", "polykybd-split72.json"), encoding="utf-8"))
-        self.kle = KleRenderer(kle, unit=72, glyphs=ed.GfxGlyphRenderer(os.path.join(PK, "base", "fonts")),
+        self.kle = KleRenderer(kle, unit=72, glyphs=ed.GfxGlyphRenderer(_pkf("base", "fonts")),
                                bezel=False, dither=False)
         # the Intl picker
-        self.latin = ipd.parse_latin_ex_map(os.path.join(PK, "lang", "lang_lut.c"))
+        self.latin = ipd.parse_latin_ex_map(_pkf("lang", "lang_lut.c"))
 
     # ---- whole layers --------------------------------------------------------
     def layer(self, name="_L0", shift=False):
@@ -325,7 +338,7 @@ def name_tiles(tag):
     """A pre-rendered native name from anim/tutorial_names_gen.h (72x40 tiles, row-major,
     9 bytes per row, MSB first)."""
     import re
-    t = open(os.path.join(PK, "anim", "tutorial_names_gen.h"), encoding="utf-8").read()
+    t = open(_pkf("anim", "tutorial_names_gen.h"), encoding="utf-8").read()
     m = re.search(r"TUT_NAME_TILES_" + tag + r"\[(\d+) \* 360\] = \{(.*?)\};", t, re.S)
     n = int(m.group(1))
     b = np.array([int(v, 16) for v in re.findall(r"0x[0-9A-Fa-f]{2}", m.group(2))], np.uint8)
@@ -340,7 +353,7 @@ def heavy(cp):
     """tut_draw_heavy(): one character in the splash face, centred from its measured box."""
     global _HEAVY
     if _HEAVY is None:
-        _HEAVY = lld.load_one_font(os.path.join(PK, "base", "fonts", "FreeSansBold24pt7b.h"), "FreeSansBold24pt7b")
+        _HEAVY = lld.load_one_font(_pkf("base", "fonts", "FreeSansBold24pt7b.h"), "FreeSansBold24pt7b")
     f = _HEAVY
     a = np.zeros((OH, OW), np.float32)
     if not (f.first <= cp <= f.last):
